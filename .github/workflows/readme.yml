@@ -127,7 +127,7 @@ jobs:
     permissions:
       contents: write # the SVGs, the README blocks and the lock
       pull-requests: write # declared by the called workflow
-    uses: tannergolden/banners/.github/workflows/banners.yml@v1
+    uses: tannergolden/banners/.github/workflows/banners.yml@v1 # zizmor: ignore[unpinned-uses] - first-party callee on its moving major, the way every stub calls it.
     with:
       mode: ${{ inputs.mode }}
       theme: ${{ inputs.theme }}
@@ -141,7 +141,7 @@ jobs:
     permissions:
       contents: write # the SVGs, the README blocks, the data file and the lock
       pull-requests: write # declared by the called workflow
-    uses: tannergolden/banners/.github/workflows/elements.yml@v1
+    uses: tannergolden/banners/.github/workflows/elements.yml@v1 # zizmor: ignore[unpinned-uses] - first-party callee on its moving major, the way every stub calls it.
     with:
       author: ${{ inputs.author }}
     secrets: inherit # zizmor: ignore[secrets-inherit] - first-party callee on its moving major, the way every stub calls it.
@@ -187,7 +187,7 @@ jobs:
     permissions:
       contents: write # the SVGs, the README block and the ledger
       pull-requests: write # declared by the called workflow
-    uses: tannergolden/trophies/.github/workflows/trophies.yml@v1
+    uses: tannergolden/trophies/.github/workflows/trophies.yml@v1 # zizmor: ignore[unpinned-uses] - first-party callee on its moving major, the way every stub calls it.
     with:
       mode: ${{ inputs.mode }}
       style: ${{ inputs.style }}
