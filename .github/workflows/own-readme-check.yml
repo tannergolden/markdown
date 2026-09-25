@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2026 Tanner Golden
+# SPDX-License-Identifier: MIT
+#
+# The check half of this repository's own page: on a pull request that
+# touches a kit's data, its lock, its files or the README, every kit redraws
+# from its lock and the run fails if anything committed differs. Nothing is
+# measured or committed and no token is used.
+
+name: '📖 Own README Check'
+
+on:
+  pull_request:
+    paths:
+      - '.github/banners.yml'
+      - '.github/banners.lock.json'
+      - '.github/badges.yml'
+      - '.github/elements.yml'
+      - '.github/elements.lock.json'
+      - '.github/trophies.yml'
+      - '.github/trophies.lock.json'
+      - 'assets/**'
+      - 'README.md'
+
+permissions: {}
+
+jobs:
+  check:
+    if: ${{ !github.event.repository.is_template }}
+    permissions:
+      contents: read # redraw from each lock and compare, and write nothing
+    uses: ./.github/workflows/readme.yml
+    with:
+      banners: '7 0 * * *'
+      badges: '7 8 * * *'
+      trophies: '7 16 * * *'
+      check: true

@@ -94,6 +94,6 @@ copied across - the seeds stay where they are and you take what you want.
 
 <br />
 
-Built with ❤️ by the Engineering Team. Proprietary and confidential; all rights reserved.
+Built with ❤️ by the Engineering Team. Distributed under the MIT License.
 
 </div>

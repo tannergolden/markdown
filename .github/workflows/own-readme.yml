@@ -1,0 +1,38 @@
+# SPDX-FileCopyrightText: 2026 Tanner Golden
+# SPDX-License-Identifier: MIT
+#
+# This repository's own page: the umbrella eating its own cooking. It calls
+# the reusable workflow by LOCAL path, so a change to it is exercised by the
+# tree that carries it, rather than by the last release.
+#
+# Three crons, eight hours apart, one per generator repository. Each cron
+# appears twice, under on.schedule so GitHub fires it and under with: so the
+# workflow knows which kit it means; the two must match to the character.
+
+name: '📖 Own README'
+
+on:
+  schedule:
+    - cron: '7 0 * * *' # banners, then the elements
+    - cron: '7 8 * * *' # badges
+    - cron: '7 16 * * *' # trophies
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  readme:
+    if: ${{ !github.event.repository.is_template }}
+    permissions:
+      contents: write # the SVGs, the README blocks and each kit's lock
+      pull-requests: write # declared by the called workflows
+    uses: ./.github/workflows/readme.yml
+    with:
+      banners: '7 0 * * *'
+      badges: '7 8 * * *'
+      trophies: '7 16 * * *'
+    secrets: inherit # zizmor: ignore[secrets-inherit] - first-party callee at a local path.

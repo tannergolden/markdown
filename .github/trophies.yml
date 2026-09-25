@@ -1,0 +1,5 @@
+# The case THIS page draws for itself, in repository mode, through the
+# umbrella's own stub. Every key and its default:
+# tannergolden/trophies/examples/trophies.yml.
+mode: repository
+style: trophy

@@ -1,0 +1,7 @@
+# The banners THIS page draws for itself, through the umbrella's own stub.
+# The title, the tagline, every figure and the four link buttons under the
+# footer are read from GitHub on each run; only what is written here is
+# fixed. Every key and its default: tannergolden/banners/examples/banners.yml.
+mode: repository
+motto: One stub. The whole page.
+closing: Drawn at both ends, and everything between.

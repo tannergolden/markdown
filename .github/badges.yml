@@ -1,0 +1,54 @@
+# The badges THIS page draws for itself, through the umbrella's own stub,
+# rendered by tannergolden/badges into assets/badges/. Every badge is a
+# blueprint plate, so it sits on the same paper as the banners above it and
+# the elements below; the four identity plates keep their conventional
+# colours as prints. Fields: tannergolden/badges/docs/badges.example.yml.
+
+badges:
+  - name: status
+    label: Status
+    message: Active
+    icon: pulse
+    style: blueprint-for-the-badge
+    print: greenprint
+    link: ./
+  - name: role
+    label: Role
+    message: Workflow
+    icon: play
+    style: blueprint-for-the-badge
+    print: pinkprint
+    link: ./
+  - name: context
+    label: Context
+    message: README
+    icon: book
+    style: blueprint-for-the-badge
+    print: purpleprint
+    link: ./
+  - name: license
+    label: License
+    message: MIT
+    icon: scale
+    style: blueprint-for-the-badge
+    print: yellowprint
+    link: ./LICENSE
+
+  - name: kits
+    label: Kits
+    message: '4'
+    icon: layers
+    style: blueprint-for-the-badge
+    link: '#-the-kits'
+  - name: slots
+    label: Slots
+    message: 3 a day
+    icon: clock
+    style: blueprint-for-the-badge
+    link: '#-one-stub-three-slots'
+  - name: apart
+    label: Commits
+    message: 8 hours apart
+    icon: calendar
+    style: blueprint-for-the-badge
+    link: '#-one-stub-three-slots'

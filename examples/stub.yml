@@ -1,0 +1,39 @@
+# Put this at .github/workflows/readme.yml in any repository, and its README
+# gets a header and a footer from tannergolden/banners, the body of the page
+# from the elements kit beside them, badges from tannergolden/badges and a
+# case from tannergolden/trophies: each measured from the repository, drawn
+# as committed SVGs, never fetched.
+#
+# Three crons, eight hours apart, one per generator repository. Each cron
+# appears twice: under on.schedule so GitHub fires it, and under with: so
+# the workflow knows which kit it means. They must match to the character.
+# Drop a kit by deleting its cron in both places. Run it once from the
+# Actions tab: a manual run draws everything, one kit after another.
+#
+# GITHUB_TOKEN already reads everything about its own repository, so no
+# extra token is needed.
+name: README
+
+on:
+  schedule:
+    - cron: '7 0 * * *' # banners, then the elements
+    - cron: '7 8 * * *' # badges
+    - cron: '7 16 * * *' # trophies
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  readme:
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: tannergolden/markdown/.github/workflows/readme.yml@v1
+    with:
+      banners: '7 0 * * *'
+      badges: '7 8 * * *'
+      trophies: '7 16 * * *'
+      # mode: profile      # in the repository named after your account
+      # theme: greenprint  # the banners' print; the elements follow their own data file
+      # style: crest       # the trophies' style
+      # elements: false    # the banners alone in their slot

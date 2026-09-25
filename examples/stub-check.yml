@@ -1,0 +1,31 @@
+# For pull-request CI: every kit the stub names redraws from its lock and
+# the check fails if any committed file or README block differs. Nothing is
+# measured or committed and no token is used, so it runs on a pull request
+# from a fork. The crons are the same as the stub's, so the same kits run.
+name: README check
+
+on:
+  pull_request:
+    paths:
+      - '.github/banners.yml'
+      - '.github/banners.lock.json'
+      - '.github/badges.yml'
+      - '.github/elements.yml'
+      - '.github/elements.lock.json'
+      - '.github/trophies.yml'
+      - '.github/trophies.lock.json'
+      - 'assets/**'
+      - 'README.md'
+
+permissions: {}
+
+jobs:
+  check:
+    permissions:
+      contents: read
+    uses: tannergolden/markdown/.github/workflows/readme.yml@v1
+    with:
+      banners: '7 0 * * *'
+      badges: '7 8 * * *'
+      trophies: '7 16 * * *'
+      check: true

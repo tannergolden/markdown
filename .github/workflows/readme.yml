@@ -1,0 +1,236 @@
+# SPDX-FileCopyrightText: 2026 Tanner Golden
+# SPDX-License-Identifier: MIT
+#
+# The one workflow a README needs. A consumer's stub names a cron for each
+# generator repository, and this runs the right kit when each fires:
+#
+#   banners   tannergolden/banners   the header and the footer, then the
+#                                    elements, the body of the page, from
+#                                    the same repository
+#   badges    tannergolden/badges    the badges
+#   trophies  tannergolden/trophies  the case
+#
+# Three slots, eight hours apart, so a repository is committed to at most
+# once per slot and a quiet slot commits nothing. A manual run, or a check
+# on a pull request, runs every kit the stub names, one after another, so
+# no two ever push at once.
+#
+# Called, never copied: each kit stays in its own repository on its own
+# release line, and this holds nothing that draws.
+
+name: '📖 README'
+
+on:
+  workflow_call:
+    inputs:
+      banners:
+        description: >-
+          The cron under on.schedule that means the banners slot, written
+          the same way. Empty skips banners (and the elements) entirely.
+        type: string
+        default: ''
+      badges:
+        description: 'The cron that means the badges slot. Empty skips badges.'
+        type: string
+        default: ''
+      trophies:
+        description: 'The cron that means the trophies slot. Empty skips trophies.'
+        type: string
+        default: ''
+      elements:
+        description: 'Draw the elements in the banners slot, after the banners.'
+        type: boolean
+        default: true
+      mode:
+        description: 'repository, or profile in the repository named after your account. Banners and trophies both take it.'
+        type: string
+        default: 'repository'
+      theme:
+        description: 'The print the banners are drawn in; empty reads .github/banners.yml, whose default is blueprint.'
+        type: string
+        default: ''
+      style:
+        description: 'The trophies style: trophy, crest, medallion, crystal or plaque; empty reads .github/trophies.yml.'
+        type: string
+        default: ''
+      author:
+        description: 'Who each refresh commit is authored by, as "Name <email>". The kits'' author by default.'
+        type: string
+        default: 'Tanner Golden <24684994+tannergolden@users.noreply.github.com>'
+      check:
+        description: >-
+          true only checks: every kit the stub names redraws from its lock
+          and fails if any committed file or README block differs. Nothing
+          is measured, written or committed, and no token is used, so the
+          caller grants contents: read and nothing more. For pull-request CI.
+        type: boolean
+        default: false
+    secrets:
+      BANNERS_TOKEN:
+        description: 'Optional token for the banners; nothing a banner shows needs one.'
+        required: false
+      TROPHIES_TOKEN:
+        description: 'Optional read-only personal token for the trophies: counts private contributions in profile mode.'
+        required: false
+      ELEMENTS_TOKEN:
+        description: 'Optional token for the elements; only a placard for another repository needs one.'
+        required: false
+
+permissions: {}
+
+jobs:
+  slot:
+    name: '🕗 Which slot'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      banners: ${{ steps.pick.outputs.banners }}
+      badges: ${{ steps.pick.outputs.badges }}
+      trophies: ${{ steps.pick.outputs.trophies }}
+    steps:
+      # On a schedule, the kit whose cron fired; on anything else (a manual
+      # run, a push, a pull request's check), every kit the stub names.
+      # Inputs travel through env, never interpolated into the script body.
+      - id: pick
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
+          BANNERS_AT: ${{ inputs.banners }}
+          BADGES_AT: ${{ inputs.badges }}
+          TROPHIES_AT: ${{ inputs.trophies }}
+        run: |
+          set -euo pipefail
+          pick() {
+            if [ -z "$1" ]; then echo false; return; fi
+            if [ "$EVENT" != "schedule" ]; then echo true; return; fi
+            if [ "$1" = "$SCHEDULE" ]; then echo true; else echo false; fi
+          }
+          banners="$(pick "$BANNERS_AT")"
+          badges="$(pick "$BADGES_AT")"
+          trophies="$(pick "$TROPHIES_AT")"
+          if [ "$EVENT" = "schedule" ] && [ "$banners$badges$trophies" = "falsefalsefalse" ]; then
+            echo "::error::the schedule '$SCHEDULE' fired but names no kit: list the same cron under 'with:' as under 'on.schedule'"
+            exit 1
+          fi
+          {
+            echo "banners=$banners"
+            echo "badges=$badges"
+            echo "trophies=$trophies"
+          } >> "$GITHUB_OUTPUT"
+          echo "banners=$banners badges=$badges trophies=$trophies"
+
+  banners:
+    name: '🪧 Banners'
+    needs: slot
+    if: ${{ !inputs.check && needs.slot.outputs.banners == 'true' }}
+    permissions:
+      contents: write # the SVGs, the README blocks and the lock
+      pull-requests: write # declared by the called workflow
+    uses: tannergolden/banners/.github/workflows/banners.yml@v1
+    with:
+      mode: ${{ inputs.mode }}
+      theme: ${{ inputs.theme }}
+      author: ${{ inputs.author }}
+    secrets: inherit # zizmor: ignore[secrets-inherit] - first-party callee on its moving major, the way every stub calls it.
+
+  elements:
+    name: '📐 Elements'
+    needs: [slot, banners]
+    if: ${{ !cancelled() && !inputs.check && needs.slot.outputs.banners == 'true' && inputs.elements }}
+    permissions:
+      contents: write # the SVGs, the README blocks, the data file and the lock
+      pull-requests: write # declared by the called workflow
+    uses: tannergolden/banners/.github/workflows/elements.yml@v1
+    with:
+      author: ${{ inputs.author }}
+    secrets: inherit # zizmor: ignore[secrets-inherit] - first-party callee on its moving major, the way every stub calls it.
+
+  badges:
+    name: '🏷️ Badges'
+    needs: [slot, elements]
+    if: ${{ !cancelled() && !inputs.check && needs.slot.outputs.badges == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # the action commits the badges it redrew
+    steps:
+      - name: '📥 Checkout'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: true # zizmor: ignore[artipacked] - the action commits and pushes what it redrew, and nothing else runs after it.
+
+      # Only its owner knows which badges a page should carry, so the badges
+      # wait for a data file rather than inventing one.
+      - name: '📄 Is there a data file'
+        id: data
+        shell: bash
+        run: |
+          if [ -f .github/badges.yml ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::no .github/badges.yml yet: copy tannergolden/badges/docs/badges.example.yml there and the next run draws them."
+          fi
+
+      - name: '🏷️ Render and commit'
+        if: ${{ steps.data.outputs.present == 'true' }}
+        uses: tannergolden/badges@v1 # zizmor: ignore[unpinned-uses] - first-party action on its moving major, the way every stub calls it.
+        with:
+          mode: render
+          commit: true
+
+  trophies:
+    name: '🏆 Trophies'
+    needs: [slot, badges]
+    if: ${{ !cancelled() && !inputs.check && needs.slot.outputs.trophies == 'true' }}
+    permissions:
+      contents: write # the SVGs, the README block and the ledger
+      pull-requests: write # declared by the called workflow
+    uses: tannergolden/trophies/.github/workflows/trophies.yml@v1
+    with:
+      mode: ${{ inputs.mode }}
+      style: ${{ inputs.style }}
+      author: ${{ inputs.author }}
+    secrets: inherit # zizmor: ignore[secrets-inherit] - first-party callee on its moving major, the way every stub calls it.
+
+  # The check is every kit's action in check mode on one checkout, at
+  # contents: read: each redraws from its lock and compares, and writes
+  # nothing. The kits' workflows declare write, so they are not called here.
+  check:
+    name: '🔍 Check'
+    needs: slot
+    if: ${{ inputs.check }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read # redraw from each lock and compare
+    steps:
+      - name: '📥 Checkout'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: '🪧 Check the banners'
+        if: ${{ needs.slot.outputs.banners == 'true' }}
+        uses: tannergolden/banners@v1 # zizmor: ignore[unpinned-uses] - first-party action on its moving major, the way every stub calls it.
+        with:
+          mode: check
+
+      - name: '📐 Check the elements'
+        if: ${{ needs.slot.outputs.banners == 'true' && inputs.elements }}
+        uses: tannergolden/banners/elements@v1 # zizmor: ignore[unpinned-uses] - first-party action on its moving major, the way every stub calls it.
+        with:
+          mode: check
+
+      - name: '🏷️ Check the badges'
+        if: ${{ needs.slot.outputs.badges == 'true' && hashFiles('.github/badges.yml') != '' }}
+        uses: tannergolden/badges@v1 # zizmor: ignore[unpinned-uses] - first-party action on its moving major, the way every stub calls it.
+        with:
+          mode: check
+
+      - name: '🏆 Check the trophies'
+        if: ${{ needs.slot.outputs.trophies == 'true' }}
+        uses: tannergolden/trophies@v1 # zizmor: ignore[unpinned-uses] - first-party action on its moving major, the way every stub calls it.
+        with:
+          mode: check

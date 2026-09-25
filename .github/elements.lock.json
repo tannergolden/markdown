@@ -1,0 +1,209 @@
+{
+ "measured": {
+  "vitals": {
+   "histogram": {
+    "label": "COMMITS PER WEEK",
+    "sum": "IN TEN WEEKS",
+    "bars": [
+     [
+      "20 JUL",
+      0
+     ],
+     [
+      "27 JUL",
+      0
+     ],
+     [
+      "3 AUG",
+      0
+     ],
+     [
+      "10 AUG",
+      0
+     ],
+     [
+      "17 AUG",
+      0
+     ],
+     [
+      "24 AUG",
+      0
+     ],
+     [
+      "31 AUG",
+      0
+     ],
+     [
+      "7 SEP",
+      0
+     ],
+     [
+      "14 SEP",
+      0
+     ],
+     [
+      "21 SEP",
+      1
+     ]
+    ]
+   },
+   "materials": {
+    "label": "TRACKED BYTES BY FILE TYPE",
+    "parts": [
+     [
+      "MARKDOWN",
+      123113
+     ],
+     [
+      "PYTHON",
+      86125
+     ],
+     [
+      "YAML",
+      57207
+     ],
+     [
+      "JSON",
+      4088
+     ],
+     [
+      "OTHER",
+      12698
+     ]
+    ],
+    "total": "283 KB"
+   },
+   "dial": {
+    "label": "DAYS SINCE THE LAST RELEASE",
+    "value": 0,
+    "span": 30,
+    "sub": "NO RELEASE YET"
+   },
+   "counters": [
+    [
+     "WORKFLOWS",
+     13
+    ],
+    [
+     "EXAMPLES",
+     0
+    ],
+    [
+     "DOCS",
+     27
+    ]
+   ],
+   "caption": "MEASURED 25 SEP 2026"
+  },
+  "layout": {
+   "total": 61,
+   "rooms": [
+    {
+     "key": "github",
+     "label": ".GITHUB/",
+     "count": 51,
+     "lines": [
+      [
+       "docs/",
+       "27"
+      ],
+      [
+       "workflows/",
+       "13"
+      ],
+      [
+       "scripts/",
+       "7"
+      ],
+      [
+       "CODEOWNERS",
+       ""
+      ],
+      [
+       "dependabot.yml",
+       ""
+      ],
+      [
+       "release.yml",
+       ""
+      ],
+      [
+       "template-parity.yml",
+       ""
+      ]
+     ]
+    }
+   ],
+   "lobby": {
+    "count": 7,
+    "lines": [
+     [
+      "LICENSE",
+      ""
+     ],
+     [
+      "README.md",
+      ""
+     ]
+    ],
+    "far": [
+     "+5 DOTFILES"
+    ]
+   },
+   "closets": [
+    {
+     "label": ".VSCODE/",
+     "count": 2
+    },
+    {
+     "label": ".DEVCONTAINER/",
+     "count": 1
+    }
+   ]
+  },
+  "history": {
+   "caption": "",
+   "events": [],
+   "today": "2026-09-25"
+  },
+  "contributors": {
+   "caption": "1 COMMITS FROM 1 CONTRIBUTORS",
+   "people": [
+    {
+     "name": "TANNER GOLDEN",
+     "handle": "@TANNERGOLDEN",
+     "n": 1,
+     "first": "25 SEP 2026",
+     "last": "25 SEP",
+     "initials": "TG"
+    }
+   ]
+  },
+  "conformance": {
+   "commit": "f16fcf9",
+   "checks": [
+    [
+     "Licensed",
+     "LICENSE",
+     true
+    ],
+    [
+     "Security policy",
+     "none",
+     false
+    ],
+    [
+     "Actions pinned to a tag or a commit",
+     "28 of 28 uses:",
+     true
+    ],
+    [
+     "Conventional commits",
+     "1 of 1 subjects",
+     true
+    ]
+   ]
+  }
+ },
+ "today": "2026-09-25"
+}

@@ -1,0 +1,111 @@
+# The elements THIS page draws for itself, through the umbrella's own stub,
+# drawn by the elements kit in tannergolden/banners in the banners slot.
+# The schematic, the placards and the seal are written here by hand; the
+# instruments, the plan, the milestones, the roster and the certificate are
+# measured from git on each run. Every field of every kind:
+# tannergolden/banners/docs/Elements-Kit.md.
+
+print: blueprint
+subject: tannergolden/markdown
+
+elements:
+  how-it-runs:
+    kind: schematic
+    title: A day in the life of one stub
+    desc: A stub in your repository calls this workflow at three crons, eight hours apart. At seven past midnight it draws the banners, then the elements; at seven past eight, the badges; at seven past four, the trophies. Each kit commits between its own markers, and a quiet slot commits nothing.
+    caption: "ONE DAY, LEFT TO RIGHT  ·  NOT TO SCALE"
+    boxes:
+      stub: {title: Your stub, path: .github/workflows/readme.yml, icon: code, note: 1}
+      umbrella: {title: This workflow, path: tannergolden/markdown, icon: branch, note: 2}
+      banners: {title: Banners, path: tannergolden/banners, icon: layers}
+      elements: {title: Elements, path: banners/elements, icon: grid, note: 3}
+      badges: {title: Badges, path: tannergolden/badges, icon: tag}
+      trophies: {title: Trophies, path: tannergolden/trophies, icon: trophy}
+    wires:
+      - [stub, umbrella, THREE CRONS]
+      - [umbrella, banners, "00:07"]
+      - [banners, elements, THEN]
+      - [elements, badges, "08:07"]
+      - [badges, trophies, "16:07"]
+    notes:
+      - [1, "TEN LINES: A CRON FOR EACH GENERATOR, AND WHICH KIT IT MEANS"]
+      - [2, "ONE KIT PER RUN ON A SCHEDULE; EVERY KIT, IN THIS ORDER, BY HAND"]
+      - [3, "THE SAME REPOSITORY AS THE BANNERS, SO THE SAME SLOT"]
+
+  vitals:
+    kind: instruments
+    measure:
+      count: {workflows: ".github/workflows/*.yml", examples: "examples/*.yml", docs: ".github/docs/**.md"}
+
+  layout:
+    kind: plan
+    entrance: "ENTRANCE  ·  README.MD"
+    measure: {}
+    notes:
+      - [1, "THE WORKFLOW, THIS PAGE'S OWN STUBS, AND EACH KIT'S DATA AND LOCK"]
+      - [2, "WHAT EVERY KIT DREW FOR THIS PAGE"]
+    rooms:
+      - {key: github, notes: [[1, 0]]}
+      - {key: assets, notes: [[2, 0]]}
+
+  history:
+    kind: milestones
+    measure:
+      notable:
+        v1.0.0: [ONE STUB, THREE SLOTS]
+
+  contributors:
+    kind: roster
+    size: half
+    measure:
+      rename:
+        claude: {name: CLAUDE, handle: CO-AUTHOR, initials: C}
+
+  conformance:
+    kind: certificate
+    size: half
+    name: MARKDOWN
+    ring_top: CONFORMS TO TANNERGOLDEN/STANDARDS
+    ring_bottom: "V1  ·  MEASURED FROM DEVELOPMENT"
+    measure: {ci: Development}
+
+  banners:
+    kind: placard
+    owner: tannergolden
+    name: banners
+    icon: layers
+    link: https://github.com/tannergolden/banners
+    desc: The two ends of the page and its body. Headers, footers and eight elements, measured from GitHub and git, drawn on one paper.
+    cells: [[Language, PYTHON], [Slot, "00:07"], [Draws, "HEADER  ·  FOOTER  ·  BODY"]]
+  badges:
+    kind: placard
+    owner: tannergolden
+    name: badges
+    icon: tag
+    link: https://github.com/tannergolden/badges
+    desc: Badges a repository draws for itself from one data file, in six styles and their blueprint twins, so no README depends on a third-party service.
+    cells: [[Language, PYTHON], [Slot, "08:07"], [Draws, BADGES]]
+  trophies:
+    kind: placard
+    owner: tannergolden
+    name: trophies
+    icon: trophy
+    link: https://github.com/tannergolden/trophies
+    desc: Trophies and achievements a profile or a repository earns for itself, measured on a schedule, in five styles.
+    cells: [[Language, PYTHON], [Slot, "16:07"], [Draws, THE CASE]]
+  standards:
+    kind: placard
+    owner: tannergolden
+    name: standards
+    icon: shield
+    link: https://github.com/tannergolden/standards
+    desc: The engineering standards every kit follows and the automation that delivers them, called by link rather than copied.
+    cells: [[Language, YAML], [Delivers, RELEASES], [Called, "BY EVERY KIT"]]
+
+  stamp:
+    kind: seal
+    title: "Seal: drawn, never fetched"
+    desc: The seal at the foot of a page every kit drew.
+    ring_top: DRAWN, NEVER FETCHED
+    ring_bottom: "ONE STUB  ·  THREE SLOTS"
+    name: MARKDOWN

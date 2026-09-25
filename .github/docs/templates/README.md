@@ -74,6 +74,6 @@ Every document here is one you complete: either a **fill-in standard** whose dec
 
 <br />
 
-Built with ❤️ by the Engineering Team. Proprietary and confidential; all rights reserved.
+Built with ❤️ by the Engineering Team. Distributed under the MIT License.
 
 </div>
