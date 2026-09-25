@@ -6,6 +6,22 @@ category: docs
 -->
 
 <!-- banners:header:start -->
+<!-- markdownlint-disable MD041 -->
+
+<div align="center">
+
+<a name="top"></a>
+
+<picture>
+  <source media="(max-width: 585px) and (prefers-color-scheme: dark)" srcset="assets/banners/header-narrow-dark.svg">
+  <source media="(max-width: 585px)" srcset="assets/banners/header-narrow-day.svg">
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/banners/header-still-dark.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/banners/header-still-day.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/banners/header-dark.svg">
+  <img alt="markdown: One stub that keeps a README drawn: banners, badges, trophies and elements, each measured from the repository at its own hour and committed only when…. One stub. The whole page. Project: tannergolden/markdown. Release: v1.0.1. Stars: 0. Forks: 0. Open issues: 1. License: MIT." src="assets/banners/header-day.svg">
+</picture>
+
+</div>
 <!-- banners:header:end -->
 
 <div align="center">
@@ -340,4 +356,21 @@ the four kits, under their licences.
 </div>
 
 <!-- banners:footer:start -->
+<div align="center">
+
+<a href="#top">
+<picture>
+  <source media="(max-width: 585px) and (prefers-color-scheme: dark)" srcset="assets/banners/footer-narrow-dark.svg">
+  <source media="(max-width: 585px)" srcset="assets/banners/footer-narrow-day.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/banners/footer-dark.svg">
+  <img alt="Drawn at both ends, and everything between. Back to Top. Built with love by @tannergolden. Distributed under the MIT License. Last updated September 25, 2026." src="assets/banners/footer-day.svg">
+</picture>
+</a>
+
+<a href="https://github.com/tannergolden/markdown/issues"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/banners/link-issues-dark.svg"><img alt="Issues" src="assets/banners/link-issues-day.svg"></picture></a>
+<a href="https://github.com/tannergolden/markdown/pulls"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/banners/link-pull-requests-dark.svg"><img alt="Pull Requests" src="assets/banners/link-pull-requests-day.svg"></picture></a>
+<a href="https://github.com/tannergolden/markdown/releases"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/banners/link-releases-dark.svg"><img alt="Releases" src="assets/banners/link-releases-day.svg"></picture></a>
+<a href="https://github.com/tannergolden/markdown/actions"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/banners/link-actions-dark.svg"><img alt="Actions" src="assets/banners/link-actions-day.svg"></picture></a>
+
+</div>
 <!-- banners:footer:end -->
