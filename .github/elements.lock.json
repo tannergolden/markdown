@@ -43,7 +43,7 @@
      ],
      [
       "21 SEP",
-      1
+      4
      ]
     ]
    },
@@ -51,42 +51,44 @@
     "label": "TRACKED BYTES BY FILE TYPE",
     "parts": [
      [
+      "SVG",
+      1389243
+     ],
+     [
       "MARKDOWN",
-      123113
+      114836
      ],
      [
       "PYTHON",
-      86125
+      90066
      ],
      [
       "YAML",
-      57207
-     ],
-     [
-      "JSON",
-      4088
+      80222
      ],
      [
       "OTHER",
-      12698
+      19503
      ]
     ],
-    "total": "283 KB"
+    "total": "1.7 MB"
    },
    "dial": {
     "label": "DAYS SINCE THE LAST RELEASE",
     "value": 0,
     "span": 30,
-    "sub": "NO RELEASE YET"
+    "major": 10,
+    "minor": 5,
+    "sub": "V1.0.1  ·  25 SEP"
    },
    "counters": [
     [
      "WORKFLOWS",
-     13
+     17
     ],
     [
      "EXAMPLES",
-     0
+     2
     ],
     [
      "DOCS",
@@ -96,12 +98,12 @@
    "caption": "MEASURED 25 SEP 2026"
   },
   "layout": {
-   "total": 61,
+   "total": 136,
    "rooms": [
     {
      "key": "github",
      "label": ".GITHUB/",
-     "count": 51,
+     "count": 62,
      "lines": [
       [
        "docs/",
@@ -109,18 +111,38 @@
       ],
       [
        "workflows/",
-       "13"
+       "17"
       ],
       [
        "scripts/",
-       "7"
+       "8"
       ],
       [
        "CODEOWNERS",
        ""
       ],
       [
+       "badges.yml",
+       ""
+      ],
+      [
+       "banners.lock.json",
+       ""
+      ],
+      [
+       "banners.yml",
+       ""
+      ],
+      [
        "dependabot.yml",
+       ""
+      ],
+      [
+       "elements.lock.json",
+       ""
+      ],
+      [
+       "elements.yml",
        ""
       ],
       [
@@ -130,6 +152,29 @@
       [
        "template-parity.yml",
        ""
+      ],
+      [
+       "trophies.yml",
+       ""
+      ]
+     ]
+    },
+    {
+     "key": "assets",
+     "label": "ASSETS/",
+     "count": 62,
+     "lines": [
+      [
+       "elements/",
+       "30"
+      ],
+      [
+       "banners/",
+       "18"
+      ],
+      [
+       "badges/",
+       "14"
       ]
      ]
     }
@@ -156,31 +201,59 @@
      "count": 2
     },
     {
+     "label": "EXAMPLES/",
+     "count": 2
+    },
+    {
      "label": ".DEVCONTAINER/",
      "count": 1
     }
    ]
   },
   "history": {
-   "caption": "",
-   "events": [],
+   "caption": "2 RELEASES SINCE 25 SEP 2026",
+   "events": [
+    {
+     "date": "2026-09-25",
+     "tag": "V1.0.0",
+     "major": true,
+     "above": [
+      "ONE STUB",
+      "THREE SLOTS"
+     ],
+     "big": true
+    },
+    {
+     "date": "2026-09-25",
+     "tag": "V1.0.1",
+     "major": false
+    }
+   ],
    "today": "2026-09-25"
   },
   "contributors": {
-   "caption": "1 COMMITS FROM 1 CONTRIBUTORS",
+   "caption": "4 COMMITS FROM 2 CONTRIBUTORS",
    "people": [
     {
      "name": "TANNER GOLDEN",
      "handle": "@TANNERGOLDEN",
-     "n": 1,
+     "n": 4,
      "first": "25 SEP 2026",
      "last": "25 SEP",
      "initials": "TG"
+    },
+    {
+     "name": "CLAUDE",
+     "handle": "CO-AUTHOR",
+     "n": 2,
+     "first": "25 SEP 2026",
+     "last": "25 SEP",
+     "initials": "C"
     }
    ]
   },
   "conformance": {
-   "commit": "f16fcf9",
+   "commit": "1a9380c",
    "checks": [
     [
      "Licensed",
@@ -189,17 +262,17 @@
     ],
     [
      "Security policy",
-     "none",
-     false
+     "tannergolden/.github/SECURITY.md",
+     true
     ],
     [
      "Actions pinned to a tag or a commit",
-     "28 of 28 uses:",
+     "41 of 41 uses:",
      true
     ],
     [
      "Conventional commits",
-     "1 of 1 subjects",
+     "4 of 4 subjects",
      true
     ]
    ]

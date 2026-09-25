@@ -127,7 +127,7 @@ hand, in [`.github/elements.yml`](.github/elements.yml).
   <source media="(max-width: 585px) and (prefers-color-scheme: dark)" srcset="assets/elements/layout-narrow-dark.svg">
   <source media="(max-width: 585px)" srcset="assets/elements/layout-narrow-day.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/elements/layout-dark.svg">
-  <img alt="Plan of tannergolden/markdown. tannergolden/markdown as a floor plan: 61 tracked files in 1 rooms and a lobby." src="assets/elements/layout-day.svg">
+  <img alt="Plan of tannergolden/markdown. tannergolden/markdown as a floor plan: 136 tracked files in 2 rooms and a lobby." src="assets/elements/layout-day.svg">
 </picture>
 <!-- elements:layout:end -->
 
@@ -136,7 +136,7 @@ hand, in [`.github/elements.yml`](.github/elements.yml).
   <source media="(max-width: 585px) and (prefers-color-scheme: dark)" srcset="assets/elements/history-narrow-dark.svg">
   <source media="(max-width: 585px)" srcset="assets/elements/history-narrow-day.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/elements/history-dark.svg">
-  <img alt="Milestones of tannergolden/markdown. 0 releases of tannergolden/markdown on a time line." src="assets/elements/history-day.svg">
+  <img alt="Milestones of tannergolden/markdown. 2 releases of tannergolden/markdown on a time line." src="assets/elements/history-day.svg">
 </picture>
 <!-- elements:history:end -->
 
@@ -145,13 +145,13 @@ hand, in [`.github/elements.yml`](.github/elements.yml).
 <!-- elements:contributors:start -->
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/elements/contributors-dark.svg">
-  <img alt="Contributors to tannergolden/markdown. TANNER GOLDEN: 1 commits." src="assets/elements/contributors-day.svg">
+  <img alt="Contributors to tannergolden/markdown. TANNER GOLDEN: 4 commits; CLAUDE: 2 commits." src="assets/elements/contributors-day.svg">
 </picture>
 <!-- elements:contributors:end -->
 <!-- elements:conformance:start -->
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/elements/conformance-dark.svg">
-  <img alt="Conformance of tannergolden/markdown. 4 checks on tannergolden/markdown, with the evidence for each; not met: Security policy." src="assets/elements/conformance-day.svg">
+  <img alt="Conformance of tannergolden/markdown. 4 checks on tannergolden/markdown, with the evidence for each, each met." src="assets/elements/conformance-day.svg">
 </picture>
 <!-- elements:conformance:end -->
 
