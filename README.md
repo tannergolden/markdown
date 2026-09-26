@@ -18,7 +18,7 @@ category: docs
   <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/banners/header-still-dark.svg">
   <source media="(prefers-reduced-motion: reduce)" srcset="assets/banners/header-still-day.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/banners/header-dark.svg">
-  <img alt="markdown: One stub that keeps a README drawn: banners, badges, trophies and elements, each measured from the repository at its own hour and committed only when…. One stub. The whole page. Project: tannergolden/markdown. Release: v1.0.1. Stars: 0. Forks: 0. Open issues: 0. License: MIT." src="assets/banners/header-day.svg">
+  <img alt="markdown: One stub that keeps a README drawn: banners, badges, trophies and elements, each measured from the repository at its own hour and committed only when…. One stub. The whole page. Project: tannergolden/markdown. Release: v1.1.1. Stars: 0. Forks: 0. Open issues: 0. License: MIT." src="assets/banners/header-day.svg">
 </picture>
 
 </div>
