@@ -30,7 +30,7 @@ jobs:
       contents: read # redraw from each lock and compare, and write nothing
     uses: ./.github/workflows/markdown.yml
     with:
-      banners: '7 0 * * *'
-      badges: '7 8 * * *'
-      trophies: '7 16 * * *'
+      banners: '0 0 * * *'
+      badges: '0 8 * * *'
+      trophies: '0 16 * * *'
       check: true

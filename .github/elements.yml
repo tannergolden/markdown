@@ -12,7 +12,7 @@ elements:
   how-it-runs:
     kind: schematic
     title: A day in the life of one stub
-    desc: A stub in your repository calls this workflow at three crons, eight hours apart. At seven past midnight it draws the banners, then the elements; at seven past eight, the badges; at seven past four, the trophies. Each kit commits between its own markers, and a quiet slot commits nothing.
+    desc: A stub in your repository calls this workflow at three crons, eight hours apart. At midnight it draws the banners, then the elements; at eight in the morning, the badges; at four in the afternoon, the trophies. Each kit commits between its own markers, and a quiet slot commits nothing.
     caption: "ONE DAY, LEFT TO RIGHT  ·  NOT TO SCALE"
     boxes:
       stub: {title: Your stub, path: .github/workflows/markdown.yml, icon: code, note: 1}
@@ -23,10 +23,10 @@ elements:
       trophies: {title: Trophies, path: tannergolden/trophies, icon: trophy}
     wires:
       - [stub, umbrella, THREE CRONS]
-      - [umbrella, banners, "00:07"]
+      - [umbrella, banners, "00:00"]
       - [banners, elements, THEN]
-      - [elements, badges, "08:07"]
-      - [badges, trophies, "16:07"]
+      - [elements, badges, "08:00"]
+      - [badges, trophies, "16:00"]
     notes:
       - [1, "TEN LINES: A CRON FOR EACH GENERATOR, AND WHICH KIT IT MEANS"]
       - [2, "ONE KIT PER RUN ON A SCHEDULE; EVERY KIT, IN THIS ORDER, BY HAND"]
@@ -65,7 +65,7 @@ elements:
     icon: layers
     link: https://github.com/tannergolden/banners
     desc: The two ends of the page and its body. Headers, footers and seven elements, measured from GitHub and git, drawn on one paper.
-    cells: [[Language, PYTHON], [Slot, "00:07"], [Draws, "HEADER  ·  FOOTER  ·  BODY"]]
+    cells: [[Language, PYTHON], [Slot, "00:00"], [Draws, "HEADER  ·  FOOTER  ·  BODY"]]
   badges:
     kind: placard
     owner: tannergolden
@@ -73,7 +73,7 @@ elements:
     icon: tag
     link: https://github.com/tannergolden/badges
     desc: Badges a repository draws for itself from one data file, in six styles and their blueprint twins, so no README depends on a third-party service.
-    cells: [[Language, PYTHON], [Slot, "08:07"], [Draws, BADGES]]
+    cells: [[Language, PYTHON], [Slot, "08:00"], [Draws, BADGES]]
   trophies:
     kind: placard
     owner: tannergolden
@@ -81,7 +81,7 @@ elements:
     icon: trophy
     link: https://github.com/tannergolden/trophies
     desc: Trophies and achievements a profile or a repository earns for itself, measured on a schedule, in five styles.
-    cells: [[Language, PYTHON], [Slot, "16:07"], [Draws, THE CASE]]
+    cells: [[Language, PYTHON], [Slot, "16:00"], [Draws, THE CASE]]
   standards:
     kind: placard
     owner: tannergolden

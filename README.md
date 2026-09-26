@@ -50,10 +50,10 @@ line, and is called by link.
 
 | Kit          | Draws                                                                                                          | Lives in                                                                                     | Slot                |
 | :----------- | :------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- | :------------------ |
-| **banners**  | The header at the top of the page and the footer at its foot, from what GitHub knows about the repository      | [`tannergolden/banners`](https://github.com/tannergolden/banners)                            | 00:07               |
-| **elements** | The body of the page: a schematic, instruments, milestones, a roster, a certificate and placards               | [`tannergolden/banners`](https://github.com/tannergolden/banners), beside the banners        | 00:07, after them   |
-| **badges**   | The badges under the header, from one data file, in six styles and their blueprint twins                       | [`tannergolden/badges`](https://github.com/tannergolden/badges)                              | 08:07               |
-| **trophies** | The case: the trophies and achievements the repository has earned                                              | [`tannergolden/trophies`](https://github.com/tannergolden/trophies)                          | 16:07               |
+| **banners**  | The header at the top of the page and the footer at its foot, from what GitHub knows about the repository      | [`tannergolden/banners`](https://github.com/tannergolden/banners)                            | 00:00               |
+| **elements** | The body of the page: a schematic, instruments, milestones, a roster, a certificate and placards               | [`tannergolden/banners`](https://github.com/tannergolden/banners), beside the banners        | 00:00, after them   |
+| **badges**   | The badges under the header, from one data file, in six styles and their blueprint twins                       | [`tannergolden/badges`](https://github.com/tannergolden/badges)                              | 08:00               |
+| **trophies** | The case: the trophies and achievements the repository has earned                                              | [`tannergolden/trophies`](https://github.com/tannergolden/trophies)                          | 16:00               |
 
 Every one of them draws **committed SVGs** on the same drafting paper, in the
 same eleven prints, lettered with the same outlines, so a page drawn by all
@@ -75,8 +75,9 @@ rule every one of these repositories follows, published in
 ## 🕗 One Stub, Three Slots
 
 There are three generator repositories, so there are three slots in a day,
-**eight hours apart**: the banners and the elements at seven minutes past
-midnight, the badges at seven past eight, the trophies at seven past four.
+**eight hours apart**, each on the hour: the banners and the elements at
+midnight, the badges at eight in the morning, the trophies at four in the
+afternoon.
 A repository is committed to at most once in each slot, and a slot in which
 nothing that kit shows has moved commits nothing at all. A manual run, from
 the Actions tab, draws everything, one kit after another, so no two ever
@@ -93,7 +94,7 @@ kit fails loudly rather than drawing the wrong thing.
   <source media="(max-width: 585px) and (prefers-color-scheme: dark)" srcset="assets/elements/how-it-runs-narrow-dark.svg">
   <source media="(max-width: 585px)" srcset="assets/elements/how-it-runs-narrow-day.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/elements/how-it-runs-dark.svg">
-  <img alt="A day in the life of one stub. A stub in your repository calls this workflow at three crons, eight hours apart. At seven past midnight it draws the banners, then the elements; at seven past eight, the badges; at seven past four, the trophies. Each kit commits between its own markers, and a quiet slot commits nothing." src="assets/elements/how-it-runs-day.svg">
+  <img alt="A day in the life of one stub. A stub in your repository calls this workflow at three crons, eight hours apart. At midnight it draws the banners, then the elements; at eight in the morning, the badges; at four in the afternoon, the trophies. Each kit commits between its own markers, and a quiet slot commits nothing." src="assets/elements/how-it-runs-day.svg">
 </picture>
 <!-- elements:how-it-runs:end -->
 
@@ -323,9 +324,9 @@ the whole interface.
 name: Markdown
 on:
   schedule:
-    - cron: '7 0 * * *'
-    - cron: '7 8 * * *'
-    - cron: '7 16 * * *'
+    - cron: '0 0 * * *'
+    - cron: '0 8 * * *'
+    - cron: '0 16 * * *'
   workflow_dispatch:
 
 permissions: {}
@@ -337,9 +338,9 @@ jobs:
       pull-requests: write
     uses: tannergolden/markdown/.github/workflows/markdown.yml@v1
     with:
-      banners: '7 0 * * *'
-      badges: '7 8 * * *'
-      trophies: '7 16 * * *'
+      banners: '0 0 * * *'
+      badges: '0 8 * * *'
+      trophies: '0 16 * * *'
 ```
 
 Run it once from the Actions tab. The banners put a header block at the top
@@ -353,10 +354,9 @@ them, and each kit writes only between its own. The badges wait for a
 since only you know which badges a page should carry, and say so in the
 run's log until it exists.
 
-Drop a kit by deleting its cron in both places. Keep the minutes off the
-hour, as they are here: GitHub delays scheduled runs that pile up at `:00`,
-and a delayed run costs nothing, since the next one measures everything
-again, but an odd minute makes the delays rarer.
+Drop a kit by deleting its cron in both places. The three run on the hour,
+and GitHub may delay a scheduled run when it is busy; a delayed run costs
+nothing here, since the next one measures everything again.
 [`examples/stub.yml`](examples/stub.yml) is the stub above with its options.
 
 ### Or gate on it

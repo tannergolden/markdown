@@ -37,7 +37,7 @@ on:
   push:
   pull_request:
   schedule:
-    - cron: '30 6 * * *' # daily: the baseline is a separate repository and moves independently
+    - cron: '0 6 * * *' # daily: the baseline is a separate repository and moves independently
   workflow_dispatch:
 
 concurrency:

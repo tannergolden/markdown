@@ -25,7 +25,7 @@ jobs:
       contents: read
     uses: tannergolden/markdown/.github/workflows/markdown.yml@v1
     with:
-      banners: '7 0 * * *'
-      badges: '7 8 * * *'
-      trophies: '7 16 * * *'
+      banners: '0 0 * * *'
+      badges: '0 8 * * *'
+      trophies: '0 16 * * *'
       check: true

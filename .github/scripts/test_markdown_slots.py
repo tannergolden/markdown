@@ -33,7 +33,7 @@ def pick(event: str, schedule: str = "", banners: str = "", badges: str = "", tr
 
 
 class Slots(unittest.TestCase):
-    crons = dict(banners="7 0 * * *", badges="7 8 * * *", trophies="7 16 * * *")
+    crons = dict(banners="0 0 * * *", badges="0 8 * * *", trophies="0 16 * * *")
 
     def test_a_schedule_runs_only_the_kit_whose_cron_fired(self):
         for kit, cron in self.crons.items():
@@ -48,10 +48,10 @@ class Slots(unittest.TestCase):
             self.assertEqual(got, {"banners": "true", "badges": "true", "trophies": "true"}, event)
 
     def test_a_kit_with_no_cron_never_runs(self):
-        code, got, _ = pick("workflow_dispatch", "", banners="7 0 * * *")
+        code, got, _ = pick("workflow_dispatch", "", banners="0 0 * * *")
         self.assertEqual(code, 0)
         self.assertEqual(got, {"banners": "true", "badges": "false", "trophies": "false"})
-        code, got, _ = pick("schedule", "7 0 * * *", banners="7 0 * * *")
+        code, got, _ = pick("schedule", "0 0 * * *", banners="0 0 * * *")
         self.assertEqual(got["banners"], "true")
 
     def test_a_cron_that_names_no_kit_fails_loudly(self):
@@ -75,6 +75,7 @@ class Slots(unittest.TestCase):
         hours = sorted(int(c.split()[1]) for c in self.crons.values())
         self.assertEqual([b - a for a, b in zip(hours, hours[1:])], [8, 8])
         self.assertEqual(len({c.split()[0] for c in self.crons.values()}), 1, "the same minute, so the gaps are exact")
+        self.assertEqual({c.split()[0] for c in self.crons.values()}, {"0"}, "every slot fires on the hour")
 
 
 if __name__ == "__main__":

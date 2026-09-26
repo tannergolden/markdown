@@ -13,9 +13,9 @@ name: '📖 Own README'
 
 on:
   schedule:
-    - cron: '7 0 * * *' # banners, then the elements
-    - cron: '7 8 * * *' # badges
-    - cron: '7 16 * * *' # trophies
+    - cron: '0 0 * * *' # banners, then the elements
+    - cron: '0 8 * * *' # badges
+    - cron: '0 16 * * *' # trophies
   workflow_dispatch:
 
 concurrency:
@@ -32,7 +32,7 @@ jobs:
       pull-requests: write # declared by the called workflows
     uses: ./.github/workflows/markdown.yml
     with:
-      banners: '7 0 * * *'
-      badges: '7 8 * * *'
-      trophies: '7 16 * * *'
+      banners: '0 0 * * *'
+      badges: '0 8 * * *'
+      trophies: '0 16 * * *'
     secrets: inherit # zizmor: ignore[secrets-inherit] - first-party callee at a local path.
