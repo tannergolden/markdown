@@ -467,7 +467,8 @@ against the caller's checkout where nothing of this repository is on disk;
 its test lifts the script out of the YAML and runs it under every event.
 A version is cut by dispatching **🏷️ Cut Release** with `vX.Y.Z`: the
 standards' release workflow proves the workflow and the stubs exist at the
-commit and that the checks pass, then tags the version and moves `v1`.
+commit and that the checks pass, then tags the version, moves `v1` and prunes
+every older release, page and tag.
 
 ---
 
