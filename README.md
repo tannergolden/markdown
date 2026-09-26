@@ -51,9 +51,9 @@ line, and is called by link.
 | Kit          | Draws                                                                                                          | Lives in                                                                                     | Slot                |
 | :----------- | :------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- | :------------------ |
 | **banners**  | The header at the top of the page and the footer at its foot, from what GitHub knows about the repository      | [`tannergolden/banners`](https://github.com/tannergolden/banners)                            | 00:07               |
-| **elements** | The body of the page: a schematic, instruments, milestones, a roster, a certificate, placards, a seal              | [`tannergolden/banners`](https://github.com/tannergolden/banners), beside the banners    | 00:07, after them   |
-| **badges**   | The badges under the header, from one data file, in six styles and their blueprint twins                        | [`tannergolden/badges`](https://github.com/tannergolden/badges)                              | 08:07               |
-| **trophies** | The case: the trophies and achievements the repository has earned                                               | [`tannergolden/trophies`](https://github.com/tannergolden/trophies)                          | 16:07               |
+| **elements** | The body of the page: a schematic, instruments, milestones, a roster, a certificate and placards               | [`tannergolden/banners`](https://github.com/tannergolden/banners), beside the banners        | 00:07, after them   |
+| **badges**   | The badges under the header, from one data file, in six styles and their blueprint twins                       | [`tannergolden/badges`](https://github.com/tannergolden/badges)                              | 08:07               |
+| **trophies** | The case: the trophies and achievements the repository has earned                                              | [`tannergolden/trophies`](https://github.com/tannergolden/trophies)                          | 16:07               |
 
 Every one of them draws **committed SVGs** on the same drafting paper, in the
 same eleven prints, lettered with the same outlines, so a page drawn by all
@@ -485,17 +485,6 @@ the four kits, under their licences.
 > case. Each can be called on its own, with its own stub; this calls all of
 > them with one. The engineering standards they follow are published in
 > [`tannergolden/standards`](https://github.com/tannergolden/standards).
-
-<div align="center">
-
-<!-- elements:stamp:start -->
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/elements/stamp-dark.svg">
-  <img alt="Seal: drawn, never fetched. The seal at the foot of a page every kit drew." src="assets/elements/stamp-day.svg">
-</picture>
-<!-- elements:stamp:end -->
-
-</div>
 
 <!-- banners:footer:start -->
 <div align="center">

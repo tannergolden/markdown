@@ -1,6 +1,6 @@
 # The elements THIS page draws for itself, through the umbrella's own stub,
 # drawn by the elements kit in tannergolden/banners in the banners slot.
-# The schematic, the placards and the seal are written here by hand; the
+# The schematic and the placards are written here by hand; the
 # instruments, the milestones, the roster and the certificate are
 # measured from git on each run. Every field of every kind:
 # tannergolden/banners/docs/Elements-Kit.md.
@@ -90,11 +90,3 @@ elements:
     link: https://github.com/tannergolden/standards
     desc: The engineering standards every kit follows and the automation that delivers them, called by link rather than copied.
     cells: [[Language, YAML], [Delivers, RELEASES], [Called, "BY EVERY KIT"]]
-
-  stamp:
-    kind: seal
-    title: "Seal: drawn, never fetched"
-    desc: The seal at the foot of a page every kit drew.
-    ring_top: DRAWN, NEVER FETCHED
-    ring_bottom: "ONE STUB  ·  THREE SLOTS"
-    name: MARKDOWN
