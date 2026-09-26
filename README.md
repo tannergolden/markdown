@@ -505,7 +505,7 @@ the four kits, under their licences.
   <source media="(max-width: 585px) and (prefers-color-scheme: dark)" srcset="assets/banners/footer-narrow-dark.svg">
   <source media="(max-width: 585px)" srcset="assets/banners/footer-narrow-day.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/banners/footer-dark.svg">
-  <img alt="Drawn at both ends, and everything between. Back to Top. Built with love by @tannergolden. Distributed under the MIT License. Last updated September 25, 2026." src="assets/banners/footer-day.svg">
+  <img alt="Drawn at both ends, and everything between. Back to Top. Built with love by @tannergolden. Distributed under the MIT License. Last updated September 26, 2026." src="assets/banners/footer-day.svg">
 </picture>
 </a>
 
