@@ -139,7 +139,7 @@ words on the certificate's ring are written by hand, in
 <!-- elements:contributors:start -->
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/elements/contributors-dark.svg">
-  <img alt="Contributors to tannergolden/markdown. TANNER GOLDEN: 16 commits; CLAUDE: 5 commits." src="assets/elements/contributors-day.svg">
+  <img alt="Contributors to tannergolden/markdown. TANNER GOLDEN: 20 commits; CLAUDE: 6 commits." src="assets/elements/contributors-day.svg">
 </picture>
 <!-- elements:contributors:end -->
 <!-- elements:conformance:start -->
