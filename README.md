@@ -136,13 +136,13 @@ words on the certificate's ring are written by hand, in
 <!-- elements:contributors:start -->
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/elements/contributors-dark.svg">
-  <img alt="Contributors to tannergolden/markdown. TANNER GOLDEN: 4 commits; CLAUDE: 2 commits." src="assets/elements/contributors-day.svg">
+  <img alt="Contributors to tannergolden/markdown. TANNER GOLDEN: 8 commits; CLAUDE: 3 commits." src="assets/elements/contributors-day.svg">
 </picture>
 <!-- elements:contributors:end -->
 <!-- elements:conformance:start -->
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/elements/conformance-dark.svg">
-  <img alt="Conformance of tannergolden/markdown. 4 checks on tannergolden/markdown, with the evidence for each, each met." src="assets/elements/conformance-day.svg">
+  <img alt="Conformance of tannergolden/markdown. 5 checks on tannergolden/markdown, with the evidence for each, each met." src="assets/elements/conformance-day.svg">
 </picture>
 <!-- elements:conformance:end -->
 
