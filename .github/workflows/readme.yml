@@ -5,8 +5,8 @@
 # generator repository, and this runs the right kit when each fires:
 #
 #   banners   tannergolden/banners   the header and the footer, then the
-#                                    elements, the body of the page, from
-#                                    the same repository
+#                                    elements, the body of the page, by
+#                                    the one workflow that draws both
 #   badges    tannergolden/badges    the badges
 #   trophies  tannergolden/trophies  the case
 #
@@ -125,30 +125,19 @@ jobs:
     needs: slot
     if: ${{ !inputs.check && needs.slot.outputs.banners == 'true' }}
     permissions:
-      contents: write # the SVGs, the README blocks and the lock
+      contents: write # the SVGs, the README blocks, the elements' data file and both locks
       pull-requests: write # declared by the called workflow
     uses: tannergolden/banners/.github/workflows/banners.yml@v1 # zizmor: ignore[unpinned-uses] - first-party callee on its moving major, the way every stub calls it.
     with:
       mode: ${{ inputs.mode }}
       theme: ${{ inputs.theme }}
-      author: ${{ inputs.author }}
-    secrets: inherit # zizmor: ignore[secrets-inherit] - first-party callee on its moving major, the way every stub calls it.
-
-  elements:
-    name: '📐 Elements'
-    needs: [slot, banners]
-    if: ${{ !cancelled() && !inputs.check && needs.slot.outputs.banners == 'true' && inputs.elements }}
-    permissions:
-      contents: write # the SVGs, the README blocks, the data file and the lock
-      pull-requests: write # declared by the called workflow
-    uses: tannergolden/banners/.github/workflows/elements.yml@v1 # zizmor: ignore[unpinned-uses] - first-party callee on its moving major, the way every stub calls it.
-    with:
+      elements: ${{ inputs.elements }} # the body of the page, drawn by the same workflow right after the banners
       author: ${{ inputs.author }}
     secrets: inherit # zizmor: ignore[secrets-inherit] - first-party callee on its moving major, the way every stub calls it.
 
   badges:
     name: '🏷️ Badges'
-    needs: [slot, elements]
+    needs: [slot, banners]
     if: ${{ !cancelled() && !inputs.check && needs.slot.outputs.badges == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
