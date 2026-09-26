@@ -17,8 +17,12 @@
 #
 # Called, never copied: each kit stays in its own repository on its own
 # release line, and this holds nothing that draws.
+#
+# A stub calls tannergolden/markdown/.github/workflows/markdown.yml@v1:
+# the file is named after this repository, the way banners.yml and
+# trophies.yml are named after theirs.
 
-name: '📖 README'
+name: '📖 Markdown'
 
 on:
   workflow_call:

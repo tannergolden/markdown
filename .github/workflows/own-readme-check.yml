@@ -28,7 +28,7 @@ jobs:
     if: ${{ !github.event.repository.is_template }}
     permissions:
       contents: read # redraw from each lock and compare, and write nothing
-    uses: ./.github/workflows/readme.yml
+    uses: ./.github/workflows/markdown.yml
     with:
       banners: '7 0 * * *'
       badges: '7 8 * * *'

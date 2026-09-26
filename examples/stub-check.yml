@@ -2,7 +2,7 @@
 # the check fails if any committed file or README block differs. Nothing is
 # measured or committed and no token is used, so it runs on a pull request
 # from a fork. The crons are the same as the stub's, so the same kits run.
-name: README check
+name: Markdown check
 
 on:
   pull_request:
@@ -23,7 +23,7 @@ jobs:
   check:
     permissions:
       contents: read
-    uses: tannergolden/markdown/.github/workflows/readme.yml@v1
+    uses: tannergolden/markdown/.github/workflows/markdown.yml@v1
     with:
       banners: '7 0 * * *'
       badges: '7 8 * * *'

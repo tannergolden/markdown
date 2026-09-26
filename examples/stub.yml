@@ -1,4 +1,4 @@
-# Put this at .github/workflows/readme.yml in any repository, and its README
+# Put this at .github/workflows/markdown.yml in any repository, and its README
 # gets a header and a footer from tannergolden/banners, the body of the page
 # from the elements kit beside them, badges from tannergolden/badges and a
 # case from tannergolden/trophies: each measured from the repository, drawn
@@ -12,7 +12,7 @@
 #
 # GITHUB_TOKEN already reads everything about its own repository, so no
 # extra token is needed.
-name: README
+name: Markdown
 
 on:
   schedule:
@@ -24,11 +24,11 @@ on:
 permissions: {}
 
 jobs:
-  readme:
+  markdown:
     permissions:
       contents: write
       pull-requests: write
-    uses: tannergolden/markdown/.github/workflows/readme.yml@v1
+    uses: tannergolden/markdown/.github/workflows/markdown.yml@v1
     with:
       banners: '7 0 * * *'
       badges: '7 8 * * *'

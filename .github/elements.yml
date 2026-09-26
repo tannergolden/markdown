@@ -15,7 +15,7 @@ elements:
     desc: A stub in your repository calls this workflow at three crons, eight hours apart. At seven past midnight it draws the banners, then the elements; at seven past eight, the badges; at seven past four, the trophies. Each kit commits between its own markers, and a quiet slot commits nothing.
     caption: "ONE DAY, LEFT TO RIGHT  ·  NOT TO SCALE"
     boxes:
-      stub: {title: Your stub, path: .github/workflows/readme.yml, icon: code, note: 1}
+      stub: {title: Your stub, path: .github/workflows/markdown.yml, icon: code, note: 1}
       umbrella: {title: This workflow, path: tannergolden/markdown, icon: branch, note: 2}
       banners: {title: Banners, path: tannergolden/banners, icon: layers}
       elements: {title: Elements, path: banners/elements, icon: grid, note: 3}

@@ -49,5 +49,5 @@ jobs:
     with:
       version: ${{ inputs.version }}
       move-major: ${{ inputs.move-major }}
-      required-files: '.github/workflows/readme.yml examples/stub.yml examples/stub-check.yml'
+      required-files: '.github/workflows/markdown.yml examples/stub.yml examples/stub-check.yml'
       check-command: 'python3 .github/scripts/validate-repository.py && python3 -m unittest discover -s .github/scripts -p "test_*.py"'

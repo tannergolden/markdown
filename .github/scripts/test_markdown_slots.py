@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The slot picker in .github/workflows/readme.yml, run as bash under every event it sees.
+"""The slot picker in .github/workflows/markdown.yml, run as bash under every event it sees.
 
 The logic lives in the workflow because a reusable workflow runs against the
 caller's checkout, where nothing of this repository is on disk. So the test
@@ -16,7 +16,7 @@ import unittest
 import yaml
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-WORKFLOW = ROOT / ".github" / "workflows" / "readme.yml"
+WORKFLOW = ROOT / ".github" / "workflows" / "markdown.yml"
 
 
 def pick(event: str, schedule: str = "", banners: str = "", badges: str = "", trophies: str = "") -> tuple[int, dict, str]:

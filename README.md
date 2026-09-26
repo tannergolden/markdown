@@ -316,11 +316,11 @@ repository starts with an empty case, which is the honest one.
 
 ## 🚀 Use It In Your README
 
-Add this as `.github/workflows/readme.yml` in any repository. That stub is
+Add this as `.github/workflows/markdown.yml` in any repository. That stub is
 the whole interface.
 
 ```yaml
-name: README
+name: Markdown
 on:
   schedule:
     - cron: '7 0 * * *'
@@ -331,11 +331,11 @@ on:
 permissions: {}
 
 jobs:
-  readme:
+  markdown:
     permissions:
       contents: write
       pull-requests: write
-    uses: tannergolden/markdown/.github/workflows/readme.yml@v1
+    uses: tannergolden/markdown/.github/workflows/markdown.yml@v1
     with:
       banners: '7 0 * * *'
       badges: '7 8 * * *'
@@ -437,7 +437,7 @@ repository's own page needs one.
 
 ```bash
 markdown/
-├── .github/workflows/readme.yml            the reusable workflow your stub calls
+├── .github/workflows/markdown.yml          the reusable workflow your stub calls
 ├── .github/workflows/own-readme.yml        this page's own stub, at the same three crons
 ├── .github/workflows/own-readme-check.yml  the check, on a pull request
 ├── .github/workflows/cut-release.yml       cuts a version and moves v1, via the standards

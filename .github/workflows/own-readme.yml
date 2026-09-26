@@ -25,12 +25,12 @@ concurrency:
 permissions: {}
 
 jobs:
-  readme:
+  markdown:
     if: ${{ !github.event.repository.is_template }}
     permissions:
       contents: write # the SVGs, the README blocks and each kit's lock
       pull-requests: write # declared by the called workflows
-    uses: ./.github/workflows/readme.yml
+    uses: ./.github/workflows/markdown.yml
     with:
       banners: '7 0 * * *'
       badges: '7 8 * * *'
