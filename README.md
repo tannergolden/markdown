@@ -51,7 +51,7 @@ line, and is called by link.
 | Kit          | Draws                                                                                                          | Lives in                                                                                     | Slot                |
 | :----------- | :------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- | :------------------ |
 | **banners**  | The header at the top of the page and the footer at its foot, from what GitHub knows about the repository      | [`tannergolden/banners`](https://github.com/tannergolden/banners)                            | 00:07               |
-| **elements** | The body of the page: a schematic, instruments, a floor plan, milestones, a roster, a certificate, placards, a seal | [`tannergolden/banners`](https://github.com/tannergolden/banners), beside the banners    | 00:07, after them   |
+| **elements** | The body of the page: a schematic, instruments, milestones, a roster, a certificate, placards, a seal              | [`tannergolden/banners`](https://github.com/tannergolden/banners), beside the banners    | 00:07, after them   |
 | **badges**   | The badges under the header, from one data file, in six styles and their blueprint twins                        | [`tannergolden/badges`](https://github.com/tannergolden/badges)                              | 08:07               |
 | **trophies** | The case: the trophies and achievements the repository has earned                                               | [`tannergolden/trophies`](https://github.com/tannergolden/trophies)                          | 16:07               |
 
@@ -108,10 +108,10 @@ page is fetched from anywhere.
 ### The body
 
 The elements read this repository's git history in the banners slot: commits
-per week and the days since the last release, the tree as a floor plan, the
-releases on a time line, who drew it, and the checks it passes. Only the two
-notes on the plan and the words on the certificate's ring are written by
-hand, in [`.github/elements.yml`](.github/elements.yml).
+per week and the days since the last release, the releases on a time line,
+who drew it, and the checks it passes. Only the notes on the releases and the
+words on the certificate's ring are written by hand, in
+[`.github/elements.yml`](.github/elements.yml).
 
 <!-- elements:vitals:start -->
 <picture>
@@ -121,15 +121,6 @@ hand, in [`.github/elements.yml`](.github/elements.yml).
   <img alt="Instruments for tannergolden/markdown. Commits per week, days since the last release, tracked bytes by file type and counts for tannergolden/markdown." src="assets/elements/vitals-day.svg">
 </picture>
 <!-- elements:vitals:end -->
-
-<!-- elements:layout:start -->
-<picture>
-  <source media="(max-width: 585px) and (prefers-color-scheme: dark)" srcset="assets/elements/layout-narrow-dark.svg">
-  <source media="(max-width: 585px)" srcset="assets/elements/layout-narrow-day.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="assets/elements/layout-dark.svg">
-  <img alt="Plan of tannergolden/markdown. tannergolden/markdown as a floor plan: 136 tracked files in 2 rooms and a lobby." src="assets/elements/layout-day.svg">
-</picture>
-<!-- elements:layout:end -->
 
 <!-- elements:history:start -->
 <picture>
@@ -350,7 +341,7 @@ jobs:
 
 Run it once from the Actions tab. The banners put a header block at the top
 of your README and a footer block at its foot, the elements write a data
-file with the five elements that need nothing by hand and put a pair of
+file with the four elements that need nothing by hand and put a pair of
 markers for each at the foot, and the trophies put their block there too;
 every kit draws into its own folder under `assets/` and commits. Move any
 pair of markers wherever you like: later runs rewrite only what is between
@@ -405,7 +396,7 @@ repository's own page needs one.
 <a href="https://github.com/tannergolden/banners">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/elements/banners-dark.svg">
-  <img alt="tannergolden/banners. The two ends of the page and its body. Headers, footers and eight elements, measured from GitHub and git, drawn on one paper." src="assets/elements/banners-day.svg">
+  <img alt="tannergolden/banners. The two ends of the page and its body. Headers, footers and seven elements, measured from GitHub and git, drawn on one paper." src="assets/elements/banners-day.svg">
 </picture>
 </a>
 <!-- elements:banners:end -->

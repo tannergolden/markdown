@@ -1,7 +1,7 @@
 # The elements THIS page draws for itself, through the umbrella's own stub,
 # drawn by the elements kit in tannergolden/banners in the banners slot.
 # The schematic, the placards and the seal are written here by hand; the
-# instruments, the plan, the milestones, the roster and the certificate are
+# instruments, the milestones, the roster and the certificate are
 # measured from git on each run. Every field of every kind:
 # tannergolden/banners/docs/Elements-Kit.md.
 
@@ -37,17 +37,6 @@ elements:
     measure:
       count: {workflows: ".github/workflows/*.yml", examples: "examples/*.yml", docs: ".github/docs/**.md"}
 
-  layout:
-    kind: plan
-    entrance: "ENTRANCE  ·  README.MD"
-    measure: {}
-    notes:
-      - [1, "THE WORKFLOW, THIS PAGE'S OWN STUBS, AND EACH KIT'S DATA AND LOCK"]
-      - [2, "WHAT EVERY KIT DREW FOR THIS PAGE"]
-    rooms:
-      - {key: github, notes: [[1, 0]]}
-      - {key: assets, notes: [[2, 0]]}
-
   history:
     kind: milestones
     measure:
@@ -75,7 +64,7 @@ elements:
     name: banners
     icon: layers
     link: https://github.com/tannergolden/banners
-    desc: The two ends of the page and its body. Headers, footers and eight elements, measured from GitHub and git, drawn on one paper.
+    desc: The two ends of the page and its body. Headers, footers and seven elements, measured from GitHub and git, drawn on one paper.
     cells: [[Language, PYTHON], [Slot, "00:07"], [Draws, "HEADER  ·  FOOTER  ·  BODY"]]
   badges:
     kind: placard
