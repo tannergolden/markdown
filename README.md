@@ -1,7 +1,7 @@
 <!--
 title: '📖 MARKDOWN'
 description: 'One stub that keeps a README drawn: banners, badges, trophies and elements, each measured from the repository at its own hour and committed only when something moved.'
-tags: [readme, readme-header, readme-badges, readme-trophies, github-actions, reusable-workflow, svg, blueprint]
+tags: [readme, reusable-workflow, svg, github-actions]
 category: docs
 -->
 
@@ -488,6 +488,8 @@ the four kits, under their licences.
 > case. Each can be called on its own, with its own stub; this calls all of
 > them with one. The engineering standards they follow are published in
 > [`tannergolden/standards`](https://github.com/tannergolden/standards).
+
+---
 
 <!-- banners:footer:start -->
 <div align="center">
