@@ -57,8 +57,11 @@ line, and is called by link.
 
 Every one of them draws **committed SVGs** on the same drafting paper, in the
 same eleven prints, lettered with the same outlines, so a page drawn by all
-four reads as one set of engineering drawings. No request at view time,
-nothing to rate-limit, and nothing to keep in step by hand.
+four reads as one set of engineering drawings. This page is a
+**rainbowprint**: each update of its banners takes the next colour of the
+spectrum, and the elements and the plates follow them, so the whole page
+changes colour together. No request at view time, nothing to rate-limit,
+and nothing to keep in step by hand.
 
 **Called, never copied.** Your repository holds a stub that names three
 crons. This workflow runs the right kit when each fires, and each kit does

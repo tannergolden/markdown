@@ -1,8 +1,8 @@
 # The badges THIS page draws for itself, through the umbrella's own stub,
 # rendered by tannergolden/badges into assets/badges/. Every badge is a
-# blueprint plate in the page's own print, so it sits on the same paper as
-# the banners above it and the elements below, and no static plate wears a
-# colour the kit reserves for a live one. Fields:
+# blueprint plate in the rainbowprint, the colour the banners above it are
+# in now, so it sits on the same paper as them and the elements below, and
+# no static plate wears a colour the kit reserves for a live one. Fields:
 # tannergolden/badges/docs/badges.example.yml.
 
 badges:
@@ -11,24 +11,28 @@ badges:
     message: Active
     icon: pulse
     style: blueprint-for-the-badge
+    print: rainbowprint
     link: ./
   - name: role
     label: Role
     message: Workflow
     icon: play
     style: blueprint-for-the-badge
+    print: rainbowprint
     link: ./
   - name: context
     label: Context
     message: README
     icon: book
     style: blueprint-for-the-badge
+    print: rainbowprint
     link: ./
   - name: license
     label: License
     message: MIT
     icon: scale
     style: blueprint-for-the-badge
+    print: rainbowprint
     link: ./LICENSE
 
   - name: kits
@@ -36,16 +40,19 @@ badges:
     message: '4'
     icon: layers
     style: blueprint-for-the-badge
+    print: rainbowprint
     link: '#-the-kits'
   - name: slots
     label: Slots
     message: 3 a day
     icon: clock
     style: blueprint-for-the-badge
+    print: rainbowprint
     link: '#-one-stub-three-slots'
   - name: apart
     label: Commits
     message: 8 hours apart
     icon: calendar
     style: blueprint-for-the-badge
+    print: rainbowprint
     link: '#-one-stub-three-slots'

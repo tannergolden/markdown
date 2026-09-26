@@ -3,5 +3,9 @@
 # footer are read from GitHub on each run; only what is written here is
 # fixed. Every key and its default: tannergolden/banners/examples/banners.yml.
 mode: repository
+# The page is a rainbowprint: each update of the banners takes the next
+# colour of the spectrum, the lock remembers where it is, and the elements
+# and the plates follow, so the whole page changes colour together.
+theme: rainbowprint
 motto: One stub. The whole page.
 closing: Drawn at both ends, and everything between.

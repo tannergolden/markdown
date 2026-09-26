@@ -5,7 +5,7 @@
 # measured from git on each run. Every field of every kind:
 # tannergolden/banners/docs/Elements-Kit.md.
 
-print: blueprint
+print: rainbowprint   # the colour the banners are in now, from their lock
 subject: tannergolden/markdown
 
 elements:

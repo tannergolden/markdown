@@ -158,6 +158,10 @@ jobs:
       - name: '📥 Checkout'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          # The branch as it is NOW, not as it was when the run was queued: in
+          # one run the banners commit first, and a plate in the rainbowprint
+          # reads the colour they took from their lock.
+          ref: ${{ github.ref_name }}
           persist-credentials: true # zizmor: ignore[artipacked] - the action commits and pushes what it redrew, and nothing else runs after it.
 
       # Only its owner knows which badges a page should carry, so the badges
