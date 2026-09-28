@@ -18,8 +18,8 @@ DATA = Path(__file__).resolve().parents[1] / "domain" / "data"
 FONTS = DATA / "fonts"
 # The glyph tables, earlier first: a later one only adds characters an earlier one lacks.
 GLYPHS = ("glyphs.json", "glyphs-extra.json")
-# Faces kept in files of their own, each with its font's metadata around the face.
-FACES = {"jetbrains-mono.json": "mono"}
+# Faces kept in files of their own, each with its font's metadata around its faces.
+FACES = {"jetbrains-mono.json": ("mono",), "dejavu-sans.json": ("sans", "sans-bold")}
 # What `markdown-kit calibrate` measured of the repository population, when it has been run.
 CALIBRATION = DATA / "calibration" / "repositories.json"
 
@@ -30,7 +30,9 @@ def _json(path: Path):
 
 def glyph_tables() -> list[dict]:
     tables = [_json(FONTS / name) for name in GLYPHS]
-    tables += [{face: _json(FONTS / name)[face]} for name, face in FACES.items()]
+    for name, faces in FACES.items():
+        data = _json(FONTS / name)
+        tables.append({face: data[face] for face in faces})
     return tables
 
 

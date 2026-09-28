@@ -227,14 +227,15 @@ def contents() -> dict:
 
 def cmd_lint(args, ports: Ports) -> int:
     failed = 0
+    themes = (prints.STANDARD, *prints.PRINTS)
     for name, (h, f) in contents().items():
         for code, design in DESIGNS.items():
             largest, problems = 0, {}
-            for tone in prints.PRINTS:
+            for tone in themes:
                 files = render_design(design, (h if design.kind == "header" else f).with_(tone=tone))
-                problems.update(lint_files(design, files))
+                problems.update({f"{tone} {k}": v for k, v in lint_files(design, files).items()})
                 largest = max(largest, *(len(svg.encode("utf-8")) for svg in files.values()))
-            print(f"{name:<10} {code} {design.name:<12} {len(prints.PRINTS)} prints, largest {largest / 1000:.1f} KB"
+            print(f"{name:<10} {code} {design.name:<12} {len(themes)} themes, largest {largest / 1000:.1f} KB"
                   + ("" if not problems else f"  PROBLEMS: {problems}"), file=ports.out)
             failed += bool(problems)
     largest, problems = 0, []
@@ -261,14 +262,14 @@ def cmd_lint(args, ports: Ports) -> int:
         section = cfg["elements"] if isinstance(cfg["elements"], dict) else {}
         elements = elements_data.merged(section, {}, subject=cfg["subject"])
         largest, problems = 0, []
-        for tone in prints.PRINTS:
+        for tone in themes:
             try:
                 files = elements_data.render(elements, tone)
             except ValueError as exc:  # a drawing that fails the lint says which, and how
                 problems.append(f"{tone}: {exc}")
                 continue
             largest = max(largest, *(len(svg.encode("utf-8")) for svg in files.values()))
-        print(f"elements   {len(elements)} of them, {len(prints.PRINTS)} prints, largest {largest / 1000:.1f} KB"
+        print(f"elements   {len(elements)} of them, {len(themes)} themes, largest {largest / 1000:.1f} KB"
               + ("" if not problems else f"  PROBLEMS: {problems}"), file=ports.out)
         failed += bool(problems)
     return 1 if failed else 0

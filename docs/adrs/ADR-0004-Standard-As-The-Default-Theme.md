@@ -58,7 +58,9 @@ The banners kit drew every page in a print, the blueprint unless told otherwise:
 
 ### Rationale for Selection
 
-`standard` matches the badges a README already carries, so a page that sets nothing reads as one family: flat panels, a black label with a coloured accent, bold letter-spaced capitals and the badges' 64 icons. Its lettering is drawn as outlines, like every other theme's, so it looks the same on every screen. The prints stay one line away (`theme: blueprint`, or any other), `rainbowprint` walks the spectrum, and a repository can add prints of its own. The holiday sets take over from whichever theme a page is in and hand it back.
+`standard` matches the badges a README already carries, so a page that sets nothing reads as one family: flat panels, a black label with a coloured accent, bold letter-spaced capitals and the badges' 64 icons. Its lettering is DejaVu Sans, the face a badge's Verdana falls back to, drawn as outlines like every other theme's, so it looks the same on every screen, and every letter holds 4.5:1 against its ground.
+
+Of the three layouts drawn for it, the masthead was chosen: a header opens with one badge the width of the page, the title in its black and the release in its accent, so it flows straight into the row of badges under it; the footer ends in the same band, with the way back up in the accent, and every element opens with it. The prints stay one line away (`theme: blueprint`, or any other), `rainbowprint` walks the spectrum, and a repository can add prints of its own. The holiday sets take over from whichever theme a page is in and hand it back.
 
 ---
 

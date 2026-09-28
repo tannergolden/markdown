@@ -19,6 +19,8 @@ from html import escape
 
 from .. import readme
 from ..palette import ICONS
+from ..prints import STANDARD
+from ..standard import elements as SE
 from . import draw as E
 
 # The fields each kind cannot be drawn without, from the settings or from what was measured.
@@ -102,14 +104,20 @@ def file_name(eid: str, variant: str, theme: str) -> str:
 
 
 def render(elements: dict, tone: str) -> dict[str, str]:
-    """{name: svg} for every element, every variant, both themes, in the print `tone`."""
-    half = E.half_height(elements)
+    """{name: svg} for every element, every variant, both themes, in the theme `tone`.
+
+    `standard` is drawn by `standard.elements`, a print by `draw`, from the
+    same data into the same files.
+    """
+    std = tone == STANDARD
+    half = (SE.half_height if std else E.half_height)(elements)
     files = {}
     for eid, d in elements.items():
         kind = d["kind"]
         for variant in E.variants(kind, d):
             for theme in ("day", "dark"):
-                files[file_name(eid, variant, theme)] = E.draw(kind, d, tone, theme, variant, height=half)
+                files[file_name(eid, variant, theme)] = (SE.draw(kind, d, theme, variant, height=half) if std else
+                                                         E.draw(kind, d, tone, theme, variant, height=half))
     return files
 
 

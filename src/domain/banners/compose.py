@@ -38,7 +38,7 @@ from __future__ import annotations
 import re
 
 from ..lettering import missing
-from ..prints import DEFAULT_THEME
+from ..prints import DEFAULT_THEME, STANDARD
 from .content import FOOTER_FIELDS, HEADER_FIELDS, Footer, Header
 
 # Every figure each mode can draw, in the order the page offers them, with its label.
@@ -172,7 +172,7 @@ def _value(mode: str, key: str, m: dict) -> str:
     return v or ""
 
 
-def figures(mode: str, m: dict, wanted, notes: list) -> tuple:
+def figures(mode: str, m: dict, wanted, notes: list, face: str = "meta") -> tuple:
     """The (LABEL, value) pairs a header draws: the config's keys, else the mode's defaults, each only if measured."""
     labels = FIGURES[mode]
     keys = list(wanted) if wanted else list(DEFAULT_FIGURES[mode])
@@ -182,7 +182,7 @@ def figures(mode: str, m: dict, wanted, notes: list) -> tuple:
                                f"({', '.join(labels)})")
     out = []
     for k in keys:
-        v = drawable(_value(mode, k, m), "meta", notes, f"figure {k}")
+        v = drawable(_value(mode, k, m), face, notes, f"figure {k}")
         if v:
             out.append((labels[k], clip(v, LIMITS["value"])))
     return tuple(out)
@@ -249,38 +249,40 @@ def compose(m: dict, cfg: dict) -> tuple[Header, Footer, list[str]]:
     person = m.get("profile") or {}
     off = frozenset(cfg.get("hide") or ())
     tone = cfg.get("theme") or DEFAULT_THEME
+    # The faces the theme letters with: the title's, and every other line's.
+    big, small = ("sans-bold", "sans") if tone == STANDARD else ("num", "meta")
 
     if mode == "profile":
-        name = drawable(person.get("name") or "", "num", notes, "name")
+        name = drawable(person.get("name") or "", big, notes, "name")
         # A name the letters can mostly not draw is better read as the login.
         title = name if name and len(name) >= .6 * len((person.get("name") or "").strip()) else person.get("login", "")
         told = person.get("bio") or ""
         status = person.get("status") or {}
-        note = drawable(status.get("message") or "", "meta", notes, "status")
+        note = drawable(status.get("message") or "", small, notes, "status")
     else:
         title = repo.get("name") or ""
         told = repo.get("description") or ""
         note = ""
     _, told = split_emoji(told)
     header = Header(
-        title=clip(drawable(_pick(cfg, "title", title), "num", notes, "title"), LIMITS["title"]),
-        tagline=clip(drawable(_pick(cfg, "tagline", told), "meta", notes, "tagline"), LIMITS["tagline"]),
-        motto=clip(drawable(_pick(cfg, "motto", note), "meta", notes, "motto"), LIMITS["motto"]),
-        notes=tuple(n for n in (clip(drawable(text, "meta", notes, "notes"), LIMITS["motto"])
+        title=clip(drawable(_pick(cfg, "title", title), big, notes, "title"), LIMITS["title"]),
+        tagline=clip(drawable(_pick(cfg, "tagline", told), small, notes, "tagline"), LIMITS["tagline"]),
+        motto=clip(drawable(_pick(cfg, "motto", note), small, notes, "motto"), LIMITS["motto"]),
+        notes=tuple(n for n in (clip(drawable(text, small, notes, "notes"), LIMITS["motto"])
                                 for text in cfg.get("notes") or ()) if n),
-        description=drawable(_pick(cfg, "description", ""), "meta", notes, "description"),
-        figures=figures(mode, m, cfg.get("figures"), notes),
+        description=drawable(_pick(cfg, "description", ""), small, notes, "description"),
+        figures=figures(mode, m, cfg.get("figures"), notes, small),
         tone=tone,
         off=frozenset(k for k in off if k in HEADER_FIELDS),
     )
     given = cfg.get("links")
     footer = Footer(
-        closing=drawable(_pick(cfg, "closing", ""), "meta", notes, "closing"),
-        top=drawable(_pick(cfg, "top", TOP), "meta", notes, "top"),
+        closing=drawable(_pick(cfg, "closing", ""), small, notes, "closing"),
+        top=drawable(_pick(cfg, "top", TOP), small, notes, "top"),
         handle="@" + (person.get("login") if mode == "profile" else repo.get("owner") or ""),
         license=repo.get("license") or "",
         updated=repo.get("updated") or "",
-        links=tuple((drawable(str(label), "meta"), str(url)) for label, url in given) if given else links(mode, m),
+        links=tuple((drawable(str(label), small), str(url)) for label, url in given) if given else links(mode, m),
         tone=tone,
         off=frozenset(k for k in off if k in FOOTER_FIELDS),
     )

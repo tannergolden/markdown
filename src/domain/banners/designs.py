@@ -12,12 +12,18 @@ A design is drawn as up to six files, named the way the siblings name theirs:
 A footer draws the same six as `footer-*.svg`, plus one pair per link in its
 links row, `link-<label>-day.svg` and `link-<label>-dark.svg`, because an
 image in a README can carry only the one link that wraps it.
+
+A design drawn in `standard` is drawn by `standard.banners`, the masthead,
+and in any print by its own function here: the codes, the files and the
+README blocks are the same whichever draws them.
 """
 from __future__ import annotations
 
 import re
 
 from ..canvas import BUDGET, DARK, DAY, lint
+from ..prints import STANDARD
+from ..standard import banners as standard
 from . import footers, headers
 from .content import Footer, Header
 from .layout import Design
@@ -70,15 +76,18 @@ def slug(label: str) -> str:
 
 def render(design: Design, content: Header | Footer, only: set | None = None) -> dict[str, str]:
     """Every file the design draws for this content, by filename; `only` names the variants wanted."""
+    draw, chip = design.draw, design.chip
+    if content.tone == STANDARD:
+        draw, chip = standard.DRAW[design.code], standard.link
     out = {}
     for suffix, wide, motion, theme in variants(design):
         if not only or suffix in only:
-            out[f"{design.kind}-{suffix}.svg"] = design.draw(content, theme, wide, motion)
-    if (design.kind == "footer" and design.chip and isinstance(content, Footer) and content.on("links")
+            out[f"{design.kind}-{suffix}.svg"] = draw(content, theme, wide, motion)
+    if (design.kind == "footer" and chip and isinstance(content, Footer) and content.on("links")
             and (not only or "links" in only)):
         for label, _ in content.links:
             for theme in (DAY, DARK):
-                out[f"link-{slug(label)}-{theme['name']}.svg"] = design.chip(label, theme, content.tone)
+                out[f"link-{slug(label)}-{theme['name']}.svg"] = chip(label, theme, content.tone)
     return out
 
 

@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: 2020 The Cinzel Project Authors (Cinzel outlines)
 # SPDX-FileCopyrightText: 2017 The Barlow Project Authors (Barlow Condensed outlines)
 # SPDX-FileCopyrightText: 2020 The JetBrains Mono Project Authors (JetBrains Mono outlines)
+# SPDX-FileCopyrightText: 2003 Bitstream, Inc. (DejaVu Sans outlines; DejaVu's changes are in the public domain)
 # SPDX-License-Identifier: MIT
 """Outlined lettering, so a file looks the same on every screen.
 
@@ -10,12 +11,17 @@ platform, so every letter is drawn as a path. The outlines are data under
 `data/fonts/`, each file with its font's licence beside it; `infra.resources`
 reads them and hands them in with `use`, because this module does no I/O.
 
-Four faces, each with the one-letter prefix its glyph ids start with:
+Six faces, each with the one-letter prefix its glyph ids start with:
 
-  serif   Cinzel Bold: titles, engraving, anything that should feel struck
-  meta    Barlow Condensed SemiBold: prose, captions, the terminal line
-  num     Barlow Condensed Bold: the heavier cut, for a title that shouts
-  mono    JetBrains Mono Regular: paths and code in the elements
+  serif      Cinzel Bold: titles, engraving, anything that should feel struck
+  meta       Barlow Condensed SemiBold: prose, captions, the terminal line
+  num        Barlow Condensed Bold: the heavier cut, for a title that shouts
+  mono       JetBrains Mono Regular: paths and code in the elements
+  sans       DejaVu Sans Book: the standard theme's prose
+  sans-bold  DejaVu Sans Bold: the standard theme's capitals, as a badge sets them
+
+The two sans faces are the badges' own letters: a badge names Verdana, and
+DejaVu Sans is the face a screen without Verdana draws it in.
 
 Each SVG embeds only the glyphs it uses, once, and places them with `<use>`.
 Nothing is set as `<text>`: every letter on a page is a path.
@@ -27,7 +33,7 @@ import itertools
 # Glyph ids are the face's letter and the code point: `m64` is Barlow's `@`.
 # None of these letters is a hex digit, which is what lets the lint tell a
 # reference like `#m64` from a colour like `#ABCDEF`.
-PREFIX = {"serif": "s", "num": "n", "meta": "m", "mono": "j"}
+PREFIX = {"serif": "s", "num": "n", "meta": "m", "mono": "j", "sans": "p", "sans-bold": "q"}
 
 # What an unknown character advances by, in ems. It is drawn as nothing; the
 # kit reports it rather than guessing a shape.

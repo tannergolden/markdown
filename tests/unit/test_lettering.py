@@ -13,7 +13,12 @@ class LetteringTest(unittest.TestCase):
         support.install()
 
     def test_every_face_is_loaded(self):
-        self.assertEqual(set(L.fonts()), {"serif", "meta", "num", "mono"})
+        self.assertEqual(set(L.fonts()), {"serif", "meta", "num", "mono", "sans", "sans-bold"})
+
+    def test_the_sans_faces_letter_whatever_another_face_can(self):
+        drawn = set().union(*(set(L.fonts()[f]["g"]) for f in ("serif", "meta", "num", "mono")))
+        for face in ("sans", "sans-bold"):
+            self.assertEqual(L.missing("".join(sorted(drawn)), face), "", face)
 
     def test_prefixes_are_not_hex_digits(self):
         for face, prefix in L.PREFIX.items():

@@ -12,7 +12,7 @@ from infra import clock, resources
 class ResourcesTest(unittest.TestCase):
     def test_install_hands_the_domain_its_outlines_and_prints(self):
         catalogue = support.install()
-        self.assertEqual(set(lettering.fonts()), {"serif", "meta", "num", "mono"})
+        self.assertEqual(set(lettering.fonts()), {"serif", "meta", "num", "mono", "sans", "sans-bold"})
         self.assertEqual(tuple(catalogue), prints.BUILTIN)
         for face in lettering.fonts().values():
             self.assertGreater(len(face["g"]), 60)
@@ -22,6 +22,9 @@ class ResourcesTest(unittest.TestCase):
         for name in ("OFL-Cinzel.txt", "OFL-Barlow-Condensed.txt", "OFL-JetBrains-Mono.txt"):
             text = (resources.FONTS / name).read_text(encoding="utf-8")
             self.assertIn("SIL Open Font License", text, name)
+        text = (resources.FONTS / "Bitstream-Vera-DejaVu-Sans.txt").read_text(encoding="utf-8")
+        self.assertIn("Bitstream Vera Fonts Copyright", text)
+        self.assertIn("DejaVu changes are in public domain", text)
 
     def test_the_catalogue_uses_only_palette_tokens(self):
         from domain.palette import PALETTE
