@@ -43,9 +43,12 @@ Copy the [ADR template](../templates/ADR.md) to `docs/adrs/ADR-NNNN-Short-Slug.m
 
 Read a row in four moves: **Decision** links the record (its number and title); **Status** is Proposed, Accepted, Superseded, or Deprecated; **Date** is when it was decided; **Evidence** is the research report(s) that informed it, or `-`.
 
-| Decision   | Status | Date | Evidence |
-| :--------- | :----- | :--- | :------- |
-| _none yet_ | -      | -    | -        |
+| Decision                                                                                     | Status   | Date       | Evidence |
+| :------------------------------------------------------------------------------------------- | :------- | :--------- | :------- |
+| [ADR-0004: Standard as the default theme](ADR-0004-Standard-As-The-Default-Theme.md)         | Accepted | 2026-09-28 | -        |
+| [ADR-0003: Holiday windows](ADR-0003-Holiday-Windows.md)                                     | Accepted | 2026-09-28 | -        |
+| [ADR-0002: Standard library only](ADR-0002-Standard-Library-Only.md)                         | Accepted | 2026-09-28 | -        |
+| [ADR-0001: One kit, one stub](ADR-0001-One-Kit-One-Stub.md)                                  | Accepted | 2026-09-28 | -        |
 
 ---
 
