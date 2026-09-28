@@ -160,17 +160,37 @@ def _clear(box: tuple, taken: list) -> bool:
     return all(box[2] < a - 3 or box[0] > b + 3 or box[3] < t - 3 or box[1] > u + 3 for a, t, b, u in taken)
 
 
+def _pieces(pts: list, words: list) -> list[list]:
+    """The polyline `pts` cut wherever a run passes through one of `words`, the boxes of text on the card,
+    so a wire breaks around a word rather than striking through it."""
+    pieces = [[pts[0]]]
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+        cuts = []
+        for wx0, wy0, wx1, wy1 in words:
+            if x0 == x1 and wx0 < x0 < wx1 and min(y0, y1) < wy0 and max(y0, y1) > wy1:
+                cuts.append(((x0, wy0), (x0, wy1)) if y1 > y0 else ((x0, wy1), (x0, wy0)))
+            elif y0 == y1 and wy0 < y0 < wy1 and min(x0, x1) < wx0 and max(x0, x1) > wx1:
+                cuts.append(((wx0, y0), (wx1, y0)) if x1 > x0 else ((wx1, y0), (wx0, y0)))
+        for enter, leave in sorted(cuts, key=lambda cut: abs(cut[0][0] - x0) + abs(cut[0][1] - y0)):
+            pieces[-1].append(enter)
+            pieces.append([leave])
+        pieces[-1].append((x1, y1))
+    return [piece for piece in pieces if len(piece) > 1]
+
+
 def _wire(cv, th: dict, W: float, pts: list, label: str | None, *, taken: list, avoid: list,
-          along: bool = False) -> str:
+          along: bool = False, words: list | None = None) -> str:
     """A wire in the muted ink ending in an arrowhead just short of the box it enters, its label in small
-    capitals beside its longest run, slid along the run until clear of every box, label and other wire."""
+    capitals beside its longest run, slid along the run until clear of every box, label and other wire. The
+    wire breaks around `words`, the other text on the card in its way."""
     col = th["muted"]
     (x0, y0), (x1, y1) = pts[-2], pts[-1]
     n = math.hypot(x1 - x0, y1 - y0) or 1
     tip = (x1 - (x1 - x0) / n * 2, y1 - (y1 - y0) / n * 2)
     pts = pts[:-1] + [tip]
-    out = [f'<path d="{_rounded(pts)}" fill="none" stroke="{c(col)}" stroke-width="1.8" stroke-linejoin="round"/>',
-           _arrowhead(tip[0], tip[1], x1 - x0, y1 - y0, col)]
+    out = [f'<path d="{_rounded(piece)}" fill="none" stroke="{c(col)}" stroke-width="1.8" stroke-linejoin="round"/>'
+           for piece in _pieces(pts, words or [])]
+    out.append(_arrowhead(tip[0], tip[1], x1 - x0, y1 - y0, col))
     if not label:
         return "".join(out)
     text = E.plain(str(label).upper(), "sans-bold")
@@ -347,6 +367,7 @@ def schematic(d: dict, th: dict, variant: str = "wide") -> str:
     cv = P.new(W, H, d.get("title", "Schematic"), d.get("desc", ""), f"elements schematic {variant} {th['name']}")
     frame(cv, std, W, H, "schematic", d.get("subject", ""), caption)
     taken = [(b.x, b.y - 8, b.x + b.w + 8, b.y + b.h) for b in boxes]
+    words = []  # the groups' captions, which a wire breaks around
     for gk, label in groups.items():
         members = [by[k] for k in keys if d["boxes"][k].get("in") == gk]
         if members:
@@ -356,14 +377,14 @@ def schematic(d: dict, th: dict, variant: str = "wide") -> str:
                 x0, x1 = 10, W - 10
             cv.add(_group(cv, std, x0, y0, x1, y1, label))
             tw = width(E.plain(str(label).upper(), "sans-bold"), "sans-bold", 8, .8)
-            taken += [((x0 + x1) / 2 - tw / 2 - 8, y0 - 6, (x0 + x1) / 2 + tw / 2 + 8, y0 + 6),
-                      (x0 - 1, y0, x0 + 1, y1), (x1 - 1, y0, x1 + 1, y1)]
+            words.append(((x0 + x1) / 2 - tw / 2 - 8, y0 - 6, (x0 + x1) / 2 + tw / 2 + 8, y0 + 6))
+            taken += [words[-1], (x0 - 1, y0, x0 + 1, y1), (x1 - 1, y0, x1 + 1, y1)]
     runs = [[(min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1])) for a, b in zip(pts, pts[1:])]
             for pts, _, _ in wires]
     marks = []
     for i, (pts, label, along) in enumerate(wires):
         others = [seg for j, segs in enumerate(runs) if j != i for seg in segs]
-        marks.append(_wire(cv, std, W, pts, label, taken=taken, avoid=others, along=along))
+        marks.append(_wire(cv, std, W, pts, label, taken=taken, avoid=others, along=along, words=words))
     cv.add(*marks)
     for k in keys:
         cv.add(_node(cv, std, by[k], d["boxes"][k]))

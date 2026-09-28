@@ -98,6 +98,37 @@ class Elements(unittest.TestCase):
             for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
                 self.assertFalse(L._crosses(x0, y0, x1, y1, boxes, (a, b)), (a, b, pts))
 
+    def test_a_run_breaks_around_a_word(self):
+        word = [(10, 40, 50, 50)]
+        self.assertEqual(E._broken([((30, 0), (30, 100))], word), [((30, 0), (30, 40)), ((30, 50), (30, 100))])
+        self.assertEqual(E._broken([((30, 100), (30, 0))], word), [((30, 100), (30, 50)), ((30, 40), (30, 0))])
+        self.assertEqual(E._broken([((0, 45), (100, 45))], word), [((0, 45), (10, 45)), ((50, 45), (100, 45))])
+        clear = [((60, 0), (60, 100)), ((30, 0), (30, 30))]
+        self.assertEqual(E._broken(clear, word), clear)
+
+    def test_a_wire_into_a_group_breaks_around_its_label_rather_than_through_it(self):
+        # On a phone a wire from the box above a group runs down the middle, where the group's label is set.
+        d = {"kind": "schematic", "subject": "x/y", "groups": {"g": "THIS README  ·  EVERY IMAGE DRAWN, NEVER FETCHED"},
+             "boxes": {"a": {"title": "A", "path": "a"}, "b": {"title": "B", "path": "b", "in": "g"}},
+             "wires": [["a", "b"]]}
+        svg = E.draw("schematic", d, "blueprint", "day", "narrow")
+        boxes = [(float(x), float(y)) for x, y in
+                 re.findall(r'<rect x="([\d.]+)" y="([\d.]+)" width="276" height="52" rx="3"', svg)]
+        (_, _), (bx, by) = boxes
+        mid = bx + 138
+        letters = (by - 20, by - 14)  # the label's capitals: 16 px under the group's top, 30 px over its box
+        down = []
+        for path in re.findall(r'<path d="([^"]+)" fill="none" stroke="#[0-9A-Fa-f]{6}" stroke-width="1.2"', svg):
+            at = None
+            for op, x, y in re.findall(r"([ML])([\d.]+) ([\d.]+)", path):
+                here = (float(x), float(y))
+                if op == "L" and at and at[0] == here[0] == mid:
+                    down.append((at[1], here[1]))
+                at = here
+        self.assertEqual(len(down), 2, "the wire is drawn in two runs, one each side of the label")
+        for y0, y1 in down:
+            self.assertTrue(max(y0, y1) <= letters[0] or min(y0, y1) >= letters[1], (y0, y1, letters))
+
     def test_the_first_row_sits_under_the_title_unless_a_group_needs_the_room(self):
         def first_row(boxes: dict) -> float:
             d = {"kind": "schematic", "subject": "x/y", "boxes": boxes, "groups": {"g": "GROUP"},

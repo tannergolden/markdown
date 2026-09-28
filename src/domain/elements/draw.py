@@ -170,19 +170,41 @@ def ring(cv, col, s: str, *, cx, cy, r, size, top: bool, ls=1.2):
 
 # --- schematic ----------------------------------------------------------------------------------
 
+def _broken(segs: list, words: list) -> list:
+    """`segs` with a gap wherever a run passes through one of `words`, the boxes of text drawn on the sheet.
+
+    A line breaks around a word rather than striking through it, the way a
+    wire's own label sits in a gap in it.
+    """
+    for wx0, wy0, wx1, wy1 in words:
+        cut = []
+        for (x0, y0), (x1, y1) in segs:
+            if x0 == x1 and wx0 < x0 < wx1 and min(y0, y1) < wy0 and max(y0, y1) > wy1:
+                a, b = (wy0, wy1) if y1 > y0 else (wy1, wy0)
+                cut += [((x0, y0), (x0, a)), ((x0, b), (x1, y1))]
+            elif y0 == y1 and wy0 < y0 < wy1 and min(x0, x1) < wx0 and max(x0, x1) > wx1:
+                a, b = (wx0, wx1) if x1 > x0 else (wx1, wx0)
+                cut += [((x0, y0), (a, y0)), ((b, y0), (x1, y1))]
+            else:
+                cut.append(((x0, y0), (x1, y1)))
+        segs = cut
+    return segs
+
+
 def _wire(cv, col, pts: list, label: str | None, W: float, *, along: bool = False, placed: list | None = None,
-          avoid: list | None = None) -> None:
+          avoid: list | None = None, words: list | None = None) -> None:
     """A polyline with an arrowhead at its end, its label set in a gap in its longest run, as a dimension's is.
 
     On a vertical run the label is set across the wire in a gap; with `along`
     it is turned to run with it, for a wire in a channel with no room beside.
     `placed` collects the labels' boxes, and a label slides along its run
     until it is clear of every one before it and of every run in `avoid`,
-    the other wires' segments, so no wire crosses through a word.
+    the other wires' segments, so no wire crosses through a word. The wire
+    itself breaks around `words`, the other text on the sheet in its way.
     """
     placed = placed if placed is not None else []
     avoid = avoid or []
-    segs = list(zip(pts, pts[1:]))
+    segs = _broken(list(zip(pts, pts[1:])), words or [])
     gap_seg = None
     if label:
         gap_seg = max(range(len(segs)), key=lambda i: abs(segs[i][1][0] - segs[i][0][0])
@@ -326,6 +348,7 @@ def schematic(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
     sheet(cv, col, W=W, H=H, border=B, zones=g["zones"])
     title(cv, col, g, "SCHEMATIC", d.get("subject", ""), d.get("caption", ""))
     line = c(col["line"])
+    words = []  # the groups' labels, which a wire breaks around
     for gk, label in groups.items():
         members = [by[k] for k in keys if d["boxes"][k].get("in") == gk]
         if not members:
@@ -336,7 +359,9 @@ def schematic(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
             x0, x1 = max(x0, B + 4), min(x1, left + 276 + 6)
         cv.add(f'<rect x="{f1(x0)}" y="{f1(y0)}" width="{f1(x1 - x0)}" height="{f1(y1 - y0)}" rx="4" fill="none" '
                f'{hair(col, .8)} stroke-dasharray="7 4"/>')
-        say(cv, label, x=(x0 + x1) / 2, y=y0 + 16, col=col, size=8, anchor="middle", ls=1.2, op=.75)
+        mid, tw = (x0 + x1) / 2, width(str(label), "meta", 8, 1.2)
+        say(cv, label, x=mid, y=y0 + 16, col=col, size=8, anchor="middle", ls=1.2, op=.75)
+        words.append((mid - tw / 2 - 5, y0 + 7, mid + tw / 2 + 5, y0 + 20))
     for k in keys:
         b, spec = by[k], d["boxes"][k]
         cv.add(f'<rect x="{f1(b.x)}" y="{f1(b.y)}" width="{f1(b.w)}" height="{f1(b.h)}" rx="3" fill="{paper(col)}" '
@@ -348,12 +373,12 @@ def schematic(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
         say(cv, spec.get("path", ""), x=b.x + 46, y=b.y + b.h / 2 + 12, col=col, size=9, face="mono", op=.75)
         if spec.get("note"):
             bubble(cv, col, spec["note"], b.x + b.w - 12, b.y + 12)
-    taken = [(b.x, b.y, b.x + b.w, b.y + b.h) for b in boxes]
+    taken = [(b.x, b.y, b.x + b.w, b.y + b.h) for b in boxes] + words
     runs = [[(min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1])) for a, b in zip(pts, pts[1:])]
             for pts, _, _ in wires]
     for i, (pts, label, along) in enumerate(wires):
         others = [seg for j, segs in enumerate(runs) if j != i for seg in segs]
-        _wire(cv, col, pts, label, W, along=along, placed=taken, avoid=others)
+        _wire(cv, col, pts, label, W, along=along, placed=taken, avoid=others, words=words)
     if ns:
         notes(cv, col, ns, x=left, y=H - B - 17 - (rows - 1) * 14, right=W - B - 20)
     return cv.svg()

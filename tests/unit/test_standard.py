@@ -289,6 +289,20 @@ class EveryElement(unittest.TestCase):
         self.assertGreater(len(lines), 1)
         self.assertTrue(all(width(line, "sans-bold", 8.5, .8) <= 360 - 40 - 24 for line in lines))
 
+    def test_a_wire_breaks_around_a_groups_caption_rather_than_through_it(self):
+        self.assertEqual(SE._pieces([(0, 0), (30, 0), (30, 100)], [(10, 40, 50, 50)]),
+                         [[(0, 0), (30, 0), (30, 40)], [(30, 50), (30, 100)]])
+        self.assertEqual(SE._pieces([(60, 0), (60, 100)], [(10, 40, 50, 50)]), [[(60, 0), (60, 100)]])
+        # On a phone a long caption on a group's top edge spans the tabs a wire enters by, and the channel
+        # a wire that skips a row goes down: each wire breaks around it.
+        d = {"kind": "schematic", "subject": "x/y", "groups": {"g": "THIS README  ·  EVERY IMAGE DRAWN, NEVER FETCHED"},
+             "boxes": {"a": {"title": "A", "path": "a"}, "b": {"title": "B", "path": "b", "in": "g"},
+                       "c": {"title": "C", "path": "c", "in": "g"}},
+             "wires": [["a", "b"], ["b", "c"], ["a", "c", "SKIPS"]]}
+        svg = SE.draw("schematic", d, "day", "narrow")
+        wires = re.findall(r'<path d="([^"]+)" fill="none" stroke="#[0-9A-F]{6}" stroke-width="1.8"', svg)
+        self.assertEqual(len(wires), 5, "a to b and a to c each in two runs, b to c whole")
+
     def test_a_phone_puts_the_box_that_goes_on_last_in_its_layer(self):
         edges = [("a", "b"), ("a", "c"), ("c", "d")]
         for keys in (["a", "b", "c", "d"], ["a", "c", "b", "d"]):
