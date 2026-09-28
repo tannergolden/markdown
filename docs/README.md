@@ -75,6 +75,14 @@ copied across - the seeds stay where they are and you take what you want.
 
 ---
 
+## 📂 This Project's Documents
+
+- [Source Code](technical/Source-Code.md) - where each piece of the kit lives, and the layering rules its imports are held to
+- [Technology Stack & Tooling](technical/Technology-Stack-&-Tooling.md) - the stack, and the Makefile targets CI runs
+- [Architecture Decision Records](adrs/Architecture-Decision-Records.md) - every decision the kit's design rests on, newest first
+
+---
+
 ## 🔗 See also
 
 - [Standards Index](https://github.com/tannergolden/standards/blob/Development/docs/README.md) - every canonical guide
