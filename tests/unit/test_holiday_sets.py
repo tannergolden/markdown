@@ -63,11 +63,23 @@ def contents(key: str) -> dict:
     return out
 
 
-def every_banner(key: str):
+def draw_banners(key: str) -> list:
+    """Every banner file the set draws for its contents: (content, code, file name, svg)."""
+    out = []
     for name, (h, f) in contents(key).items():
         for code, design in DESIGNS.items():
-            for fn, svg in render(design, h if design.kind == "header" else f).items():
-                yield name, code, fn, svg
+            out += [(name, code, fn, svg) for fn, svg in render(design, h if design.kind == "header" else f).items()]
+    return out
+
+
+DRAWN: dict = {}
+
+
+def every_banner(key: str) -> list:
+    """`draw_banners`, drawn once per set for every test that only reads the files."""
+    if key not in DRAWN:
+        DRAWN[key] = draw_banners(key)
+    return DRAWN[key]
 
 
 class Registry(unittest.TestCase):
@@ -94,26 +106,27 @@ class Registry(unittest.TestCase):
 class Banners(unittest.TestCase):
     def test_every_file_is_the_sets_well_formed_linted_and_deterministic(self):
         for key, held in SETS.items():
-            again = {(n, c, fn): svg for n, c, fn, svg in every_banner(key)}
-            for (name, code, fn), svg in again.items():
+            drawn = {(n, c, fn): svg for n, c, fn, svg in every_banner(key)}
+            for (name, code, fn), svg in drawn.items():
                 minidom.parseString(svg)
                 self.assertIn(f"<!--{KIT} v{KIT_VERSION} {key} ", svg, (key, name, fn))
                 self.assertNotIn("<text", svg)
                 for ch in DASHES:
                     self.assertNotIn(ch, svg)
-            for name, code, fn, svg in every_banner(key):
-                self.assertEqual(svg, again[(name, code, fn)], (key, name, fn))
-            for name, (h, f) in contents(key).items():
+            for name, code, fn, svg in draw_banners(key):
+                self.assertEqual(svg, drawn[(name, code, fn)], (key, name, fn))
+            for name in contents(key):
                 for code, design in DESIGNS.items():
-                    files = render(design, h if design.kind == "header" else f)
+                    files = {fn: svg for (n, c, fn), svg in drawn.items() if (n, c) == (name, code)}
                     self.assertEqual(check(design, files, held.tokens), {}, (key, name, code))
 
     def test_files_are_the_kits_sizes_and_names(self):
         for key in SETS:
+            drawn = every_banner(key)
             for name, (h, f) in contents(key).items():
                 for code, design in DESIGNS.items():
                     content = h if design.kind == "header" else f
-                    files = render(design, content)
+                    files = {fn: svg for n, c, fn, svg in drawn if (n, c) == (name, code)}
                     self.assertEqual(set(files), set(render(design, content.with_(holiday=""))), (key, name, code))
                     for fn, svg in files.items():
                         w = int(re.search(r'width="(\d+)"', svg).group(1))
