@@ -54,6 +54,8 @@ class Header:
                       ("LICENSE", "MIT"))
     # The print it is drawn in: a key of `prints.PRINTS`.
     tone: str = "blueprint"
+    # The holiday whose set draws it instead, a key of `holidays.SETS`, or "" for none.
+    holiday: str = ""
     off: frozenset = field(default_factory=frozenset)
 
     def on(self, name: str) -> bool:
@@ -109,6 +111,8 @@ class Footer:
     built: bool = True
     # The print it is drawn in, the header's: a key of `prints.PRINTS`.
     tone: str = "blueprint"
+    # The holiday whose set draws it instead, the header's, or "" for none.
+    holiday: str = ""
     off: frozenset = field(default_factory=frozenset)
 
     def on(self, name: str) -> bool:

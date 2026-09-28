@@ -44,8 +44,8 @@ import hashlib
 import re
 from html import escape
 
-from .. import KIT, KIT_VERSION, readme
-from ..canvas import BUDGET, hazards
+from .. import KIT, KIT_VERSION, holidays, readme
+from ..canvas import BUDGET, colours, hazards
 from ..palette import ICONS, PALETTE
 from ..prints import PRINTS, RAINBOW, SPECTRUM
 from . import classic, live, plates
@@ -329,17 +329,40 @@ def lint(svg: str) -> list[str]:
     return problems
 
 
-def draw(b: dict, measured: dict, *, theme: str, shade: str | None, seed: str) -> dict[str, str]:
+def draw(b: dict, measured: dict, *, theme: str, shade: str | None, seed: str, holiday: str = "") -> dict[str, str]:
     """{path under the badges' folder: svg} for one badge on a page in `theme`, every file linted.
 
     `shade` is the print a rainbowprint page is in, which a plate that names
-    rainbowprint follows; `seed` picks a rotating badge's colour.
+    rainbowprint follows; `seed` picks a rotating badge's colour. While
+    `holiday`'s set is up it draws the badge, at the same paths, unless its
+    letters cannot.
     """
-    files = _draw(b, measured, theme=theme, shade=shade, seed=seed)
+    files = _holiday(b, measured, theme=theme, seed=seed, holiday=holiday) \
+        or _draw(b, measured, theme=theme, shade=shade, seed=seed)
     for rel, svg in files.items():
         problems = lint(svg)
         if problems:
             raise BadgesError(f"badges: {b['name']}: {rel} fails the lint: {'; '.join(problems)}")
+    return files
+
+
+def in_set(held, b: dict, measured: dict, *, theme: str, seed: str) -> dict[str, str] | None:
+    """The badge as the holiday set `held` draws it, in the form and at the paths the page draws it with,
+    unchecked; None when the set's letters cannot draw it."""
+    message, colour = says(b, measured, seed)
+    live_ = is_live(b)
+    return held.badge(style=form(b, theme), label=b.get("label", ""), message=message, icon=b.get("icon") or None,
+                      label_hex=_hex(label_colour(b)), message_hex=_hex(colour), live=live_,
+                      state=health(colour) if live_ else None, reserve=reserve(b), rels=paths(b, theme),
+                      stamp=STAMP[4:-3])
+
+
+def _holiday(b: dict, measured: dict, *, theme: str, seed: str, holiday: str) -> dict[str, str] | None:
+    """The badge in `holiday`'s set, or None when no set is up or the set cannot draw it within the lint."""
+    held = holidays.drawn_by(holiday)
+    files = in_set(held, b, measured, theme=theme, seed=seed) if held else None
+    if not files or any(lint(svg) or colours(svg, held.tokens) for svg in files.values()):
+        return None
     return files
 
 
@@ -388,7 +411,7 @@ def block(rows: list[list[str]]) -> str | None:
 
 
 def plan(badges: list[dict], measured: dict, *, theme: str, shade: str | None, today: dt.date, folder: str,
-         base: str, draw_files: bool = True) -> dict:
+         base: str, draw_files: bool = True, holiday: str = "") -> dict:
     """Every badge's files by path, the README's block, and what each badge says, for a page in `theme`.
 
     `folder` is where the files go, from the repository's root, and `base` the
@@ -399,7 +422,7 @@ def plan(badges: list[dict], measured: dict, *, theme: str, shade: str | None, t
     rows: tuple[list[str], list[str]] = ([], [])
     said = {}
     for b in badges:
-        drawn = draw(b, measured, theme=theme, shade=shade, seed=seed) if draw_files else \
+        drawn = draw(b, measured, theme=theme, shade=shade, seed=seed, holiday=holiday) if draw_files else \
             {rel: "" for rel in paths(b, theme)}
         files.update({f"{folder}/{rel}": svg for rel, svg in drawn.items()})
         message, _ = says(b, measured, seed)

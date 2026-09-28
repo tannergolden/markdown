@@ -17,11 +17,14 @@ from __future__ import annotations
 import re
 from html import escape
 
-from .. import readme
+from .. import holidays, readme
+from ..canvas import BUDGET, lint
+from ..holidays.pixel import MISSING
 from ..palette import ICONS
 from ..prints import STANDARD
 from ..standard import elements as SE
 from . import draw as E
+from .draw import THEMES
 
 # The fields each kind cannot be drawn without, from the settings or from what was measured.
 REQUIRED = {
@@ -103,21 +106,36 @@ def file_name(eid: str, variant: str, theme: str) -> str:
     return f"{eid}{v}-{theme}.svg"
 
 
-def render(elements: dict, tone: str) -> dict[str, str]:
+def render(elements: dict, tone: str, holiday: str = "") -> dict[str, str]:
     """{name: svg} for every element, every variant, both themes, in the theme `tone`.
 
     `standard` is drawn by `standard.elements`, a print by `draw`, from the
-    same data into the same files.
+    same data into the same files. While `holiday`'s set is up it draws them
+    instead, at its own shared half height, and a file it cannot draw within
+    the lint is drawn as it always is.
     """
     std = tone == STANDARD
     half = (SE.half_height if std else E.half_height)(elements)
+    held = holidays.drawn_by(holiday)
+    if held:
+        halves = [held.element_height(d["kind"], d) for d in elements.values()
+                  if E.variants(d["kind"], d) == ("half",)]
+        held_half = max(halves) if halves else None
     files = {}
     for eid, d in elements.items():
         kind = d["kind"]
         for variant in E.variants(kind, d):
             for theme in ("day", "dark"):
-                files[file_name(eid, variant, theme)] = (SE.draw(kind, d, theme, variant, height=half) if std else
-                                                         E.draw(kind, d, tone, theme, variant, height=half))
+                svg = None
+                if held:
+                    MISSING.clear()
+                    svg = held.element(kind, E.describe(kind, d), THEMES[theme], variant, held_half)
+                    if MISSING or lint(svg, budget=BUDGET[E.KINDS[kind][2]], tokens=held.tokens):
+                        svg = None
+                    MISSING.clear()
+                files[file_name(eid, variant, theme)] = svg or (
+                    SE.draw(kind, d, theme, variant, height=half) if std else
+                    E.draw(kind, d, tone, theme, variant, height=half))
     return files
 
 

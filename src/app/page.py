@@ -28,7 +28,12 @@ class Page:
     out: str                # the folder the files go in, relative to the root
     theme: str              # what the page is drawn in: standard, or a print (rainbowprint resolved to one)
     rainbow: str | None     # the print rainbowprint is on, or None for any other theme
-    holiday: holidays.Window | None  # the holiday whose window today is in, or None
+    holiday: holidays.Window | None  # the holiday whose set draws the page today, or None
+
+    @property
+    def held(self) -> str:
+        """The key of the holiday set the page is drawn in today, or "" for its own theme."""
+        return self.holiday.key if self.holiday else ""
 
 
 def here_of(root: Path, ports) -> str:
@@ -75,6 +80,8 @@ def settle(root: Path, cfg: dict, *, mode: str, subject: str, here: str, today: 
     """The page, with its theme resolved: a rainbowprint drawn in `rainbow`, or the lock's shade, or the first."""
     tone = rainbow if rainbow else shade(cfg, lk)
     window = holidays.active(today, cfg["holiday_days"], cfg["holidays"])
+    if window and not holidays.drawn_by(window.key):
+        window = None   # its set is not drawn yet, so the page keeps its own theme
     return Page(root=Path(root), cfg=cfg, mode=mode, subject=subject, here=here, today=today,
                 readme=settings.readme_path(cfg, mode), out=settings.out_dir(cfg, mode),
                 theme=tone or cfg["theme"], rainbow=tone, holiday=window)

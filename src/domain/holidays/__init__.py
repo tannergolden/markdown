@@ -21,10 +21,16 @@ for any calendar this module is given.
 The day is the caller's: this module does no I/O and knows no clock. The kit
 passes the date in the page's time zone, so the switch happens at the page's
 midnight.
+
+Each set is a package beside this one (`halloween`, ...), drawn with the
+layouts in `designs` and the pixels in `pixel`; `drawn_by` names the set a
+window is drawn in. A window whose set is not drawn yet leaves the page in
+its own theme.
 """
 from __future__ import annotations
 
 import datetime as dt
+import importlib
 from dataclasses import dataclass
 
 MIN_DAYS, MAX_DAYS, DEFAULT_DAYS = 3, 7, 3
@@ -52,6 +58,15 @@ HOLIDAYS = (
     ("christmas", "Christmas", _fixed(12, 25)),
 )
 KEYS = tuple(k for k, _, _ in HOLIDAYS)
+NAMES = {k: name for k, name, _ in HOLIDAYS}
+# The package each set is drawn by, for every holiday that has its set.
+SETS = {"halloween": "halloween"}
+
+
+def drawn_by(key: str | None):
+    """The set that draws `key`'s window (a `designs.Holiday`), or None when it has none yet."""
+    package = SETS.get(key or "")
+    return importlib.import_module(f"{__name__}.{package}").SET if package else None
 
 
 @dataclass(frozen=True)

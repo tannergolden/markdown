@@ -125,10 +125,20 @@ keeps them all away.
 
 `markdown-kit holidays --year 2026 --days 5` prints every window of a year.
 
+A set redraws the header, the footer and its buttons, the badges and the
+elements as pixel art in its own palette, at the same sizes and in the same
+files, so the README's blocks never change. A badge keeps its style, its icon
+and its files: a plate still has a day file and a night file, and a live badge
+still shows its state, in the set's colours. The trophy case keeps its own
+styles all year. A file a set cannot draw, like a title in letters its pixels
+lack, is drawn in the page's own theme. A `rainbowprint` holds its colour while
+a set is up and picks up where it was. The commit says when a set goes up and
+when it comes down.
+
 > [!NOTE]
-> The calendar is settled and the settings are read; the sets themselves arrive
-> in the release that draws them, Halloween's first. A page that leaves
-> `holidays` on gets each one as it lands, with nothing to change.
+> Halloween's set is drawn; the other six arrive in the releases that draw
+> them. A page that leaves `holidays` on gets each one as it lands, with
+> nothing to change.
 
 ---
 

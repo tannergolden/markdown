@@ -25,7 +25,7 @@ import posixpath
 import textwrap
 from pathlib import Path
 
-from domain import lock, prints, readme, settings
+from domain import holidays, lock, prints, readme, settings
 from domain.banners import plan as banners_plan
 from domain.banners import sample as banners_sample
 from domain.trophies import ledger as trophies_ledger
@@ -86,7 +86,7 @@ def plan_page(page: Page, measured: dict, *, draw: bool = True, was: list[str] =
         result["blocks"].update({"header": None, "footer": None})
     elif "banners" in measured:
         p = banners.plan(measured["banners"], cfg["banners"], theme=page.theme, out=page.out, readme=page.readme,
-                         draw=draw)
+                         draw=draw, holiday=page.held)
         result["parts"]["banners"] = p
         result["files"].update(p["files"])
         # A design set to none takes its block away, so both are named whether drawn or not.
@@ -98,7 +98,7 @@ def plan_page(page: Page, measured: dict, *, draw: bool = True, was: list[str] =
     result["blocks"]["badges"] = None
     if listed:
         p = badges.plan(cfg["badges"], measured.get("badges") or {}, theme=page.theme, shade=page.rainbow,
-                        today=page.today, out=page.out, readme=page.readme, draw=draw)
+                        today=page.today, out=page.out, readme=page.readme, draw=draw, holiday=page.held)
         result["parts"]["badges"] = p
         result["files"].update(p["files"])
         result["blocks"]["badges"] = p["block"]
@@ -107,7 +107,8 @@ def plan_page(page: Page, measured: dict, *, draw: bool = True, was: list[str] =
     result["blocks"].update({f"element:{eid}": None for eid in was if eid not in section})
     if section:
         p = elements.plan(section, measured.get("elements") or {}, subject=page.subject,
-                          today=page.today.isoformat(), tone=page.theme, out=page.out, readme=page.readme, draw=draw)
+                          today=page.today.isoformat(), tone=page.theme, out=page.out, readme=page.readme, draw=draw,
+                          holiday=page.held)
         result["parts"]["elements"] = p
         result["files"].update(p["files"])
         result["blocks"].update(p["blocks"])
@@ -236,7 +237,8 @@ def _series(items: list[str]) -> str:
 def describe(page: Page, planned: dict) -> str:
     parts = planned["parts"]
     head = (banners_plan.describe(parts["banners"]) if "banners" in parts
-            else f"the page for {page.subject} ({page.mode}) in {page.theme}")
+            else f"the page for {page.subject} ({page.mode}) in "
+            + (f"the {page.holiday.name} set" if page.holiday else page.theme))
     if "badges" in parts:
         head += f"; badges {', '.join(parts['badges']['names'])}"
     if "elements" in parts:
@@ -290,18 +292,36 @@ def _trophy_subject(planned: dict, measurement: dict, reached: dict) -> str:
     return subject if len(subject) <= 72 else subject[:69].rstrip(", ") + "..."
 
 
+def _holiday_news(page: Page, held_was: str) -> tuple[str, str]:
+    """(a subject, a paragraph) when a holiday's set went up or came down with this run, else two blanks."""
+    if page.held == held_was:
+        return "", ""
+    theme = page.cfg["theme"]
+    if page.held:
+        w = page.holiday
+        return (f"put up the {w.name} set",
+                f"The {w.name} set is up from {w.start:%B} {w.start.day} to {w.end:%B} {w.end.day}: the banners, "
+                f"the badges and the elements are drawn in it, and the page goes back to {theme} after.")
+    name = holidays.NAMES.get(held_was, held_was)
+    return f"take down the {name} set", f"The {name} set is down, and the page is drawn in {theme} again."
+
+
 def commit_message(page: Page, planned: dict, before: dict | None, changed: list[str], run_id: str = "",
-                   was: dict | None = None, measured: dict | None = None, reached: dict | None = None) -> str:
+                   was: dict | None = None, measured: dict | None = None, reached: dict | None = None,
+                   held_was: str = "") -> str:
     """A Conventional Commit for this run: what the page now shows, what moved, and why it is committed.
 
     `was` is what the live badges said before this run, so the message can say
-    which of them moved; `reached` is what the trophy case reached today.
+    which of them moved; `reached` is what the trophy case reached today;
+    `held_was` is the holiday set the committed page was drawn in.
     """
     parts = planned["parts"]
+    holiday_subject, holiday_para = _holiday_news(page, held_was)
     folder = posixpath.join(page.out.strip("/") or ".", "elements") + "/"
     redrawn = sorted({rel[len(folder):].rsplit("-", 1)[0].removesuffix("-narrow").removesuffix("-still")
                       for rel in changed if rel.startswith(folder)})
-    news = [f"Redrawn from the settings and the repository: the elements {_series(redrawn)}."] if redrawn else []
+    news = [holiday_para] if holiday_para else []
+    news += [f"Redrawn from the settings and the repository: the elements {_series(redrawn)}."] if redrawn else []
     badged, told = _badge_news(page, planned, was or {}, changed)
     news += told
     case = posixpath.join(page.out.strip("/") or ".", "trophies") + "/"
@@ -310,11 +330,13 @@ def commit_message(page: Page, planned: dict, before: dict | None, changed: list
                                      None if "banners" in parts else run_id) if cased else []
     if "banners" in parts:
         message = banners_plan.commit_message(parts["banners"], before, changed, run_id,
-                                              rainbow=page.rainbow is not None)
+                                              rainbow=page.rainbow is not None and not page.held)
         head, _, rest = message.partition("\n\n")
         if cased and "redraw the banners for" in head:
             # The banners said nothing new; the case did.
             head = _trophy_subject(parts["trophies"], (measured or {}).get("trophies") or {}, reached or {})
+        elif holiday_subject and "redraw the banners for" in head:
+            head = f"chore(markdown): \U0001F484 {holiday_subject}"
         paras = rest.split("\n\n")
         for para in news:
             paras.insert(len(paras) - 1, textwrap.fill(para, 72))
@@ -326,7 +348,8 @@ def commit_message(page: Page, planned: dict, before: dict | None, changed: list
     else:
         emoji = "\U0001F3F7\ufe0f" if (badged or told) and not redrawn else "\U0001F4D0"
         what = redrawn + (["the badges"] if badged else [])
-        subject = (f"chore(markdown): {emoji} redraw {_series(what)}" if what else
+        subject = (f"chore(markdown): \U0001F484 {holiday_subject}" if holiday_subject else
+                   f"chore(markdown): {emoji} redraw {_series(what)}" if what else
                    f"chore(markdown): {emoji} localize the shields.io badges" if told else
                    f"chore(markdown): {emoji} redraw the page for {page.subject}")
         if len(subject) > 72:
@@ -345,6 +368,7 @@ def finish(page: Page, ports, measured: dict, lk: dict, *, use_lock: bool, advan
            commit_file: str = "") -> list[str]:
     """Plan, write and remember one page. Returns the paths that changed."""
     before = _before(page, lk) if use_lock else None
+    held_was = (lock.drawn(lk) or {}).get("holiday") or ""
     said = remembered(lk).get("badges") or {}
     was = _drawn_elements(lk)
     reached: dict = {}
@@ -359,8 +383,10 @@ def finish(page: Page, ports, measured: dict, lk: dict, *, use_lock: bool, advan
     extra = localize(page, ports, lk, measured)
     planned = _merge(plan_page(page, measured, was=was), extra)
     shade_was = (lock.drawn(lk) or {}).get("rainbow")
-    if page.rainbow and advance and shade_was in prints.SPECTRUM and stale(page, ports, planned):
-        # An update: a rainbowprint draws each one in the next colour of the spectrum.
+    if (page.rainbow and not (page.held or held_was) and advance and shade_was in prints.SPECTRUM
+            and stale(page, ports, planned)):
+        # An update: a rainbowprint draws each one in the next colour of the spectrum. Not while a holiday's
+        # set is up, nor as it comes down: the page was not in the print, so it picks up where it was.
         nxt = prints.rainbow_after(page.rainbow)
         page = dataclasses.replace(page, theme=nxt, rainbow=nxt)
         planned = _merge(plan_page(page, measured, was=was), extra)
@@ -387,7 +413,8 @@ def finish(page: Page, ports, measured: dict, lk: dict, *, use_lock: bool, advan
                     record.pop(key, None)
                 if extra and extra["record"]:
                     record.update(localized=extra["record"], branch=extra["branch"])
-            lock.remember_drawn(lk, theme=page.cfg["theme"], today=page.today, rainbow=page.rainbow)
+            lock.remember_drawn(lk, theme=page.cfg["theme"], today=page.today, holiday=page.held or None,
+                                rainbow=page.rainbow)
             if due:
                 lock.mark_snapshot(lk, page.today)
             if write_lock(page.root, ports, lk):
@@ -395,7 +422,7 @@ def finish(page: Page, ports, measured: dict, lk: dict, *, use_lock: bool, advan
     print(f"{len(changed)} files changed" if changed else "nothing changed", file=ports.out)
     if commit_file and changed:
         message = commit_message(page, planned, before, changed, ports.env.get("GITHUB_RUN_ID", ""), was=said,
-                                 measured=measured, reached=reached)
+                                 measured=measured, reached=reached, held_was=held_was)
         ports.write_text(Path(commit_file), message)
         print(message.splitlines()[0], file=ports.out)
     summary = ports.env.get("GITHUB_STEP_SUMMARY")

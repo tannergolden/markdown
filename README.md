@@ -159,8 +159,9 @@ phone.
 
 Around each holiday its own set takes over the page, then hands it back: New
 Year's Day, Valentine's Day, Juneteenth, Independence Day, Halloween,
-Thanksgiving and Christmas. The calendar is settled and `holiday-days` is read;
-the sets arrive in the release that draws them, Halloween's first.
+Thanksgiving and Christmas. A set redraws the banners, the badges and the
+elements as pixel art, in the same files. Halloween's set is drawn; the other
+six arrive in the releases that draw them.
 
 ---
 

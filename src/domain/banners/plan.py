@@ -16,7 +16,7 @@ from __future__ import annotations
 import posixpath
 import textwrap
 
-from .. import readme
+from .. import holidays, readme
 from ..prints import SPECTRUM
 from . import snippets
 from .compose import FIGURES, compose
@@ -74,7 +74,7 @@ def plan(m: dict, cfg: dict, draw: bool = True) -> dict:
         # be there even when no header is drawn.
         blocks["header"] = readme.block("header", snippets.anchor())
     return {"mode": m["mode"], "subject": m["subject"], "today": m.get("today", ""), "out": out, "theme": header.tone,
-            "designs": [d for d in (hd, fd) if d], "header": header, "footer": footer, "files": files,
+            "holiday": header.holiday, "designs": [d for d in (hd, fd) if d], "header": header, "footer": footer, "files": files,
             "blocks": blocks, "notes": notes + list(m.get("notes") or ())}
 
 
@@ -126,7 +126,8 @@ def describe(p: dict) -> str:
     """One line for the log and the action's `summary` output."""
     names = " and ".join(f"{d.code} {d.name}" for d in p["designs"]) or "no banners"
     figs = ", ".join(f"{label.lower()} {value}" for label, value in p["header"].shown_figures)
-    return f"banners for {p['subject']} ({p['mode']}): {names} in {p['theme']}" + (f"; {figs}" if figs else "")
+    drawn = f"the {holidays.NAMES[p['holiday']]} set" if p.get("holiday") else p["theme"]
+    return f"banners for {p['subject']} ({p['mode']}): {names} in {drawn}" + (f"; {figs}" if figs else "")
 
 
 def _wrap(text: str) -> str:

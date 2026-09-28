@@ -273,6 +273,7 @@ def compose(m: dict, cfg: dict) -> tuple[Header, Footer, list[str]]:
         description=drawable(_pick(cfg, "description", ""), small, notes, "description"),
         figures=figures(mode, m, cfg.get("figures"), notes, small),
         tone=tone,
+        holiday=cfg.get("holiday") or "",
         off=frozenset(k for k in off if k in HEADER_FIELDS),
     )
     given = cfg.get("links")
@@ -284,6 +285,7 @@ def compose(m: dict, cfg: dict) -> tuple[Header, Footer, list[str]]:
         updated=repo.get("updated") or "",
         links=tuple((drawable(str(label), small), str(url)) for label, url in given) if given else links(mode, m),
         tone=tone,
+        holiday=cfg.get("holiday") or "",
         off=frozenset(k for k in off if k in FOOTER_FIELDS),
     )
     return header, footer, notes

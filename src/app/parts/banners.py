@@ -195,6 +195,8 @@ def settings(cfg: dict) -> dict:
     return section
 
 
-def plan(measurement: dict, section: dict, *, theme: str, out: str, readme: str, draw: bool = True) -> dict:
+def plan(measurement: dict, section: dict, *, theme: str, out: str, readme: str, draw: bool = True,
+         holiday: str = "") -> dict:
     """Everything the banners write for this measurement: files by path, README blocks, notes and facts."""
-    return banners_plan.plan(measurement, {**section, "theme": theme, "out": out, "readme_path": readme}, draw=draw)
+    return banners_plan.plan(measurement, {**section, "theme": theme, "holiday": holiday, "out": out,
+                                           "readme_path": readme}, draw=draw)

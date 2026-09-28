@@ -272,7 +272,7 @@ def measure(section: dict, before: dict, *, git, gh, subject: str, today: dt.dat
 
 
 def plan(section: dict, measured: dict, *, subject: str, today: str, tone: str, out: str, readme: str,
-         draw: bool = True) -> dict:
+         draw: bool = True, holiday: str = "") -> dict:
     """Every element's files by path, its README block, and notes on anything drawn short."""
     problems = ED.validate(section, measured)
     if problems:
@@ -281,7 +281,7 @@ def plan(section: dict, measured: dict, *, subject: str, today: str, tone: str, 
     folder = posixpath.join(out.strip("/") or ".", "elements")
     rel = posixpath.relpath(folder, posixpath.dirname(readme) or ".")
     E.WARNINGS.clear()
-    drawn = ED.render(elements, tone) if draw else {name: "" for name in ED.names(elements)}
+    drawn = ED.render(elements, tone, holiday) if draw else {name: "" for name in ED.names(elements)}
     notes = [f"{w}; drawn as '?'" for w in sorted(set(E.WARNINGS))]
     return {"files": {f"{folder}/{name}": svg for name, svg in drawn.items()},
             "blocks": {f"element:{eid}": ED.block(eid, d, rel) for eid, d in elements.items()},

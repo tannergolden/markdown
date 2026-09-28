@@ -15,13 +15,18 @@ image in a README can carry only the one link that wraps it.
 
 A design drawn in `standard` is drawn by `standard.banners`, the masthead,
 and in any print by its own function here: the codes, the files and the
-README blocks are the same whichever draws them.
+README blocks are the same whichever draws them. While a holiday's set is up
+it draws every file instead, and a file it cannot draw within the lint (a
+character its letters lack, or a budget it cannot keep) is drawn as it
+always is.
 """
 from __future__ import annotations
 
 import re
 
+from .. import holidays
 from ..canvas import BUDGET, DARK, DAY, lint
+from ..holidays.pixel import MISSING
 from ..prints import STANDARD
 from ..standard import banners as standard
 from . import footers, headers
@@ -74,20 +79,36 @@ def slug(label: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", label.lower()).strip("-") or "link"
 
 
+def _held(draw, cap: int, tokens: frozenset) -> str | None:
+    """A holiday set's file from `draw()`, or None when it fails the lint or its letters lack a character."""
+    MISSING.clear()
+    svg = draw()
+    lacks = bool(MISSING)
+    MISSING.clear()
+    return None if lacks or lint(svg, budget=cap, tokens=tokens) else svg
+
+
 def render(design: Design, content: Header | Footer, only: set | None = None) -> dict[str, str]:
     """Every file the design draws for this content, by filename; `only` names the variants wanted."""
     draw, chip = design.draw, design.chip
     if content.tone == STANDARD:
         draw, chip = standard.DRAW[design.code], standard.link
+    held = holidays.drawn_by(content.holiday)
     out = {}
     for suffix, wide, motion, theme in variants(design):
         if not only or suffix in only:
-            out[f"{design.kind}-{suffix}.svg"] = draw(content, theme, wide, motion)
+            svg = None
+            if held:
+                drawer = held.header if design.kind == "header" else held.footer
+                svg = _held(lambda: drawer(design.code, content, theme, wide, motion), budget(design.kind),
+                            held.tokens)
+            out[f"{design.kind}-{suffix}.svg"] = svg or draw(content, theme, wide, motion)
     if (design.kind == "footer" and chip and isinstance(content, Footer) and content.on("links")
             and (not only or "links" in only)):
-        for label, _ in content.links:
+        for i, (label, _) in enumerate(content.links):
             for theme in (DAY, DARK):
-                out[f"link-{slug(label)}-{theme['name']}.svg"] = chip(label, theme, content.tone)
+                svg = _held(lambda: held.link(label, theme, i), BUDGET["link"], held.tokens) if held else None
+                out[f"link-{slug(label)}-{theme['name']}.svg"] = svg or chip(label, theme, content.tone)
     return out
 
 
@@ -99,12 +120,13 @@ def names(design: Design, content: Header | Footer) -> list[str]:
     return out
 
 
-def check(design: Design, files: dict[str, str]) -> dict[str, list[str]]:
-    """Lint every file; only the ones with problems appear in the result."""
+def check(design: Design, files: dict[str, str], tokens: frozenset = frozenset()) -> dict[str, list[str]]:
+    """Lint every file; only the ones with problems appear in the result. `tokens` are a holiday set's
+    colours, for files it drew."""
     problems = {}
     for name, svg in files.items():
         cap = BUDGET["link"] if name.startswith("link-") else budget(design.kind)
-        found = lint(svg, budget=cap, text_ok=design.text_ok)
+        found = lint(svg, budget=cap, text_ok=design.text_ok, tokens=tokens)
         if found:
             problems[name] = found
     return problems

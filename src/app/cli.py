@@ -36,8 +36,12 @@ from domain.banners import sample as banners_sample
 from domain.banners.compose import compose
 from domain.banners.content import Footer, Header
 from domain.banners.designs import DESIGNS, check as lint_files, render as render_design
+from domain.banners.designs import variants as banner_variants
+from domain.canvas import BUDGET, DARK, DAY, colours
+from domain.canvas import lint as lint_svg
 from domain.banners.settings import check as banners_check
 from domain.elements import data as elements_data
+from domain.elements import draw as elements_draw
 from domain.trophies import art as trophies_art
 from domain.trophies import catalogue as trophies_catalogue
 from domain.trophies import catalogue_md
@@ -216,6 +220,44 @@ def trophy_specimens():
             yield f"next-up {mode} {case}", trophies_art.next_up_card(theme, m["core"], s["values"], m["ach"], s["curs"])
 
 
+def holiday_specimens(held, elements: dict | None = None):
+    """Every file the holiday set `held` draws for the kit's contents, its badge specimens and the elements
+    when given, as (what, svg, problems): drawn by the set itself, so a file it cannot draw is a problem here
+    where a run would draw it in the page's own theme."""
+    for name, (h, f) in contents().items():
+        for code, design in DESIGNS.items():
+            content = (h if design.kind == "header" else f).with_(holiday=held.key)
+            for suffix, wide, motion, theme in banner_variants(design):
+                draw = held.header if design.kind == "header" else held.footer
+                svg = draw(code, content, theme, wide, motion)
+                yield (f"{name} {code} {suffix}", svg,
+                       lint_svg(svg, budget=BUDGET[design.kind], tokens=held.tokens))
+            if design.kind == "footer":
+                for i, (label, _) in enumerate(f.links):
+                    for theme in (DAY, DARK):
+                        svg = held.link(label, theme, i)
+                        yield (f"{name} link {label} {theme['name']}", svg,
+                               lint_svg(svg, budget=BUDGET["link"], tokens=held.tokens))
+    for what, b, theme in badge_specimens():
+        files = badges_data.in_set(held, b, {}, theme=theme, seed="2026W01") or {}
+        if not files:
+            yield f"badge {what}", "", ["its letters cannot draw it"]
+        for rel, svg in files.items():
+            yield f"badge {what} {rel}", svg, badges_data.lint(svg) + colours(svg, held.tokens)
+    half = None
+    if elements:
+        halves = [held.element_height(d["kind"], d) for d in elements.values()
+                  if elements_draw.variants(d["kind"], d) == ("half",)]
+        half = max(halves) if halves else None
+    for eid, d in (elements or {}).items():
+        kind = d["kind"]
+        for variant in elements_draw.variants(kind, d):
+            for theme in (DAY, DARK):
+                svg = held.element(kind, elements_draw.describe(kind, d), theme, variant, half)
+                yield (f"element {eid} {variant} {theme['name']}", svg,
+                       lint_svg(svg, budget=BUDGET[elements_draw.KINDS[kind][2]], tokens=held.tokens))
+
+
 def contents() -> dict:
     """Every content the kit is linted with: each sample, composed, and the kit's own lines."""
     out = {"kit": (Header(), Footer())}
@@ -271,6 +313,17 @@ def cmd_lint(args, ports: Ports) -> int:
             largest = max(largest, *(len(svg.encode("utf-8")) for svg in files.values()))
         print(f"elements   {len(elements)} of them, {len(themes)} themes, largest {largest / 1000:.1f} KB"
               + ("" if not problems else f"  PROBLEMS: {problems}"), file=ports.out)
+        failed += bool(problems)
+    else:
+        elements = None
+    for key in holidays.SETS:
+        largest, problems, n = 0, [], 0
+        for what, svg, found in holiday_specimens(holidays.drawn_by(key), elements):
+            n += 1
+            largest = max(largest, len(svg.encode("utf-8")))
+            problems += [f"{what}: {p}" for p in found]
+        print(f"{key:<10} {n:,} files in its set, largest {largest / 1000:.1f} KB"
+              + ("" if not problems else f"  PROBLEMS: {problems[:5]}"), file=ports.out)
         failed += bool(problems)
     return 1 if failed else 0
 
