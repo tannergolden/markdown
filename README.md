@@ -50,6 +50,28 @@ A page is a person's profile or a repository. Organization pages are next.
 
 ---
 
+## 👤 The Example: A Profile
+
+[**tannergolden/tannergolden**](https://github.com/tannergolden/tannergolden),
+my GitHub profile, is the example of all of it on a profile repository. Its
+README is drawn by this kit every night at midnight EST, in profile mode, in
+the `blackprint`, with the holidays on, from one stub and one settings file:
+
+| Part         | On the profile                                                                                                                                                               |
+| :----------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Banners**  | A header read from GitHub, the name and the bio, with a motto, a note and six figures; a footer with its closing words, and four buttons under it.                           |
+| **Badges**   | Four static badges, and two live ones the run measures: whether the standards pass their own checks, and how long ago the last commit was.                                   |
+| **Elements** | A schematic of how its repositories fit together, written by hand, and placards for the two latest releases and two good first issues, which its own scripts rewrite weekly. |
+| **Trophies** | The case in profile mode: five core trophies in one row, the level and next-up cards over them, and the achievements under them.                                             |
+
+Its stub is the one below with `mode: profile` and `theme: blackprint`, and
+[its settings](https://github.com/tannergolden/tannergolden/blob/Development/.github/markdown.yaml)
+set up every part, with a comment on each. This README is the other example:
+this repository's own page, in repository mode, in the `blueprint`, with the
+holidays on and its trophy case over the footer.
+
+---
+
 ## 🚀 One Stub
 
 Your repository holds one small workflow that names the schedule. The

@@ -5,26 +5,31 @@
 # repository mode, every night, by 📝 Own Page. Whatever is not written here
 # is read from GitHub and git, and docs/Settings.md has every key.
 
+# The page's one theme: every part is drawn in the blueprint.
+theme: blueprint
+# Around each holiday its set takes over the page, then hands it back.
+holidays: true
+
 banners:
   motto: Measured nightly, never fetched.
   closing: Drawn at both ends. Fetched at neither.
 
+# The row under the header: three static badges, then three live ones the
+# run measures, whose gold labels say so. In the page's print every badge is
+# drawn as its plate, so none names a colour of its own.
 badges:
   - name: status
     label: Status
     message: Active
     icon: pulse
-    message_color: green
   - name: python
     label: Python
     message: Standard library only
     icon: code
-    message_color: blue
   - name: license
     label: License
     message: MIT
     icon: scale
-    message_color: yellow
     link: LICENSE
   - name: ci
     label: CI
@@ -68,3 +73,9 @@ elements:
       - [1, "OPTIONAL: A PAGE THAT SAYS NOTHING IS DRAWN FROM GITHUB"]
       - [2, NOTHING IS FETCHED WHEN THE README IS READ]
       - [3, CHECK DRAWS THE PAGE AGAIN FROM IT WITH NO TOKEN]
+
+# The trophy case, over the footer: this repository's eight core trophies in
+# repository mode, the level and next-up cards above them, and its hundred
+# achievements under them.
+trophies:
+  style: trophy
