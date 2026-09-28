@@ -63,27 +63,22 @@ jobs:
       # resolves to nothing, rather than reporting a green check that checked
       # nothing - so one real command is always enough.
       #
-      # Until you have a linter, this one validates the repository's OWN
-      # configuration: every YAML and JSON file parses, every workflow `uses:`
-      # is pinned to a tag or a commit, no stray whitespace or CRLF. That is a
-      # real check on files that exist from day one, which is why this gate is
-      # honestly green before you have written any code.
+      # Both stages are the Makefile's, so CI runs exactly what a contributor
+      # runs locally, and the kit is standard-library Python: nothing to
+      # install before either.
       #
-      # Replace them when your project has its own, and add the third as it
-      # becomes true:
+      # `make lint` starts with the repository's own configuration check
+      # (every YAML and JSON file parses, every workflow `uses:` is pinned to a
+      # tag or a commit, no stray whitespace or CRLF), then compiles every
+      # module and holds each layer to the imports it may make.
+      lint-command: 'make lint'
+      # `make test` runs the kit's unit, integration and end-to-end suites,
+      # then the tests of the scripts under .github/scripts/, which are the
+      # repository's own gates and must not regress silently either.
       #
-      #   lint-command: 'golangci-lint run'
-      #   test-command: 'go test ./...'
-      #   build-command: 'go build ./...'
-      lint-command: 'python3 .github/scripts/validate-repository.py'
-      # The scripts under .github/scripts/ are the only gates a fresh
-      # repository has, so they are the code here that must not regress
-      # silently. Their tests ship beside them and run on every push - a suite
-      # nothing executes is not a regression net, it only looks like one.
-      #
-      # Discovery rather than a list: a `test_*.py` added next to a new script
-      # is picked up without anyone remembering to name it here.
-      test-command: "python3 -m unittest discover -s .github/scripts -p 'test_*.py'"
+      # Discovery rather than a list: a `test_*.py` added beside the others is
+      # picked up without anyone remembering to name it here.
+      test-command: 'make test'
 
   # RULESET-LOAD-BEARING JOB ID: reports as 'secrets / 🔍 Scan for Secrets'.
   secrets:
