@@ -12,6 +12,7 @@ from tests import support
 
 from domain.banners import sample as BS
 from domain.canvas import BUDGET, lint
+from domain.lettering import width
 from domain.elements import data as ED
 from domain.elements import draw as E
 from domain.banners.compose import compose
@@ -201,7 +202,7 @@ class Dispatch(unittest.TestCase):
 
     def test_the_same_files_in_every_theme(self):
         for code, design in DESIGNS.items():
-            name, (h, f) = "repository", CONTENTS["repository"]
+            h, f = CONTENTS["repository"]
             content = h if design.kind == "header" else f
             self.assertEqual(set(render(design, content)), set(render(design, content.with_(tone="blueprint"))), code)
 
@@ -272,6 +273,32 @@ class EveryElement(unittest.TestCase):
         d = dict(ELEMENTS["action"], desc="Arrows → and 漢")
         SE.draw("placard", d, "day", "wide")
         self.assertEqual(E.WARNINGS, ["sans cannot letter '漢'"])
+
+    def test_every_wire_stays_on_the_card(self):
+        own = loads((support.ROOT / ".github" / "markdown.yaml").read_text(encoding="utf-8"))
+        kit = ED.merged(ED.check(own["elements"]), {}, subject="tannergolden/markdown")["how-it-runs"]
+        for d in (ELEMENTS["how-it-runs"], kit):
+            for variant, w in (("wide", 830), ("narrow", 360)):
+                svg = SE.draw("schematic", d, "day", variant)
+                for path in re.findall(r'<path d="([^"]+)" fill="none" stroke="#[0-9A-F]{6}" stroke-width="1.8"', svg):
+                    xs = [float(x) for x in re.findall(r"[MLQ ]?(-?[\d.]+) -?[\d.]+", path)]
+                    self.assertTrue(xs and all(0 < x < w - 4 for x in xs), (variant, path))
+
+    def test_a_note_too_long_for_a_phone_wraps_evenly(self):
+        lines = SE._note_lines("Optional: a page that says nothing is drawn from GitHub", 360 - 40 - 24)
+        self.assertGreater(len(lines), 1)
+        self.assertTrue(all(width(line, "sans-bold", 8.5, .8) <= 360 - 40 - 24 for line in lines))
+
+    def test_a_phone_puts_the_box_that_goes_on_last_in_its_layer(self):
+        edges = [("a", "b"), ("a", "c"), ("c", "d")]
+        for keys in (["a", "b", "c", "d"], ["a", "c", "b", "d"]):
+            self.assertEqual(SE.phone_order(keys, edges), ["a", "b", "c", "d"], keys)
+        d = {"kind": "schematic", "subject": "x/y", "boxes": {k: {"title": k.upper(), "path": k} for k in "acbd"},
+             "wires": [list(e) for e in edges]}
+        svg = SE.draw("schematic", d, "day", "narrow")
+        wires = re.findall(r'<path d="([^"]+)" fill="none" stroke="#[0-9A-F]{6}" stroke-width="1.8"', svg)
+        self.assertEqual(len(wires), 3)
+        self.assertEqual(sum("Q" in w for w in wires), 1, "only a to c goes round, down the channel")
 
     def test_a_long_subject_keeps_its_name_in_the_band(self):
         text, size, mw, _ = SE._band(360, "schematic", "an-organisation-with-a-long-name/and-a-long-repository", "")

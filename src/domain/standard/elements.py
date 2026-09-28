@@ -23,7 +23,7 @@ import math
 from ..canvas import BUDGET, DARK, DAY, c, lint
 from ..elements import draw as E
 from ..elements.layout import Box, layers, route, snake, timeline
-from ..lettering import cap_height, f1, width
+from ..lettering import cap_height, f1, width, wrap
 from . import pieces as P
 from .pieces import Chip
 
@@ -245,22 +245,39 @@ def _group(cv, th: dict, x0: float, y0: float, x1: float, y1: float, label: str)
             + caps(cv, text, cx, y0 + cap(8) / 2, th, 8, anchor="middle", what="group caption"))
 
 
+def _note_lines(text: str, room: float) -> list[str]:
+    """A note's words in the fewest lines no wider than `room`, split as evenly as they go."""
+    words = E.plain(str(text).upper(), "sans-bold")
+    return wrap(words, "sans-bold", 8.5, room, .8, rows=6) or [words]
+
+
 def _notes(cv, th: dict, items, *, x: float, y: float, right: float, measure: bool = False):
-    """Numbered notes in rows, each a number chip and its words in small capitals. With `measure`, only the
-    height they take."""
-    xx, yy, out = x, y, []
+    """Numbered notes, each a number chip and its words in small capitals, side by side while they fit and
+    each wrapped to the width when it alone does not. With `measure`, only the height they take."""
+    xx, yy, row_h, out = x, y, 16.0, []
     for num, text in items:
-        text = E.plain(str(text).upper(), "sans-bold")
-        w = 24 + width(text, "sans-bold", 8.5, .8)
+        lines = _note_lines(text, right - x - 24)
+        w = 24 + max(width(line, "sans-bold", 8.5, .8) for line in lines)
+        h = 16 + 16 * (len(lines) - 1)
         if xx + w > right and xx > x:
-            xx, yy = x, yy + 24
+            xx, yy, row_h = x, yy + row_h + 8, 16.0
         if not measure:
-            out.append(number(cv, num, xx, yy) + caps(cv, text, xx + 24, yy + 8 + cap(8.5) / 2, th, 8.5, th["ink"],
-                                                       what="note"))
+            out.append(number(cv, num, xx, yy))
+            for j, line in enumerate(lines):
+                out.append(caps(cv, line, xx + 24, yy + 8 + cap(8.5) / 2 + 16 * j, th, 8.5, th["ink"], what="note"))
+        row_h = max(row_h, h)
         xx += w + 24
     if measure:
-        return (yy + 16 - y) if items else 0
+        return (yy + row_h - y) if items else 0
     return "".join(out)
+
+
+def phone_order(keys: list[str], edges: list[tuple[str, str]]) -> list[str]:
+    """The boxes one to a row on a phone: by layer, and within a layer, a box whose wire goes on to the next
+    layer last, so that wire meets its box directly under it rather than taking the channel."""
+    lay = layers(keys, edges)
+    onward = {a for a, b in edges if lay.get(b) == lay.get(a, -2) + 1}
+    return sorted(keys, key=lambda k: (lay[k], k in onward, keys.index(k)))
 
 
 def schematic(d: dict, th: dict, variant: str = "wide") -> str:
@@ -280,8 +297,7 @@ def schematic(d: dict, th: dict, variant: str = "wide") -> str:
     wires: list[tuple] = []
     if narrow:
         left, bw, gap_y = PAD, 250, 42
-        lay = layers(keys, edges)
-        order = sorted(keys, key=lambda k: (lay[k], keys.index(k)))
+        order = phone_order(keys, edges)
         y, prev = top, None
         for k in order:
             grp = d["boxes"][k].get("in")
@@ -304,7 +320,8 @@ def schematic(d: dict, th: dict, variant: str = "wide") -> str:
                 channel += 1
                 wires.append(([(A.x + A.w, A.cy), (chx, A.cy), (chx, B.cy), (B.x + B.w, B.cy)], label, True))
     else:
-        left, gap_x = 26, 72
+        # The margin leaves room outside the last column for a wire that goes round it.
+        left, gap_x = 46, 72
         used = snake(boxes, edges, left=left, top=top, width=W - 2 * left, per_row=3, box_w=212, box_h=bh,
                      gap_x=gap_x, gap_y=64)
         # A group round a box in the first row needs the room above it for its caption.
@@ -673,7 +690,7 @@ def milestones(d: dict, th: dict, variant: str = "wide") -> str:
         bottom = axis - 18 - lift
         blk = bottom - h
         planned = e.get("next")
-        stem = f' stroke-dasharray="3 3"' if planned else ""
+        stem = ' stroke-dasharray="3 3"' if planned else ""
         cv.add(f'<path d="M{f1(x)} {f1(bottom + 4)}V{axis - 5}" stroke="{muted if planned or e.get("made") else ink}" '
                f'stroke-width="1.2"{stem}/>')
         if e.get("made"):
