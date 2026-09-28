@@ -38,6 +38,8 @@ on:
       - '🚀 Preview Deploy'
       # Once a quarter: the measurement the trophies' thresholds are pinned to.
       - '📐 Calibrate'
+      # The kit drawing its own page, daily: the first to show a broken release.
+      - '📝 Own Page'
       # Add any workflow whose silent failure would cost something.
       #
       # ⚠️ NEVER ADD THIS WORKFLOW TO ITS OWN LIST. It cannot escalate its

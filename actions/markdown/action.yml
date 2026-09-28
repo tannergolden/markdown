@@ -1,0 +1,137 @@
+# SPDX-FileCopyrightText: 2026 Tanner Golden
+# SPDX-License-Identifier: MIT
+#
+# The action the reusable workflow runs: one run of the kit on the checkout it
+# is handed. It lives under actions/, outside .github/, because the standards
+# keep actions there: .github/ is left out of release archives.
+#
+# Most repositories never name this action; they call
+# .github/workflows/markdown.yml from a stub, which checks the repository and
+# the kit out and commits what this drew.
+name: 'Markdown'
+description: >-
+  A README's header, footer, badges, elements and trophy case, measured over
+  the API and drawn as committed SVGs in one run, never fetched.
+author: 'Tanner Golden'
+branding:
+  icon: 'book-open'
+  color: 'blue'
+
+inputs:
+  command:
+    description: >-
+      run measures, draws, writes and reports; check draws the committed page
+      again from the measurement the lock keeps and fails if any file or README
+      block differs, with no token and no network; render draws from the lock
+      and writes.
+    required: false
+    default: 'run'
+  mode:
+    description: 'profile, repository or organization. Empty reads the settings, which guess it by default.'
+    required: false
+    default: ''
+  theme:
+    description: 'standard, a print, rainbowprint, or a print of the settings. Empty reads the settings.'
+    required: false
+    default: ''
+  holidays:
+    description: "'false' keeps the holiday sets away. Empty reads the settings, whose default is on."
+    required: false
+    default: ''
+  holiday-days:
+    description: "How long each holiday's set is up, 3 to 7 days. Empty reads the settings."
+    required: false
+    default: ''
+  token:
+    description: >-
+      The token the run measures with. GITHUB_TOKEN reads everything public;
+      a read-only personal token also counts private contributions.
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  changed:
+    description: "'true' when the run changed any file."
+    value: ${{ steps.run.outputs.changed }}
+  summary:
+    description: 'One line: the page, its theme, and what each part drew.'
+    value: ${{ steps.run.outputs.summary }}
+  commit-file:
+    description: 'The commit message the kit wrote for this run, for `git commit -F`. Missing when nothing changed.'
+    value: ${{ steps.run.outputs.commit-file }}
+  commit-title:
+    description: "The commit's subject, unique to what the run measured. Empty when nothing changed."
+    value: ${{ steps.run.outputs.commit-title }}
+  commit-body:
+    description: "The commit's body: what the page shows, what moved, and why it is committed."
+    value: ${{ steps.run.outputs.commit-body }}
+
+runs:
+  using: 'composite'
+  steps:
+    # No setup-python step on purpose: the kit is standard-library Python and
+    # every GitHub-hosted runner ships python3. Nothing to install or cache.
+    - id: run
+      shell: bash
+      # Inputs travel through env, never interpolated into the script: a
+      # ${{ }} expansion inside `run:` is a shell-injection sink.
+      env:
+        KIT_COMMAND: ${{ inputs.command }}
+        KIT_MODE: ${{ inputs.mode }}
+        KIT_THEME: ${{ inputs.theme }}
+        KIT_HOLIDAYS: ${{ inputs.holidays }}
+        KIT_HOLIDAY_DAYS: ${{ inputs.holiday-days }}
+        KIT_PATH: ${{ github.action_path }}
+        MARKDOWN_TOKEN: ${{ inputs.token }}
+      run: |
+        set -euo pipefail
+        case "$KIT_COMMAND" in
+          run|check|render) ;;
+          *) echo "::error::unknown command '$KIT_COMMAND' (run, check or render)"; exit 1 ;;
+        esac
+        PY="$(command -v python3 || command -v python || true)"
+        if [ -z "$PY" ]; then echo "::error::no python3 or python on PATH"; exit 1; fi
+        kit="$KIT_PATH/../../src/markdown-kit.py"
+
+        root="$GITHUB_WORKSPACE"
+        # The reusable workflow fetches the kit beside the checkout; keep its
+        # folder out of git's view, so it is never a change and never lands
+        # in a commit.
+        if [ -d "$root/.markdown-kit" ] && [ -d "$root/.git" ]; then
+          grep -qx '.markdown-kit/' "$root/.git/info/exclude" 2>/dev/null || echo '.markdown-kit/' >> "$root/.git/info/exclude"
+        fi
+        # --untracked-files=all: the default folds a new folder into one line,
+        # so a second file drawn into it would read as no change.
+        before="$(git -C "$root" status --porcelain --untracked-files=all 2>/dev/null || true)"
+
+        args=( --root "$root" )
+        if [ -n "$KIT_MODE" ]; then args+=( --input "mode=$KIT_MODE" ); fi
+        if [ -n "$KIT_THEME" ]; then args+=( --input "theme=$KIT_THEME" ); fi
+        if [ -n "$KIT_HOLIDAYS" ]; then args+=( --input "holidays=$KIT_HOLIDAYS" ); fi
+        if [ -n "$KIT_HOLIDAY_DAYS" ]; then args+=( --input "holiday-days=$KIT_HOLIDAY_DAYS" ); fi
+        msg="$RUNNER_TEMP/markdown-commit.txt"
+        rm -f "$msg"
+        if [ "$KIT_COMMAND" = "run" ]; then
+          args+=( --commit-file "$msg" )
+        fi
+
+        out="$("$PY" "$kit" "$KIT_COMMAND" "${args[@]}" | tee /dev/stderr)"
+        {
+          echo "summary<<EOF"
+          printf '%s\n' "$out" | head -n 1
+          echo "EOF"
+          echo "commit-file=$msg"
+          echo "commit-title<<EOF"
+          if [ -f "$msg" ]; then head -n 1 "$msg"; fi
+          echo "EOF"
+          echo "commit-body<<EOF"
+          if [ -f "$msg" ]; then tail -n +3 "$msg"; fi
+          echo "EOF"
+        } >> "$GITHUB_OUTPUT"
+
+        after="$(git -C "$root" status --porcelain --untracked-files=all 2>/dev/null || true)"
+        if [ "$before" != "$after" ]; then
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "changed=false" >> "$GITHUB_OUTPUT"
+        fi
