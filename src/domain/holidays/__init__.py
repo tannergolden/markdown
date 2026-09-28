@@ -63,10 +63,16 @@ NAMES = {k: name for k, name, _ in HOLIDAYS}
 SETS = {"halloween": "halloween"}
 
 
-def drawn_by(key: str | None):
-    """The set that draws `key`'s window (a `designs.Holiday`), or None when it has none yet."""
-    package = SETS.get(key or "")
-    return importlib.import_module(f"{__name__}.{package}").SET if package else None
+def drawn_by(held: str | None):
+    """The set that draws a window (a `designs.Holiday`), or None when it has none yet. `held` is the
+    holiday's key, and after a colon the day it falls on, `new-years-day:2027-01-01`, which a set that
+    says the year it celebrates needs; with no day a set draws its sample."""
+    key, _, day = (held or "").partition(":")
+    package = SETS.get(key)
+    if not package:
+        return None
+    drawn = importlib.import_module(f"{__name__}.{package}").SET
+    return drawn.on(dt.date.fromisoformat(day)) if day else drawn
 
 
 @dataclass(frozen=True)

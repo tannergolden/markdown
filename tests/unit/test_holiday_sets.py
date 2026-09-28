@@ -78,6 +78,14 @@ class Registry(unittest.TestCase):
             self.assertEqual((held.key, held.name), (key, H.NAMES[key]))
             self.assertTrue(held.tokens)
 
+    def test_a_set_is_told_the_day_its_holiday_falls_on_and_the_shared_one_is_not(self):
+        import datetime as dt
+        for key, held in SETS.items():
+            on = H.drawn_by(f"{key}:2026-10-31")
+            self.assertEqual((on.key, on.day), (key, dt.date(2026, 10, 31)))
+            self.assertIsNone(held.day)
+            self.assertIsNone(H.drawn_by(key).day)
+
     def test_a_holiday_without_its_set_and_no_holiday_draw_nothing(self):
         for key in ("", None, "no-such-day", *[k for k in H.KEYS if k not in H.SETS]):
             self.assertIsNone(H.drawn_by(key), key)

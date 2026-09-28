@@ -35,6 +35,11 @@ class Page:
         """The key of the holiday set the page is drawn in today, or "" for its own theme."""
         return self.holiday.key if self.holiday else ""
 
+    @property
+    def drawn_in(self) -> str:
+        """What the parts are told to draw in: the set's key and the day its holiday falls on, or ""."""
+        return f"{self.holiday.key}:{self.holiday.day.isoformat()}" if self.holiday else ""
+
 
 def here_of(root: Path, ports) -> str:
     """owner/name of the repository the run is in: what GitHub Actions says, else what `origin` says."""

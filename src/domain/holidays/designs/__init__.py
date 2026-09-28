@@ -12,6 +12,9 @@ same content and theme it hands a print, and gets finished SVGs back.
 """
 from __future__ import annotations
 
+import copy
+import datetime as dt
+
 from ... import KIT, KIT_VERSION
 from ...canvas import BUDGET
 from ..pixel import Pix
@@ -27,6 +30,13 @@ class Holiday(Banners, Elements, Badges):
     key = ""          # the calendar's key: "halloween"
     name = ""         # "Halloween"
     tokens: frozenset = frozenset()   # every colour its files may use, upper-case #RRGGBB
+    day: dt.date | None = None        # the day the holiday falls on this time, when the kit says
+
+    def on(self, day: dt.date) -> "Holiday":
+        """This set drawing the holiday that falls on `day`."""
+        held = copy.copy(self)
+        held.day = day
+        return held
 
     # ------------------------------------------------------------------------------------------ hooks
     def ink(self, night: bool) -> dict:

@@ -86,7 +86,7 @@ def plan_page(page: Page, measured: dict, *, draw: bool = True, was: list[str] =
         result["blocks"].update({"header": None, "footer": None})
     elif "banners" in measured:
         p = banners.plan(measured["banners"], cfg["banners"], theme=page.theme, out=page.out, readme=page.readme,
-                         draw=draw, holiday=page.held)
+                         draw=draw, holiday=page.drawn_in)
         result["parts"]["banners"] = p
         result["files"].update(p["files"])
         # A design set to none takes its block away, so both are named whether drawn or not.
@@ -98,7 +98,7 @@ def plan_page(page: Page, measured: dict, *, draw: bool = True, was: list[str] =
     result["blocks"]["badges"] = None
     if listed:
         p = badges.plan(cfg["badges"], measured.get("badges") or {}, theme=page.theme, shade=page.rainbow,
-                        today=page.today, out=page.out, readme=page.readme, draw=draw, holiday=page.held)
+                        today=page.today, out=page.out, readme=page.readme, draw=draw, holiday=page.drawn_in)
         result["parts"]["badges"] = p
         result["files"].update(p["files"])
         result["blocks"]["badges"] = p["block"]
@@ -108,7 +108,7 @@ def plan_page(page: Page, measured: dict, *, draw: bool = True, was: list[str] =
     if section:
         p = elements.plan(section, measured.get("elements") or {}, subject=page.subject,
                           today=page.today.isoformat(), tone=page.theme, out=page.out, readme=page.readme, draw=draw,
-                          holiday=page.held)
+                          holiday=page.drawn_in)
         result["parts"]["elements"] = p
         result["files"].update(p["files"])
         result["blocks"].update(p["blocks"])
