@@ -129,6 +129,22 @@ class Elements(unittest.TestCase):
         for y0, y1 in down:
             self.assertTrue(max(y0, y1) <= letters[0] or min(y0, y1) >= letters[1], (y0, y1, letters))
 
+    def test_a_label_with_no_clear_spot_in_its_run_sits_above_it(self):
+        # Two wires into one box: the second joins the first from below, near the middle of the first's run,
+        # where neither side of the join is long enough for the first's label.
+        cv, col = E.new("schematic", "wide", E.THEMES["day"], "blueprint", 830, 300, "t", "d")
+        placed = []
+        E._wire(cv, col, [(100, 50), (171, 50)], "CALLS", 830, placed=placed, avoid=[(136, 50, 136, 120)])
+        x0, y0, x1, y1 = placed[-1]
+        self.assertLessEqual(y1, 50 - 4, "the label is set above the line")
+        self.assertTrue(x0 < 136 < x1, "centred on the run, over the join")
+        self.assertIn('d="M100 50H171"', cv.svg(), "and the line runs unbroken under it")
+        # With the run to itself, the label sits in a gap in the line as before.
+        cv, col = E.new("schematic", "wide", E.THEMES["day"], "blueprint", 830, 300, "t", "d")
+        placed = []
+        E._wire(cv, col, [(100, 50), (171, 50)], "CALLS", 830, placed=placed)
+        self.assertTrue(placed[-1][1] < 50 < placed[-1][3])
+
     def test_the_first_row_sits_under_the_title_unless_a_group_needs_the_room(self):
         def first_row(boxes: dict) -> float:
             d = {"kind": "schematic", "subject": "x/y", "boxes": boxes, "groups": {"g": "GROUP"},

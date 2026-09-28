@@ -215,8 +215,10 @@ def _wire(cv, col, pts: list, label: str | None, W: float, *, along: bool = Fals
         return all(box[2] < a - 4 or box[0] > b + 4 or box[3] < c_ - 4 or box[1] > d + 4
                    for a, c_, b, d in placed + avoid)
 
-    def spot(x0, y0, x1, y1, tw, th):
-        """Where along the run the label sits: the middle, else stepped toward either end until clear."""
+    def spot(x0, y0, x1, y1, tw, th, lift=False):
+        """Where along the run the label sits: the middle, else stepped toward either end until clear. With
+        `lift`, a label with no clear spot in a horizontal run is set just above it instead, clear of a wire
+        that joins the run from below, and the second value says so."""
         mx, my = (x0 + x1) / 2, (y0 + y1) / 2
         run = max(abs(x1 - x0), abs(y1 - y0))
         for k in (0, 1, -1, 2, -2, 3, -3):
@@ -229,18 +231,25 @@ def _wire(cv, col, pts: list, label: str | None, W: float, *, along: bool = Fals
                      (min(y0, y1) - 1 <= box[1] and box[3] <= max(y0, y1) + 1)
             if (clear(box) and (inside or k == 0)) or run < 30:
                 placed.append(box)
-                return px, py
+                return px, (False if lift else py)
+        above = (mx - tw / 2 + 4, my - 15, mx + tw / 2 - 4, my - 5)
+        if lift and clear(above):
+            placed.append(above)
+            return mx, True
         placed.append((mx - tw / 2, my - th / 2, mx + tw / 2, my + th / 2))
-        return mx, my
+        return mx, (False if lift else my)
 
     for i, ((x0, y0), (x1, y1)) in enumerate(segs):
         if i == gap_seg and y0 == y1:
             tw = width(label, "meta", 8, 1.1)
-            px, _ = spot(x0, y0, x1, y1, tw + 12, 10)
+            px, lifted = spot(x0, y0, x1, y1, tw + 12, 10, lift=True)
             half = tw / 2 + 6
             sgn = 1 if x1 > x0 else -1
-            parts.append(f"M{f1(x0)} {f1(y0)}H{f1(px - sgn * half)}M{f1(px + sgn * half)} {f1(y0)}H{f1(x1)}")
-            say(cv, label, x=px, y=y0 + 3, col=col, size=8, anchor="middle", ls=1.1, op=.85)
+            if lifted:
+                parts.append(f"M{f1(x0)} {f1(y0)}H{f1(x1)}")
+            else:
+                parts.append(f"M{f1(x0)} {f1(y0)}H{f1(px - sgn * half)}M{f1(px + sgn * half)} {f1(y0)}H{f1(x1)}")
+            say(cv, label, x=px, y=y0 - 6 if lifted else y0 + 3, col=col, size=8, anchor="middle", ls=1.1, op=.85)
         elif i == gap_seg and abs(y1 - y0) >= 36:
             sgn = 1 if y1 > y0 else -1
             tw = width(label, "meta", 8, 1.1)
@@ -369,8 +378,13 @@ def schematic(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
         cv.add(f'<rect x="{f1(b.x)}" y="{f1(b.y)}" width="34" height="{f1(b.h)}" fill="{line}" fill-opacity=".06"/>'
                + _open(col, f"M{f1(b.x + 34)} {f1(b.y)}V{f1(b.y + b.h)}", .45))
         cv.add(icon(spec.get("icon", "grid"), b.x + 8, b.y + (b.h - 18) / 2, 18, col["ink"], 1.8))
-        say(cv, str(spec["title"]).upper(), x=b.x + 46, y=b.y + b.h / 2 - 3, col=col, size=11.5, face="num", ls=1)
-        say(cv, spec.get("path", ""), x=b.x + 46, y=b.y + b.h / 2 + 12, col=col, size=9, face="mono", op=.75)
+        # The title shares its row with the note's bubble; each line takes the largest size that fits its box.
+        name, path = plain(str(spec["title"]).upper(), "num"), plain(spec.get("path", ""), "mono")
+        room = b.w - 46 - 8
+        say(cv, name, x=b.x + 46, y=b.y + b.h / 2 - 3, col=col, face="num", ls=1,
+            size=fit(name, "num", room - (16 if spec.get("note") else 0), 11.5, 8.5, 1))
+        say(cv, path, x=b.x + 46, y=b.y + b.h / 2 + 12, col=col, size=fit(path, "mono", room, 9, 6.5), face="mono",
+            op=.75)
         if spec.get("note"):
             bubble(cv, col, spec["note"], b.x + b.w - 12, b.y + 12)
     taken = [(b.x, b.y, b.x + b.w, b.y + b.h) for b in boxes] + words
