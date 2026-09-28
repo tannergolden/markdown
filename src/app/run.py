@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 """A run, start to finish: measure the page, draw every part, write what changed, and say what moved.
 
-  run      measure through GitHub, draw, write the files, the README's blocks and the lock
+  run      measure through GitHub and git, draw, write the files, the README's blocks and the lock
   render   redraw from what the lock kept (or a saved measurement), write, and measure nothing
   check    redraw from what the lock kept and compare, byte for byte, writing nothing
   preview  draw a sample page into a folder the way a run would, and keep its lock, so the folder checks
@@ -18,6 +18,7 @@ import dataclasses
 import datetime as dt
 import json
 import posixpath
+import textwrap
 from pathlib import Path
 
 from domain import lock, prints, readme, settings
@@ -25,7 +26,7 @@ from domain.banners import plan as banners_plan
 from domain.banners import sample as banners_sample
 
 from .page import Page, here_of, mode_and_subject, settle
-from .parts import banners
+from .parts import banners, elements
 
 LOCK = ".github/markdown.lock.json"
 # What the lock keeps of the banners' measurement: what `plan` needs to draw them again, nothing that moves by itself.
@@ -43,16 +44,28 @@ def write_lock(root: Path, ports, lk: dict) -> bool:
 def remembered(lk: dict) -> dict:
     """Each part's last measurement, as the lock kept it: what a check and a render redraw from."""
     out = {}
-    last = lock.part(lk, "banners").get("last") if "banners" in lk["parts"] else None
-    if last:
-        out["banners"] = last
+    parts = lk["parts"]
+    if (parts.get("banners") or {}).get("last"):
+        out["banners"] = parts["banners"]["last"]
+    if "elements" in parts:
+        out["elements"] = parts["elements"].get("measured") or {}
     return out
+
+
+def _drawn_elements(lk: dict) -> list[str]:
+    """The elements the committed page carries: the ones this kit drew last, and so the ones it may take out."""
+    return list((lk["parts"].get("elements") or {}).get("drawn") or [])
 
 
 # --- planning ----------------------------------------------------------------------------------
 
-def plan_page(page: Page, measured: dict, *, draw: bool = True) -> dict:
-    """Everything a run writes for this page: every part's files by path, the README's blocks, and the notes."""
+def plan_page(page: Page, measured: dict, *, draw: bool = True, was: list[str] = ()) -> dict:
+    """Everything a run writes for this page: every part's files by path, the README's blocks, and the notes.
+
+    `was` names the elements the committed page carries, so one no longer in
+    the settings has its block taken out; a block the kit never drew is never
+    touched.
+    """
     cfg = page.cfg
     result: dict = {"parts": {}, "files": {}, "blocks": {}, "notes": []}
     if cfg["banners"] is False:
@@ -64,6 +77,15 @@ def plan_page(page: Page, measured: dict, *, draw: bool = True) -> dict:
         result["files"].update(p["files"])
         # A design set to none takes its block away, so both are named whether drawn or not.
         result["blocks"].update({"header": None, "footer": None, **p["blocks"]})
+        result["notes"] += p["notes"]
+    section = cfg["elements"] if isinstance(cfg["elements"], dict) else {}
+    result["blocks"].update({f"element:{eid}": None for eid in was if eid not in section})
+    if section:
+        p = elements.plan(section, measured.get("elements") or {}, subject=page.subject,
+                          today=page.today.isoformat(), tone=page.theme, out=page.out, readme=page.readme, draw=draw)
+        result["parts"]["elements"] = p
+        result["files"].update(p["files"])
+        result["blocks"].update(p["blocks"])
         result["notes"] += p["notes"]
     return result
 
@@ -101,7 +123,8 @@ def stale(page: Page, ports, planned: dict) -> list[str]:
     for name, wanted in planned["blocks"].items():
         found = readme.current(text, name)
         if wanted is not None and found is None:
-            out.append(f"{page.readme} ({name} markers missing)")
+            if not name.startswith("element:"):
+                out.append(f"{page.readme} ({name} markers missing)")
         elif wanted is not None and found != wanted:
             out.append(f"{page.readme} ({name} block differs)")
         elif wanted is None and found is not None:
@@ -111,31 +134,55 @@ def stale(page: Page, ports, planned: dict) -> list[str]:
 
 # --- saying what happened --------------------------------------------------------------------------
 
+def _series(items: list[str]) -> str:
+    items = list(items)
+    return items[0] if len(items) == 1 else ", ".join(items[:-1]) + " and " + items[-1] if items else ""
+
+
 def describe(page: Page, planned: dict) -> str:
     parts = planned["parts"]
-    if "banners" in parts:
-        return banners_plan.describe(parts["banners"])
-    return f"the page for {page.subject} ({page.mode}): no banners"
+    head = (banners_plan.describe(parts["banners"]) if "banners" in parts
+            else f"the page for {page.subject} ({page.mode}) in {page.theme}")
+    if "elements" in parts:
+        head += f"; elements {', '.join(parts['elements']['names'])}"
+    return head
 
 
 def _before(page: Page, lk: dict) -> dict | None:
     """What the committed page showed, for the commit message to compare with; None on a first run."""
     last = remembered(lk)
-    if "banners" not in last or "banners" not in (page.cfg or {}) or page.cfg["banners"] is False:
+    if "banners" not in last or page.cfg["banners"] is False:
         return None
     try:
-        return banners_plan.facts(plan_page(page, last, draw=False)["parts"]["banners"])
+        return banners_plan.facts(plan_page(page, {"banners": last["banners"]}, draw=False)["parts"]["banners"])
     except (ValueError, KeyError, TypeError):
         return None
 
 
 def commit_message(page: Page, planned: dict, before: dict | None, changed: list[str], run_id: str = "") -> str:
-    if "banners" in planned["parts"]:
-        return banners_plan.commit_message(planned["parts"]["banners"], before, changed, run_id,
-                                           rainbow=page.rainbow is not None)
-    return (f"chore(markdown): \U0001FAA7 redraw the page for {page.subject}\n\n"
-            f"This run rewrote {len(changed)} files. Nothing is fetched when the README is viewed, so every value\n"
-            "the page shows has to be committed.\n")
+    """A Conventional Commit for this run: what the page now shows, what moved, and why it is committed."""
+    parts = planned["parts"]
+    folder = posixpath.join(page.out.strip("/") or ".", "elements") + "/"
+    redrawn = sorted({rel[len(folder):].rsplit("-", 1)[0].removesuffix("-narrow").removesuffix("-still")
+                      for rel in changed if rel.startswith(folder)})
+    said = f"Redrawn from the settings and the repository: the elements {_series(redrawn)}." if redrawn else ""
+    if "banners" in parts:
+        message = banners_plan.commit_message(parts["banners"], before, changed, run_id,
+                                              rainbow=page.rainbow is not None)
+        if said:
+            head, _, rest = message.partition("\n\n")
+            paras = rest.split("\n\n")
+            paras.insert(len(paras) - 1, textwrap.fill(said, 72))
+            message = head + "\n\n" + "\n\n".join(paras)
+        return message
+    subject = f"chore(markdown): \U0001F4D0 redraw {_series(redrawn)}" if redrawn else \
+        f"chore(markdown): \U0001F4D0 redraw the page for {page.subject}"
+    if len(subject) > 72:
+        subject = f"chore(markdown): \U0001F4D0 redraw the page for {page.subject}"
+    body = textwrap.fill((said + " " if said else "") + f"This run rewrote {len(changed)} files. Nothing is fetched "
+                         "when the README is viewed, so every value the page shows has to be committed. The kit "
+                         "recognises this commit by its scope and never counts it as the repository's last change.", 72)
+    return f"{subject}\n\n{body}\n"
 
 
 # --- the commands ------------------------------------------------------------------------------
@@ -144,25 +191,30 @@ def finish(page: Page, ports, measured: dict, lk: dict, *, use_lock: bool, advan
            commit_file: str = "") -> list[str]:
     """Plan, write and remember one page. Returns the paths that changed."""
     before = _before(page, lk) if use_lock else None
-    planned = plan_page(page, measured)
-    was = (lock.drawn(lk) or {}).get("rainbow")
-    if page.rainbow and advance and was in prints.SPECTRUM and stale(page, ports, planned):
+    was = _drawn_elements(lk)
+    planned = plan_page(page, measured, was=was)
+    shade_was = (lock.drawn(lk) or {}).get("rainbow")
+    if page.rainbow and advance and shade_was in prints.SPECTRUM and stale(page, ports, planned):
         # An update: a rainbowprint draws each one in the next colour of the spectrum.
         nxt = prints.rainbow_after(page.rainbow)
         page = dataclasses.replace(page, theme=nxt, rainbow=nxt)
-        planned = plan_page(page, measured)
+        planned = plan_page(page, measured, was=was)
     print(describe(page, planned), file=ports.out)
     changed, unplaced = write(page, ports, planned)
-    notes = planned["notes"] + [f"{name}: the README has no markers for it yet, so it is not shown"
-                                for name in unplaced]
+    notes = planned["notes"] + [f"{name}: the README has no markers for it yet, so it is not shown; add "
+                                f"<!-- markdown:{name}:start --> and its end where it belongs" for name in unplaced]
     for note in notes:
         print(f"note: {note}", file=ports.out)
     if use_lock:
         due = lock.snapshot_due(lk, page.today)
         if changed or due or ports.read_text(page.root / LOCK) is None:
-            for name, m in measured.items():
-                keep = BANNERS_KEEP if name == "banners" else tuple(m)
-                lock.part(lk, name)["last"] = {k: m[k] for k in keep if k in m}
+            if "banners" in measured:
+                lock.part(lk, "banners")["last"] = {k: measured["banners"][k] for k in BANNERS_KEEP
+                                                    if k in measured["banners"]}
+            if "elements" in planned["parts"] or "elements" in lk["parts"]:
+                record = lock.part(lk, "elements")
+                record["measured"] = measured.get("elements") or {}
+                record["drawn"] = planned["parts"]["elements"]["names"] if "elements" in planned["parts"] else []
             lock.remember_drawn(lk, theme=page.cfg["theme"], today=page.today, rainbow=page.rainbow)
             if due:
                 lock.mark_snapshot(lk, page.today)
@@ -186,7 +238,7 @@ def _is_organization(gh, owner: str) -> bool:
 
 
 def measure_page(root: Path, cfg: dict, ports, today: dt.date | None = None) -> tuple[Page, dict, dict]:
-    """The page and every part's measurement, read from GitHub now."""
+    """The page and every part's measurement, read from GitHub and git now."""
     lk = read_lock(root, ports)
     here = here_of(root, ports)
     gh = ports.github()
@@ -202,6 +254,15 @@ def measure_page(root: Path, cfg: dict, ports, today: dt.date | None = None) -> 
     if cfg["banners"] is not False:
         measured["banners"] = banners.measure(gh, mode, subject, here or f"{subject}/{subject}",
                                               today=day.isoformat())
+    section = cfg["elements"] if isinstance(cfg["elements"], dict) else {}
+    if section:
+        repo = ports.git(root)
+        notes: list = []
+        measured["elements"] = elements.measure(section, remembered(lk).get("elements") or {}, git=repo.run, gh=gh,
+                                                subject=subject if mode == "repository" else here, today=day,
+                                                notes=notes)
+        for note in notes:
+            print(f"note: {note}", file=ports.out)
     return page, measured, lk
 
 
@@ -216,15 +277,18 @@ def run(root: Path, cfg: dict, ports, *, today: dt.date | None = None, commit_fi
 def _offline_page(root: Path, cfg: dict, measured: dict, lk: dict) -> Page:
     """The page a saved measurement was taken of, settled without asking GitHub anything."""
     m = measured.get("banners") or {}
-    mode = m.get("mode") or ("repository" if cfg["mode"] == "auto" else cfg["mode"])
-    subject = m.get("subject") or cfg["subject"] or ""
-    day = dt.date.fromisoformat(m["today"]) if m.get("today") else dt.date(2026, 1, 1)
+    drawn = lock.drawn(lk) or {}
+    mode = cfg["mode"] if cfg["mode"] != "auto" else m.get("mode") or "repository"
+    subject = cfg["subject"] or m.get("subject") or ""
+    stamp = m.get("today") or drawn.get("day")
+    day = dt.date.fromisoformat(stamp) if stamp else dt.date(2026, 1, 1)
     return settle(root, cfg, mode=mode, subject=subject, here="", today=day, lk=lk)
 
 
 def render(root: Path, cfg: dict, ports, measured: dict | None = None) -> int:
     lk = read_lock(root, ports)
-    measured = measured or remembered(lk) or sample(cfg)
+    if measured is None:
+        measured = remembered(lk) or sample(cfg)
     finish(_offline_page(root, cfg, measured, lk), ports, measured, lk, use_lock=False)
     return 0
 
@@ -237,12 +301,12 @@ def check(root: Path, cfg: dict, ports, measured: dict | None = None) -> int:
     settings changed without a run.
     """
     lk = read_lock(root, ports)
-    measured = measured or remembered(lk)
-    if not measured:
+    measured = remembered(lk) if measured is None else measured
+    if cfg["banners"] is not False and "banners" not in measured:
         print("check needs a measurement: run the kit once with the lock on, or pass --from", file=ports.out)
         return 2
     page = _offline_page(root, cfg, measured, lk)
-    planned = plan_page(page, measured)
+    planned = plan_page(page, measured, was=_drawn_elements(lk))
     found = stale(page, ports, planned)
     if found:
         print("stale: " + ", ".join(found), file=ports.out)

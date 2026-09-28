@@ -23,7 +23,7 @@ lint:
 	@$(PYTHON) .github/scripts/validate-repository.py
 	@$(PYTHON) -m compileall -q src tests
 	@$(TEST) -s tests/unit -p 'test_layering.py'
-	@$(KIT) lint > /dev/null || $(KIT) lint
+	@$(KIT) lint --specimen tests/fixtures/driftmark > /dev/null || $(KIT) lint --specimen tests/fixtures/driftmark
 
 ## draw: Draw a sample page into preview/ the way a run would, in the blueprint (no network)
 draw:

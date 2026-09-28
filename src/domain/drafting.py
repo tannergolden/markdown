@@ -1,10 +1,10 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
-"""Drafting: what every banner here is drawn with.
+"""Drafting: the paper every sheet in a print is drawn on, the banners' and the elements' alike.
 
 A banner is a sheet from a set of drawings, the header the first sheet of
-the set and the footer the second. This module holds what every sheet
-shares: the print's colours, the paper with its grain, grid, border and
+the set and the footer the second, and every element is a sheet between
+them. This module holds what every sheet shares: the print's colours, the paper with its grain, grid, border and
 zone marks, dimensions, numbered notes, a title block's cells, and the
 plotter that draws the linework in as the page opens.
 
@@ -15,10 +15,10 @@ from __future__ import annotations
 
 import math
 
-from ..canvas import Canvas, c
-from ..draw import clip_rect, grain
-from ..lettering import cap_height, f1, fit, flow, fx, width
-from ..prints import colours  # noqa: F401  (the designs take a print's colours from here, with its drawing)
+from .canvas import Canvas, c
+from .draw import clip_rect, grain
+from .lettering import cap_height, f1, fit, flow, fx, width
+from .prints import colours  # noqa: F401  (a drawing takes a print's colours from here, with its paper)
 
 
 def hair(col: dict, opacity: float = .8) -> str:

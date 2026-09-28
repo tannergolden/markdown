@@ -29,6 +29,7 @@ from domain.banners.compose import compose
 from domain.banners.content import Footer, Header
 from domain.banners.designs import DESIGNS, check as lint_files, render as render_design
 from domain.banners.settings import check as banners_check
+from domain.elements import data as elements_data
 
 from . import config, run
 from .ports import Ports
@@ -77,7 +78,8 @@ def parser() -> argparse.ArgumentParser:
          today=False).add_argument("--from", dest="source", type=Path, help="a saved measurement to compare with")
     page(sub.add_parser("preview", help="draw a sample page into a folder, the way a run would"))
     page(sub.add_parser("measure", help="measure the page and print the measurement"))
-    sub.add_parser("lint", help="draw every design for every sample in every print, and lint every file")
+    sub.add_parser("lint", help="draw every design for every sample in every print, and lint every file").add_argument(
+        "--specimen", type=Path, help="a repository whose elements are drawn in every print too")
     s = page(sub.add_parser("settings", help="read a repository's settings and print them in full"), today=False)
     s.set_defaults(command="settings")
     h = sub.add_parser("holidays", help="the holiday calendar")
@@ -150,6 +152,21 @@ def cmd_lint(args, ports: Ports) -> int:
             print(f"{name:<10} {code} {design.name:<12} {len(prints.PRINTS)} prints, largest {largest / 1000:.1f} KB"
                   + ("" if not problems else f"  PROBLEMS: {problems}"), file=ports.out)
             failed += bool(problems)
+    if args.specimen:
+        cfg = config.load(args.specimen, ports)
+        section = cfg["elements"] if isinstance(cfg["elements"], dict) else {}
+        elements = elements_data.merged(section, {}, subject=cfg["subject"])
+        largest, problems = 0, []
+        for tone in prints.PRINTS:
+            try:
+                files = elements_data.render(elements, tone)
+            except ValueError as exc:  # a drawing that fails the lint says which, and how
+                problems.append(f"{tone}: {exc}")
+                continue
+            largest = max(largest, *(len(svg.encode("utf-8")) for svg in files.values()))
+        print(f"elements   {len(elements)} of them, {len(prints.PRINTS)} prints, largest {largest / 1000:.1f} KB"
+              + ("" if not problems else f"  PROBLEMS: {problems}"), file=ports.out)
+        failed += bool(problems)
     return 1 if failed else 0
 
 

@@ -52,7 +52,7 @@ class Header:
     # (LABEL, value) pairs, in the order they are drawn.
     figures: tuple = (("PROJECT", "tannergolden/banners"), ("RELEASE", "v1.0.0"), ("LANGUAGE", "Python"),
                       ("LICENSE", "MIT"))
-    # The print it is drawn in: a key of `drafting.PRINTS`.
+    # The print it is drawn in: a key of `prints.PRINTS`.
     tone: str = "blueprint"
     off: frozenset = field(default_factory=frozenset)
 
@@ -107,7 +107,7 @@ class Footer:
     links: tuple = (("Docs", "docs/Banner-Kit.md"), ("Issues", "https://github.com/tannergolden/banners/issues"),
                     ("Releases", "https://github.com/tannergolden/banners/releases"))
     built: bool = True
-    # The print it is drawn in, the header's: a key of `drafting.PRINTS`.
+    # The print it is drawn in, the header's: a key of `prints.PRINTS`.
     tone: str = "blueprint"
     off: frozenset = field(default_factory=frozenset)
 

@@ -34,9 +34,9 @@ For this kit, "the core logic" is everything that decides what a README page loo
 
 ### Recommended Sub-structure
 
-- **`/app`**: Application-specific logic and entry points. Here: the command line (`cli.py`), reading a repository's settings (`config.py`), and `Ports`, everything the application is handed to reach outside itself (`ports.py`).
+- **`/app`**: Application-specific logic and entry points. Here: the command line (`cli.py`); reading a repository's settings (`config.py`); settling one run's page, its mode, subject, day and theme (`page.py`); the run itself, with render, check and preview (`run.py`); each part's measuring and planning (`parts/banners.py`, `parts/elements.py`); and `Ports`, everything the application is handed to reach outside itself (`ports.py`).
 - **`/lib`**: Sharable libraries and utility functions. This kit has none: every helper it has knows the kit's rules, so it belongs in `domain`.
-- **`/domain`**: Core business entities and logic (framework-agnostic). Here: `palette`, `lettering`, `canvas`, `draw`, `prints`, `holidays`, `readme`, `settings`, `lock` and `history`, with their data under `domain/data/` (the glyph outlines and their licences, and the print catalogue).
+- **`/domain`**: Core business entities and logic (framework-agnostic). Here: `palette`, `lettering`, `canvas`, `draw`, `prints`, `drafting` (the paper a print is drawn on), `holidays`, `readme`, `settings`, `lock` and `history`; the parts' drawings, `banners/` (the header, the footer and the links under it) and `elements/` (the schematic, instruments, milestones, roster, certificate and placard); and their data under `domain/data/` (the glyph outlines and their licences, and the print catalogue).
 - **`/infra`**: Implementation details (database, external APIs). Here: `files`, `git`, `github`, `clock`, `resources` (which reads `domain/data/` and hands it in) and `yaml_reader`.
 
 The one executable is `src/markdown-kit.py`, the composition root: it reads the kit's data into the domain, builds the real `Ports` from `infra`, and runs the command line.

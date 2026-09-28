@@ -22,7 +22,7 @@ from ..canvas import Canvas, c
 from ..draw import solid, up_arrow
 from ..lettering import cap_height, f1, fit, flow, width
 from .content import Footer
-from .drafting import colours, hair, rule, sheet
+from ..drafting import colours, hair, rule, sheet
 from .layout import NARROW, WIDE
 
 

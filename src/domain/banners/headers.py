@@ -26,7 +26,7 @@ from __future__ import annotations
 from ..canvas import Canvas, c
 from ..lettering import f1, flow, fonts, fx, width
 from .content import Header
-from .drafting import colours, dimension, hair, note, plot, schedule, sheet, vdimension
+from ..drafting import colours, dimension, hair, note, plot, schedule, sheet, vdimension
 from .layout import NARROW, WIDE, Flow, title_block, title_lines
 
 
