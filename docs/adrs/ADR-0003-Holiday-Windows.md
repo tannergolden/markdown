@@ -68,7 +68,7 @@ The kit has a set of drawings for each of seven holidays: New Year's Day, Valent
 - **The page's own midnight.** The switch happens when the stub runs, on the day in the page's `timezone` (UTC unless the settings name another), so the stub's schedule should sit at the page's midnight.
 - **Remembered.** The lock records the holiday a page was drawn in, so `check` redraws the same thing on any day.
 
-`src/domain/holidays.py` holds the calendar and `make holidays` prints this year's windows.
+`src/domain/holidays/__init__.py` holds the calendar and `make holidays` prints this year's windows.
 
 ---
 

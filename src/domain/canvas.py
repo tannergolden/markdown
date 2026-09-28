@@ -181,11 +181,33 @@ def hazards(svg: str) -> list[str]:
     return _unsafe(svg) + _references(svg) + (["an en or em dash"] if any(d in svg for d in _DASHES) else [])
 
 
-def lint(svg: str, *, budget: int, text_ok: bool = False) -> list[str]:
+def colours(svg: str, tokens: frozenset = frozenset()) -> list[str]:
+    """Every colour `svg` paints that is not a palette token, nor one of `tokens`, as a problem."""
+    problems = []
+    for hexc in (m.group(1) for m in _matches(_HEX, svg, ("#",), lambda i, n: i + 8)):
+        full = hexc if len(hexc) == 6 else "".join(ch * 2 for ch in hexc)
+        if f"#{full.upper()}" not in HEXES and f"#{full.upper()}" not in DECLARED and f"#{full.upper()}" not in tokens:
+            problems.append(f"#{hexc} is not a palette token")
+    # A paint's value ends at the first of " ; } after it, which is the second after the name when an = opens it.
+    paints = _matches(_PAINT, svg, ("fill", "stroke", "stop-color", "flood-color", "lighting-color", "color"),
+                      lambda i, n: _stop(svg, _stop(svg, i + len(n), '";}'), '";}'))
+    for prop, value in (m.groups() for m in paints):
+        value = value.strip()
+        if (value == "none" or value.startswith("url(#") or value.upper() in HEXES or value.upper() in DECLARED
+                or value.upper() in tokens):
+            continue
+        if prop == "fill" and value in ("freeze", "remove"):
+            continue   # SMIL's own `fill`, which says what an animation leaves behind, not a colour
+        problems.append(f"{prop} {value!r} is not a token")
+    return problems
+
+
+def lint(svg: str, *, budget: int, text_ok: bool = False, tokens: frozenset = frozenset()) -> list[str]:
     """Everything wrong with `svg` as a README image, or an empty list.
 
     No `<text>` is allowed: every letter is a path. `text_ok` admits it, for
     the badges, which are lettered in the viewer's Verdana as shields are.
+    `tokens` are colours a holiday set's closed palette adds, as #RRGGBB.
     """
     problems = _unsafe(svg)
     if 'role="img"' not in svg:
@@ -196,20 +218,7 @@ def lint(svg: str, *, budget: int, text_ok: bool = False) -> list[str]:
         problems.append("no title")
     if not desc or not desc.group(1).strip():
         problems.append("no description")
-    for hexc in (m.group(1) for m in _matches(_HEX, svg, ("#",), lambda i, n: i + 8)):
-        full = hexc if len(hexc) == 6 else "".join(ch * 2 for ch in hexc)
-        if f"#{full.upper()}" not in HEXES and f"#{full.upper()}" not in DECLARED:
-            problems.append(f"#{hexc} is not a palette token")
-    # A paint's value ends at the first of " ; } after it, which is the second after the name when an = opens it.
-    paints = _matches(_PAINT, svg, ("fill", "stroke", "stop-color", "flood-color", "lighting-color", "color"),
-                      lambda i, n: _stop(svg, _stop(svg, i + len(n), '";}'), '";}'))
-    for prop, value in (m.groups() for m in paints):
-        value = value.strip()
-        if value == "none" or value.startswith("url(#") or value.upper() in HEXES or value.upper() in DECLARED:
-            continue
-        if prop == "fill" and value in ("freeze", "remove"):
-            continue   # SMIL's own `fill`, which says what an animation leaves behind, not a colour
-        problems.append(f"{prop} {value!r} is not a token")
+    problems += colours(svg, tokens)
     problems += _references(svg)
     texts = [m.group(1) for m in _matches(_TEXT, svg, ("<text",), lambda i, n: _stop(svg, i + 5, ">"))]
     if not text_ok and texts:
