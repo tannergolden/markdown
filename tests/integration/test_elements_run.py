@@ -72,6 +72,13 @@ class Specimen(unittest.TestCase):
         (self.root / "empty.json").write_text("{}", encoding="utf-8")
         self.assertEqual(self.check("--from", str(self.root / "empty.json"))[0], 0)
 
+    def test_render_without_a_lock_names_the_page_from_the_repository_it_runs_in(self):
+        self.settings.write_text(self.settings.read_text(encoding="utf-8").replace(
+            "subject: driftmark/driftmark\n", "mode: repository\n"), encoding="utf-8")
+        code, out = self.render()
+        self.assertEqual(code, 0, out)
+        self.assertIn("the page for driftmark/driftmark (repository)", out)
+
     def test_render_is_idempotent(self):
         self.render()
         before = {p.name: p.read_bytes() for p in self.out.glob("*.svg")}

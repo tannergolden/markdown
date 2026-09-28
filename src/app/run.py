@@ -476,8 +476,15 @@ def _offline_page(root: Path, cfg: dict, measured: dict, lk: dict, here: str = "
     """The page a saved measurement was taken of, settled without asking GitHub anything."""
     m = measured.get("banners") or {}
     drawn = lock.drawn(lk) or {}
-    mode = cfg["mode"] if cfg["mode"] != "auto" else m.get("mode") or "repository"
+    mode = cfg["mode"] if cfg["mode"] != "auto" else m.get("mode") or ""
     subject = cfg["subject"] or m.get("subject") or ""
+    if not (mode and subject):
+        # Nothing measured says whose page it is: the repository the run is in does, as it does for `run`.
+        try:
+            guessed = mode_and_subject(dict(cfg, mode=mode or cfg["mode"], subject=subject), here)
+        except settings.SettingsError:
+            guessed = ("repository", "")
+        mode, subject = mode or guessed[0], subject or guessed[1]
     stamp = m.get("today") or drawn.get("day")
     day = dt.date.fromisoformat(stamp) if stamp else dt.date(2026, 1, 1)
     return settle(root, cfg, mode=mode, subject=subject, here=here, today=day, lk=lk)
