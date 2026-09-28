@@ -14,7 +14,13 @@ import datetime as dt
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, TextIO
+from typing import Callable, Mapping, TextIO
+
+
+def _missing(what: str) -> Callable:
+    def fail(*args, **kwargs):
+        raise RuntimeError(f"this run was not handed {what}")
+    return fail
 
 
 @dataclass
@@ -23,5 +29,12 @@ class Ports:
     read_text: Callable[[Path], str | None]            # a file's text, or None when it is missing
     parse_yaml: Callable[[str], object]                # a YAML document's value
     today: Callable[[str], dt.date]                    # the date in a time zone, by name
+    write_text: Callable[[Path, str], bool] = field(default_factory=lambda: _missing("a way to write files"))
+    append_text: Callable[[Path, str], None] = field(default_factory=lambda: _missing("a way to append to files"))
+    drawn: Callable[[Path], list] = field(default_factory=lambda: _missing("a way to list drawn files"))
+    prune: Callable[[Path, set], list] = field(default_factory=lambda: _missing("a way to remove drawn files"))
+    github: Callable[[], object] = field(default_factory=lambda: _missing("a GitHub client"))
+    slug: Callable[[Path], tuple | None] = field(default_factory=lambda: (lambda root: None))
+    env: Mapping[str, str] = field(default_factory=dict)
     out: TextIO = field(default_factory=lambda: sys.stdout)
     err: TextIO = field(default_factory=lambda: sys.stderr)

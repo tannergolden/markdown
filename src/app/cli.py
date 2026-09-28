@@ -2,14 +2,19 @@
 # SPDX-License-Identifier: MIT
 """The command line: `markdown-kit <command>`.
 
-  version    the kit and the version of the files it draws
+  run        measure the page through GitHub, draw it, and write what changed
+  render     redraw from what the lock kept, or from a saved measurement, and write
+  check      redraw from what the lock kept and compare, writing nothing; exit 1 when stale
+  preview    draw a sample page into a folder, the way a run would
+  measure    measure the page and print the measurement
+  lint       draw every design for every sample in every print, and lint every file
   settings   read a repository's settings and print them in full, every default filled in
   holidays   the holiday calendar: which set is up on a day, and the windows ahead or in a year
   palette    the 64 colour tokens, and the letters each takes
   icons      the 64 icons
+  version    the kit and the version of the files it draws
 
-A setting that is wrong exits with status 2 and one line naming it. The run,
-check and preview commands arrive with the parts they draw.
+A setting that is wrong exits with status 2 and one line naming it.
 """
 from __future__ import annotations
 
@@ -19,8 +24,13 @@ import json
 from pathlib import Path
 
 from domain import KIT, KIT_VERSION, holidays, palette, prints
+from domain.banners import sample as banners_sample
+from domain.banners.compose import compose
+from domain.banners.content import Footer, Header
+from domain.banners.designs import DESIGNS, check as lint_files, render as render_design
+from domain.banners.settings import check as banners_check
 
-from . import config
+from . import config, run
 from .ports import Ports
 
 
@@ -49,11 +59,27 @@ def parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog=KIT, description="Draws a README's header, footer, badges, elements and "
                                 "trophies as committed SVG files.")
     sub = p.add_subparsers(dest="command", required=True, metavar="command")
-    sub.add_parser("version", help="the kit and the version of the files it draws")
-    s = sub.add_parser("settings", help="read a repository's settings and print them in full")
-    s.add_argument("--root", type=Path, default=Path("."), help="the repository (default: here)")
-    s.add_argument("--input", action="append", metavar="KEY=VALUE", help="a value the stub sets, as the workflow "
-                   "passes it: mode, theme, holidays, holiday-days")
+
+    def page(sp, today: bool = True):
+        sp.add_argument("--root", type=Path, default=Path("."), help="the repository (default: here)")
+        sp.add_argument("--input", action="append", metavar="KEY=VALUE", help="a value the stub sets, as the "
+                        "workflow passes it: mode, theme, holidays, holiday-days")
+        if today:
+            sp.add_argument("--today", type=_date, help="the day to draw, YYYY-MM-DD (default: today in the page's zone)")
+        return sp
+
+    r = page(sub.add_parser("run", help="measure the page through GitHub, draw it, and write what changed"))
+    r.add_argument("--commit-file", default="", help="write a Conventional Commit message here when something changed")
+    r.add_argument("--save", default="", help="also save the measurement here, as JSON")
+    page(sub.add_parser("render", help="redraw from what the lock kept, and write"), today=False).add_argument(
+        "--from", dest="source", type=Path, help="a saved measurement to redraw instead")
+    page(sub.add_parser("check", help="compare the committed page with a fresh drawing; exit 1 when stale"),
+         today=False).add_argument("--from", dest="source", type=Path, help="a saved measurement to compare with")
+    page(sub.add_parser("preview", help="draw a sample page into a folder, the way a run would"))
+    page(sub.add_parser("measure", help="measure the page and print the measurement"))
+    sub.add_parser("lint", help="draw every design for every sample in every print, and lint every file")
+    s = page(sub.add_parser("settings", help="read a repository's settings and print them in full"), today=False)
+    s.set_defaults(command="settings")
     h = sub.add_parser("holidays", help="the holiday calendar")
     h.add_argument("--year", type=int, help="every window in this year")
     h.add_argument("--days", type=int, default=holidays.DEFAULT_DAYS, help="holiday-days, 3 to 7 (default 3)")
@@ -61,16 +87,74 @@ def parser() -> argparse.ArgumentParser:
     h.add_argument("--timezone", default="UTC", help="the zone the day is taken in (default UTC)")
     sub.add_parser("palette", help="the 64 colour tokens")
     sub.add_parser("icons", help="the 64 icons")
+    sub.add_parser("version", help="the kit and the version of the files it draws")
     return p
 
 
-def cmd_version(args, ports: Ports) -> int:
-    print(f"{KIT} {KIT_VERSION}", file=ports.out)
+def _cfg(args, ports: Ports) -> dict:
+    return config.load(args.root, ports, _pairs(args.input))
+
+
+def _saved(args, ports: Ports) -> dict | None:
+    """A measurement saved by `run --save`, or by the banners kit's own `--save`."""
+    if not getattr(args, "source", None):
+        return None
+    text = ports.read_text(args.source)
+    if text is None:
+        raise Usage(f"--from {args.source}: no such file")
+    data = json.loads(text)
+    return {"banners": data} if "mode" in data else data
+
+
+def cmd_run(args, ports: Ports) -> int:
+    return run.run(args.root, _cfg(args, ports), ports, today=args.today, commit_file=args.commit_file,
+                   save=args.save)
+
+
+def cmd_render(args, ports: Ports) -> int:
+    return run.render(args.root, _cfg(args, ports), ports, _saved(args, ports))
+
+
+def cmd_check(args, ports: Ports) -> int:
+    return run.check(args.root, _cfg(args, ports), ports, _saved(args, ports))
+
+
+def cmd_preview(args, ports: Ports) -> int:
+    return run.preview(args.root, _cfg(args, ports), ports, args.today)
+
+
+def cmd_measure(args, ports: Ports) -> int:
+    _, measured, _ = run.measure_page(args.root, _cfg(args, ports), ports, args.today)
+    print(json.dumps(measured, indent=1, ensure_ascii=False), file=ports.out)
     return 0
 
 
+def contents() -> dict:
+    """Every content the kit is linted with: each sample, composed, and the kit's own lines."""
+    out = {"kit": (Header(), Footer())}
+    for key, m in banners_sample.SAMPLES.items():
+        h, f, _ = compose(m, banners_check({}))
+        out[key] = (h, f)
+    return out
+
+
+def cmd_lint(args, ports: Ports) -> int:
+    failed = 0
+    for name, (h, f) in contents().items():
+        for code, design in DESIGNS.items():
+            largest, problems = 0, {}
+            for tone in prints.PRINTS:
+                files = render_design(design, (h if design.kind == "header" else f).with_(tone=tone))
+                problems.update(lint_files(design, files))
+                largest = max(largest, *(len(svg.encode("utf-8")) for svg in files.values()))
+            print(f"{name:<10} {code} {design.name:<12} {len(prints.PRINTS)} prints, largest {largest / 1000:.1f} KB"
+                  + ("" if not problems else f"  PROBLEMS: {problems}"), file=ports.out)
+            failed += bool(problems)
+    return 1 if failed else 0
+
+
 def cmd_settings(args, ports: Ports) -> int:
-    cfg = config.load(args.root, ports, _pairs(args.input))
+    cfg = _cfg(args, ports)
     print(json.dumps({k.replace("_", "-"): v for k, v in cfg.items()}, indent=1, ensure_ascii=False), file=ports.out)
     return 0
 
@@ -109,8 +193,14 @@ def cmd_icons(args, ports: Ports) -> int:
     return 0
 
 
-COMMANDS = {"version": cmd_version, "settings": cmd_settings, "holidays": cmd_holidays, "palette": cmd_palette,
-            "icons": cmd_icons}
+def cmd_version(args, ports: Ports) -> int:
+    print(f"{KIT} {KIT_VERSION}", file=ports.out)
+    return 0
+
+
+COMMANDS = {"run": cmd_run, "render": cmd_render, "check": cmd_check, "preview": cmd_preview, "measure": cmd_measure,
+            "lint": cmd_lint, "settings": cmd_settings, "holidays": cmd_holidays, "palette": cmd_palette,
+            "icons": cmd_icons, "version": cmd_version}
 
 
 def main(argv: list[str], ports: Ports) -> int:

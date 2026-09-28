@@ -45,7 +45,8 @@ class CliTest(unittest.TestCase):
         self.assertEqual(done.returncode, 0, done.stderr)
         cfg = json.loads(done.stdout)
         self.assertEqual((cfg["mode"], cfg["theme"], cfg["holiday-days"], cfg["trophies"]), ("profile", "blackprint", 5, False))
-        self.assertEqual(cfg["banners"], {"motto": "Built to be rebuilt."})
+        # The banners check their own section and fill in its defaults.
+        self.assertEqual((cfg["banners"]["motto"], cfg["banners"]["header"]), ("Built to be rebuilt.", "section"))
 
     def test_a_bad_setting_exits_2_naming_it(self):
         (self.root / ".github").mkdir()

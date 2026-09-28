@@ -76,6 +76,22 @@ def stamped(path: Path) -> bool:
     return f"<!--{KIT} v" in head
 
 
+def drawn(folder: Path, pattern: str = "*.svg") -> list[str]:
+    """Every file under `folder` the kit drew, relative to it, in order."""
+    folder = Path(folder)
+    if not folder.is_dir():
+        return []
+    return [f.relative_to(folder).as_posix() for f in sorted(folder.rglob(pattern)) if stamped(f)]
+
+
+def append_text(path: Path, text: str) -> None:
+    """Add `text` to the end of `path`, which is made if it is missing: the run's summary, a line at a time."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as fh:
+        fh.write(text)
+
+
 def prune(folder: Path, keep: set[str], pattern: str = "*.svg") -> list[str]:
     """Delete the files under `folder` the kit drew and this run did not, and return their paths.
 

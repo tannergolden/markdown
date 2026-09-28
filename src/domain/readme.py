@@ -89,6 +89,8 @@ def _remove(text: str, a: int, b: int) -> str:
     after = after[1:] if after.startswith("\n") else after
     if not after.strip():
         return before.rstrip("\n") + "\n" if before.strip() else ""
+    if not before.strip():
+        return after.lstrip("\n")
     if before.endswith("\n\n") and after.startswith("\n"):
         after = after.lstrip("\n")
     return before + after

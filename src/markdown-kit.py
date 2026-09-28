@@ -18,12 +18,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from app import cli  # noqa: E402
 from app.ports import Ports  # noqa: E402
-from infra import clock, files, resources, yaml_reader  # noqa: E402
+from infra import clock, files, git, github, resources, yaml_reader  # noqa: E402
 
 
 def ports() -> Ports:
     return Ports(catalogue=resources.install(), read_text=files.read_text, parse_yaml=yaml_reader.loads,
-                 today=clock.today)
+                 today=clock.today, write_text=files.write_text, append_text=files.append_text, drawn=files.drawn,
+                 prune=files.prune, github=github.GitHub, slug=lambda root: git.Git(root).slug(), env=dict(os.environ))
 
 
 def main(argv: list[str] | None = None) -> int:

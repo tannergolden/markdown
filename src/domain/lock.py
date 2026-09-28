@@ -23,6 +23,7 @@ This module is the lock's shape only; reading and writing the file is
 from __future__ import annotations
 
 import datetime as dt
+import json
 
 VERSION = 1
 SNAPSHOT_DAYS = 7
@@ -34,6 +35,22 @@ class LockError(ValueError):
 
 def new() -> dict:
     return {"version": VERSION, "drawn": None, "parts": {}, "snapshot": None}
+
+
+def dumps(lk: dict) -> str:
+    """The lock as its file holds it: sorted, one space of indent, UTF-8 as it is, a newline at the end."""
+    return json.dumps(lk, indent=1, sort_keys=True, ensure_ascii=False) + "\n"
+
+
+def loads(text: str | None) -> dict:
+    """A lock from its file's text, or an empty one when there is no file."""
+    if text is None or not text.strip():
+        return new()
+    try:
+        data = json.loads(text)
+    except ValueError as exc:
+        raise LockError(f"the lock is not JSON ({exc})") from exc
+    return normalise(data)
 
 
 def normalise(data: object) -> dict:

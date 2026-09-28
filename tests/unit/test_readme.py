@@ -42,6 +42,10 @@ class ReadmeTest(unittest.TestCase):
         self.assertNotIn("\n\n\n", text)
         self.assertTrue(text.endswith("Some words.\n"))
 
+    def test_a_block_that_opened_the_file_leaves_no_blank_line_behind(self):
+        text, _ = R.place("# Title\n\nBody.\n", blocks("header"))
+        self.assertEqual(R.place(text, {"header": None})[0], "# Title\n\nBody.\n")
+
     def test_a_new_block_goes_beside_its_neighbour(self):
         with_ends, _ = R.place(FRONT, blocks("header", "footer"))
         text, _ = R.place(with_ends, blocks("badges", "trophies"))

@@ -6,6 +6,10 @@ from __future__ import annotations
 from pathlib import Path
 
 from domain import settings
+from domain.banners import settings as banners_settings
+
+# Each part's own check of its section of the settings, as the parts arrive.
+PARTS = {"banners": banners_settings.check}
 
 # The settings file, by the name the standards give a new YAML file, and by the
 # name the workflow beside it would suggest. One of them, not both.
@@ -29,4 +33,5 @@ def load(root: Path, ports, inputs: dict | None = None, parts: dict | None = Non
             given = ports.parse_yaml(text)
         except ValueError as exc:
             raise settings.SettingsError(f"{where}: {exc}") from exc
-    return settings.validate(given, inputs, catalogue=ports.catalogue, parts=parts, where=where or "the settings")
+    return settings.validate(given, inputs, catalogue=ports.catalogue, parts=PARTS if parts is None else parts,
+                             where=where or "the settings")
