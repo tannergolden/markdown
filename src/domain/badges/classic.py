@@ -194,15 +194,32 @@ def _lum(hexc: str) -> float:
     return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b)
 
 
-def _ink(bg: str) -> str:
-    """Black or white text, whichever reads on the segment color.
+# The dark ink: GitHub's own text colour, for a segment white letters cannot hold.
+_DARK = "#1f2328"
 
-    The 0.6 luminance threshold is a deliberate brand choice: it keeps
-    white ink on the metallic-gold label (the approved for-the-badge look,
-    matching shields.io's own treatment of mid-tone colors) while flipping
-    to dark ink on genuinely light segments like the license yellow.
+
+def _contrast(a: str, b: str) -> float:
+    """WCAG's contrast ratio between two #RRGGBB colours, from 1 to 21."""
+    la, lb = sorted((_lum(a), _lum(b)), reverse=True)
+    return (la + 0.05) / (lb + 0.05)
+
+
+def _ink(bg: str) -> str:
+    """The letters' colour on a segment: white where white holds 4.5:1 against it, else the dark ink.
+
+    4.5:1 is the contrast WCAG asks of text, and every letter the kit sets
+    is held to it: the standard theme's, the live plates', and these. White
+    holds on the darker half of the palette (black, slate, blue, red,
+    purple); from there up the dark ink does, and on the few mid-tones where
+    neither quite holds, the one that holds more is used. The badges kit
+    kept white until a luminance of .6, which left white on gold, green and
+    orange at 2.5:1 to 3.5:1.
     """
-    return "#1f2328" if _lum(bg) > 0.6 else "#ffffff"
+    white = _contrast("#ffffff", bg)
+    if white >= 4.5:
+        return "#ffffff"
+    dark = _contrast(_DARK, bg)
+    return _DARK if dark >= 4.5 or dark > white else "#ffffff"
 
 
 def _color(token: str, field: str) -> str:

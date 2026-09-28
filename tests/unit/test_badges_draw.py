@@ -42,6 +42,29 @@ class TheBadgesKitsOwn(unittest.TestCase):
             svg = drawn(case["badge"])
             self.assertEqual(hashlib.sha256(svg.encode()).hexdigest(), case["sha256"], case["badge"])
 
+    def test_a_badge_drawn_again_differs_only_in_its_letters_turning_dark(self):
+        redrawn = [case for case in GOLDEN["badges"] if case.get("ink") == "4.5:1"]
+        self.assertTrue(redrawn)
+        for case in redrawn:
+            self.assertIn('fill="#1f2328"', drawn(case["badge"]), case["badge"])
+
+
+class Ink(unittest.TestCase):
+    def test_letters_hold_4_5_wherever_white_or_the_dark_ink_can(self):
+        for token, hexc in PALETTE.items():
+            ink = C._ink(hexc)
+            best = max(C._contrast("#ffffff", hexc), C._contrast(C._DARK, hexc))
+            if best >= 4.5:
+                self.assertGreaterEqual(C._contrast(ink, hexc), 4.5, token)
+            else:
+                self.assertEqual(C._contrast(ink, hexc), best, token)
+
+    def test_white_stays_where_it_holds(self):
+        for token in ("black", "slate", "blue", "red", "purple", "cobalt", "navy"):
+            self.assertEqual(C._ink(PALETTE[token]), "#ffffff", token)
+        for token in ("gold", "green", "orange", "yellow", "amber"):
+            self.assertEqual(C._ink(PALETTE[token]), "#1f2328", token)
+
     def test_every_badge_is_well_formed_deterministic_stamped_and_passes_the_lint(self):
         for case in GOLDEN["badges"]:
             svg = drawn(case["badge"])

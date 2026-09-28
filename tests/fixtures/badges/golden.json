@@ -1,5 +1,5 @@
 {
- "about": "Each badge the badges kit v2 drew, with the SHA-256 of its file once its stamp reads markdown-kit v1: the kit must draw every one of them byte for byte the same.",
+ "about": "Each badge the badges kit v2 drew, with the SHA-256 of its file once its stamp reads markdown-kit v1: the kit must draw every one of them byte for byte the same, but for the letters' colour. The kit holds a badge's letters to 4.5:1 against their segment, where the badges kit kept them white until a luminance of .6; the 68 badges whose letters that turns dark carry \"ink\": \"4.5:1\" and the hash of the kit's own drawing.",
  "badges": [
   {
    "badge": {
@@ -649,7 +649,8 @@
     "message_color": "amber",
     "icon": null
    },
-   "sha256": "9d1e18518dca06d2abb32903917d4e0869867475b2380142bee527164fa8f84f"
+   "sha256": "afabe0810e4aa281e34a9af9ba8d7554565b8cf7479c41c810a9059cda9bce20",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -669,7 +670,8 @@
     "message_color": "apricot",
     "icon": null
    },
-   "sha256": "642abbb363048af11de13bc65c8742b171bb449b9d62e94a33160e25839015ed"
+   "sha256": "8b5facd062e5d2e930ff072628016dab24b014297b7953b2ccc6c7f9782e873f",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -679,7 +681,8 @@
     "message_color": "aqua",
     "icon": null
    },
-   "sha256": "46fe96b7049b86a74f6cee9f27241163567496ea614ff5806b38c991130ff7f3"
+   "sha256": "6e5e84f67a8fb2d03ce0d64b41ec8d10689f21e4bd082f28dc388aa52a64f250",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -689,7 +692,8 @@
     "message_color": "ash",
     "icon": null
    },
-   "sha256": "fefbb21180bf13086c799287f9d0ddf3a72e517709acb785e2300a48495ff9cd"
+   "sha256": "0e87df9896e7e92d16bef4d78ef65064c000e78de236c528064632256544241c",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -699,7 +703,8 @@
     "message_color": "azure",
     "icon": null
    },
-   "sha256": "3a48b184ad0220900ebc162767efeed4a7e68d9c05a354701eb8dc79d11dcfe3"
+   "sha256": "4c37857d754c2895b6927b179a96ad7259478cdee0a08815f405343e347a382a",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -789,7 +794,8 @@
     "message_color": "coral",
     "icon": null
    },
-   "sha256": "3b5756f0115b57b84f404014e015f69eab4bc54b30f4c457c4af149b12fc7aec"
+   "sha256": "a8c48c0526a0c3c62246375d18a1a1008b2058f4a40d85786a0c79a3013d9019",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -809,7 +815,8 @@
     "message_color": "cyan",
     "icon": null
    },
-   "sha256": "0e8d443a524dc0cfd847c10d461eb994f6227286c0b25013bd3f3d8516af7655"
+   "sha256": "3ccfc25b322256954f2ff864e0cc3d0fd9eef83ba7f9d54c2244c3476b3a2550",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -829,7 +836,8 @@
     "message_color": "emerald",
     "icon": null
    },
-   "sha256": "847136b771821b2e52dd90b663622d0ced533755ae70f56b6209a68ef1724570"
+   "sha256": "400ead517abd31d1b7a29f06fea172bc7cede9ebb378f03ddb41d9baf863b091",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -849,7 +857,8 @@
     "message_color": "fuchsia",
     "icon": null
    },
-   "sha256": "8dc86447b2d43759b24e4d51982153b2d18fe48c60330430381338cc6195ddc3"
+   "sha256": "c731723b357f294228f0b77bba42099f9f810f5528be5ea00559d7f0e858c735",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -859,7 +868,8 @@
     "message_color": "gold",
     "icon": null
    },
-   "sha256": "27d7bddfb8ab37721f0c4f8eff4a3ba525425e13c7f3662c3b9ce7473b9110f8"
+   "sha256": "07fdf8a91811552ab5ef1dcac5bc38fbeddabc2eb6d9e651c4bd398875ec5351",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -869,7 +879,8 @@
     "message_color": "gray",
     "icon": null
    },
-   "sha256": "43988549fd35710fa4e99fe22913887de0290402aeff6e5b5848312f5db7b37a"
+   "sha256": "0e36a091c62ad3e4a30760183d5af75f49a5020348cce355f4caddaa10910b6e",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -879,7 +890,8 @@
     "message_color": "green",
     "icon": null
    },
-   "sha256": "fe034de5b69214bc59672efe1ecd3c142c319009ff7aa89afb8a1be16ef4f0e0"
+   "sha256": "d5b1e796315fd24637fffe07d02ea80092f7bebb9e11c1b8abb7c99e7156bd23",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -889,7 +901,8 @@
     "message_color": "honey",
     "icon": null
    },
-   "sha256": "0215cde040f773b7ba0888403871bf5fa85d54d3a2af65ef186829f35469c3b1"
+   "sha256": "6965c8f988449ba6e1b4b354aa215e61e1479676a720a2e0e58c6332b358d994",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -929,7 +942,8 @@
     "message_color": "jade",
     "icon": null
    },
-   "sha256": "4d11e2ef6ff4b1bc297737d2bb448b20b8cb75c9377ea13740915b761b190120"
+   "sha256": "03c3c6eb12cb4761f669a7dc1a0871b6c4494e96af175758b9b6da701abd1e71",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -939,7 +953,8 @@
     "message_color": "lavender",
     "icon": null
    },
-   "sha256": "a16412a3d226fe556b8483dab6d1a6adb6d1c82cfc1dc4060e9202a0b6c6d5e2"
+   "sha256": "d57e3280e30f45101a04ddf853606289074834900fcf9be26a3337f97fd5360a",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -949,7 +964,8 @@
     "message_color": "lime",
     "icon": null
    },
-   "sha256": "b3d4e13b4e134749a8ca8ad861a14f03af6edacfe6637a76ce50a124296766ba"
+   "sha256": "1aa2c2484dd1eb8a7e34956c4e626a7c91c2eeed2f1093879de2bd809f75de47",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -989,7 +1005,8 @@
     "message_color": "mint",
     "icon": null
    },
-   "sha256": "434e88919e2f996cd9958a5b1cc3f0ff3c32b12c9ef636958d4d9c139b0e1f01"
+   "sha256": "46f1f8f6b249ca0601441db19c6c15b9bcfb996f44f89a639a19d73fdeb702b2",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1009,7 +1026,8 @@
     "message_color": "mustard",
     "icon": null
    },
-   "sha256": "20f072ff11d290a61c17c9108a806233401feeab4238733044c0e4461b2b9594"
+   "sha256": "2e0d6a3bfc9b8f7a547fc03df6e35fc710334deb0194ddc828ac8fe7d435f9b4",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1039,7 +1057,8 @@
     "message_color": "olive",
     "icon": null
    },
-   "sha256": "46b52ade7d25aa9ec5acf8e26a89596fadfe4e73fbb640eb06a4d63d20ea346a"
+   "sha256": "6c367855028236ca770eaa4cbefeb0f0242d8d03b31efd98d51592e28261565f",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1049,7 +1068,8 @@
     "message_color": "orange",
     "icon": null
    },
-   "sha256": "e6472d8c07b3a92483980a45d7fa4c61e103996654043f858bce8cb742166fbe"
+   "sha256": "2a3a17b4f836f91c924037043e87b44f624d136a0027a4764d44ff42f9f2d63b",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1059,7 +1079,8 @@
     "message_color": "orchid",
     "icon": null
    },
-   "sha256": "5c0d585cf98849bc648f9ded3cd861849c5dcb786b0e9aa2118051e9bf7961d9"
+   "sha256": "3afa11b9d1db64f409562e50cbde55705493e2359db15a7654dfcbc8c36d34fb",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1069,7 +1090,8 @@
     "message_color": "peach",
     "icon": null
    },
-   "sha256": "7ce9b36542bb54fd030c5a24cbef3287616f9c42804bdf9f6ecd238a603a02ad"
+   "sha256": "1d49e02191216b3b00e719730073f4aea7881c255f0129709ff990eca752c9da",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1079,7 +1101,8 @@
     "message_color": "pink",
     "icon": null
    },
-   "sha256": "465ac54c26e612e056dcda98a80df3a30951fc50ee32fe5d51dd29b76fb5d230"
+   "sha256": "171460b96c27e3e5f4d37a64a86819b0a98c343e030e49967858075c1d68f660",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1119,7 +1142,8 @@
     "message_color": "rose",
     "icon": null
    },
-   "sha256": "82a828ae21ff74b1cc35b72c9f43c454b1c3197904b4ea6cf03524372393f68d"
+   "sha256": "23675b73fa546e1319f3b71b493235f703bd4297a2f609d07b48678243e5f61e",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1139,7 +1163,8 @@
     "message_color": "sage",
     "icon": null
    },
-   "sha256": "97b539be1a971e695db2fbbe03d2c95f14f8d88847404fc76bbf5d941fabacc1"
+   "sha256": "0906d4908a11cc0e500c2093037982b266a47be4fb323d8e322cf64d927e64f1",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1149,7 +1174,8 @@
     "message_color": "salmon",
     "icon": null
    },
-   "sha256": "caaa9c0b4f717bf07e35f7adc45a058921571ea5d8ce8be857dcd275fed34bc5"
+   "sha256": "e23a89c8258fe9dd0bd7076b602340c481b9a656617264a489a2924373daea66",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1159,7 +1185,8 @@
     "message_color": "sand",
     "icon": null
    },
-   "sha256": "f2d6c8aa6b7abba69092c048c44e508b9ee17ff60c84695ffd7606434a1f38c0"
+   "sha256": "a11b746e91386ac370a8d96dd1e57a277f21fd36812541c81688dc297d67f35b",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1169,7 +1196,8 @@
     "message_color": "sky",
     "icon": null
    },
-   "sha256": "def7dcd7e45485ff71cfd5cdfaaad1b34bfb8b3cb30e2804a7c562c2f9f30c90"
+   "sha256": "945a4ffc2568dc4f2ecde5670e515d4840f30d906a73e9fee17e5804e975609a",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1199,7 +1227,8 @@
     "message_color": "stone",
     "icon": null
    },
-   "sha256": "506626e3b17d7e67f2367561ea864a0c43bec2fe4e7026f281ccee35887032ed"
+   "sha256": "71dbd6c317640c6362bd89bb814622779d85603704da057e2b4cd0066b2663b5",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1209,7 +1238,8 @@
     "message_color": "tan",
     "icon": null
    },
-   "sha256": "b6a4c26c9cfbc2f3e9acff47bc4e24ef4cbd5981c761b349fc8e272d8142ba38"
+   "sha256": "cf31fec01c9161291228724c0e025949d4595a3d05756ef8e99e96403814154e",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1219,7 +1249,8 @@
     "message_color": "tangerine",
     "icon": null
    },
-   "sha256": "b8955aac20a583bdb9ea933fdcac424e4b69d8032df01bc51653c5bbff8be37a"
+   "sha256": "a379fa18a43546b64d57bbba0cc87dcc029b49bd1e2a00c8ecdf064a4efb1a28",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1239,7 +1270,8 @@
     "message_color": "teal",
     "icon": null
    },
-   "sha256": "2c7a479f3317b1f8759f094aca67c685c44cde4edefe18fcc08b1c9a65b5004c"
+   "sha256": "44619ea6c8870e529b32816cb0a52f918374380d624e5abdcf17116b9f9f7c01",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1249,7 +1281,8 @@
     "message_color": "turquoise",
     "icon": null
    },
-   "sha256": "a526257f2933b4adab07d1f04441ef619bf05d7dfb64cbd848501d77f96836b1"
+   "sha256": "1822ebebfc3a7e043eacdbd68fc0faed125f9fd9d2b6f7b353e5ed62dc0efa01",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1259,7 +1292,8 @@
     "message_color": "violet",
     "icon": null
    },
-   "sha256": "1be2e31965779874048fc6b6031ea27230d2e09341b98aa141154fc10d4034f5"
+   "sha256": "8c04d22f8a7a70a26942a9389ef6c7a4691142f968a39d46d0c35fdbac000f7a",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1355,7 +1389,8 @@
     "message_color": "green",
     "icon": "pulse"
    },
-   "sha256": "7178f7afc32078caa01a60b169bf8f3da6ea3bcec856a972e03e446529271580"
+   "sha256": "b4e66130de0938f87fd2c6d142ab96578612c654d97a57791c8e99cb22355214",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1365,7 +1400,8 @@
     "message_color": "red",
     "icon": "pulse"
    },
-   "sha256": "bea9709ff2e5662c1d408363c16817731927c7c8c9a9f3b071afa2ba394561b1"
+   "sha256": "ac0b9a8ef8eff9bae41bdd8544862a767bf0e03e4500fddefd6c1a64ca92574c",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1375,7 +1411,8 @@
     "message_color": "slate",
     "icon": "pulse"
    },
-   "sha256": "74cd40555eaed73db93cd8ca04a27442cae95bfacf937c361dad346b94fdaea6"
+   "sha256": "f621c891ec42b8d8400525f90a3d926e227d2921903ed154574b70dbf154e13d",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1385,7 +1422,8 @@
     "message_color": "yellow",
     "icon": "pulse"
    },
-   "sha256": "6004bd7942c48635ea531e94eaeb377630116c9ed6b08af356db1b0bfa496509"
+   "sha256": "f217a766d8304459b69397bfe7687680cec9925eed92c95b84b5b062238180dc",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1858,7 +1896,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "d12af1c84b68c2272ec2cd0a2a60fa6cb59aed58c2f3c2b6078b35dfdbd9cf49"
+   "sha256": "edf02377ae0e6e346b6fd48e09f42d624e970a8fcfe936c63425ef41964df4c9",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1869,7 +1908,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "bd8b486fb39a3974265bdf4bc4d4654f887385d5854af890561b4a4ca7b100ba"
+   "sha256": "ec55ac5ec7c8ae7f9ca50a3f6d1be50fbaa24d7b302749fb8c5a2ff3caa1ebed",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1880,7 +1920,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "74b2dad40193432e8d9137a48458374b13fb5ec1fe975069a90476ab8142fcec"
+   "sha256": "c0c5416208c1ef5ca49559b63badad4eb9f6d41d914643d8edd70f5b39d8afc5",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1902,7 +1943,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "428cdb5c6cad8ce82c47e3ad9290eb873bf5e93d8664a5aeac5b8245f3d16f57"
+   "sha256": "3013c28a58731b925bcb603e2737361d73ff6578f461dad45d09278fc77619ba",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1913,7 +1955,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "2b5aa564c88b34781ae30be628babd48c09b7fc57cc53f73289ae7a9c40ed76d"
+   "sha256": "4a38ce0a3f81f0009ed9d5ddc4ced55532fb62eae14c6f3fae20c3cf1818e2ef",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1924,7 +1967,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "a02a70f691a89137625209d58bab579b6ce4f3c5409766bb4342ed454160851e"
+   "sha256": "2c08a978f1faa356c203278c9681d971591c35fdc1a031f5fc873e79aed4684e",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1946,7 +1990,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "c64a648ef76c3ffd449c97c1fae58e6b96ffb7589d6c9225e20dc7af067dfe2b"
+   "sha256": "c27dd9d3b2f9823bd8664632bd0260d01ea09bd00de2b675d8646dd59f70572b",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1957,7 +2002,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "1e1cce277e38c1cdf7c8655879c3dfbfcda2f1350e86327610fcc303b2ab168c"
+   "sha256": "a49cf430410bd9559dfff0325ab549732118e9f404083fa04b53a664bb70dc06",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1968,7 +2014,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "133f4ca764164ab52b44ff99f71f717e7bdf79d29f8c03e042472246f410ed25"
+   "sha256": "c1ea23ac5358a9c1c17813f147a3c2768aff67ce5503b62648f75de1dfd9e5bd",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -1990,7 +2037,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "98ffbdcf4779df06c2bd9c80d3fb3414f16e696d0ba74cf6e5b2c3419c21ef7f"
+   "sha256": "ccf2b870cd8cfb81f1d4b63b49488a9d167aaf3e3da46d18ab002bf4c789fce4",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2001,7 +2049,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "5a7c209de638864216d6f7a4f807e3d8f92e87df1ad34906cf197baa6853b570"
+   "sha256": "7d778ddd83d24a4c70edfa39aef7e30a1710bdffb71ff19bbb9e43368a77984b",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2012,7 +2061,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "5e02262e4cf48ac7a55cab7e7a4327440931cb52fd57d19cbc995370c5d3c448"
+   "sha256": "98bd74ee3b5fae9f9c4e7145557868702e6559847e36f3c5ea33fcaa1f5c6db8",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2034,7 +2084,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "5f70b295142187234da477ee68dccede35a6e004dcaba318e1c91e1cbbef2147"
+   "sha256": "467ab64f934af157cd4a3e0037eee032c58ca535e616be52646522234a4cf59a",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2045,7 +2096,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "d096db51c8cb65cc152d42073926db49fec015180f434b14463ffda2ba0cbe24"
+   "sha256": "139f62aabf452c75872565c7f6a222d68684621fd93d8c89adc9e6a3ef39487c",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2056,7 +2108,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "4c7d70159b3bc0e6834f39bf8dbb5413e45143830be911da334a339d4b346f80"
+   "sha256": "351de6cf50731c83897789792744f18253aa64405d1b748a28d752060812d839",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2078,7 +2131,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "693ef25e4582707d7c7b31ec869c89f1e11cd01bdd0511d4acc0da0b992311db"
+   "sha256": "cad07eb26ea0055f3ce1e9644f31ee9fd2f74a82d0d9bd24f0f96c77d39ed0af",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2089,7 +2143,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "9aeab95cec6bf71cf67d80d1dba60e2d6b8d1797af8f9b2662bd4033e5c8c9b4"
+   "sha256": "6eaae1c12a885022da5a2c966e74e934675ff6ef570dc1c9a694070abb5359f8",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2100,7 +2155,8 @@
     "label_color": "black",
     "message_color": "teal"
    },
-   "sha256": "42c4e78c32102d8666f43a0ac744ecb40e898baab7a314c3167a2d74458b5930"
+   "sha256": "a8466aec2d4f773c9224ad6fdfcb71888bb137cf3d4f019bcd37aea0142aef56",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2554,7 +2610,8 @@
     "label_color": "#C0A062",
     "message_color": "#2EA043"
    },
-   "sha256": "da4f5c9e199a700d830783217cfb5eb976bbf085e10ff61b98341fe986ce5e23"
+   "sha256": "177c17613ad7fc1106caa7f99bf32e9cae3c0067f7c65fa0c9d5e832eb1ee926",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2565,7 +2622,8 @@
     "label_color": "navy",
     "message_color": "#FF00AA"
    },
-   "sha256": "caa6cc33fc701b04c702901563a5ddae82c78daf4e70141506cc2334d6a79763"
+   "sha256": "c4b66bf5e9d2cfddb39298c4307145d079fec7e257af90b116c566cead38839b",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2576,7 +2634,8 @@
     "label_color": "#C0A062",
     "message_color": "#2EA043"
    },
-   "sha256": "583b43a119d3abbc942c39d9d2aa830544ad94fba6f905f1ea9d630c3e4ea3c4"
+   "sha256": "a44eab9121b099d03d73285cdc68e3d8725ffa7361de8a34915cc532e4bd7583",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2587,7 +2646,8 @@
     "label_color": "navy",
     "message_color": "#FF00AA"
    },
-   "sha256": "d77dc45bfe3f965bb080aeae727f2afb5d503bf24e3ec0f92cb0e910f5ee46f7"
+   "sha256": "2371b2d4ee71462004cc379d17ca5f4c7fc94fea60fa9c6de3f098e202a5eb80",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2598,7 +2658,8 @@
     "label_color": "#C0A062",
     "message_color": "#2EA043"
    },
-   "sha256": "a969b88e708b3725852bd80bf8991c9b29192a2f8d65b936a64ba44b3f621d27"
+   "sha256": "856f67ea301a883753a6127f4bd38f62323b8f6af9ed108d8fd6051de334433e",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2609,7 +2670,8 @@
     "label_color": "navy",
     "message_color": "#FF00AA"
    },
-   "sha256": "cb0340c7e51affb641c9333ec6a3a1279397c9f6fabe2c4dbd0fdefe36b73022"
+   "sha256": "a59a8fc667f2d3af3c603f4ce85214e10fa2b21a32251cc55b17763186fb224e",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2620,7 +2682,8 @@
     "label_color": "#C0A062",
     "message_color": "#2EA043"
    },
-   "sha256": "3f861227797fd3cf7fe389a2ef325b4ab39fcb2952b6d192c10762ec2a36b7e9"
+   "sha256": "d43d80a247c1e04c316af6b9b88a957a1fecfed0fc0c82cb2ac9ac1a36ea7af9",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2631,7 +2694,8 @@
     "label_color": "navy",
     "message_color": "#FF00AA"
    },
-   "sha256": "96447356285e420533bbb47dc10d64d1c003137a45108bcbf98c54968e44fad1"
+   "sha256": "cd5e27be820bc7359f7c2fedc73ef08bfa88aa2f9db8d4a9d8f51856138159c4",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2642,7 +2706,8 @@
     "label_color": "#C0A062",
     "message_color": "#2EA043"
    },
-   "sha256": "3e5b7037df984c5a2deb1ff5d702a533567a71346fd29df7c05ed7bb0cea8498"
+   "sha256": "5964dd7f49d1ceb0f13bfe4b90fe15eba6235d53227e023539dff9a2e9a8446b",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2653,7 +2718,8 @@
     "label_color": "navy",
     "message_color": "#FF00AA"
    },
-   "sha256": "bb3c0608e94536529f45f8b3a6c564c7084edf72c5b505f85a53df5de32e7761"
+   "sha256": "3b9ffbc324db09d9a78a997b41084ba00e15ba7e9bc3c93a2e28b83cc394a701",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2664,7 +2730,8 @@
     "label_color": "#C0A062",
     "message_color": "#2EA043"
    },
-   "sha256": "015c048d43b146861921da8729fcede82ede2593b531ec2286b46b242a0c7095"
+   "sha256": "d4d7332494d9bc6fb07c603b0a71372a5c60ac4d2f281cd5b1e69ffb1dc36060",
+   "ink": "4.5:1"
   },
   {
    "badge": {
@@ -2675,7 +2742,8 @@
     "label_color": "navy",
     "message_color": "#FF00AA"
    },
-   "sha256": "c1e1a40f2e8cd6daf296e9fcc7cba8975949a39b8fb38f3d635f615fe94a7786"
+   "sha256": "ee1f46c554a4f0ecbfd9df602018896cb4e8e610a950f80574125a060efe0cb3",
+   "ink": "4.5:1"
   }
  ]
 }
