@@ -33,8 +33,10 @@ THEMES = {"day": DAY, "dark": DARK}
 # Budgets, in bytes. A README loads every one of these on every view, so each
 # kind of file is held to a size: a header or footer to what the longest
 # titles in the family need, a link under the footer to a button's worth, an
-# element sheet to a chart's, and a card beside another to half of that.
-BUDGET = {"header": 48_000, "footer": 48_000, "link": 12_000, "sheet": 72_000, "card": 32_000}
+# element sheet to a chart's, a card beside another to half of that, and a
+# badge to a header's: a plate embeds each letter it uses once, and a long
+# label and value in mixed case use most of the alphabet.
+BUDGET = {"header": 48_000, "footer": 48_000, "link": 12_000, "sheet": 72_000, "card": 32_000, "badge": 48_000}
 
 
 def c(token: str) -> str:
@@ -135,12 +137,8 @@ def _matches(pattern: re.Pattern, text: str, starts: tuple[str, ...], window, fo
     return found
 
 
-def lint(svg: str, *, budget: int, text_ok: bool = False) -> list[str]:
-    """Everything wrong with `svg` as a README image, or an empty list.
-
-    No `<text>` is allowed: every letter is a path. `text_ok` admits it, for
-    the badges, which are lettered in the viewer's Verdana as shields are.
-    """
+def _unsafe(svg: str) -> list[str]:
+    """What would make `svg` unsafe or incomplete as an image: a script or the like, or a reference outside it."""
     problems = []
     low = svg.lower()
     for word in _BANNED:
@@ -150,6 +148,44 @@ def lint(svg: str, *, budget: int, text_ok: bool = False) -> list[str]:
     if _matches(_EXTERNAL, svg, ("href", "src", "url("),
                 lambda i, n: i + 5 if n == "url(" else min(len(svg), _stop(svg, i + len(n), "\"'") + 1), fold=True):
         problems.append("references something outside the file")
+    return problems
+
+
+def _references(svg: str) -> list[str]:
+    """Ids given twice or reading as a colour, and references to an id that is not there."""
+    problems = []
+    ids = [m.group(1) for m in _matches(_ID, svg, ('id="',), lambda i, n: _stop(svg, i + 4, '"'))]
+    if len(ids) != len(set(ids)):
+        problems.append("duplicate ids")
+    for i in ids:
+        if re.fullmatch(r"[0-9a-fA-F]{3}|[0-9a-fA-F]{6}", i):
+            problems.append(f"id {i!r} reads as a colour")
+    # First seen, first reported, so the same file always reports the same way.
+    refs = dict.fromkeys(m.group(1) for m in _matches(_REF, svg, ('href="#', "url(#"), lambda i, n: _stop(svg, i + len(n), '")')))
+    for ref in refs:
+        if ref not in ids:
+            problems.append(f"#{ref} is referenced but never defined")
+    return problems
+
+
+def hazards(svg: str) -> list[str]:
+    """What no file the kit draws may carry, whatever it is lettered in and however it is coloured.
+
+    A script or anything like one, a reference outside the file, an id given
+    twice or reading as a colour, a reference to an id that is not there, and
+    a dash the standards ban. `lint` checks these and more; the badges, which
+    are set in a font and coloured in their own shades, are held to these.
+    """
+    return _unsafe(svg) + _references(svg) + (["an en or em dash"] if any(d in svg for d in _DASHES) else [])
+
+
+def lint(svg: str, *, budget: int, text_ok: bool = False) -> list[str]:
+    """Everything wrong with `svg` as a README image, or an empty list.
+
+    No `<text>` is allowed: every letter is a path. `text_ok` admits it, for
+    the badges, which are lettered in the viewer's Verdana as shields are.
+    """
+    problems = _unsafe(svg)
     if 'role="img"' not in svg:
         problems.append('no role="img"')
     title = re.search(r'<title id="t">([^<]*)</title>', svg)
@@ -172,17 +208,7 @@ def lint(svg: str, *, budget: int, text_ok: bool = False) -> list[str]:
         if prop == "fill" and value in ("freeze", "remove"):
             continue   # SMIL's own `fill`, which says what an animation leaves behind, not a colour
         problems.append(f"{prop} {value!r} is not a token")
-    ids = [m.group(1) for m in _matches(_ID, svg, ('id="',), lambda i, n: _stop(svg, i + 4, '"'))]
-    if len(ids) != len(set(ids)):
-        problems.append("duplicate ids")
-    for i in ids:
-        if re.fullmatch(r"[0-9a-fA-F]{3}|[0-9a-fA-F]{6}", i):
-            problems.append(f"id {i!r} reads as a colour")
-    # First seen, first reported, so the same file always reports the same way.
-    refs = dict.fromkeys(m.group(1) for m in _matches(_REF, svg, ('href="#', "url(#"), lambda i, n: _stop(svg, i + len(n), '")')))
-    for ref in refs:
-        if ref not in ids:
-            problems.append(f"#{ref} is referenced but never defined")
+    problems += _references(svg)
     texts = [m.group(1) for m in _matches(_TEXT, svg, ("<text",), lambda i, n: _stop(svg, i + 5, ">"))]
     if not text_ok and texts:
         problems.append("text not drawn as paths")

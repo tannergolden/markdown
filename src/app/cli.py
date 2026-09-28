@@ -7,6 +7,7 @@
   check      redraw from what the lock kept and compare, writing nothing; exit 1 when stale
   preview    draw a sample page into a folder, the way a run would
   measure    measure the page and print the measurement
+  set        set badges' values in the settings file, NAME=MESSAGE[:COLOR], keeping its comments
   lint       draw every design for every sample in every print, and lint every file
   settings   read a repository's settings and print them in full, every default filled in
   holidays   the holiday calendar: which set is up on a day, and the windows ahead or in a year
@@ -23,7 +24,11 @@ import datetime as dt
 import json
 from pathlib import Path
 
-from domain import KIT, KIT_VERSION, holidays, palette, prints
+from domain import KIT, KIT_VERSION, holidays, palette, prints, settings
+from domain.badges import classic as badges_classic
+from domain.badges import data as badges_data
+from domain.badges import plates as badges_plates
+from domain.badges import settings as badges_settings
 from domain.banners import sample as banners_sample
 from domain.banners.compose import compose
 from domain.banners.content import Footer, Header
@@ -78,6 +83,9 @@ def parser() -> argparse.ArgumentParser:
          today=False).add_argument("--from", dest="source", type=Path, help="a saved measurement to compare with")
     page(sub.add_parser("preview", help="draw a sample page into a folder, the way a run would"))
     page(sub.add_parser("measure", help="measure the page and print the measurement"))
+    page(sub.add_parser("set", help="set badges' values in the settings file, keeping its comments"),
+         today=False).add_argument("values", nargs="+", metavar="NAME=MESSAGE[:COLOR]",
+                                   help="a badge's name, its new message, and a colour after a colon if it changes")
     sub.add_parser("lint", help="draw every design for every sample in every print, and lint every file").add_argument(
         "--specimen", type=Path, help="a repository whose elements are drawn in every print too")
     s = page(sub.add_parser("settings", help="read a repository's settings and print them in full"), today=False)
@@ -131,6 +139,49 @@ def cmd_measure(args, ports: Ports) -> int:
     return 0
 
 
+def cmd_set(args, ports: Ports) -> int:
+    """Rewrite each named badge's message, and colour, in the settings file, and check the result still holds."""
+    cfg = _cfg(args, ports)
+    where, text = config.find(args.root, ports)
+    if text is None:
+        raise Usage(f"set: there is no settings file to set values in; badges are listed in {config.NAMES[0]}")
+    listed = {b["name"]: b for b in (cfg["badges"]["list"] if isinstance(cfg["badges"], dict) else [])}
+    updates = {}
+    for spec in args.values:
+        name, message, colour = badges_settings.update(spec)
+        if name not in listed:
+            raise Usage(f"set: {where} lists no badge named {name}")
+        if listed[name].get("measure"):
+            raise Usage(f"set: {name} measures its own value; take out its measure to set one")
+        updates[name] = (message, colour)
+    new, missing = badges_settings.set_values(text, updates)
+    if missing:
+        raise Usage(f"set: {', '.join(missing)} has no message line in {where} to rewrite")
+    settings.validate(ports.parse_yaml(new), _pairs(args.input), catalogue=ports.catalogue, parts=config.PARTS,
+                      where=where)
+    ports.write_text(args.root / where, new)
+    print(f"set {len(updates)} value{'s' if len(updates) != 1 else ''} in {where}", file=ports.out)
+    return 0
+
+
+def badge_specimens() -> list[tuple[str, dict, str]]:
+    """A badge of every style and every plate, in every print and state: what `lint` draws them from."""
+    out = []
+    for style in badges_classic.STYLES:
+        for label, message in (("Status", "Active"), ("Only a label", ""), ("", "Only a message")):
+            out.append((f"{style} {label or message}", {"name": "specimen", "label": label, "message": message,
+                                                       "icon": "pulse", "style": style}, "standard"))
+    for tone in prints.PRINTS:
+        for style in badges_classic.STYLES:
+            out.append((f"{badges_plates.BLUEPRINT}{style} {tone}", {"name": "specimen", "label": "License",
+                                                                     "message": "MIT", "icon": "scale",
+                                                                     "style": style}, tone))
+    for state in ("green", "yellow", "red", "slate"):
+        out.append((f"live {state}", {"name": "specimen", "label": "Build", "message": "Passing", "icon": "check",
+                                      "label_color": "gold", "message_color": state}, "blueprint"))
+    return out
+
+
 def contents() -> dict:
     """Every content the kit is linted with: each sample, composed, and the kit's own lines."""
     out = {"kit": (Header(), Footer())}
@@ -152,6 +203,17 @@ def cmd_lint(args, ports: Ports) -> int:
             print(f"{name:<10} {code} {design.name:<12} {len(prints.PRINTS)} prints, largest {largest / 1000:.1f} KB"
                   + ("" if not problems else f"  PROBLEMS: {problems}"), file=ports.out)
             failed += bool(problems)
+    largest, problems = 0, []
+    for what, b, theme in badge_specimens():
+        try:
+            files = badges_data.draw(b, {}, theme=theme, shade=None, seed="2026W01")
+        except ValueError as exc:
+            problems.append(f"{what}: {exc}")
+            continue
+        largest = max(largest, *(len(svg.encode("utf-8")) for svg in files.values()))
+    print(f"badges     {len(badge_specimens())} specimens, largest {largest / 1000:.1f} KB"
+          + ("" if not problems else f"  PROBLEMS: {problems}"), file=ports.out)
+    failed += bool(problems)
     if args.specimen:
         cfg = config.load(args.specimen, ports)
         section = cfg["elements"] if isinstance(cfg["elements"], dict) else {}
@@ -216,7 +278,7 @@ def cmd_version(args, ports: Ports) -> int:
 
 
 COMMANDS = {"run": cmd_run, "render": cmd_render, "check": cmd_check, "preview": cmd_preview, "measure": cmd_measure,
-            "lint": cmd_lint, "settings": cmd_settings, "holidays": cmd_holidays, "palette": cmd_palette,
+            "set": cmd_set, "lint": cmd_lint, "settings": cmd_settings, "holidays": cmd_holidays, "palette": cmd_palette,
             "icons": cmd_icons, "version": cmd_version}
 
 

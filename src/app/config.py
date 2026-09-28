@@ -6,11 +6,12 @@ from __future__ import annotations
 from pathlib import Path
 
 from domain import settings
+from domain.badges import data as badges_data
 from domain.banners import settings as banners_settings
 from domain.elements import data as elements_data
 
 # Each part's own check of its section of the settings, as the parts arrive.
-PARTS = {"banners": banners_settings.check, "elements": elements_data.check}
+PARTS = {"banners": banners_settings.check, "badges": badges_data.check, "elements": elements_data.check}
 
 # The settings file, by the name the standards give a new YAML file, and by the
 # name the workflow beside it would suggest. One of them, not both.

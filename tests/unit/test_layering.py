@@ -47,17 +47,20 @@ class LayeringTest(unittest.TestCase):
 
     def test_the_domain_does_no_io(self):
         banned = {"open", "subprocess", "urllib", "socket", "os", "shutil", "tempfile", "pathlib", "zoneinfo"}
+        # urllib.parse only takes a string apart; the rest of urllib reaches the network.
+        pure = {"urllib.parse"}
         for path in self.modules("domain"):
             tree = ast.parse(path.read_text(encoding="utf-8"))
             for node in ast.walk(tree):
                 if isinstance(node, ast.Import):
-                    names = {a.name.split(".")[0] for a in node.names}
+                    names = {a.name for a in node.names}
                 elif isinstance(node, ast.ImportFrom) and not node.level:
-                    names = {(node.module or "").split(".")[0]}
+                    names = {node.module or ""}
                 elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "open":
                     names = {"open"}
                 else:
                     continue
+                names = {name.split(".")[0] for name in names - pure}
                 self.assertFalse(names & banned, f"{path.relative_to(support.ROOT)}:{node.lineno} uses {names & banned}")
 
     def test_only_the_composition_root_imports_infra_and_app(self):

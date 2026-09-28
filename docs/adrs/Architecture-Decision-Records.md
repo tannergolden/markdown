@@ -45,6 +45,7 @@ Read a row in four moves: **Decision** links the record (its number and title); 
 
 | Decision                                                                                     | Status   | Date       | Evidence |
 | :------------------------------------------------------------------------------------------- | :------- | :--------- | :------- |
+| [ADR-0005: The kit measures live badges](ADR-0005-The-Kit-Measures-Live-Badges.md)          | Accepted | 2026-09-28 | -        |
 | [ADR-0004: Standard as the default theme](ADR-0004-Standard-As-The-Default-Theme.md)         | Accepted | 2026-09-28 | -        |
 | [ADR-0003: Holiday windows](ADR-0003-Holiday-Windows.md)                                     | Accepted | 2026-09-28 | -        |
 | [ADR-0002: Standard library only](ADR-0002-Standard-Library-Only.md)                         | Accepted | 2026-09-28 | -        |

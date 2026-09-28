@@ -13,11 +13,17 @@ from app.parts import banners as measure
 
 
 class FakeGitHub:
-    """Answers each query from `answers`, keyed by the query text; a callable answer gets the variables."""
+    """Answers each query from `answers`, keyed by the query text; a callable answer gets the variables.
 
-    def __init__(self, answers: dict, users: dict | None = None):
+    A REST path is answered from `paths`, where a callable answer gets the
+    parameters, and else as a user from `users`, by the path's last part.
+    Anything else is a 404: None.
+    """
+
+    def __init__(self, answers: dict, users: dict | None = None, paths: dict | None = None):
         self.answers = answers
         self.users = users or {}
+        self.paths = paths or {}
         self.calls = 0
         self.points = 0
         self.last_errors: list[str] = []
@@ -32,6 +38,9 @@ class FakeGitHub:
     def rest(self, path: str, **params):
         self.calls += 1
         self.asked.append((path, params))
+        if path in self.paths:
+            answer = self.paths[path]
+            return answer(**params) if callable(answer) else answer
         login = path.rsplit("/", 1)[-1]
         return self.users.get(login)
 

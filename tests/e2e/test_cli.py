@@ -48,6 +48,30 @@ class CliTest(unittest.TestCase):
         # The banners check their own section and fill in its defaults.
         self.assertEqual((cfg["banners"]["motto"], cfg["banners"]["header"]), ("Built to be rebuilt.", "section"))
 
+    def test_badges_are_checked_and_drawn_by_the_preview(self):
+        (self.root / ".github").mkdir()
+        settings = self.root / ".github" / "markdown.yaml"
+        settings.write_text("mode: repository\nsubject: octo/site\ntheme: blackprint\nbadges:\n"
+                            "  - name: status\n    label: Status\n    message: Active\n"
+                            "  - name: ci\n    label: CI\n    measure: {workflow: checks.yml}\n", encoding="utf-8")
+        done = kit("settings", "--root", str(self.root))
+        self.assertEqual(done.returncode, 0, done.stderr)
+        badges = json.loads(done.stdout)["badges"]
+        self.assertEqual(badges["list"][1]["measure"], {"kind": "workflow", "target": "checks.yml", "repository": "",
+                                                        "branch": ""})
+        done = kit("preview", "--root", str(self.root))
+        self.assertEqual(done.returncode, 0, done.stderr)
+        out = self.root / "assets" / "markdown" / "badges"
+        self.assertEqual(sorted(p.relative_to(out).as_posix() for p in out.rglob("*.svg")),
+                         ["dynamic/ci.svg", "static/status-dark.svg", "static/status.svg"])
+        self.assertIn('alt="CI: Passing"', (self.root / "README.md").read_text(encoding="utf-8"))
+        self.assertEqual(kit("check", "--root", str(self.root)).returncode, 0)
+        settings.write_text(settings.read_text(encoding="utf-8") + "  - name: odd\n    label: Odd\n"
+                            "    label_color: gold\n    message_color: teal\n", encoding="utf-8")
+        done = kit("settings", "--root", str(self.root))
+        self.assertEqual(done.returncode, 2)
+        self.assertIn("badges[2] (odd): a live badge (gold label) paints its message in a state", done.stderr)
+
     def test_a_bad_setting_exits_2_naming_it(self):
         (self.root / ".github").mkdir()
         (self.root / ".github" / "markdown.yml").write_text("holiday-days: 9\n", encoding="utf-8")

@@ -110,6 +110,7 @@ What one kit means in practice:
 - [ADR-0002](ADR-0002-Standard-Library-Only.md): the kit installs nothing.
 - [ADR-0003](ADR-0003-Holiday-Windows.md): how the holiday sets take over.
 - [ADR-0004](ADR-0004-Standard-As-The-Default-Theme.md): the default theme.
+- [ADR-0005](ADR-0005-The-Kit-Measures-Live-Badges.md): the live badges are measured in the same run.
 
 ### 🔗 See also
 
