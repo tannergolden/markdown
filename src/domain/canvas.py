@@ -33,10 +33,12 @@ THEMES = {"day": DAY, "dark": DARK}
 # Budgets, in bytes. A README loads every one of these on every view, so each
 # kind of file is held to a size: a header or footer to what the longest
 # titles in the family need, a link under the footer to a button's worth, an
-# element sheet to a chart's, a card beside another to half of that, and a
-# badge to a header's: a plate embeds each letter it uses once, and a long
-# label and value in mixed case use most of the alphabet.
-BUDGET = {"header": 48_000, "footer": 48_000, "link": 12_000, "sheet": 72_000, "card": 32_000, "badge": 48_000}
+# element sheet to a chart's, a card beside another to half of that, a
+# badge to a header's (a plate embeds each letter it uses once, and a long
+# label and value in mixed case use most of the alphabet), and a trophy to
+# what the richest card, a medallion in its laurel, needs.
+BUDGET = {"header": 48_000, "footer": 48_000, "link": 12_000, "sheet": 72_000, "card": 32_000, "badge": 48_000,
+          "trophy": 40_000}
 
 
 def c(token: str) -> str:

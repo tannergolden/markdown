@@ -89,10 +89,12 @@ Mapping the project-specific tools to the universal repository interface (Makefi
 | Makefile Target   | Execution Logic           | Strategic Purpose                         |
 | :---------------- | :------------------------ | :---------------------------------------- |
 | **Setup** | Nothing: the kit installs nothing, so there is no `make setup`. | Bootstrap the local workspace. |
-| **Lint** (`lint-command`) | `make lint`: the repository validator, `compileall` over `src` and `tests`, and the layering test. | Static analysis and style enforcement. |
+| **Lint** (`lint-command`) | `make lint`: the repository validator, `compileall` over `src` and `tests`, the layering test, and `markdown-kit lint`, which draws every design, badge and trophy and lints each file. | Static analysis and style enforcement. |
 | **Test** (`test-command`) | `make test`: `unittest` over `tests/unit`, `tests/integration`, `tests/e2e` and `.github/scripts`. | Execution of the validation suite. |
 | **Build** (`build-command`) | Nothing is built: the action runs the source as it is tagged. | Transformation into deployable artifacts. |
 | **`make deploy`** | None: a release is a tag, cut by the release workflow. | Environmental promotion.                  |
+| **`make catalogue`** | `docs/Catalogue.md`, written from the trophies' catalogue and calibration; a unit test fails when it is stale. | Documentation that cannot drift from the data. |
+| **`make calibrate`** | `markdown-kit calibrate` measures the repository population through the API (needs `GITHUB_TOKEN`), then `make calibrated` writes the catalogue again. The **📐 Calibrate** workflow runs it once a quarter. | Thresholds pinned to measurements. |
 
 ### 🔗 See also
 

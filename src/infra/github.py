@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -160,3 +161,97 @@ class GitHub:
                 break
             after = info.get("endCursor")
         return nodes
+
+
+# --- a paced client, for the calibration --------------------------------------------------
+
+def link_last(link: str) -> int | None:
+    """The last page a Link header names, or None when there is only the one page."""
+    m = re.search(r'[?&]page=(\d+)>;\s*rel="last"', link or "")
+    return int(m.group(1)) if m else None
+
+
+class Paced:
+    """The smallest REST client that keeps inside GitHub's two rate limits, for `calibrate`.
+
+    The calibration reads thousands of pages through search (thirty calls a
+    minute) and REST (a thousand an hour with an Actions token), so this
+    sleeps through a limit rather than failing on it, and hands back the
+    headers too, because a count behind a paged endpoint is read off its
+    Link header.
+    """
+
+    def __init__(self, token: str | None = None, quiet: bool = False, sleep=time.sleep, clock=time.time,
+                 opener=urllib.request.urlopen):
+        self.token = token or os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN") or ""
+        if not self.token:
+            raise ApiError("no token: calibrate reads GitHub's API with GITHUB_TOKEN")
+        self.quiet = quiet
+        self.calls = 0
+        self._sleep_fn, self._clock, self._open = sleep, clock, opener
+
+    def get(self, path: str, params: dict | None = None):
+        """(the JSON body or None, the headers). Sleeps through rate limits; None on 404, 409, 422 and 451."""
+        url = path if path.startswith("http") else REST + path
+        if params:
+            url += ("&" if "?" in url else "?") + urllib.parse.urlencode(params)
+        for attempt in range(10):
+            req = urllib.request.Request(url, headers={
+                "Authorization": f"Bearer {self.token}", "Accept": "application/vnd.github+json",
+                "User-Agent": f"{UA}-calibrate", "X-GitHub-Api-Version": "2022-11-28"})
+            try:
+                with self._open(req, timeout=60) as r:
+                    self.calls += 1
+                    body = r.read()
+                    headers = {k.lower(): v for k, v in r.headers.items()}
+                    self._pace(headers)
+                    return (json.loads(body) if body else None), headers
+            except urllib.error.HTTPError as e:
+                headers = {k.lower(): v for k, v in e.headers.items()}
+                if e.code in (403, 429):
+                    if "too large" in (e.read() or b"").decode("utf-8", "replace").lower():
+                        return {"too_large": True}, headers
+                    self._wait(headers, attempt)
+                    continue
+                if e.code in (404, 409, 422, 451):
+                    return None, headers
+                if e.code == 202:  # statistics being computed
+                    self._sleep_fn(3)
+                    continue
+                self._sleep_fn(2 + attempt)
+            except (urllib.error.URLError, TimeoutError, ConnectionError):
+                self._sleep_fn(2 + attempt)
+        return None, {}
+
+    def _pace(self, headers: dict) -> None:
+        if headers.get("x-ratelimit-remaining") in ("0", "1") and headers.get("x-ratelimit-reset"):
+            self._sleep(int(headers["x-ratelimit-reset"]) - self._clock() + 2)
+
+    def _wait(self, headers: dict, attempt: int) -> None:
+        if headers.get("retry-after"):
+            self._sleep(int(headers["retry-after"]) + 1)
+        elif headers.get("x-ratelimit-reset"):
+            self._sleep(int(headers["x-ratelimit-reset"]) - self._clock() + 2)
+        else:
+            self._sleep(min(120, 15 * (attempt + 1)))
+
+    def _sleep(self, seconds: float) -> None:
+        seconds = max(1.0, min(seconds, 3600))
+        if not self.quiet:
+            print(f"  rate limit: sleeping {seconds:.0f}s", file=sys.stderr, flush=True)
+        self._sleep_fn(seconds)
+
+    def count(self, kind: str, q: str) -> int | None:
+        """How many a search finds, or None when it could not ask."""
+        data, _ = self.get(f"/search/{kind}", {"q": q, "per_page": 1})
+        return None if data is None else data.get("total_count")
+
+    def last_page(self, path: str, params: dict) -> int | None:
+        """The count behind a paged endpoint, from its Link header's last page."""
+        data, headers = self.get(path, dict(params, per_page=1))
+        if isinstance(data, dict) and data.get("too_large"):
+            return 500  # GitHub refuses to list more than 500 contributors
+        if data is None:
+            return 0
+        n = link_last(headers.get("link", ""))
+        return n if n is not None else (len(data) if isinstance(data, list) else 0)

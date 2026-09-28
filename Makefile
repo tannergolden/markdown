@@ -10,7 +10,7 @@ KIT    := $(PYTHON) src/markdown-kit.py
 TEST   := $(PYTHON) -m unittest discover -t .
 
 .DEFAULT_GOAL := help
-.PHONY: help lint draw test test-unit test-integration test-e2e test-scripts holidays
+.PHONY: help lint draw test test-unit test-integration test-e2e test-scripts holidays catalogue calibrate calibrated
 
 ## help: List the available targets
 help:
@@ -53,3 +53,15 @@ test-scripts:
 ## holidays: The holiday calendar for this year, at the default three days
 holidays:
 	@$(KIT) holidays --year $$(date -u +%Y)
+
+## catalogue: Write docs/Catalogue.md from the trophies' catalogue and calibration
+catalogue:
+	@$(KIT) catalogue > docs/Catalogue.md
+
+## calibrate: Measure the repository population through the API (needs GITHUB_TOKEN), then write what reads it
+calibrate:
+	@$(KIT) calibrate
+	@$(MAKE) --no-print-directory calibrated
+
+## calibrated: Write the catalogue again from the calibration on disk
+calibrated: catalogue

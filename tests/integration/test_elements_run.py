@@ -191,7 +191,7 @@ class Measured(unittest.TestCase):
             f"<!-- markdown:element:{eid}:start -->\n<!-- markdown:element:{eid}:end -->"
             for eid in ("vitals", "people", "history", "conformance")) + "\n", encoding="utf-8")
         (self.root / ".github" / "markdown.yaml").write_text(
-            "mode: repository\nsubject: octo-dev/tool\ntheme: greenprint\nbanners: false\nelements:\n"
+            "mode: repository\nsubject: octo-dev/tool\ntheme: greenprint\nbanners: false\ntrophies: false\nelements:\n"
             "  vitals: {kind: instruments, measure: {count: {tests: 'tests/test_*.py', workflows: '.github/workflows/*'}}}\n"
             "  people: {kind: roster, measure: {}}\n"
             "  history: {kind: milestones, measure: {notable: {v1.1.0: [FIRST RELEASE]}}}\n"

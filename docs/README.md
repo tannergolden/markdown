@@ -80,6 +80,7 @@ copied across - the seeds stay where they are and you take what you want.
 - [Source Code](technical/Source-Code.md) - where each piece of the kit lives, and the layering rules its imports are held to
 - [Technology Stack & Tooling](technical/Technology-Stack-&-Tooling.md) - the stack, and the Makefile targets CI runs
 - [Architecture Decision Records](adrs/Architecture-Decision-Records.md) - every decision the kit's design rests on, newest first
+- [Catalogue](Catalogue.md) - every trophy and achievement a case can hold, what earns each, and how its threshold was set
 
 ---
 

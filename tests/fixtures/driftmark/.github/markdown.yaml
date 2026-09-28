@@ -4,6 +4,7 @@
 theme: blueprint
 subject: driftmark/driftmark
 banners: false
+trophies: false
 
 elements:
   how-it-runs:

@@ -28,6 +28,7 @@ SETTINGS = """\
 mode: repository
 subject: octo/site
 banners: false
+trophies: false
 badges:
   localize: true
   list:
@@ -211,7 +212,7 @@ class Badges(unittest.TestCase):
 
     def test_badges_turned_off_take_their_block_and_files_away(self):
         self.run_kit()
-        self.settings.write_text("mode: repository\nsubject: octo/site\nbanners: false\nbadges: false\n",
+        self.settings.write_text("mode: repository\nsubject: octo/site\nbanners: false\ntrophies: false\nbadges: false\n",
                                  encoding="utf-8")
         code, out = self.run_kit()
         self.assertEqual(code, 0, out)

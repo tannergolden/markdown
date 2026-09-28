@@ -28,9 +28,12 @@ from pathlib import Path
 from domain import lock, prints, readme, settings
 from domain.banners import plan as banners_plan
 from domain.banners import sample as banners_sample
+from domain.trophies import ledger as trophies_ledger
+from domain.trophies import plan as trophies_plan
+from domain.trophies import sample as trophies_sample
 
 from .page import Page, here_of, mode_and_subject, settle
-from .parts import badges, banners, elements
+from .parts import badges, banners, elements, trophies
 
 LOCK = ".github/markdown.lock.json"
 # What the lock keeps of the banners' measurement: what `plan` needs to draw them again, nothing that moves by itself.
@@ -57,6 +60,8 @@ def remembered(lk: dict) -> dict:
         out["badges"] = parts["badges"].get("measured") or {}
         if parts["badges"].get("branch"):
             out["localize"] = {"branch": parts["badges"]["branch"]}
+    if (parts.get("trophies") or {}).get("last"):
+        out["trophies"] = parts["trophies"]["last"]
     return out
 
 
@@ -72,10 +77,11 @@ def plan_page(page: Page, measured: dict, *, draw: bool = True, was: list[str] =
 
     `was` names the elements the committed page carries, so one no longer in
     the settings has its block taken out; a block the kit never drew is never
-    touched.
+    touched. A part that is on but has nothing measured to draw from, like a
+    trophy case with no lock yet, keeps its files and its block as they are.
     """
     cfg = page.cfg
-    result: dict = {"parts": {}, "files": {}, "blocks": {}, "notes": []}
+    result: dict = {"parts": {}, "files": {}, "blocks": {}, "notes": [], "hold": []}
     if cfg["banners"] is False:
         result["blocks"].update({"header": None, "footer": None})
     elif "banners" in measured:
@@ -86,6 +92,8 @@ def plan_page(page: Page, measured: dict, *, draw: bool = True, was: list[str] =
         # A design set to none takes its block away, so both are named whether drawn or not.
         result["blocks"].update({"header": None, "footer": None, **p["blocks"]})
         result["notes"] += p["notes"]
+    else:
+        result["hold"] += ["header-", "footer-", "link-"]
     listed = cfg["badges"]["list"] if isinstance(cfg["badges"], dict) else []
     result["blocks"]["badges"] = None
     if listed:
@@ -104,6 +112,16 @@ def plan_page(page: Page, measured: dict, *, draw: bool = True, was: list[str] =
         result["files"].update(p["files"])
         result["blocks"].update(p["blocks"])
         result["notes"] += p["notes"]
+    if cfg["trophies"] is False:
+        result["blocks"]["trophies"] = None
+    elif "trophies" in measured:
+        p = trophies.plan(measured["trophies"], cfg["trophies"], out=page.out, readme=page.readme)
+        result["parts"]["trophies"] = p
+        result["files"].update(p["files"])
+        if p["block"] is not None:  # a case drawn with block: false leaves the README to its author
+            result["blocks"]["trophies"] = p["block"]
+    else:
+        result["hold"].append("trophies/")
     return result
 
 
@@ -158,17 +176,20 @@ def _merge(planned: dict, extra: dict | None) -> dict:
     return planned
 
 
-def _kept(page: Page, planned: dict) -> set[str]:
+def _kept(page: Page, planned: dict, drawn: list[str] = ()) -> set[str]:
+    """The drawn files, relative to the page's folder, that stay: everything planned, and what a part holds."""
     prefix = page.out.strip("/") + "/"
-    return {posixpath.relpath(rel, page.out.strip("/")) for rel in [*planned["files"], *planned.get("keep", ())]
-            if rel.startswith(prefix)}
+    held = tuple(planned.get("hold") or ())
+    return ({posixpath.relpath(rel, page.out.strip("/")) for rel in [*planned["files"], *planned.get("keep", ())]
+             if rel.startswith(prefix)} | {name for name in drawn if held and name.startswith(held)})
 
 
 def write(page: Page, ports, planned: dict) -> tuple[list[str], list[str]]:
     """Write what differs and remove what is no longer drawn. Returns (the paths that changed, blocks with no place)."""
     root = page.root
     changed = [rel for rel, svg in planned["files"].items() if ports.write_text(root / rel, svg)]
-    changed += [f"{page.out}/{gone}" for gone in ports.prune(root / page.out, _kept(page, planned))]
+    held = ports.drawn(root / page.out) if planned.get("hold") else []
+    changed += [f"{page.out}/{gone}" for gone in ports.prune(root / page.out, _kept(page, planned, held))]
     texts = planned.get("texts") or {}
     changed += [rel for rel, doc in texts.items() if rel != page.readme and ports.write_text(root / rel, doc)]
     text = ports.read_text(root / page.readme) or ""
@@ -188,8 +209,9 @@ def stale(page: Page, ports, planned: dict) -> list[str]:
             out.append(f"{rel} (missing)")
         elif now != svg:
             out.append(f"{rel} (differs)")
-    keep = _kept(page, planned)
-    out += [f"{page.out}/{name} (no longer drawn)" for name in ports.drawn(root / page.out) if name not in keep]
+    drawn = ports.drawn(root / page.out)
+    keep = _kept(page, planned, drawn)
+    out += [f"{page.out}/{name} (no longer drawn)" for name in drawn if name not in keep]
     out += [f"{rel} (shields.io links to localize)" for rel in planned.get("texts") or {}]
     text = ports.read_text(root / page.readme) or ""
     for name, wanted in planned["blocks"].items():
@@ -219,6 +241,8 @@ def describe(page: Page, planned: dict) -> str:
         head += f"; badges {', '.join(parts['badges']['names'])}"
     if "elements" in parts:
         head += f"; elements {', '.join(parts['elements']['names'])}"
+    if "trophies" in parts:
+        head += f"; {trophies_plan.describe(parts['trophies'])}"
     if planned.get("localized"):
         n = len(planned["localized"]["record"])
         head += f"; {n} localized badge{'s' if n != 1 else ''}"
@@ -260,12 +284,18 @@ def _badge_news(page: Page, planned: dict, was: dict, changed: list[str]) -> tup
     return redrawn, news
 
 
+def _trophy_subject(planned: dict, measurement: dict, reached: dict) -> str:
+    """The subject a commit takes when the case is what moved: a tier reached, an achievement earned, or a change."""
+    subject = f"chore(markdown): \U0001F3C6 {trophies_plan.headline(reached, measurement.get('delta'), planned['subject'])}"
+    return subject if len(subject) <= 72 else subject[:69].rstrip(", ") + "..."
+
+
 def commit_message(page: Page, planned: dict, before: dict | None, changed: list[str], run_id: str = "",
-                   was: dict | None = None) -> str:
+                   was: dict | None = None, measured: dict | None = None, reached: dict | None = None) -> str:
     """A Conventional Commit for this run: what the page now shows, what moved, and why it is committed.
 
     `was` is what the live badges said before this run, so the message can say
-    which of them moved.
+    which of them moved; `reached` is what the trophy case reached today.
     """
     parts = planned["parts"]
     folder = posixpath.join(page.out.strip("/") or ".", "elements") + "/"
@@ -274,27 +304,38 @@ def commit_message(page: Page, planned: dict, before: dict | None, changed: list
     news = [f"Redrawn from the settings and the repository: the elements {_series(redrawn)}."] if redrawn else []
     badged, told = _badge_news(page, planned, was or {}, changed)
     news += told
+    case = posixpath.join(page.out.strip("/") or ".", "trophies") + "/"
+    cased = "trophies" in parts and any(rel.startswith(case) for rel in changed)
+    trophy_news = trophies_plan.news(parts["trophies"], (measured or {}).get("trophies") or {}, reached or {},
+                                     None if "banners" in parts else run_id) if cased else []
     if "banners" in parts:
         message = banners_plan.commit_message(parts["banners"], before, changed, run_id,
                                               rainbow=page.rainbow is not None)
-        if news:
-            head, _, rest = message.partition("\n\n")
-            paras = rest.split("\n\n")
-            for para in news:
-                paras.insert(len(paras) - 1, textwrap.fill(para, 72))
-            message = head + "\n\n" + "\n\n".join(paras)
-        return message
-    emoji = "\U0001F3F7\ufe0f" if (badged or told) and not redrawn else "\U0001F4D0"
-    what = redrawn + (["the badges"] if badged else [])
-    subject = (f"chore(markdown): {emoji} redraw {_series(what)}" if what else
-               f"chore(markdown): {emoji} localize the shields.io badges" if told else
-               f"chore(markdown): {emoji} redraw the page for {page.subject}")
-    if len(subject) > 72:
-        subject = f"chore(markdown): {emoji} redraw the page for {page.subject}"
-    paras = [textwrap.fill(para, 72) for para in news]
+        head, _, rest = message.partition("\n\n")
+        if cased and "redraw the banners for" in head:
+            # The banners said nothing new; the case did.
+            head = _trophy_subject(parts["trophies"], (measured or {}).get("trophies") or {}, reached or {})
+        paras = rest.split("\n\n")
+        for para in news:
+            paras.insert(len(paras) - 1, textwrap.fill(para, 72))
+        for para in trophy_news:
+            paras.insert(len(paras) - 1, para)
+        return head + "\n\n" + "\n\n".join(paras)
+    if cased:
+        subject = _trophy_subject(parts["trophies"], (measured or {}).get("trophies") or {}, reached or {})
+    else:
+        emoji = "\U0001F3F7\ufe0f" if (badged or told) and not redrawn else "\U0001F4D0"
+        what = redrawn + (["the badges"] if badged else [])
+        subject = (f"chore(markdown): {emoji} redraw {_series(what)}" if what else
+                   f"chore(markdown): {emoji} localize the shields.io badges" if told else
+                   f"chore(markdown): {emoji} redraw the page for {page.subject}")
+        if len(subject) > 72:
+            subject = f"chore(markdown): {emoji} redraw the page for {page.subject}"
+    paras = [textwrap.fill(para, 72) for para in news] + trophy_news
     paras.append(textwrap.fill(f"This run rewrote {len(changed)} files. Nothing is fetched when the README is "
                                "viewed, so every value the page shows has to be committed. The kit recognises this "
-                               "commit by its scope and never counts it as the repository's last change.", 72))
+                               "commit by its scope and never counts it as the repository's last change, or "
+                               "toward anyone's trophies.", 72))
     return subject + "\n\n" + "\n\n".join(paras) + "\n"
 
 
@@ -306,6 +347,15 @@ def finish(page: Page, ports, measured: dict, lk: dict, *, use_lock: bool, advan
     before = _before(page, lk) if use_lock else None
     said = remembered(lk).get("badges") or {}
     was = _drawn_elements(lk)
+    reached: dict = {}
+    if use_lock and "trophies" in measured and isinstance(page.cfg["trophies"], dict):
+        # The case's ledger: a run folds itself in, which gives the cards their weekly change and NEW
+        # ribbons; a preview only keeps what it drew from.
+        record = lock.part(lk, "trophies")
+        if advance:
+            reached = trophies.fold(record, measured["trophies"], page.cfg["trophies"], page.today)
+        else:
+            trophies_ledger.remember(record, measured["trophies"])
     extra = localize(page, ports, lk, measured)
     planned = _merge(plan_page(page, measured, was=was), extra)
     shade_was = (lock.drawn(lk) or {}).get("rainbow")
@@ -344,7 +394,8 @@ def finish(page: Page, ports, measured: dict, lk: dict, *, use_lock: bool, advan
                 changed.append(LOCK)
     print(f"{len(changed)} files changed" if changed else "nothing changed", file=ports.out)
     if commit_file and changed:
-        message = commit_message(page, planned, before, changed, ports.env.get("GITHUB_RUN_ID", ""), was=said)
+        message = commit_message(page, planned, before, changed, ports.env.get("GITHUB_RUN_ID", ""), was=said,
+                                 measured=measured, reached=reached)
         ports.write_text(Path(commit_file), message)
         print(message.splitlines()[0], file=ports.out)
     summary = ports.env.get("GITHUB_STEP_SUMMARY")
@@ -397,6 +448,19 @@ def measure_page(root: Path, cfg: dict, ports, today: dt.date | None = None) -> 
                                                 notes=notes)
         for note in notes:
             print(f"note: {note}", file=ports.out)
+    if isinstance(cfg["trophies"], dict):
+        if "trophies" not in lk["parts"]:
+            adopted = trophies.adopt(ports.read_text(Path(root) / trophies.LEGACY_LOCK))
+            if adopted:
+                lk["parts"]["trophies"] = adopted
+                print(f"note: the trophy case keeps its history from {trophies.LEGACY_LOCK}, which can go now",
+                      file=ports.out)
+        notes = []
+        record = lk["parts"].setdefault("trophies", trophies_ledger.new())
+        measured["trophies"] = trophies.measure(gh, cfg["trophies"], record, mode=mode, subject=subject, today=day,
+                                                notes=notes)
+        for note in notes:
+            print(f"note: {note}", file=ports.out)
     return page, measured, lk
 
 
@@ -420,9 +484,10 @@ def _offline_page(root: Path, cfg: dict, measured: dict, lk: dict, here: str = "
 
 
 def render(root: Path, cfg: dict, ports, measured: dict | None = None) -> int:
+    """Redraw from what the lock kept, or a saved measurement. A part with nothing measured is kept as it is."""
     lk = read_lock(root, ports)
     if measured is None:
-        measured = remembered(lk) or sample(cfg)
+        measured = remembered(lk)
     finish(_offline_page(root, cfg, measured, lk, here_of(root, ports)), ports, measured, lk, use_lock=False)
     return 0
 
@@ -436,8 +501,10 @@ def check(root: Path, cfg: dict, ports, measured: dict | None = None) -> int:
     """
     lk = read_lock(root, ports)
     measured = remembered(lk) if measured is None else measured
-    if cfg["banners"] is not False and "banners" not in measured:
-        print("check needs a measurement: run the kit once with the lock on, or pass --from", file=ports.out)
+    missing = [part for part in ("banners", "trophies") if cfg[part] is not False and part not in measured]
+    if missing:
+        print(f"check needs a measurement of the {' and the '.join(missing)}: run the kit once with the lock on, "
+              "or pass --from", file=ports.out)
         return 2
     page = _offline_page(root, cfg, measured, lk, here_of(root, ports))
     planned = _merge(plan_page(page, measured, was=_drawn_elements(lk)), localize(page, ports, lk, measured))
@@ -455,6 +522,8 @@ def sample(cfg: dict) -> dict:
     out = {"banners": json.loads(json.dumps(banners_sample.SAMPLES[mode]))}
     if isinstance(cfg["badges"], dict):
         out["badges"] = badges.sample(cfg["badges"]["list"])
+    if isinstance(cfg["trophies"], dict):
+        out["trophies"] = json.loads(json.dumps(trophies_sample.SAMPLES[mode]))
     return out
 
 

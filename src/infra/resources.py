@@ -2,8 +2,9 @@
 # SPDX-License-Identifier: MIT
 """The kit's own data files, read from `src/domain/data/` and handed to the domain.
 
-The domain does no I/O, so the outlines it letters with and the prints it draws
-in are read here and handed in: `install()` is the first thing a run does.
+The domain does no I/O, so the outlines it letters with, the prints it draws
+in and the repository population the trophies are calibrated against are read
+here and handed in: `install()` is the first thing a run does.
 """
 from __future__ import annotations
 
@@ -11,6 +12,7 @@ import json
 from pathlib import Path
 
 from domain import lettering, prints
+from domain.trophies import calibration
 
 DATA = Path(__file__).resolve().parents[1] / "domain" / "data"
 FONTS = DATA / "fonts"
@@ -18,6 +20,8 @@ FONTS = DATA / "fonts"
 GLYPHS = ("glyphs.json", "glyphs-extra.json")
 # Faces kept in files of their own, each with its font's metadata around the face.
 FACES = {"jetbrains-mono.json": "mono"}
+# What `markdown-kit calibrate` measured of the repository population, when it has been run.
+CALIBRATION = DATA / "calibration" / "repositories.json"
 
 
 def _json(path: Path):
@@ -35,9 +39,15 @@ def catalogue() -> dict:
     return _json(DATA / "prints.json")
 
 
+def repository_sample() -> dict | None:
+    """The measured repository population, or None before `calibrate` has been run."""
+    return _json(CALIBRATION) if CALIBRATION.is_file() else None
+
+
 def install() -> dict:
-    """Hand the outlines and the kit's prints to the domain. Returns the prints catalogue."""
+    """Hand the outlines, the kit's prints and the calibration to the domain. Returns the prints catalogue."""
     lettering.use(*glyph_tables())
     cat = catalogue()
     prints.use(cat)
+    calibration.use(repository_sample())
     return cat

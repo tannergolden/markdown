@@ -35,6 +35,7 @@ class Ports:
     prune: Callable[[Path, set], list] = field(default_factory=lambda: _missing("a way to remove drawn files"))
     github: Callable[[], object] = field(default_factory=lambda: _missing("a GitHub client"))
     git: Callable[[Path], object] = field(default_factory=lambda: _missing("git"))
+    paced: Callable[[], object] = field(default_factory=lambda: _missing("a paced GitHub client"))  # calibrate
     slug: Callable[[Path], tuple | None] = field(default_factory=lambda: (lambda root: None))
     env: Mapping[str, str] = field(default_factory=dict)
     out: TextIO = field(default_factory=lambda: sys.stdout)

@@ -61,7 +61,9 @@ class Folder(unittest.TestCase):
         support.install()
 
     def set(self, text: str) -> None:
+        """The page's settings; these tests are the banners', so the trophy case is off unless a test says."""
         (self.root / SETTINGS).parent.mkdir(exist_ok=True)
+        text += "" if "trophies" in text else "trophies: false\n"
         (self.root / SETTINGS).write_text(text, encoding="utf-8")
 
     def lock(self) -> dict:

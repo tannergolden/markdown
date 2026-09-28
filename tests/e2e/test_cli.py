@@ -13,7 +13,7 @@ from tests import support
 
 
 def kit(*args, cwd=None):
-    env = {k: v for k, v in os.environ.items() if k not in ("MARKDOWN_TOKEN", "GITHUB_TOKEN")}
+    env = {k: v for k, v in os.environ.items() if k not in ("MARKDOWN_TOKEN", "GITHUB_TOKEN", "GH_TOKEN")}
     return subprocess.run([sys.executable, str(support.LAUNCHER), *args], cwd=cwd, capture_output=True, text=True,
                           env=env, timeout=120)
 
@@ -71,6 +71,26 @@ class CliTest(unittest.TestCase):
         done = kit("settings", "--root", str(self.root))
         self.assertEqual(done.returncode, 2)
         self.assertIn("badges[2] (odd): a live badge (gold label) paints its message in a state", done.stderr)
+
+    def test_the_catalogue_command_prints_the_committed_page(self):
+        done = kit("catalogue")
+        self.assertEqual(done.returncode, 0, done.stderr)
+        self.assertEqual(done.stdout, (support.ROOT / "docs" / "Catalogue.md").read_text(encoding="utf-8"))
+
+    def test_a_repository_case_is_previewed_and_checks(self):
+        done = kit("preview", "--root", str(self.root), "--input", "mode=repository", "--today", "2026-09-25")
+        self.assertEqual(done.returncode, 0, done.stderr)
+        self.assertIn("trophies 60 of 100 achievements, stars Gold", done.stdout)
+        case = self.root / "assets" / "markdown" / "trophies"
+        self.assertTrue((case / "level.svg").is_file() and (case / "achievements" / "first-star-day.svg").is_file())
+        done = kit("check", "--root", str(self.root), "--input", "mode=repository")
+        self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+
+    def test_calibrate_without_a_token_says_so(self):
+        done = kit("calibrate", "--out", str(self.root / "x.json"))
+        self.assertEqual(done.returncode, 1)
+        self.assertIn("markdown-kit: no token", done.stderr)
+        self.assertFalse((self.root / "x.json").exists())
 
     def test_a_bad_setting_exits_2_naming_it(self):
         (self.root / ".github").mkdir()

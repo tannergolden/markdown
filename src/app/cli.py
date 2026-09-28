@@ -9,13 +9,16 @@
   measure    measure the page and print the measurement
   set        set badges' values in the settings file, NAME=MESSAGE[:COLOR], keeping its comments
   lint       draw every design for every sample in every print, and lint every file
+  catalogue  docs/Catalogue.md: every trophy and achievement, and what earns it
+  calibrate  measure the repository population the repository-mode trophies are set against
   settings   read a repository's settings and print them in full, every default filled in
   holidays   the holiday calendar: which set is up on a day, and the windows ahead or in a year
   palette    the 64 colour tokens, and the letters each takes
   icons      the 64 icons
   version    the kit and the version of the files it draws
 
-A setting that is wrong exits with status 2 and one line naming it.
+A setting that is wrong exits with status 2 and one line naming it; a fault
+outside the settings, like a refused token or no network, exits 1 the same way.
 """
 from __future__ import annotations
 
@@ -35,8 +38,13 @@ from domain.banners.content import Footer, Header
 from domain.banners.designs import DESIGNS, check as lint_files, render as render_design
 from domain.banners.settings import check as banners_check
 from domain.elements import data as elements_data
+from domain.trophies import art as trophies_art
+from domain.trophies import catalogue as trophies_catalogue
+from domain.trophies import catalogue_md
+from domain.trophies import plan as trophies_plan
+from domain.trophies import sample as trophies_sample
 
-from . import config, run
+from . import calibrate, config, run
 from .ports import Ports
 
 
@@ -88,6 +96,13 @@ def parser() -> argparse.ArgumentParser:
                                    help="a badge's name, its new message, and a colour after a colon if it changes")
     sub.add_parser("lint", help="draw every design for every sample in every print, and lint every file").add_argument(
         "--specimen", type=Path, help="a repository whose elements are drawn in every print too")
+    sub.add_parser("catalogue", help="print docs/Catalogue.md, written from the catalogue")
+    c = sub.add_parser("calibrate", help="measure the repository population the trophies are set against")
+    c.add_argument("--out", type=Path, default=Path("src/domain/data/calibration/repositories.json"),
+                   help="where the measurement goes (default: the kit's own data file)")
+    c.add_argument("--per-band", type=int, default=40, help="repositories to measure in each star band (default 40)")
+    c.add_argument("--seed", type=int, help="the sample's seed (default: today's ordinal, so a re-run repeats it)")
+    c.add_argument("--today", type=_date, help="the day to date it (default: today)")
     s = page(sub.add_parser("settings", help="read a repository's settings and print them in full"), today=False)
     s.set_defaults(command="settings")
     h = sub.add_parser("holidays", help="the holiday calendar")
@@ -182,6 +197,25 @@ def badge_specimens() -> list[tuple[str, dict, str]]:
     return out
 
 
+def trophy_specimens():
+    """Every trophy style at every tier in both cases, every pin in every state, and both banner cards."""
+    for style, draw in trophies_art.STYLES.items():
+        for case, theme in trophies_art.CASES.items():
+            for cores in (trophies_catalogue.CORE, trophies_catalogue.RCORE):
+                for core in cores:
+                    for v in (0, 310, 3610, 23500, 640000):
+                        yield f"{style} {core.key} {v} {case}", draw(theme, core, v, {"rank": True, "delta": 9, "new": True})
+    for mode, s in trophies_sample.SAMPLES.items():
+        m = trophies_catalogue.MODES[mode]
+        for case, theme in trophies_art.CASES.items():
+            for a in m["ach"]:
+                for cur in (None, 0, a.tiers[-1]):
+                    yield f"pin {a.slug} {cur} {case}", trophies_art.pin(theme, a, cur)
+            yield f"level {mode} {case}", trophies_art.level_card(theme, m["core"], s["values"], m["ach"], s["curs"],
+                                                                   s["subject"], ("flame", "#000000", "X", "Y"))
+            yield f"next-up {mode} {case}", trophies_art.next_up_card(theme, m["core"], s["values"], m["ach"], s["curs"])
+
+
 def contents() -> dict:
     """Every content the kit is linted with: each sample, composed, and the kit's own lines."""
     out = {"kit": (Header(), Footer())}
@@ -214,6 +248,14 @@ def cmd_lint(args, ports: Ports) -> int:
     print(f"badges     {len(badge_specimens())} specimens, largest {largest / 1000:.1f} KB"
           + ("" if not problems else f"  PROBLEMS: {problems}"), file=ports.out)
     failed += bool(problems)
+    largest, problems, n = 0, [], 0
+    for what, svg in trophy_specimens():
+        n += 1
+        largest = max(largest, len(svg.encode("utf-8")))
+        problems += [f"{what}: {p}" for p in trophies_plan.lint(svg)]
+    print(f"trophies   {n:,} specimens, largest {largest / 1000:.1f} KB"
+          + ("" if not problems else f"  PROBLEMS: {problems[:5]}"), file=ports.out)
+    failed += bool(problems)
     if args.specimen:
         cfg = config.load(args.specimen, ports)
         section = cfg["elements"] if isinstance(cfg["elements"], dict) else {}
@@ -230,6 +272,24 @@ def cmd_lint(args, ports: Ports) -> int:
               + ("" if not problems else f"  PROBLEMS: {problems}"), file=ports.out)
         failed += bool(problems)
     return 1 if failed else 0
+
+
+def cmd_catalogue(args, ports: Ports) -> int:
+    ports.out.write(catalogue_md.page())
+    return 0
+
+
+def cmd_calibrate(args, ports: Ports) -> int:
+    today = args.today or dt.date.today()
+    client = ports.paced()
+    result = calibrate.run(client, args.per_band, args.seed if args.seed is not None else today.toordinal(), today,
+                           log=lambda line: print(line, file=ports.err))
+    ports.write_text(args.out, json.dumps(result, indent=1) + "\n")
+    print(f"wrote {args.out}: {result['n']} repositories in {len(result['bands'])} bands, {result['calls']} API calls",
+          file=ports.out)
+    for key, spec in result["cores"].items():
+        print(f"  {key:13} " + "  ".join(f"{t}: {p:g}%" for t, p in spec["anchors"]), file=ports.out)
+    return 0
 
 
 def cmd_settings(args, ports: Ports) -> int:
@@ -278,7 +338,7 @@ def cmd_version(args, ports: Ports) -> int:
 
 
 COMMANDS = {"run": cmd_run, "render": cmd_render, "check": cmd_check, "preview": cmd_preview, "measure": cmd_measure,
-            "set": cmd_set, "lint": cmd_lint, "settings": cmd_settings, "holidays": cmd_holidays, "palette": cmd_palette,
+            "set": cmd_set, "lint": cmd_lint, "catalogue": cmd_catalogue, "calibrate": cmd_calibrate, "settings": cmd_settings, "holidays": cmd_holidays, "palette": cmd_palette,
             "icons": cmd_icons, "version": cmd_version}
 
 
@@ -289,3 +349,6 @@ def main(argv: list[str], ports: Ports) -> int:
     except ValueError as exc:
         print(f"{KIT}: {exc}", file=ports.err)
         return 2
+    except RuntimeError as exc:  # git, the network, or GitHub refusing: not the settings' fault, but said as plainly
+        print(f"{KIT}: {exc}", file=ports.err)
+        return 1
