@@ -529,7 +529,7 @@ def level_card(theme: dict, cores: list, values: dict, ach: list, curs: dict, su
     cv.add(cv.txt(ttl, face="serif", size=tsz, x=x0, y=42, ls=tls, fill=th["value"])
            + cv.txt(f"LEVEL {st['L']}  ·  {fmt(st['xp'])} XP  ·  {fmt(level_xp(st['L'] + 1) - st['xp'])} TO LEVEL {st['L'] + 1}", face="meta", size=9.5, x=x0, y=59, ls=.5, fill=th["muted"])
            + f'<rect x="{x0}" y="65" width="{w}" height="5" rx="2.5" fill="{th["track"][0]}" fill-opacity="{th["track"][1]}"/><rect x="{x0}" y="65" width="{f1(max(5, w * st["lp"]))}" height="5" rx="2.5" fill="url(#xp)"/>'
-           + cv.txt(f"CASE {round(st['completion'] * 100)}% COMPLETE  ·  {st['earned']} OF {len(ach)} ACHIEVEMENTS", face="meta", size=9.5, x=x0, y=90, ls=.5, fill=th["muted"])
+           + cv.txt(f"CASE {round(st['completion'] * 100)}% COMPLETE" + (f"  ·  {st['earned']} OF {len(ach)} ACHIEVEMENTS" if ach else ""), face="meta", size=9.5, x=x0, y=90, ls=.5, fill=th["muted"])
            + f'<rect x="{x0}" y="96" width="{w}" height="5" rx="2.5" fill="{th["track"][0]}" fill-opacity="{th["track"][1]}"/><rect x="{x0}" y="96" width="{f1(max(5, w * st["completion"]))}" height="5" rx="2.5" fill="url(#cp)"/>'
            + f'<circle cx="{x0 + 7}" cy="120" r="7.5" fill="{foot[1]}"/>' + cv.icon(foot[0], x0 + 2, 115, .42, "#FFFFFF", 2.6)
            + cv.txt(foot[2], face="meta", size=10.5, x=x0 + 20, y=124, ls=.5, fill=th["value"])

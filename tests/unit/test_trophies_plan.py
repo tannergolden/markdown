@@ -136,6 +136,13 @@ class Block(unittest.TestCase):
         self.assertIn("https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md", block)
         self.assertIn('srcset="assets/markdown/trophies/commits.svg"', block)
 
+    def test_a_case_that_shows_no_achievements_has_no_drawer_and_counts_none(self):
+        p = planned({"achievements": "none"})
+        self.assertNotIn("<details>", p["block"])
+        self.assertTrue(P.describe(p).startswith("trophies commits "), P.describe(p))
+        self.assertIn("The case stands with commits at", P.news(p, result(), {}, None)[0].replace("\n", " "))
+        self.assertIn("<details>", planned()["block"])
+
     def test_block_false_draws_the_files_and_leaves_the_readme(self):
         p = planned({"block": False})
         self.assertIsNone(p["block"])

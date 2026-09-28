@@ -154,8 +154,8 @@ def plan(result: dict, section: dict, *, folder: str, base: str) -> dict:
 
 def describe(planned: dict) -> str:
     """One line for the run's log: the case, its tiers, and how much of it is earned."""
-    return (f"trophies {planned['earned']} of {planned['total']} achievements, "
-            + ", ".join(f"{k} {v}" for k, v in planned["tiers"].items()))
+    counted = f"{planned['earned']} of {planned['total']} achievements, " if planned["total"] else ""
+    return "trophies " + counted + ", ".join(f"{k} {v}" for k, v in planned["tiers"].items())
 
 
 def headline(reached: dict, delta: dict, subject: str) -> str:
@@ -180,8 +180,9 @@ def news(planned: dict, result: dict, reached: dict, run: str | None = None) -> 
     """
     stamp = (f"Measured {planned['subject']} on {result.get('today', '')}" + (f" in run {run}" if run else "") + ". "
              if run is not None else "")
-    out = [stamp + f"The case stands at {planned['earned']} of {planned['total']} achievements, with "
-           + ", ".join(f"{k} at {v}" for k, v in planned["tiers"].items()) + "."]
+    standing = (f"The case stands at {planned['earned']} of {planned['total']} achievements, with "
+                if planned["total"] else "The case stands with ")
+    out = [stamp + standing + ", ".join(f"{k} at {v}" for k, v in planned["tiers"].items()) + "."]
     tiers, ach_new = reached.get("tiers", []), reached.get("achievements", [])
     if tiers:
         out.append("Newly reached: " + ", ".join(f"{t} on {name}" for t, name in tiers) + ".")

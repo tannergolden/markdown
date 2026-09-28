@@ -51,18 +51,21 @@ def content(out: str, mode: str, cores: list, alts: dict, pins: list, groups: li
     for c in cores:
         lines.append(f'  <a href="{CATALOGUE}#{mode}-{c.key}">' + _img(f"{out}/{c.key}", alts.get(c.key, c.title), embed)
                      + "</a>")
-    lines += ["</p>", "", "<details>", f"<summary><b>Achievements</b> · {summary}</summary>", ""]
-    for gi, g in enumerate(groups):
-        mine = [(b, a) for (gg, b, a) in pins if gg == gi]
-        if not mine:
-            continue
-        lines += [f'<p align="center"><b>{g}</b></p>', '<p align="center">']
-        for base, alt in mine:
-            lines.append(f'  <a href="{CATALOGUE}#{mode}-{base}">' + _img(f"{out}/achievements/{base}", alt, embed)
-                         + "</a>")
-        lines += ["</p>", ""]
-    lines += ["</details>", "",
-              f'<p align="center"><sub>Refreshed daily by <a href="{KIT_URL}">tannergolden/markdown</a>'
+    lines += ["</p>", ""]
+    if pins:
+        # A case that shows no achievements has no drawer for them.
+        lines += ["<details>", f"<summary><b>Achievements</b> · {summary}</summary>", ""]
+        for gi, g in enumerate(groups):
+            mine = [(b, a) for (gg, b, a) in pins if gg == gi]
+            if not mine:
+                continue
+            lines += [f'<p align="center"><b>{g}</b></p>', '<p align="center">']
+            for base, alt in mine:
+                lines.append(f'  <a href="{CATALOGUE}#{mode}-{base}">' + _img(f"{out}/achievements/{base}", alt, embed)
+                             + "</a>")
+            lines += ["</p>", ""]
+        lines += ["</details>", ""]
+    lines += [f'<p align="center"><sub>Refreshed daily by <a href="{KIT_URL}">tannergolden/markdown</a>'
               f' · Every trophy and achievement, what it is for and how to earn it: <a href="{CATALOGUE}#{mode}">the '
               'catalogue</a>. Click any card for its entry.</sub></p>']
     return "\n".join(lines)
