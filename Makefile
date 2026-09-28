@@ -10,7 +10,7 @@ KIT    := $(PYTHON) src/markdown-kit.py
 TEST   := $(PYTHON) -m unittest discover -t .
 
 .DEFAULT_GOAL := help
-.PHONY: help lint test test-unit test-integration test-e2e test-scripts holidays
+.PHONY: help lint draw test test-unit test-integration test-e2e test-scripts holidays
 
 ## help: List the available targets
 help:
@@ -18,11 +18,18 @@ help:
 	@echo
 	@sed -n 's/^## //p' $(MAKEFILE_LIST) | awk -F': ' '{ printf "  %-18s %s\n", $$1, substr($$0, length($$1) + 3) }'
 
-## lint: The repository's configuration parses, every module compiles, and the layers import only what they may
+## lint: The repository's configuration parses, every module compiles, the layers import only what they may, and every design lints
 lint:
 	@$(PYTHON) .github/scripts/validate-repository.py
 	@$(PYTHON) -m compileall -q src tests
 	@$(TEST) -s tests/unit -p 'test_layering.py'
+	@$(KIT) lint > /dev/null || $(KIT) lint
+
+## draw: Draw a sample page into preview/ the way a run would, in the blueprint (no network)
+draw:
+	@rm -rf preview/repository preview/profile
+	@$(KIT) preview --root preview/repository --input mode=repository --input theme=blueprint --today 2026-09-25
+	@$(KIT) preview --root preview/profile --input mode=profile --input theme=blueprint --today 2026-09-25
 
 ## test: Everything CI runs: the kit's three suites and the repository script tests
 test: test-unit test-integration test-e2e test-scripts
