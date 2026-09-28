@@ -25,11 +25,13 @@ lint:
 	@$(TEST) -s tests/unit -p 'test_layering.py'
 	@$(KIT) lint --specimen tests/fixtures/driftmark > /dev/null || $(KIT) lint --specimen tests/fixtures/driftmark
 
-## draw: Draw a sample page into preview/ the way a run would, in the blueprint (no network)
+## draw: Draw a sample page into preview/ the way a run would, in the default theme (no network)
 draw:
-	@rm -rf preview/repository preview/profile
-	@$(KIT) preview --root preview/repository --input mode=repository --input theme=blueprint --today 2026-09-25
-	@$(KIT) preview --root preview/profile --input mode=profile --input theme=blueprint --today 2026-09-25
+	@for mode in repository profile; do \
+		rm -rf preview/$$mode && mkdir -p preview/$$mode/.github && \
+		cp tests/fixtures/sample/markdown.yaml preview/$$mode/.github/markdown.yaml && \
+		$(KIT) preview --root preview/$$mode --input mode=$$mode --today 2026-09-25 || exit 1; \
+	done
 
 ## test: Everything CI runs: the kit's three suites and the repository script tests
 test: test-unit test-integration test-e2e test-scripts

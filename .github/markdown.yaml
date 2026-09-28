@@ -1,0 +1,70 @@
+# SPDX-FileCopyrightText: 2026 Tanner Golden
+# SPDX-License-Identifier: MIT
+#
+# This repository's own page: its README, drawn by the kit it documents, in
+# repository mode, every night, by 📝 Own Page. Whatever is not written here
+# is read from GitHub and git, and docs/Settings.md has every key.
+
+banners:
+  motto: Measured nightly, never fetched.
+  closing: Drawn at both ends. Fetched at neither.
+
+badges:
+  - name: status
+    label: Status
+    message: Active
+    icon: pulse
+    message_color: green
+  - name: python
+    label: Python
+    message: Standard library only
+    icon: code
+    message_color: blue
+  - name: license
+    label: License
+    message: MIT
+    icon: scale
+    message_color: yellow
+    link: LICENSE
+  - name: ci
+    label: CI
+    icon: check
+    measure:
+      workflow: checks.yml
+  - name: release
+    label: Release
+    icon: tag
+    measure: release
+  - name: last-commit
+    label: Last Commit
+    icon: commit
+    measure: last-commit
+
+elements:
+  how-it-runs:
+    kind: schematic
+    title: How a run draws a page
+    desc: >-
+      A repository's stub calls the kit's workflow, which reads the settings,
+      measures the page over GitHub's API and git, draws every file, keeps
+      what it measured in the lock, and commits the page once.
+    caption: "ONE STUB  ·  ONE RUN  ·  ONE COMMIT"
+    boxes:
+      stub: {title: Your stub, path: .github/workflows/markdown.yml, icon: play}
+      settings: {title: Your settings, path: .github/markdown.yaml, icon: gear, note: 1}
+      workflow: {title: The kit, path: tannergolden/markdown@v1, icon: package}
+      measure: {title: The measurement, path: "GitHub's API and git", icon: pulse, note: 2}
+      draw: {title: The drawing, path: assets/markdown, icon: layers}
+      lock: {title: The lock, path: .github/markdown.lock.json, icon: lock, note: 3}
+      commit: {title: One commit, path: "chore(markdown): what moved", icon: commit}
+    wires:
+      - [stub, workflow, CALLS]
+      - [settings, workflow, READ]
+      - [workflow, measure, MEASURES]
+      - [measure, draw, DRAWS]
+      - [measure, lock, KEEPS]
+      - [draw, commit, WRITES]
+    notes:
+      - [1, "OPTIONAL: A PAGE THAT SAYS NOTHING IS DRAWN FROM GITHUB"]
+      - [2, NOTHING IS FETCHED WHEN THE README IS READ]
+      - [3, CHECK DRAWS THE PAGE AGAIN FROM IT WITH NO TOKEN]

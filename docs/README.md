@@ -77,6 +77,7 @@ copied across - the seeds stay where they are and you take what you want.
 
 ## 📂 This Project's Documents
 
+- [Settings](Settings.md) - every key `.github/markdown.yaml` can hold, what each does, and its default
 - [Source Code](technical/Source-Code.md) - where each piece of the kit lives, and the layering rules its imports are held to
 - [Technology Stack & Tooling](technical/Technology-Stack-&-Tooling.md) - the stack, and the Makefile targets CI runs
 - [Architecture Decision Records](adrs/Architecture-Decision-Records.md) - every decision the kit's design rests on, newest first
@@ -88,7 +89,7 @@ copied across - the seeds stay where they are and you take what you want.
 
 - [Standards Index](https://github.com/tannergolden/standards/blob/Development/docs/README.md) - every canonical guide
 - [Template catalogue](templates/README.md) - what each seed document is for
-- [Repository README](../README.md) - setup, and how to configure CI
+- [Repository README](../README.md) - the stub, and what a run draws
 
 ---
 

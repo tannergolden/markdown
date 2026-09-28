@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
-"""`.github/markdown.yml`: a page's settings, with a default for every one of them.
+"""`.github/markdown.yaml`: a page's settings, with a default for every one of them.
 
 A page that writes no settings at all is drawn from what GitHub says about it,
 in the `standard` theme, with the holidays on. Everything is optional, and the
