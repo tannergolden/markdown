@@ -1,0 +1,82 @@
+# SPDX-FileCopyrightText: 2026 Tanner Golden
+# SPDX-License-Identifier: MIT
+#
+# This repository's own page: its README, drawn by the kit it documents, in
+# repository mode, every night, by 📝 Markdown, the same stub the README
+# tells every repository to copy. Whatever is not written here is read from
+# GitHub and git, and docs/Settings.md has every key.
+
+# The page's one theme: every part is drawn in the blueprint.
+theme: blueprint
+# Around each holiday its set takes over the page, then hands it back.
+holidays: true
+
+banners:
+  motto: Measured nightly, never fetched.
+  closing: Drawn at both ends. Fetched at neither.
+
+# The row under the header: three static badges, then three live ones the
+# run measures, whose gold labels say so. In the page's print every badge is
+# drawn as its plate, so none names a colour of its own.
+badges:
+  - name: status
+    label: Status
+    message: Active
+    icon: pulse
+  - name: python
+    label: Python
+    message: Standard library only
+    icon: code
+  - name: license
+    label: License
+    message: MIT
+    icon: scale
+    link: LICENSE
+  - name: ci
+    label: CI
+    icon: check
+    measure:
+      workflow: checks.yml
+  - name: release
+    label: Release
+    icon: tag
+    measure: release
+  - name: last-commit
+    label: Last Commit
+    icon: commit
+    measure: last-commit
+
+elements:
+  how-it-runs:
+    kind: schematic
+    title: How a run draws a page
+    desc: >-
+      A repository's stub calls the kit's workflow, which reads the settings,
+      measures the page over GitHub's API and git, draws every file, keeps
+      what it measured in the lock, and commits the page once.
+    caption: "ONE STUB  ·  ONE RUN  ·  ONE COMMIT"
+    boxes:
+      stub: {title: Your stub, path: .github/workflows/markdown.yml, icon: play}
+      settings: {title: Your settings, path: .github/markdown.yaml, icon: gear, note: 1}
+      workflow: {title: The kit, path: tannergolden/markdown@v1, icon: package}
+      measure: {title: The measurement, path: "GitHub's API and git", icon: pulse, note: 2}
+      draw: {title: The drawing, path: assets, icon: layers}
+      lock: {title: The lock, path: .github/markdown.lock.json, icon: lock, note: 3}
+      commit: {title: One commit, path: "chore(markdown): what moved", icon: commit}
+    wires:
+      - [stub, workflow, CALLS]
+      - [settings, workflow, READ]
+      - [workflow, measure, MEASURES]
+      - [measure, draw, DRAWS]
+      - [measure, lock, KEEPS]
+      - [draw, commit, WRITES]
+    notes:
+      - [1, "OPTIONAL: A PAGE THAT SAYS NOTHING IS DRAWN FROM GITHUB"]
+      - [2, NOTHING IS FETCHED WHEN THE README IS READ]
+      - [3, CHECK DRAWS THE PAGE AGAIN FROM IT WITH NO TOKEN]
+
+# The trophy case, over the footer: this repository's eight core trophies in
+# repository mode, the level and next-up cards above them, and its hundred
+# achievements under them.
+trophies:
+  style: trophy

@@ -1,0 +1,2749 @@
+{
+ "about": "Each badge the badges kit v2 drew, with the SHA-256 of its file once its stamp reads markdown-kit v1: the kit must draw every one of them byte for byte the same, but for the letters' colour. The kit holds a badge's letters to 4.5:1 against their segment, where the badges kit kept them white until a luminance of .6; the 68 badges whose letters that turns dark carry \"ink\": \"4.5:1\" and the hash of the kit's own drawing.",
+ "badges": [
+  {
+   "badge": {
+    "label": "alert",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "alert"
+   },
+   "sha256": "6362b52b1a334d205536db77d8b28ae97204e7ecf35b96786001fd958fbdf770"
+  },
+  {
+   "badge": {
+    "label": "arrow",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "arrow"
+   },
+   "sha256": "3d22107142c050476232a38948734664513d5a1aa1ee8abf0aacd9c6dbf95181"
+  },
+  {
+   "badge": {
+    "label": "bell",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "bell"
+   },
+   "sha256": "e5533c9c0d47d80cc484e0691314be25e895c81e0e18f74ebd046e50d276c792"
+  },
+  {
+   "badge": {
+    "label": "bolt",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "bolt"
+   },
+   "sha256": "68dba018c407763224e33aaee70a3c4be47dea8a93599894f405a7bed5fd649a"
+  },
+  {
+   "badge": {
+    "label": "book",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "book"
+   },
+   "sha256": "e34d690c44b93632ea23acd328d746e7a2175644fbae9c5723650772f7291cb1"
+  },
+  {
+   "badge": {
+    "label": "branch",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "branch"
+   },
+   "sha256": "e96202b79c580c3f055ba7dd78d1186b042ce314ae92efba8354b76cb32ed748"
+  },
+  {
+   "badge": {
+    "label": "bug",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "bug"
+   },
+   "sha256": "e313136ae4c043322633223d66cc0e0f01750b95fc36802e91d6ea5492d7478c"
+  },
+  {
+   "badge": {
+    "label": "calendar",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "calendar"
+   },
+   "sha256": "994c0f5ceb21db885d4fe4722f98d2f3d3499f9d0de2bb308272dd2062deef9b"
+  },
+  {
+   "badge": {
+    "label": "chart",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "chart"
+   },
+   "sha256": "e8504154e68bfeb6b1563154b41ca8887b20d31726aca78b964b3347a5a51b69"
+  },
+  {
+   "badge": {
+    "label": "chat",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "chat"
+   },
+   "sha256": "abcfb0788f1cadc3c8341123cd26f994983830cbdf664ad5f3aba72e006d9870"
+  },
+  {
+   "badge": {
+    "label": "check",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "check"
+   },
+   "sha256": "8d366d14ac7032b392d960af8a8f00e4c07fa4062556ea4057d6e63174889901"
+  },
+  {
+   "badge": {
+    "label": "check-circle",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "check-circle"
+   },
+   "sha256": "b5d695f86f572f9f4cf7aaecb33a6e5f788ee92118baf60f976e15b8edf42373"
+  },
+  {
+   "badge": {
+    "label": "chip",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "chip"
+   },
+   "sha256": "038fb15a56fb21c350f560983c3ab52c50fa42f1eb42175c0fcdecab67be6af4"
+  },
+  {
+   "badge": {
+    "label": "clock",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "clock"
+   },
+   "sha256": "e411f688dfbad392035ba9cacaa6e948e0c8f4b8398a15f1c4650e912f5c57eb"
+  },
+  {
+   "badge": {
+    "label": "cloud",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "cloud"
+   },
+   "sha256": "63921f7c9eff1ec490148be68fa4e5af2a905103cb3acb4e7d76a59412216560"
+  },
+  {
+   "badge": {
+    "label": "code",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "code"
+   },
+   "sha256": "442c2894960ba81d6c8ba45daa038554f8ccb2f21f005f3df6e84f69d755a060"
+  },
+  {
+   "badge": {
+    "label": "commit",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "commit"
+   },
+   "sha256": "9fceb1acde0e0a963c615f725ff0ef990d47beae3cbfa8200de3a1649617c317"
+  },
+  {
+   "badge": {
+    "label": "compass",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "compass"
+   },
+   "sha256": "27d2dfe4d1d39dbd09f3c5fc3442c6af5c99591f8c7a1169b49e7ba3fac8cd95"
+  },
+  {
+   "badge": {
+    "label": "cross",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "cross"
+   },
+   "sha256": "54f146e0179aa90e719077b7c4ca60ecac770acde939e1824e7c6f1fca5a2f77"
+  },
+  {
+   "badge": {
+    "label": "database",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "database"
+   },
+   "sha256": "f4d4cdeaf598f5969b52cb9c63e9c333bc08b0ea9942526406721ab0c5a12713"
+  },
+  {
+   "badge": {
+    "label": "download",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "download"
+   },
+   "sha256": "28a952610e1e1d6c49e091f90ce6455c9528779a9654a18bb9fd5b9eda7da7e8"
+  },
+  {
+   "badge": {
+    "label": "eye",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "eye"
+   },
+   "sha256": "33c052c7a84f60236557fdb30054e662b2bcf26d4d7af53e8e56fa0f6d48498b"
+  },
+  {
+   "badge": {
+    "label": "flag",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "flag"
+   },
+   "sha256": "64be13c29824cf9591ea62fe4f38ff4dd81b1d4c26adcea1b5fcbb8823e77d41"
+  },
+  {
+   "badge": {
+    "label": "flame",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "flame"
+   },
+   "sha256": "8bd59eafe80a2d5f2ed833a7fc16b5f48bdee7e06922634bb5901589fc489d5e"
+  },
+  {
+   "badge": {
+    "label": "flask",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "flask"
+   },
+   "sha256": "e759fe95d75ee0a25e45ab4893cdcc8d55fc7b77320122ebc8f28b0b72888521"
+  },
+  {
+   "badge": {
+    "label": "folder",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "folder"
+   },
+   "sha256": "921f55be818f466630cbe42bbdb0765d3602a666b54c38c0420b6aa206458e0d"
+  },
+  {
+   "badge": {
+    "label": "gear",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "gear"
+   },
+   "sha256": "e73bcc5d37a43984787be3ecb6912170b376ef446284f027fa4c8920c2756e69"
+  },
+  {
+   "badge": {
+    "label": "globe",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "globe"
+   },
+   "sha256": "52d54d8054bdb509d6ac273d1033106bbe5ebe1a366ef9c8e93f147439aaea07"
+  },
+  {
+   "badge": {
+    "label": "grid",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "grid"
+   },
+   "sha256": "2697d089195d8f9bc170f9484b10a1be849bf07e678022b9b91d6ea1887505ce"
+  },
+  {
+   "badge": {
+    "label": "heart",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "heart"
+   },
+   "sha256": "af0a0939385f9e71bd1956132b04f73df5ca9b9c25a8d9c235fe56d368e89149"
+  },
+  {
+   "badge": {
+    "label": "home",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "home"
+   },
+   "sha256": "eec6eee0b77423692742fce0d1c73235725a0fdaef37b3992ac568a370891f29"
+  },
+  {
+   "badge": {
+    "label": "infinity",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "infinity"
+   },
+   "sha256": "da343d84f9d69b2afdcc6c229f239de87ea53addb0a3a7441329974a84adffb0"
+  },
+  {
+   "badge": {
+    "label": "info",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "info"
+   },
+   "sha256": "bdaff83f1fd35772068db543afa35803b65ad99ff1bee27dceb92f31ac1932e0"
+  },
+  {
+   "badge": {
+    "label": "key",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "key"
+   },
+   "sha256": "1b09238340b8db2b38ad70f0e8ee7e44190cb6f29edc354f92d9da25e2920ecf"
+  },
+  {
+   "badge": {
+    "label": "layers",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "layers"
+   },
+   "sha256": "478381b3588db752d3e78024e92f5dc6441c4e33933ccb99413f81eae9e05f8a"
+  },
+  {
+   "badge": {
+    "label": "link",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "link"
+   },
+   "sha256": "803b85bd3e213c7e9a94ad6ea0e84f12c3e82f052e4de6420eb83ea4c1220c9b"
+  },
+  {
+   "badge": {
+    "label": "lock",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "lock"
+   },
+   "sha256": "fe4e2e74072cf29c9ed8b8c5f04fea776cddd26b24a3e1b83019ea18e54dde22"
+  },
+  {
+   "badge": {
+    "label": "mail",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "mail"
+   },
+   "sha256": "4f85e20fabcf69398971161cda4856401a6afe1f31068d679ea8fca89ecab012"
+  },
+  {
+   "badge": {
+    "label": "medal",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "medal"
+   },
+   "sha256": "90a21a9f2d0968636983e9248805079b4663f2aa3b1b64a00960174af4856ed3"
+  },
+  {
+   "badge": {
+    "label": "minus",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "minus"
+   },
+   "sha256": "562fa1ab974a02d13b11cebc61ac15149d9fcdc08526b5ccb78782dfcb9d17fe"
+  },
+  {
+   "badge": {
+    "label": "moon",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "moon"
+   },
+   "sha256": "ab913a3bcba14bda0526cc80409c0f9b14648f2d26121678305884aa7c913bb7"
+  },
+  {
+   "badge": {
+    "label": "package",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "package"
+   },
+   "sha256": "2ba4282b6e78f890f544b77632b7557c4cdf0890f90870facf53778a828a414a"
+  },
+  {
+   "badge": {
+    "label": "pin",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "pin"
+   },
+   "sha256": "dda43901382bb539c0f1d1a3e21d257643558316f5c5a601ee54cd02dd478bcd"
+  },
+  {
+   "badge": {
+    "label": "play",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "play"
+   },
+   "sha256": "6aa4c96f60e93981d83c7af8f1fcf4dc865f8795e705d3915d9e961f0076de1b"
+  },
+  {
+   "badge": {
+    "label": "plus",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "plus"
+   },
+   "sha256": "b308ab37f4201d0b3a8020b7a06b38f4264fbbfdf4699548f5ad20bc5224b226"
+  },
+  {
+   "badge": {
+    "label": "pulse",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "pulse"
+   },
+   "sha256": "80916c5cdc14f25a28d724b1359d93db14a420e569a7417795aedcf7394409a6"
+  },
+  {
+   "badge": {
+    "label": "question",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "question"
+   },
+   "sha256": "62448db9859bc32d8bffb769f84082b6e757e7a1208c6161d3fbf551d9cf862a"
+  },
+  {
+   "badge": {
+    "label": "rocket",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "rocket"
+   },
+   "sha256": "08f80c335f8f282096b22fb6e2fc49d68143f94772e4cd864fee94ecc5a910b0"
+  },
+  {
+   "badge": {
+    "label": "scale",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "scale"
+   },
+   "sha256": "570fa1f7cc6d609d7026a50529a7f05833f8bec5c828b29e4974123043079215"
+  },
+  {
+   "badge": {
+    "label": "search",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "search"
+   },
+   "sha256": "995db62b47f488d88bbcde42ad36e8e411949aa19ef64f41c36a2046b8879ca0"
+  },
+  {
+   "badge": {
+    "label": "server",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "server"
+   },
+   "sha256": "13a61e2c6ee74b3b6c700a67741171b245dbadaa0e9ab7ad3075614cfe032c3f"
+  },
+  {
+   "badge": {
+    "label": "shield",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "shield"
+   },
+   "sha256": "f8a7bbeb510fb541d8cc110f4c21432c315fb14dc3997b7679c59394b8549f00"
+  },
+  {
+   "badge": {
+    "label": "sparkle",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "sparkle"
+   },
+   "sha256": "175d9efb71f121d94ce117cf879603587d241e20f93804ef77e7332423e8f416"
+  },
+  {
+   "badge": {
+    "label": "star",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "star"
+   },
+   "sha256": "a2c0eef27c2f25e46f4a448645c88a4fb1ec9c12f3eb541023070e8061320f15"
+  },
+  {
+   "badge": {
+    "label": "sun",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "sun"
+   },
+   "sha256": "5733bbb0438c3f939d7318defa6d14ab2af7443c39b4285e9167d7afdaf6e966"
+  },
+  {
+   "badge": {
+    "label": "sync",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "sync"
+   },
+   "sha256": "504b83afff6e2bb1500c1ce584c32c129b7987e840c720fb1a5767296010733f"
+  },
+  {
+   "badge": {
+    "label": "tag",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "tag"
+   },
+   "sha256": "a9f0a7b051790deb80c5d376c81b77ac5088934a76b2a02521f01ec44dc1ebb3"
+  },
+  {
+   "badge": {
+    "label": "target",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "target"
+   },
+   "sha256": "6b4fae1926a1a3d2d5904037eb9ae9af2ff0a3521fd203a795bc711f95b53cdc"
+  },
+  {
+   "badge": {
+    "label": "terminal",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "terminal"
+   },
+   "sha256": "f04029d74dcf1c1b9ea3ff71138ad0cd4993eba63930c0a9f3aaa08c81f716e5"
+  },
+  {
+   "badge": {
+    "label": "trash",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "trash"
+   },
+   "sha256": "c6ae5ad4ac53fe27bd316b4be306f1977de9721fd0315aceefd681ce62324087"
+  },
+  {
+   "badge": {
+    "label": "trophy",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "trophy"
+   },
+   "sha256": "ca8bfc7873eb09781c86d1cbd8192217ab512f8cacd77c8cf5699e61fd613e37"
+  },
+  {
+   "badge": {
+    "label": "upload",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "upload"
+   },
+   "sha256": "d75ef929e37f2055a623f480d923fef1e4ac4c511cd2a2f9ec9ff6ba924f0c95"
+  },
+  {
+   "badge": {
+    "label": "users",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "users"
+   },
+   "sha256": "9a2683bf434b92b84f433dfb315f648163b2286baf86e37885ec9103abf89db7"
+  },
+  {
+   "badge": {
+    "label": "wrench",
+    "message": "",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": "wrench"
+   },
+   "sha256": "57957b24a71d3a8a90f60d3c60185f64fabc556ea2e4d29b07423a5aa0e690de"
+  },
+  {
+   "badge": {
+    "label": "amber",
+    "message": "#DFAD3A",
+    "label_color": "black",
+    "message_color": "amber",
+    "icon": null
+   },
+   "sha256": "afabe0810e4aa281e34a9af9ba8d7554565b8cf7479c41c810a9059cda9bce20",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "amethyst",
+    "message": "#884CBD",
+    "label_color": "black",
+    "message_color": "amethyst",
+    "icon": null
+   },
+   "sha256": "b6c565cc657d31bf927b64caca64a9d939f2f0f31e5358a408152b26018e48a7"
+  },
+  {
+   "badge": {
+    "label": "apricot",
+    "message": "#E0A367",
+    "label_color": "black",
+    "message_color": "apricot",
+    "icon": null
+   },
+   "sha256": "8b5facd062e5d2e930ff072628016dab24b014297b7953b2ccc6c7f9782e873f",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "aqua",
+    "message": "#36C9C5",
+    "label_color": "black",
+    "message_color": "aqua",
+    "icon": null
+   },
+   "sha256": "6e5e84f67a8fb2d03ce0d64b41ec8d10689f21e4bd082f28dc388aa52a64f250",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "ash",
+    "message": "#ABB3BA",
+    "label_color": "black",
+    "message_color": "ash",
+    "icon": null
+   },
+   "sha256": "0e87df9896e7e92d16bef4d78ef65064c000e78de236c528064632256544241c",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "azure",
+    "message": "#3687E2",
+    "label_color": "black",
+    "message_color": "azure",
+    "icon": null
+   },
+   "sha256": "4c37857d754c2895b6927b179a96ad7259478cdee0a08815f405343e347a382a",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "black",
+    "message": "#000000",
+    "label_color": "black",
+    "message_color": "black",
+    "icon": null
+   },
+   "sha256": "900e81b96b942dd34a053e10d54988f1b70746468659e3c1762aeffa5d2b6448"
+  },
+  {
+   "badge": {
+    "label": "blue",
+    "message": "#3366FF",
+    "label_color": "black",
+    "message_color": "blue",
+    "icon": null
+   },
+   "sha256": "0d21c47828a16939bf6572f8c4479c684862e36c530d0ac6505ef34970124054"
+  },
+  {
+   "badge": {
+    "label": "brick",
+    "message": "#A6503A",
+    "label_color": "black",
+    "message_color": "brick",
+    "icon": null
+   },
+   "sha256": "bc820428eb251dbb58607d39efdfa613e317723991bc89006b8ff9983ebdcc15"
+  },
+  {
+   "badge": {
+    "label": "brown",
+    "message": "#8D5A35",
+    "label_color": "black",
+    "message_color": "brown",
+    "icon": null
+   },
+   "sha256": "c16688483e977986ac658cf2d46cff75e318c0440745b702ba006dc3bb23f9f3"
+  },
+  {
+   "badge": {
+    "label": "charcoal",
+    "message": "#3A414A",
+    "label_color": "black",
+    "message_color": "charcoal",
+    "icon": null
+   },
+   "sha256": "2d9e39393ad08d73bce2296c462b86f641ed0c1b2483e0e37c3a11bdc8a08100"
+  },
+  {
+   "badge": {
+    "label": "cherry",
+    "message": "#C32837",
+    "label_color": "black",
+    "message_color": "cherry",
+    "icon": null
+   },
+   "sha256": "ae9c0d3a0c121a048bdbb36dc4c56389cdbdeb083fbc172235733b69060ceea9"
+  },
+  {
+   "badge": {
+    "label": "clay",
+    "message": "#A0644B",
+    "label_color": "black",
+    "message_color": "clay",
+    "icon": null
+   },
+   "sha256": "2d44fc9bd0cce8f2901a7fe743313a54e2c96dabedf5e97c35f19c50d613c785"
+  },
+  {
+   "badge": {
+    "label": "cobalt",
+    "message": "#2F66C6",
+    "label_color": "black",
+    "message_color": "cobalt",
+    "icon": null
+   },
+   "sha256": "30d53f7bcb4f848c671c563f4a85e2954988faac19c65ef2a80ad9748907833f"
+  },
+  {
+   "badge": {
+    "label": "coral",
+    "message": "#EC7051",
+    "label_color": "black",
+    "message_color": "coral",
+    "icon": null
+   },
+   "sha256": "a8c48c0526a0c3c62246375d18a1a1008b2058f4a40d85786a0c79a3013d9019",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "crimson",
+    "message": "#CB2A4A",
+    "label_color": "black",
+    "message_color": "crimson",
+    "icon": null
+   },
+   "sha256": "358db74659047fbd683d57bc0456b0f72e035dba93f9ce48c3dc1f60346b0706"
+  },
+  {
+   "badge": {
+    "label": "cyan",
+    "message": "#2FADC6",
+    "label_color": "black",
+    "message_color": "cyan",
+    "icon": null
+   },
+   "sha256": "3ccfc25b322256954f2ff864e0cc3d0fd9eef83ba7f9d54c2244c3476b3a2550",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "denim",
+    "message": "#4977AB",
+    "label_color": "black",
+    "message_color": "denim",
+    "icon": null
+   },
+   "sha256": "7a9042577d409347c0b274b695303af612317479c489581528fddd729d622375"
+  },
+  {
+   "badge": {
+    "label": "emerald",
+    "message": "#2BB675",
+    "label_color": "black",
+    "message_color": "emerald",
+    "icon": null
+   },
+   "sha256": "400ead517abd31d1b7a29f06fea172bc7cede9ebb378f03ddb41d9baf863b091",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "forest",
+    "message": "#22773E",
+    "label_color": "black",
+    "message_color": "forest",
+    "icon": null
+   },
+   "sha256": "57d709d5436a593e5d83618c622a0fb8ea4ff7f2b165c194217af2f1b27a9eea"
+  },
+  {
+   "badge": {
+    "label": "fuchsia",
+    "message": "#E147C2",
+    "label_color": "black",
+    "message_color": "fuchsia",
+    "icon": null
+   },
+   "sha256": "c731723b357f294228f0b77bba42099f9f810f5528be5ea00559d7f0e858c735",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "gold",
+    "message": "#C0A062",
+    "label_color": "black",
+    "message_color": "gold",
+    "icon": null
+   },
+   "sha256": "07fdf8a91811552ab5ef1dcac5bc38fbeddabc2eb6d9e651c4bd398875ec5351",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "gray",
+    "message": "#7A8390",
+    "label_color": "black",
+    "message_color": "gray",
+    "icon": null
+   },
+   "sha256": "0e36a091c62ad3e4a30760183d5af75f49a5020348cce355f4caddaa10910b6e",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "green",
+    "message": "#2EA043",
+    "label_color": "black",
+    "message_color": "green",
+    "icon": null
+   },
+   "sha256": "d5b1e796315fd24637fffe07d02ea80092f7bebb9e11c1b8abb7c99e7156bd23",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "honey",
+    "message": "#CE8B27",
+    "label_color": "black",
+    "message_color": "honey",
+    "icon": null
+   },
+   "sha256": "6965c8f988449ba6e1b4b354aa215e61e1479676a720a2e0e58c6332b358d994",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "indigo",
+    "message": "#534DCB",
+    "label_color": "black",
+    "message_color": "indigo",
+    "icon": null
+   },
+   "sha256": "7d3a070067d3db6e7905aede90ca4a0f58ef813ea2f151a60234667d63e6428f"
+  },
+  {
+   "badge": {
+    "label": "iris",
+    "message": "#6C54C9",
+    "label_color": "black",
+    "message_color": "iris",
+    "icon": null
+   },
+   "sha256": "d9accb7d1311839c945cc34afbec871a66b270664ca21c5cabe2ac4774aba1c6"
+  },
+  {
+   "badge": {
+    "label": "ivory",
+    "message": "#ECE3CB",
+    "label_color": "black",
+    "message_color": "ivory",
+    "icon": null
+   },
+   "sha256": "e473c073e2909051d570fed7f2f6370f34e77ad7df0bb86adb4cf29c63ca2f01"
+  },
+  {
+   "badge": {
+    "label": "jade",
+    "message": "#389F79",
+    "label_color": "black",
+    "message_color": "jade",
+    "icon": null
+   },
+   "sha256": "03c3c6eb12cb4761f669a7dc1a0871b6c4494e96af175758b9b6da701abd1e71",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "lavender",
+    "message": "#AC94E6",
+    "label_color": "black",
+    "message_color": "lavender",
+    "icon": null
+   },
+   "sha256": "d57e3280e30f45101a04ddf853606289074834900fcf9be26a3337f97fd5360a",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "lime",
+    "message": "#6FBE37",
+    "label_color": "black",
+    "message_color": "lime",
+    "icon": null
+   },
+   "sha256": "1aa2c2484dd1eb8a7e34956c4e626a7c91c2eeed2f1093879de2bd809f75de47",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "magenta",
+    "message": "#CF3095",
+    "label_color": "black",
+    "message_color": "magenta",
+    "icon": null
+   },
+   "sha256": "bd4f0c44d3e041f4b837122678a1bb1aaf7b1db138204493f8f0c6009cdb8a37"
+  },
+  {
+   "badge": {
+    "label": "maroon",
+    "message": "#7E303D",
+    "label_color": "black",
+    "message_color": "maroon",
+    "icon": null
+   },
+   "sha256": "94bad3f3481e1c212c16e5e6dce8c8bab7a3880932e1d4b8eea67915a93a2dfc"
+  },
+  {
+   "badge": {
+    "label": "mauve",
+    "message": "#A564AF",
+    "label_color": "black",
+    "message_color": "mauve",
+    "icon": null
+   },
+   "sha256": "f95d67a50a776dfabf768eccbaa49e72bb7c387a0a227a81c8268c96344c34c3"
+  },
+  {
+   "badge": {
+    "label": "mint",
+    "message": "#4DCBA5",
+    "label_color": "black",
+    "message_color": "mint",
+    "icon": null
+   },
+   "sha256": "46f1f8f6b249ca0601441db19c6c15b9bcfb996f44f89a639a19d73fdeb702b2",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "moss",
+    "message": "#6E883A",
+    "label_color": "black",
+    "message_color": "moss",
+    "icon": null
+   },
+   "sha256": "02797c7653dded3f648461c2e539dd87f084c08902c59c08c8b1e3e68a5281c1"
+  },
+  {
+   "badge": {
+    "label": "mustard",
+    "message": "#B1932F",
+    "label_color": "black",
+    "message_color": "mustard",
+    "icon": null
+   },
+   "sha256": "2e0d6a3bfc9b8f7a547fc03df6e35fc710334deb0194ddc828ac8fe7d435f9b4",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "navy",
+    "message": "#253D7E",
+    "label_color": "black",
+    "message_color": "navy",
+    "icon": null
+   },
+   "sha256": "13278b8b236bc28f796c95a27fe57286d17782b8596f4f71c6cbfe6ad305297a"
+  },
+  {
+   "badge": {
+    "label": "ocean",
+    "message": "#277C9B",
+    "label_color": "black",
+    "message_color": "ocean",
+    "icon": null
+   },
+   "sha256": "4a8e7a71ed0e4722f08011e28cdb9fd8b4982338994da8796a9a89a6973670dc"
+  },
+  {
+   "badge": {
+    "label": "olive",
+    "message": "#8A8B2C",
+    "label_color": "black",
+    "message_color": "olive",
+    "icon": null
+   },
+   "sha256": "6c367855028236ca770eaa4cbefeb0f0242d8d03b31efd98d51592e28261565f",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "orange",
+    "message": "#E36209",
+    "label_color": "black",
+    "message_color": "orange",
+    "icon": null
+   },
+   "sha256": "2a3a17b4f836f91c924037043e87b44f624d136a0027a4764d44ff42f9f2d63b",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "orchid",
+    "message": "#CE64BC",
+    "label_color": "black",
+    "message_color": "orchid",
+    "icon": null
+   },
+   "sha256": "3afa11b9d1db64f409562e50cbde55705493e2359db15a7654dfcbc8c36d34fb",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "peach",
+    "message": "#EFA980",
+    "label_color": "black",
+    "message_color": "peach",
+    "icon": null
+   },
+   "sha256": "1d49e02191216b3b00e719730073f4aea7881c255f0129709ff990eca752c9da",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "pink",
+    "message": "#FE5196",
+    "label_color": "black",
+    "message_color": "pink",
+    "icon": null
+   },
+   "sha256": "171460b96c27e3e5f4d37a64a86819b0a98c343e030e49967858075c1d68f660",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "plum",
+    "message": "#9D47AE",
+    "label_color": "black",
+    "message_color": "plum",
+    "icon": null
+   },
+   "sha256": "6c8c3ea09af9ea0012e794ab7d09b2302326edfd49c6a82c7458d1682018bfad"
+  },
+  {
+   "badge": {
+    "label": "purple",
+    "message": "#9C27B0",
+    "label_color": "black",
+    "message_color": "purple",
+    "icon": null
+   },
+   "sha256": "a908ce6e4f89455ffd73efd5941fb630380e43c7313ebb075b937204c79d1ac9"
+  },
+  {
+   "badge": {
+    "label": "red",
+    "message": "#D73A49",
+    "label_color": "black",
+    "message_color": "red",
+    "icon": null
+   },
+   "sha256": "36ee1bbdaa2c801455665ee59d99b375b0696cfead20f1afa754dd10bdae24d4"
+  },
+  {
+   "badge": {
+    "label": "rose",
+    "message": "#E7557C",
+    "label_color": "black",
+    "message_color": "rose",
+    "icon": null
+   },
+   "sha256": "23675b73fa546e1319f3b71b493235f703bd4297a2f609d07b48678243e5f61e",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "ruby",
+    "message": "#AB2B5A",
+    "label_color": "black",
+    "message_color": "ruby",
+    "icon": null
+   },
+   "sha256": "b9383d8b95a57360bfd47591765b4e06108b09620f145f6f7673635ec020c13f"
+  },
+  {
+   "badge": {
+    "label": "sage",
+    "message": "#7AA465",
+    "label_color": "black",
+    "message_color": "sage",
+    "icon": null
+   },
+   "sha256": "0906d4908a11cc0e500c2093037982b266a47be4fb323d8e322cf64d927e64f1",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "salmon",
+    "message": "#DC796A",
+    "label_color": "black",
+    "message_color": "salmon",
+    "icon": null
+   },
+   "sha256": "e23a89c8258fe9dd0bd7076b602340c481b9a656617264a489a2924373daea66",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "sand",
+    "message": "#D0BD8B",
+    "label_color": "black",
+    "message_color": "sand",
+    "icon": null
+   },
+   "sha256": "a11b746e91386ac370a8d96dd1e57a277f21fd36812541c81688dc297d67f35b",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "sky",
+    "message": "#3E9CE0",
+    "label_color": "black",
+    "message_color": "sky",
+    "icon": null
+   },
+   "sha256": "945a4ffc2568dc4f2ecde5670e515d4840f30d906a73e9fee17e5804e975609a",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "slate",
+    "message": "#57606A",
+    "label_color": "black",
+    "message_color": "slate",
+    "icon": null
+   },
+   "sha256": "35157a4c756f194aa94106d3fba4bffca7eb8d433c3a0d4aa9d63c0a5115989c"
+  },
+  {
+   "badge": {
+    "label": "steel",
+    "message": "#5B758F",
+    "label_color": "black",
+    "message_color": "steel",
+    "icon": null
+   },
+   "sha256": "c2920c2a7db4456d22f2fb9b7c8911f5c2f236868e96f451755209bbf913e580"
+  },
+  {
+   "badge": {
+    "label": "stone",
+    "message": "#A19687",
+    "label_color": "black",
+    "message_color": "stone",
+    "icon": null
+   },
+   "sha256": "71dbd6c317640c6362bd89bb814622779d85603704da057e2b4cd0066b2663b5",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "tan",
+    "message": "#CAA472",
+    "label_color": "black",
+    "message_color": "tan",
+    "icon": null
+   },
+   "sha256": "cf31fec01c9161291228724c0e025949d4595a3d05756ef8e99e96403814154e",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "tangerine",
+    "message": "#DD732C",
+    "label_color": "black",
+    "message_color": "tangerine",
+    "icon": null
+   },
+   "sha256": "a379fa18a43546b64d57bbba0cc87dcc029b49bd1e2a00c8ecdf064a4efb1a28",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "taupe",
+    "message": "#8E7967",
+    "label_color": "black",
+    "message_color": "taupe",
+    "icon": null
+   },
+   "sha256": "53ee8b574f30a20184a54e1d93cbef2c49ffc08cd344e97733cf725ef84c9856"
+  },
+  {
+   "badge": {
+    "label": "teal",
+    "message": "#1F9E8F",
+    "label_color": "black",
+    "message_color": "teal",
+    "icon": null
+   },
+   "sha256": "44619ea6c8870e529b32816cb0a52f918374380d624e5abdcf17116b9f9f7c01",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "turquoise",
+    "message": "#2FB1A9",
+    "label_color": "black",
+    "message_color": "turquoise",
+    "icon": null
+   },
+   "sha256": "1822ebebfc3a7e043eacdbd68fc0faed125f9fd9d2b6f7b353e5ed62dc0efa01",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "violet",
+    "message": "#8B6CFF",
+    "label_color": "black",
+    "message_color": "violet",
+    "icon": null
+   },
+   "sha256": "8c04d22f8a7a70a26942a9389ef6c7a4691142f968a39d46d0c35fdbac000f7a",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "white",
+    "message": "#FFFFFF",
+    "label_color": "black",
+    "message_color": "white",
+    "icon": null
+   },
+   "sha256": "32a14e28b321c42f4406c5465eb356015fb57fcc348d8805cccae34fbe6b2370"
+  },
+  {
+   "badge": {
+    "label": "yellow",
+    "message": "#F1E05A",
+    "label_color": "black",
+    "message_color": "yellow",
+    "icon": null
+   },
+   "sha256": "f64f43a1b5501a0bec93d60a5479ecbd3ba383be5f310ee728aa98ea36627397"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "for-the-badge",
+    "label_color": "black",
+    "message_color": "steel",
+    "icon": "sparkle",
+    "style": "for-the-badge"
+   },
+   "sha256": "612678110e4f7199ba8c84b672507577efc3dcf620ad61fa00a0b615e6b56ba5"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "flat",
+    "label_color": "black",
+    "message_color": "steel",
+    "icon": "sparkle",
+    "style": "flat"
+   },
+   "sha256": "4e29d3dd98624777cdcc8ee6fcb4a7adafe6c13b954d3486a1291bee5496b139"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "flat-square",
+    "label_color": "black",
+    "message_color": "steel",
+    "icon": "sparkle",
+    "style": "flat-square"
+   },
+   "sha256": "e3748b501b46ca6bf7136b7e94182abfd07a4233c2f747518dc22939d5cbb529"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "plastic",
+    "label_color": "black",
+    "message_color": "steel",
+    "icon": "sparkle",
+    "style": "plastic"
+   },
+   "sha256": "d56ea3ed149caf2eaaf952c53a269cce9aa477c067acec5aba54da333da725f8"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "pill",
+    "label_color": "black",
+    "message_color": "steel",
+    "icon": "sparkle",
+    "style": "pill"
+   },
+   "sha256": "c430cc881266d6ef8a68fa7d3367bf9eb968f9b0131a5bd03dc92446cde0ddad"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "compact",
+    "label_color": "black",
+    "message_color": "steel",
+    "icon": "sparkle",
+    "style": "compact"
+   },
+   "sha256": "359939248de71340521d1597f84001362c96ecd09bdfbbb9338c06022ac583bc"
+  },
+  {
+   "badge": {
+    "label": "health",
+    "message": "green",
+    "label_color": "gold",
+    "message_color": "green",
+    "icon": "pulse"
+   },
+   "sha256": "b4e66130de0938f87fd2c6d142ab96578612c654d97a57791c8e99cb22355214",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "health",
+    "message": "red",
+    "label_color": "gold",
+    "message_color": "red",
+    "icon": "pulse"
+   },
+   "sha256": "ac0b9a8ef8eff9bae41bdd8544862a767bf0e03e4500fddefd6c1a64ca92574c",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "health",
+    "message": "slate",
+    "label_color": "gold",
+    "message_color": "slate",
+    "icon": "pulse"
+   },
+   "sha256": "f621c891ec42b8d8400525f90a3d926e227d2921903ed154574b70dbf154e13d",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "health",
+    "message": "yellow",
+    "label_color": "gold",
+    "message_color": "yellow",
+    "icon": "pulse"
+   },
+   "sha256": "f217a766d8304459b69397bfe7687680cec9925eed92c95b84b5b062238180dc",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "blueprint-for-the-badge",
+    "icon": "sparkle",
+    "style": "blueprint-for-the-badge",
+    "dark": false
+   },
+   "sha256": "bbe99bb3e82d084b16162c97f395a9ffb154dca210106b408a1722dd61a20f85"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "blueprint-for-the-badge",
+    "icon": "sparkle",
+    "style": "blueprint-for-the-badge",
+    "dark": true
+   },
+   "sha256": "dc6cc3fb3f4cca15e1b7f28f70346cc6dd6190a8120cc68c7c9c772f5965416a"
+  },
+  {
+   "badge": {
+    "label": "live",
+    "message": "blueprint-for-the-badge",
+    "icon": "pulse",
+    "style": "blueprint-for-the-badge",
+    "state": "green"
+   },
+   "sha256": "fab5b2b75df9ba6184da3f67fb5ebfd31153b1b38ce9f39136bd5b62a3fd246e"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "blueprint-flat",
+    "icon": "sparkle",
+    "style": "blueprint-flat",
+    "dark": false
+   },
+   "sha256": "796227b6431e8d649abbde3c0b81350714f64460accc953957030602435130a1"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "blueprint-flat",
+    "icon": "sparkle",
+    "style": "blueprint-flat",
+    "dark": true
+   },
+   "sha256": "eb98dc99eaff235e861522d78bc345863312c61c4c2becd5b7581ae67c951753"
+  },
+  {
+   "badge": {
+    "label": "live",
+    "message": "blueprint-flat",
+    "icon": "pulse",
+    "style": "blueprint-flat",
+    "state": "green"
+   },
+   "sha256": "be14cc57ccef3531a4d62e296e2bfdc805fa070aeff82b44f6007c3b18ddf959"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "blueprint-flat-square",
+    "icon": "sparkle",
+    "style": "blueprint-flat-square",
+    "dark": false
+   },
+   "sha256": "b00ae820ade825e335ca9955a990cf54bc90af7b2b341cdd5d5ab7f2415817e6"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "blueprint-flat-square",
+    "icon": "sparkle",
+    "style": "blueprint-flat-square",
+    "dark": true
+   },
+   "sha256": "de939455ad42741e81ab6101794b71b696fc05b710f7eec5a26f6f59c2ce9536"
+  },
+  {
+   "badge": {
+    "label": "live",
+    "message": "blueprint-flat-square",
+    "icon": "pulse",
+    "style": "blueprint-flat-square",
+    "state": "green"
+   },
+   "sha256": "434feec8724e4afdbe5b4420972946f7a8354fc46d5b3b89b140be8066d76856"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "blueprint-plastic",
+    "icon": "sparkle",
+    "style": "blueprint-plastic",
+    "dark": false
+   },
+   "sha256": "30b309aef25ad54dffc434fa26488eb2ee0232ba0634cb85d81acf6172ca87d7"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "blueprint-plastic",
+    "icon": "sparkle",
+    "style": "blueprint-plastic",
+    "dark": true
+   },
+   "sha256": "2b3a83be52f97d4729649cf520e5d1d46036f9ef4dc392dd78fd785672fe8572"
+  },
+  {
+   "badge": {
+    "label": "live",
+    "message": "blueprint-plastic",
+    "icon": "pulse",
+    "style": "blueprint-plastic",
+    "state": "green"
+   },
+   "sha256": "8ffb7ab31483795e58edd4e1f5b24d099ce79acdd5d7dd1b6bc13548d4df9196"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "blueprint-pill",
+    "icon": "sparkle",
+    "style": "blueprint-pill",
+    "dark": false
+   },
+   "sha256": "b921ae9ec6814bb617a2bc3f3c9612411a07dd405745d0c81e3283ae79299b52"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "blueprint-pill",
+    "icon": "sparkle",
+    "style": "blueprint-pill",
+    "dark": true
+   },
+   "sha256": "b3e60a5fad3550bfcdb0c03174db29d96fa673878901f626e0c5d43c03274d15"
+  },
+  {
+   "badge": {
+    "label": "live",
+    "message": "blueprint-pill",
+    "icon": "pulse",
+    "style": "blueprint-pill",
+    "state": "green"
+   },
+   "sha256": "d35f3caa801b3c11ddf274d8566571322aa3d1823f848fadf5340567661feef5"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "blueprint-compact",
+    "icon": "sparkle",
+    "style": "blueprint-compact",
+    "dark": false
+   },
+   "sha256": "3d42efda43ea455b34eb14d319de082a3f6e10cee76818281d8ae2722bfbb660"
+  },
+  {
+   "badge": {
+    "label": "style",
+    "message": "blueprint-compact",
+    "icon": "sparkle",
+    "style": "blueprint-compact",
+    "dark": true
+   },
+   "sha256": "86825465664b4366b2ec8d210394d4bdf450cc6fafbbe533d7f2c06cf7fb9fd1"
+  },
+  {
+   "badge": {
+    "label": "live",
+    "message": "blueprint-compact",
+    "icon": "pulse",
+    "style": "blueprint-compact",
+    "state": "green"
+   },
+   "sha256": "1a7687e39803f3e945bb6c3d5cabcf595bf48955cf135d7b700e54ec2a67db2c"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "redprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "redprint",
+    "dark": false
+   },
+   "sha256": "bce3770eaf7bd8cd3f1b4eb50908e26d0792d7b142b96f03fe1a42e538a15795"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "redprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "redprint",
+    "dark": true
+   },
+   "sha256": "1042a6bc698f47ee32e73bf156fe3a14bb64c37a04ff5746a510a2164b077374"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "orangeprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "orangeprint",
+    "dark": false
+   },
+   "sha256": "c5d788ea3c9e020553ae82f4098afacf0dd0d8dd56752e261fa861bddca11e22"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "orangeprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "orangeprint",
+    "dark": true
+   },
+   "sha256": "537881355a6a2737dfab0e1893ce61c85aadb5bb6d501f9420f87b89c0a412fd"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "yellowprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "yellowprint",
+    "dark": false
+   },
+   "sha256": "62c22629e8bb90add8f755e431fc6acad7bc99c9a85672767ef9f75c7041b9ee"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "yellowprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "yellowprint",
+    "dark": true
+   },
+   "sha256": "f3fd8cde7778b8e2208068b0f9d6f5f3086603e0c7590e754bd996e0c64ab58d"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "greenprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "greenprint",
+    "dark": false
+   },
+   "sha256": "e54f2fc96bc2ff89d1883c2ecca2436e64727cafa9f9601fac075430ff084ed6"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "greenprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "greenprint",
+    "dark": true
+   },
+   "sha256": "beb66a60c5fc2ca11b41e8b697572d08664564f874a89e4efe21187b680d8ce4"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "tealprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "tealprint",
+    "dark": false
+   },
+   "sha256": "1e40fc9a9b76440967d1e365d8c97ea8ac6e2f27c1c8cb98a16be70c64470c0e"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "tealprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "tealprint",
+    "dark": true
+   },
+   "sha256": "63d583231a00fa5de0cfb56a72606fb27fa71cb91c8609c527fa91179136865e"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "blueprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "blueprint",
+    "dark": false
+   },
+   "sha256": "09bc67c39978b151712cecba39918abb67c03d311c5f3f50ab1298c1c5ba49f0"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "blueprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "blueprint",
+    "dark": true
+   },
+   "sha256": "7f880a10cc5da7ab0da16f763dcdaa135670f1ec53523a4cd2b297798aed2487"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "indigoprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "indigoprint",
+    "dark": false
+   },
+   "sha256": "27dab0f95916e0d382bf9daca01f6dabfbe429e3dae8a2afd712829a46324605"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "indigoprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "indigoprint",
+    "dark": true
+   },
+   "sha256": "31bde5fdd98860ac96acb705b1075c563ef9b505aaa64f77b647a0959f041250"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "purpleprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "purpleprint",
+    "dark": false
+   },
+   "sha256": "358a9f04387c1d24e0174ed77a4e84fb07ef6d346698138ef574f915b003de90"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "purpleprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "purpleprint",
+    "dark": true
+   },
+   "sha256": "744acc24992221e721ea075c4ad838ffd6a9927a6c4406c4612564d53b1700c0"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "pinkprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "pinkprint",
+    "dark": false
+   },
+   "sha256": "5bcf3cbde8d729a5b41f49f69c389e0e365b8962768f4c565dd3e4c0649350e1"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "pinkprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "pinkprint",
+    "dark": true
+   },
+   "sha256": "29710e843bb3256608aa48ae800f5bd0fc4137006b8d5aaad41a40b458d9f21c"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "brownprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "brownprint",
+    "dark": false
+   },
+   "sha256": "deb3ec9c6380d617ea163686579a3c4f52c356c2a2c36a8536cfaa5ff93584bd"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "brownprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "brownprint",
+    "dark": true
+   },
+   "sha256": "720fea985f468597ed604a16a0ecba525440bedd70fbab0c2353d25c8a4f0a64"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "blackprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "blackprint",
+    "dark": false
+   },
+   "sha256": "9c1ad4fd13eacc23fb745230d56e67635dcba6109f4758ff49da4a15e2f0fc71"
+  },
+  {
+   "badge": {
+    "label": "print",
+    "message": "blackprint",
+    "icon": "layers",
+    "style": "blueprint-for-the-badge",
+    "print": "blackprint",
+    "dark": true
+   },
+   "sha256": "4652fea07793b2902f6703e8a80ab3ab6357b4dc0337d5f410b196c0a1f7d49e"
+  },
+  {
+   "badge": {
+    "label": "state",
+    "message": "green",
+    "icon": "pulse",
+    "style": "blueprint-for-the-badge",
+    "state": "green"
+   },
+   "sha256": "d1b2527867007731b048c8db8c2ef70035bc086c6050af8044a06b1e347d9baa"
+  },
+  {
+   "badge": {
+    "label": "state",
+    "message": "red",
+    "icon": "pulse",
+    "style": "blueprint-for-the-badge",
+    "state": "red"
+   },
+   "sha256": "63e364c89204d116875892c728992f6d460703b2ae255f7ffe6ee5458172c002"
+  },
+  {
+   "badge": {
+    "label": "state",
+    "message": "slate",
+    "icon": "pulse",
+    "style": "blueprint-for-the-badge",
+    "state": "slate"
+   },
+   "sha256": "9c7077170a17e8b7aed986ade0baeed5e9aadc3f82247c2ed34024358da6f179"
+  },
+  {
+   "badge": {
+    "label": "state",
+    "message": "yellow",
+    "icon": "pulse",
+    "style": "blueprint-for-the-badge",
+    "state": "yellow"
+   },
+   "sha256": "287d48127b9b738138ea755ba8ff344f2c891b1e1110aa92de698d7450d2598c"
+  },
+  {
+   "badge": {
+    "label": "Build",
+    "message": "Passing",
+    "style": "for-the-badge",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "edf02377ae0e6e346b6fd48e09f42d624e970a8fcfe936c63425ef41964df4c9",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "License",
+    "message": "MIT",
+    "style": "for-the-badge",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "ec55ac5ec7c8ae7f9ca50a3f6d1be50fbaa24d7b302749fb8c5a2ff3caa1ebed",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "",
+    "message": "Only a message",
+    "style": "for-the-badge",
+    "icon": null,
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "c0c5416208c1ef5ca49559b63badad4eb9f6d41d914643d8edd70f5b39d8afc5",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "Only a label",
+    "message": "",
+    "style": "for-the-badge",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "732375e383faa07696aeeb2697f64a1cf1584441d45c48c7a9e11579551446f4"
+  },
+  {
+   "badge": {
+    "label": "Build",
+    "message": "Passing",
+    "style": "flat",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "3013c28a58731b925bcb603e2737361d73ff6578f461dad45d09278fc77619ba",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "License",
+    "message": "MIT",
+    "style": "flat",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "4a38ce0a3f81f0009ed9d5ddc4ced55532fb62eae14c6f3fae20c3cf1818e2ef",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "",
+    "message": "Only a message",
+    "style": "flat",
+    "icon": null,
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "2c08a978f1faa356c203278c9681d971591c35fdc1a031f5fc873e79aed4684e",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "Only a label",
+    "message": "",
+    "style": "flat",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "16c49649ba8da20f2a6089598557896daec2fa560c16d5afe4ad2c3925d9f2d0"
+  },
+  {
+   "badge": {
+    "label": "Build",
+    "message": "Passing",
+    "style": "flat-square",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "c27dd9d3b2f9823bd8664632bd0260d01ea09bd00de2b675d8646dd59f70572b",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "License",
+    "message": "MIT",
+    "style": "flat-square",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "a49cf430410bd9559dfff0325ab549732118e9f404083fa04b53a664bb70dc06",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "",
+    "message": "Only a message",
+    "style": "flat-square",
+    "icon": null,
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "c1ea23ac5358a9c1c17813f147a3c2768aff67ce5503b62648f75de1dfd9e5bd",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "Only a label",
+    "message": "",
+    "style": "flat-square",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "62c9f4b9e682fb5620957bdc0938b6da0319d8d8d8315c9cca5e8181d69273f9"
+  },
+  {
+   "badge": {
+    "label": "Build",
+    "message": "Passing",
+    "style": "plastic",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "ccf2b870cd8cfb81f1d4b63b49488a9d167aaf3e3da46d18ab002bf4c789fce4",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "License",
+    "message": "MIT",
+    "style": "plastic",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "7d778ddd83d24a4c70edfa39aef7e30a1710bdffb71ff19bbb9e43368a77984b",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "",
+    "message": "Only a message",
+    "style": "plastic",
+    "icon": null,
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "98bd74ee3b5fae9f9c4e7145557868702e6559847e36f3c5ea33fcaa1f5c6db8",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "Only a label",
+    "message": "",
+    "style": "plastic",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "86a9509f03091be4538d3ab0a816432f3d1f060012b437b31dbe6be6442e76d6"
+  },
+  {
+   "badge": {
+    "label": "Build",
+    "message": "Passing",
+    "style": "pill",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "467ab64f934af157cd4a3e0037eee032c58ca535e616be52646522234a4cf59a",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "License",
+    "message": "MIT",
+    "style": "pill",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "139f62aabf452c75872565c7f6a222d68684621fd93d8c89adc9e6a3ef39487c",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "",
+    "message": "Only a message",
+    "style": "pill",
+    "icon": null,
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "351de6cf50731c83897789792744f18253aa64405d1b748a28d752060812d839",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "Only a label",
+    "message": "",
+    "style": "pill",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "d0d6cc75e0e9f7bff9538880d463b26bfc6d42a1213576d721930112a0c89e03"
+  },
+  {
+   "badge": {
+    "label": "Build",
+    "message": "Passing",
+    "style": "compact",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "cad07eb26ea0055f3ce1e9644f31ee9fd2f74a82d0d9bd24f0f96c77d39ed0af",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "License",
+    "message": "MIT",
+    "style": "compact",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "6eaae1c12a885022da5a2c966e74e934675ff6ef570dc1c9a694070abb5359f8",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "",
+    "message": "Only a message",
+    "style": "compact",
+    "icon": null,
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "a8466aec2d4f773c9224ad6fdfcb71888bb137cf3d4f019bcd37aea0142aef56",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "Only a label",
+    "message": "",
+    "style": "compact",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "c2970a3a20caed5569381d268266c503808f7055f24a38af8d284d8c0cc5318b"
+  },
+  {
+   "badge": {
+    "label": "Build",
+    "message": "Passing",
+    "style": "blueprint-for-the-badge",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "0d8ae29fdcbb0f6036e370dc96e6ad86ab7bfe3d7bc7671273daaeb1c4afae44"
+  },
+  {
+   "badge": {
+    "label": "License",
+    "message": "MIT",
+    "style": "blueprint-for-the-badge",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "d04bf3b69942da3fe06f5ec770e78a14549c4de66e18bc7b52f9251b0b0b137e"
+  },
+  {
+   "badge": {
+    "label": "",
+    "message": "Only a message",
+    "style": "blueprint-for-the-badge",
+    "icon": null,
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "527ae03d709a5374a75ae94423530f9cd3ce86b678830fa854c87d5651565a17"
+  },
+  {
+   "badge": {
+    "label": "Only a label",
+    "message": "",
+    "style": "blueprint-for-the-badge",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "7e63c57648f89fd77025d852d7c36d8f570f6d906632b237702801c0941448ec"
+  },
+  {
+   "badge": {
+    "label": "Build",
+    "message": "Passing",
+    "style": "blueprint-flat",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "61c6acba470fa243f0fd5962e22d543939e9f3db84d4eabcbe41732cbde2f79c"
+  },
+  {
+   "badge": {
+    "label": "License",
+    "message": "MIT",
+    "style": "blueprint-flat",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "849a2db57f2d05edc3354f599d777d683af0ece8638bb8d90a4a9223971e3af1"
+  },
+  {
+   "badge": {
+    "label": "",
+    "message": "Only a message",
+    "style": "blueprint-flat",
+    "icon": null,
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "0c6b76db2ab9bea7fe9b02a3a6d832db78795d0c6e31adc617599c13cd00260a"
+  },
+  {
+   "badge": {
+    "label": "Only a label",
+    "message": "",
+    "style": "blueprint-flat",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "3a79795013498f229de24e9470aaf6c1bb6e466679bffcf720e2055caa772019"
+  },
+  {
+   "badge": {
+    "label": "Build",
+    "message": "Passing",
+    "style": "blueprint-flat-square",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "165a73adf1e4be689337f3321ebc4af8fad0f7bd3205d6aa15e7c68dd828a38a"
+  },
+  {
+   "badge": {
+    "label": "License",
+    "message": "MIT",
+    "style": "blueprint-flat-square",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "373568bb7cbdf369433efb21aa93b201ec2bfa83eef01eb58b1e94f3ea8e38c7"
+  },
+  {
+   "badge": {
+    "label": "",
+    "message": "Only a message",
+    "style": "blueprint-flat-square",
+    "icon": null,
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "26fd4563b09743ff9db06fbf93d1143ee44bde90d9252b78e496b4e123417750"
+  },
+  {
+   "badge": {
+    "label": "Only a label",
+    "message": "",
+    "style": "blueprint-flat-square",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "372c510ba8d3c8021a21d1556f8a072ab8272116f52ef77fc9d03aa4a43026ed"
+  },
+  {
+   "badge": {
+    "label": "Build",
+    "message": "Passing",
+    "style": "blueprint-plastic",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "6d23ab0dbcc6a0f34481faff507b87c62eb56329e34b2e0a82f6509ed94123f0"
+  },
+  {
+   "badge": {
+    "label": "License",
+    "message": "MIT",
+    "style": "blueprint-plastic",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "0e224034d324517cb168598f6f277fc9988107c074a010fd18972f47a9383e74"
+  },
+  {
+   "badge": {
+    "label": "",
+    "message": "Only a message",
+    "style": "blueprint-plastic",
+    "icon": null,
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "2e37a3357e01951a28986f5cc69fb80ffba8a6c011520a82ab4470de5c4ce8d0"
+  },
+  {
+   "badge": {
+    "label": "Only a label",
+    "message": "",
+    "style": "blueprint-plastic",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "c9f348baffb9bbbbde0b5684cc0086b8ec24078fb361ffa72e28dc907490f628"
+  },
+  {
+   "badge": {
+    "label": "Build",
+    "message": "Passing",
+    "style": "blueprint-pill",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "dafd5b4a5174607f0d9294b0fd8d5eb6bac953f80e31ca831284cb3eee8caaa0"
+  },
+  {
+   "badge": {
+    "label": "License",
+    "message": "MIT",
+    "style": "blueprint-pill",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "527d7578ad8644e04010be6d451051fcf15540bcc5c23608268840d59fbac42f"
+  },
+  {
+   "badge": {
+    "label": "",
+    "message": "Only a message",
+    "style": "blueprint-pill",
+    "icon": null,
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "6a0ee88af100bcd97bdec4cf6d822f323461f80d939eb36460b214a36da1b50b"
+  },
+  {
+   "badge": {
+    "label": "Only a label",
+    "message": "",
+    "style": "blueprint-pill",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "b91e82858f88c8e7e06ad1c26a5d85347cd960dfa95a18187bbe1f57282d37fb"
+  },
+  {
+   "badge": {
+    "label": "Build",
+    "message": "Passing",
+    "style": "blueprint-compact",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "78761a569c24a4b33b7042f20fa7181336e1432406c286437aef51332aea2b5c"
+  },
+  {
+   "badge": {
+    "label": "License",
+    "message": "MIT",
+    "style": "blueprint-compact",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "a611f16171cb3e3ca8e9711f875c39c113fc99614c819a0c234942ca4944567a"
+  },
+  {
+   "badge": {
+    "label": "",
+    "message": "Only a message",
+    "style": "blueprint-compact",
+    "icon": null,
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "9b1b571638e62f5383ce1a3a0c775d1cf1cf3ff2a50174685029f6124a3f3293"
+  },
+  {
+   "badge": {
+    "label": "Only a label",
+    "message": "",
+    "style": "blueprint-compact",
+    "icon": "check",
+    "label_color": "black",
+    "message_color": "teal"
+   },
+   "sha256": "7dbeccd07ee11782c7e99245591ddaaf688fb8076a5a5f3197b5700ceb95133e"
+  },
+  {
+   "badge": {
+    "label": "Deploy",
+    "message": "Passing",
+    "style": "blueprint-for-the-badge",
+    "icon": "rocket",
+    "state": "green",
+    "reserve": [
+     "Failing",
+     "Pending"
+    ]
+   },
+   "sha256": "fe81fe3940b8a9dd219bb68b769059f3f2c7354e9d77920ba5fc347ff897e808"
+  },
+  {
+   "badge": {
+    "label": "Build Status",
+    "message": "1,204 Passing",
+    "style": "blueprint-for-the-badge",
+    "icon": "flask",
+    "print": "greenprint",
+    "reserve": [
+     "999 Failing"
+    ],
+    "dark": true
+   },
+   "sha256": "7b7e6c2c3bdc6d98850b472e7d78eb5947e83b794e2157610c9e469333acff03"
+  },
+  {
+   "badge": {
+    "label": "Deploy",
+    "message": "Passing",
+    "style": "blueprint-flat",
+    "icon": "rocket",
+    "state": "green",
+    "reserve": [
+     "Failing",
+     "Pending"
+    ]
+   },
+   "sha256": "7cbbf69f0a2607a1fbfc789b2f15247054c99d7f3dc0e9fb8d81f2da45af8fe7"
+  },
+  {
+   "badge": {
+    "label": "Build Status",
+    "message": "1,204 Passing",
+    "style": "blueprint-flat",
+    "icon": "flask",
+    "print": "greenprint",
+    "reserve": [
+     "999 Failing"
+    ],
+    "dark": true
+   },
+   "sha256": "db0a1de23d342cbc7e7c391e129a190946204388975d0a64bf75bc137e0cf82f"
+  },
+  {
+   "badge": {
+    "label": "Deploy",
+    "message": "Passing",
+    "style": "blueprint-flat-square",
+    "icon": "rocket",
+    "state": "green",
+    "reserve": [
+     "Failing",
+     "Pending"
+    ]
+   },
+   "sha256": "a332d105c646f76a7729215d92d7da7eb450a38a7bad9314ff45e6d64ee56254"
+  },
+  {
+   "badge": {
+    "label": "Build Status",
+    "message": "1,204 Passing",
+    "style": "blueprint-flat-square",
+    "icon": "flask",
+    "print": "greenprint",
+    "reserve": [
+     "999 Failing"
+    ],
+    "dark": true
+   },
+   "sha256": "e0d292eee5fb49ab194bad0dab188f9b05c32beb0ef8630bacae5326a3014c6b"
+  },
+  {
+   "badge": {
+    "label": "Deploy",
+    "message": "Passing",
+    "style": "blueprint-plastic",
+    "icon": "rocket",
+    "state": "green",
+    "reserve": [
+     "Failing",
+     "Pending"
+    ]
+   },
+   "sha256": "945d756aee211ef2285062392688d8a128b2c00b872993a06a9ebfdde3edfd00"
+  },
+  {
+   "badge": {
+    "label": "Build Status",
+    "message": "1,204 Passing",
+    "style": "blueprint-plastic",
+    "icon": "flask",
+    "print": "greenprint",
+    "reserve": [
+     "999 Failing"
+    ],
+    "dark": true
+   },
+   "sha256": "de1a24db36d36a81fdbb02bea3390de8dcd4df8f651c9357aaa206ea5b784cac"
+  },
+  {
+   "badge": {
+    "label": "Deploy",
+    "message": "Passing",
+    "style": "blueprint-pill",
+    "icon": "rocket",
+    "state": "green",
+    "reserve": [
+     "Failing",
+     "Pending"
+    ]
+   },
+   "sha256": "91e4ec5f4f6a23a44d2b960d0aa65a6218a0e9d7d2a6c1fa9db373a794dc05fd"
+  },
+  {
+   "badge": {
+    "label": "Build Status",
+    "message": "1,204 Passing",
+    "style": "blueprint-pill",
+    "icon": "flask",
+    "print": "greenprint",
+    "reserve": [
+     "999 Failing"
+    ],
+    "dark": true
+   },
+   "sha256": "71c85d950697346ac5a5e3fc9b542b05edbc40c8fab3c5f6332ea6574108ab62"
+  },
+  {
+   "badge": {
+    "label": "Deploy",
+    "message": "Passing",
+    "style": "blueprint-compact",
+    "icon": "rocket",
+    "state": "green",
+    "reserve": [
+     "Failing",
+     "Pending"
+    ]
+   },
+   "sha256": "1ef52457e9b1a9d8298d3d887d0ccd460ee8a9aafd8d829d8a26764d3ab9abe0"
+  },
+  {
+   "badge": {
+    "label": "Build Status",
+    "message": "1,204 Passing",
+    "style": "blueprint-compact",
+    "icon": "flask",
+    "print": "greenprint",
+    "reserve": [
+     "999 Failing"
+    ],
+    "dark": true
+   },
+   "sha256": "b81cd46d802f964701302098e0876a0a22c9061227be3f309fff6219e2656bc5"
+  },
+  {
+   "badge": {
+    "label": "Score",
+    "message": "a:b",
+    "style": "for-the-badge",
+    "icon": null,
+    "label_color": "#C0A062",
+    "message_color": "#2EA043"
+   },
+   "sha256": "177c17613ad7fc1106caa7f99bf32e9cae3c0067f7c65fa0c9d5e832eb1ee926",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "Pages",
+    "message": "Émile & Zoë <3",
+    "style": "for-the-badge",
+    "icon": "book",
+    "label_color": "navy",
+    "message_color": "#FF00AA"
+   },
+   "sha256": "c4b66bf5e9d2cfddb39298c4307145d079fec7e257af90b116c566cead38839b",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "Score",
+    "message": "a:b",
+    "style": "flat",
+    "icon": null,
+    "label_color": "#C0A062",
+    "message_color": "#2EA043"
+   },
+   "sha256": "a44eab9121b099d03d73285cdc68e3d8725ffa7361de8a34915cc532e4bd7583",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "Pages",
+    "message": "Émile & Zoë <3",
+    "style": "flat",
+    "icon": "book",
+    "label_color": "navy",
+    "message_color": "#FF00AA"
+   },
+   "sha256": "2371b2d4ee71462004cc379d17ca5f4c7fc94fea60fa9c6de3f098e202a5eb80",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "Score",
+    "message": "a:b",
+    "style": "flat-square",
+    "icon": null,
+    "label_color": "#C0A062",
+    "message_color": "#2EA043"
+   },
+   "sha256": "856f67ea301a883753a6127f4bd38f62323b8f6af9ed108d8fd6051de334433e",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "Pages",
+    "message": "Émile & Zoë <3",
+    "style": "flat-square",
+    "icon": "book",
+    "label_color": "navy",
+    "message_color": "#FF00AA"
+   },
+   "sha256": "a59a8fc667f2d3af3c603f4ce85214e10fa2b21a32251cc55b17763186fb224e",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "Score",
+    "message": "a:b",
+    "style": "plastic",
+    "icon": null,
+    "label_color": "#C0A062",
+    "message_color": "#2EA043"
+   },
+   "sha256": "d43d80a247c1e04c316af6b9b88a957a1fecfed0fc0c82cb2ac9ac1a36ea7af9",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "Pages",
+    "message": "Émile & Zoë <3",
+    "style": "plastic",
+    "icon": "book",
+    "label_color": "navy",
+    "message_color": "#FF00AA"
+   },
+   "sha256": "cd5e27be820bc7359f7c2fedc73ef08bfa88aa2f9db8d4a9d8f51856138159c4",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "Score",
+    "message": "a:b",
+    "style": "pill",
+    "icon": null,
+    "label_color": "#C0A062",
+    "message_color": "#2EA043"
+   },
+   "sha256": "5964dd7f49d1ceb0f13bfe4b90fe15eba6235d53227e023539dff9a2e9a8446b",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "Pages",
+    "message": "Émile & Zoë <3",
+    "style": "pill",
+    "icon": "book",
+    "label_color": "navy",
+    "message_color": "#FF00AA"
+   },
+   "sha256": "3b9ffbc324db09d9a78a997b41084ba00e15ba7e9bc3c93a2e28b83cc394a701",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "Score",
+    "message": "a:b",
+    "style": "compact",
+    "icon": null,
+    "label_color": "#C0A062",
+    "message_color": "#2EA043"
+   },
+   "sha256": "d4d7332494d9bc6fb07c603b0a71372a5c60ac4d2f281cd5b1e69ffb1dc36060",
+   "ink": "4.5:1"
+  },
+  {
+   "badge": {
+    "label": "Pages",
+    "message": "Émile & Zoë <3",
+    "style": "compact",
+    "icon": "book",
+    "label_color": "navy",
+    "message_color": "#FF00AA"
+   },
+   "sha256": "ee1f46c554a4f0ecbfd9df602018896cb4e8e610a950f80574125a060efe0cb3",
+   "ink": "4.5:1"
+  }
+ ]
+}

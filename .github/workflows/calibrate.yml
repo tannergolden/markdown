@@ -1,0 +1,97 @@
+# SPDX-FileCopyrightText: 2026 Tanner Golden
+# SPDX-License-Identifier: MIT
+#
+# --- The Repository Sample ---
+#
+# 📐 Calibrate
+#
+# The repository-mode trophies say "top 10%" of starred public repositories.
+# This measures that population rather than modelling it: it counts stars
+# and forks directly through the search API, samples forty repositories
+# from each of five star bands, measures each the way a case is measured,
+# and weights the bands by how many repositories they hold. The result is
+# one data file the kit reads on every run, so the catalogue's numbers, the
+# Top N% chips and the rarities follow the measurement.
+#
+# Once a quarter, to match the Innovation Graph's cadence; the population
+# moves slower than that. Commits are authored by the kit's author and
+# committed by the bot, per the standards' commit identity protocol.
+
+name: '📐 Calibrate'
+
+on:
+  schedule:
+    - cron: '0 3 1 1,4,7,10 *' # the first day of each quarter, 03:00 UTC
+  workflow_dispatch:
+    inputs:
+      per-band:
+        description: 'Repositories to measure in each star band.'
+        type: number
+        default: 40
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  calibrate:
+    name: '📐 Measure the repository population'
+    if: ${{ !github.event.repository.is_template }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write # the data file and the catalogue written from it
+    steps:
+      - name: '🛡️ Harden Runner'
+        uses: tannergolden/standards/actions/harden@v1
+        with:
+          egress-policy: audit
+          notice: '📐 Calibrate: samples starred public repositories through the API and commits the measured shares.'
+
+      - name: '📥 Checkout'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: true # zizmor: ignore[artipacked] - the push below needs them, and nothing else runs after it.
+
+      - name: '📐 Sample and measure'
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PER_BAND: ${{ inputs.per-band || 40 }}
+        run: |
+          set -euo pipefail
+          python3 src/markdown-kit.py calibrate --per-band "$PER_BAND"
+          make calibrated
+
+      # Authored by the kit's author, committed by the bot, so the kit sets
+      # the commit aside as no person's.
+      - name: '📤 Commit and push'
+        shell: bash
+        env:
+          AUTHOR: 'Tanner Golden <24684994+tannergolden@users.noreply.github.com>'
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo "the measurement changed nothing"
+            exit 0
+          fi
+          data=src/domain/data/calibration/repositories.json
+          n="$(python3 -c "import json, sys; print(json.load(open(sys.argv[1]))['n'])" "$data")"
+          day="$(python3 -c "import json, sys; print(json.load(open(sys.argv[1]))['date'])" "$data")"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit --author="$AUTHOR" -F - <<MSG
+          chore(calibration): 📐 measure the repository population on $day
+
+          Sampled $n starred public repositories across five star bands
+          through the GitHub API and re-pinned every repository-mode tier
+          and rarity to the measured shares. The catalogue is written again
+          from the same table, so the words on the cards follow the numbers.
+
+          Run: $RUN_URL
+          MSG
+          git push

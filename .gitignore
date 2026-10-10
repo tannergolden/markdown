@@ -145,3 +145,7 @@ coverage/
 _site/
 .jekyll-cache/
 .jekyll-metadata
+
+# --- This Kit ---
+# `make draw` draws sample pages here to look at; they are never committed.
+/preview/

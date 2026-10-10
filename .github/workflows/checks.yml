@@ -86,9 +86,9 @@ jobs:
     # a blank line apart, means a change to one never lands next to a change
     # to the other - which is what turns a merge into a conflict.
     with:
-      lint-command: 'python3 .github/scripts/validate-repository.py'
+      lint-command: 'make lint'
 
-      test-command: "python3 -m unittest discover -s .github/scripts -p 'test_*.py'"
+      test-command: 'make test'
 
   # RULESET-LOAD-BEARING JOB ID: reports as 'secrets / 🔍 Scan for Secrets'.
   secrets:

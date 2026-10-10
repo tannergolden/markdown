@@ -99,11 +99,22 @@ seeded folder does, and update it in the same change that adds a file.
 
 ---
 
+## 📂 This Project's Documents
+
+- [Settings](Settings.md) - every key `.github/markdown.yaml` can hold, what each does, and its default
+- [Source Code](technical/Source-Code.md) - where each piece of the kit lives, and the layering rules its imports are held to
+- [Technology Stack & Tooling](technical/Technology-Stack-&-Tooling.md) - the stack, and the Makefile targets CI runs
+- [Drawing a Collection](technical/Collections.md) - how a collection is drawn in one hand, from its hand to its twelfth design
+- [Architecture Decision Records](adrs/README.md) - every decision the kit's design rests on, each with its status and date
+- [Catalogue](Catalogue.md) - every trophy and achievement a case can hold, what earns each, and how its threshold was set
+
+---
+
 ## 🔗 See also
 
 - [Standards Index](https://github.com/tannergolden/standards/blob/Development/docs/README.md) - every canonical guide
 - [Template catalogue](templates/README.md) - what each seed document is for
-- [Repository README](../README.md) - setup, and how to configure CI
+- [Repository README](../README.md) - the stub, and what a run draws
 
 ---
 

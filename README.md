@@ -1,310 +1,353 @@
 <!--
-title: '🛤️ GOLDEN PATH'
-description: 'A language-agnostic scaffold. Structure, community health files, and workflow triggers, with every standard followed by link rather than copied.'
-tags: [template, scaffold, ci-cd, engineering-standards]
+title: '📝 MARKDOWN'
+description: 'A README''s header, footer, badges, body and trophy case, measured on a schedule and drawn as committed SVGs from one stub.'
+tags: [readme, svg, banners, badges, trophies, github-actions]
 category: docs
 -->
 
+<!-- markdown:header:start -->
+<!-- markdownlint-disable MD041 -->
 
 <div align="center">
 
-# 🛤️ GOLDEN PATH
-
 <a name="top"></a>
 
-**The paved road to a new repository.**
-
-_Scaffold here. Standards by link. Template fixes when you ask._
+<picture>
+  <source media="(max-width: 585px) and (prefers-color-scheme: dark)" srcset="assets/banners/header-narrow-dark.svg">
+  <source media="(max-width: 585px)" srcset="assets/banners/header-narrow-day.svg">
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/banners/header-still-dark.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/banners/header-still-day.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/banners/header-dark.svg">
+  <img alt="markdown: Automated SVG generator for README headers, badges, trophies, and footers, rendered locally from a single stub to bypass API rate limits. Measured nightly, never fetched. Project: tannergolden/markdown. Release: v1.3.0. Stars: 0. Forks: 0. Open issues: 0. Language: Python. License: MIT." src="assets/banners/header-day.svg">
+</picture>
 
 </div>
+<!-- markdown:header:end -->
+
+<!-- markdown:badges:start -->
+<div align="center">
+
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/badges/static/status-dark.svg"><img alt="Status: Active" src="assets/badges/static/status.svg"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="assets/badges/static/python-dark.svg"><img alt="Python: Standard library only" src="assets/badges/static/python.svg"></picture>
+<a href="LICENSE"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/badges/static/license-dark.svg"><img alt="License: MIT" src="assets/badges/static/license.svg"></picture></a>
+
+<img alt="CI: Passing" src="assets/badges/dynamic/ci.svg">
+<img alt="Release: v1.3.0" src="assets/badges/dynamic/release.svg">
+<img alt="Last Commit: This Week" src="assets/badges/dynamic/last-commit.svg">
+
+</div>
+<!-- markdown:badges:end -->
+
+> [!TIP]
+> **This page is the kit drawing itself.** Its header, the badge row, the
+> schematic, the trophy case and the footer are files the kit drew, in the
+> `blueprint`, from the [same stub](#-one-stub) it asks you to copy, and around
+> each holiday the page wears that holiday's set. **To see profile mode, check
+> out my profile, [@tannergolden](https://github.com/tannergolden).**
 
 ---
 
 ## 💡 What This Is
 
-A **golden path**: the paved, supported route to a new repository. It is a
-**boilerplate** - a working starting shape, already decided - not an empty
-directory with instructions.
+A README's images usually come from someone else's server: a stats card, a
+badge service, a banner generator. Every one is a request on every page view,
+and a dependency on that server's uptime for your page to render. A header
+typed by hand is out of date the day your description changes.
 
-That distinction is the whole design. Two things have to be true before a
-repository is any good: it has to follow sound engineering standards, and it has
-to have a structure. This template supplies **both**, and supplies them
-differently on purpose.
+This kit draws them instead, and keeps them current. One scheduled run
+measures the page over GitHub's API and git, draws every image as an SVG,
+writes the README's blocks, and commits the lot once:
 
-|                   | How it arrives                                                                      | Why                                                                      |
-| :---------------- | :---------------------------------------------------------------------------------- | :----------------------------------------------------------------------- |
-| **The standards** | By link, from [`tannergolden/standards`](https://github.com/tannergolden/standards) | Shared, so a fix reaches every repository at once                        |
-| **The structure** | Copied here, as real folders and files                                              | Yours from the first commit, because only you can decide what it becomes |
+| Part         | What it draws                                                                           |
+| :----------- | :-------------------------------------------------------------------------------------- |
+| **Banners**  | The header and the footer, and the links under the footer.                              |
+| **Badges**   | A row of static badges, and a row of live ones whose value and colour the run measures. |
+| **Elements** | The body: a schematic, instruments, milestones, a roster, a certificate, placards.      |
+| **Trophies** | The trophy case: eight core trophies with their tiers, and a hundred achievements.      |
 
-So you get `src/`, `tests/`, `packages/`, `benchmarks/`, `assets/`, and `docs/`
-already laid out, community health files already written, and continuous
-integration already wired - and none of it is enforced. A boilerplate makes the
-common case free; it does not make the uncommon case impossible.
+Every image is a **committed file**, served by GitHub with the rest of the
+repository: up as long as the repository is, with nothing to rate-limit and no
+third party in the path. The only thing on a schedule is the refresh, and a
+refresh that is late or skipped changes nothing a reader sees.
 
-The name is the point. A golden path is not the only way to build something and
-it is not compulsory. It is the way that already has the paving stones laid, so
-taking it costs less than not taking it. Every file here is yours to change the
-moment you have a reason to.
-
-What it deliberately does **not** decide is the language: no build system, no
-package manager, no toolchain. A structure is universal; a build is not.
-
-**Nothing reaches in and rewrites your tree, and the scaffold can still keep
-up - when you ask.** The standards stay current because they are linked. The
-files copied here - the workflow stubs, the repository scripts, the seeded
-documents - are brought up to date only when you run **🔄 Template Sync** from
-the Actions tab: it proposes the template's later fixes as one pull request,
-merged with whatever you changed. It never runs on its own, so a repository
-whose owner never runs it never changes. Nothing is pushed to your branch,
-nothing you deleted comes back, and editing anything after generating has no
-upstream consequence. [`.github/template-sync`](.github/template-sync) names
-every file it may touch: put a `#` in front of a line to keep that file yours.
-The structure folders are on it switched off, so a sync never touches them
-unless you take the `#` away.
-[How it works](.github/template-sync.md).
+A page is a person's profile or a repository. Organization pages are next.
 
 ---
 
-## 🔀 Fork, Or "Use This Template"
+## 👤 The Example: A Profile
 
-Both buttons hand you every file in this repository. They differ in exactly one
-thing: whether your copy keeps a **link back to this one**.
+**To see how profile mode looks, check out my profile,
+[@tannergolden](https://github.com/tannergolden).** Its repository,
+[**tannergolden/tannergolden**](https://github.com/tannergolden/tannergolden),
+is the example of all of it on a profile repository. Its README is drawn by
+this kit every night at midnight EST, in profile mode, in the `blackprint`,
+with the holidays on, from one stub and one settings file:
 
-**Fork it** when you want this repository's history, and to pull later changes
-back down through git. A fork remembers where it came from, so `Sync fork` and
-`git pull upstream` both work.
+| Part         | On the profile                                                                                                                                                               |
+| :----------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Banners**  | A header read from GitHub, the name and the bio, with a motto, a note and six figures; a footer with its closing words, and four buttons under it.                           |
+| **Badges**   | Four static badges, and two live ones the run measures: whether the standards pass their own checks, and how long ago the last commit was.                                   |
+| **Elements** | A schematic of how its repositories fit together, written by hand, and placards for the two latest releases and two good first issues, which its own scripts rewrite weekly. |
+| **Trophies** | The case in profile mode: five core trophies in one row, the level and next-up cards over them, and the achievements under them.                                             |
 
-**Click "Use this template"** when you want the current version as a starting
-point. You get a clean repository with a single `Initial commit` and no parent,
-and later fixes to the scaffold can still reach it - whenever you run
-**🔄 Template Sync**, as a pull request, one file at a time, merged with your
-changes. It is the route this template is built for, and the one
-**🚀 The First Five Minutes** assumes further down.
-
-|                              | Fork                                              | "Use this template"                     |
-| :--------------------------- | :------------------------------------------------ | :-------------------------------------- |
-| **Link back to here**        | Kept - `Sync fork` works                          | None                                    |
-| **Later scaffold fixes**     | `Sync fork`: every change, or none                | 🔄 Template Sync: per file, as a PR     |
-| **History**                  | Every commit this repository has                  | One `Initial commit`                    |
-| **Actions**                  | **Disabled until you enable them**, per GitHub    | On from the start                       |
-| **Issues**                   | Off by default                                    | On                                      |
-| **A new pull request**       | Defaults to targeting **this** repository         | Targets yours                           |
-| **Visibility**               | Public, and a fork's visibility cannot be changed | Yours to choose                         |
-| **Your contributions graph** | Commits to a fork do not count                    | They count                              |
-
-### What a fork actually buys you
-
-Less than it looks, and it is worth knowing why before choosing it. **The
-standards reach both routes identically.** Every `uses:` in these workflows
-points at `tannergolden/standards@v1`, a moving major tag, so every fix in the
-v1 line arrives the moment it is published whether you forked or generated -
-which is what **Staying current takes no effort** describes further down.
-Forking does not make you more current; that part is already free.
-
-What a fork does sync is the **scaffold**: the fifteen stub workflows, the
-directory layout, the seeded documents. A generated repository can take the
-stub and seed fixes too - every stub but `cut-release.yml`, while the layout
-stays yours - whenever you run 🔄 Template Sync, so what a fork adds is the
-shared history - and with it, every change at once or none. In a fork, delete
-`.github/workflows/template-sync.yml`: `Sync fork` already carries the same
-changes, and two routes to them would only collide.
-
-> [!IMPORTANT]
-> **Initialisation and `Sync fork` want opposite things.** Once Actions are
-> running, the `init` job claims the repository - it rewrites the identity to
-> your account and **force-pushes the default branch**. That force-push is the
-> moment your history stops being a fast-forward of this one's, so `Sync fork`
-> begins offering to discard your commits rather than catch you up.
->
-> Neither is misbehaving: a fork wants a shared history, and initialisation
-> deliberately rewrites one. If you want the fork **and** the shared history,
-> delete `.github/TEMPLATE_INIT` before enabling Actions. That skips
-> initialisation entirely, and the file itself lists what you then set by hand.
-
-> [!TIP]
-> **There is a third route.** Generate with "Use this template", then add this
-> repository as a second remote:
->
-> ```bash
-> git remote add template https://github.com/tannergolden/path
-> git fetch template
-> ```
->
-> Cherry-pick whatever you want from it, whenever you want it, with none of the
-> fork's costs - no disabled Actions, no force-push collision, and no pull
-> request that opens against somebody else's repository by mistake. For the
-> template's own fixes, prefer 🔄 Template Sync: a cherry-pick arrives in the
-> template author's identity, unmerged with your edits.
-
-> [!NOTE]
-> **Neither route carries the template flag over.** Ten of the fifteen stubs
-> are guarded by `!github.event.repository.is_template`, and 🏷️ Cut Release by
-> its inverse - which is what keeps those ten silent here and Cut Release silent
-> everywhere else. `prune-runs.yml`, `verify-stubs.yml` and `auto-index.yml` run
-> on both sides, and 🔄 Template Sync reads the same flag to decide whether to
-> check its list or to sync. A fork inherits that flag no more than a generated
-> repository does, so your copy lands on the right side of every guard.
+Its stub is the one below with `mode: profile` and `theme: blackprint`, and
+[its settings](https://github.com/tannergolden/tannergolden/blob/Development/.github/markdown.yaml)
+set up every part, with a comment on each. This README is the other example:
+this repository's own page, in repository mode, in the `blueprint`, with the
+holidays on and its trophy case over the footer, drawn every night by the
+[stub below](#-one-stub), exactly as yours would be.
 
 ---
 
-## ⚠️ CI Is Green, And Only Half Configured
+## 🚀 One Stub
 
-The `ci` job in `checks.yml` runs the commands **you** give it, and it **fails when every stage
-resolves to nothing** rather than reporting a green check that checked nothing.
-That leaves a new scaffold in an awkward spot: there is no source code to lint
-yet, but "no source code" is not the same as "nothing to validate".
-
-So `lint-command` starts out pointing at
-[`.github/scripts/validate-repository.py`](.github/scripts/validate-repository.py),
-which checks the files that exist from the first commit - every YAML and JSON
-file parses, every workflow `uses:` is pinned to a tag or a commit rather than a
-branch, no CRLF or stray whitespace. A typo in any of those breaks something
-quietly, so this is a real gate, not a placeholder that returns zero.
-
-**It is still only half the story.** Nothing is testing or building your project,
-because your project does not exist yet. Open `.github/workflows/checks.yml` and
-replace that command once it does:
+Your repository holds one small workflow that names the schedule. The
+checkout, the measurement, the drawing and the commit all happen here, so a fix
+lands once and reaches every README pinned to `v1`.
 
 ```yaml
+# .github/workflows/markdown.yml
+name: '📝 Markdown'
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # every night at midnight UTC
+  workflow_dispatch:
+
+permissions: {}
+
 jobs:
-  ci:
-    uses: tannergolden/standards/.github/workflows/ci.yml@v1
-    with:
-      lint-command: 'golangci-lint run'
-      test-command: 'go test ./...'
-      build-command: 'go build ./...'
+  markdown:
+    permissions:
+      contents: write        # the images, the README's blocks and the lock
+      pull-requests: write   # only used with commit: pr
+    uses: tannergolden/markdown/.github/workflows/markdown.yml@v1
+    secrets: inherit
 ```
 
-Any language, any tool. A few starting points:
+That is the whole setup. With no settings at all, the page gets a header and a
+footer read from GitHub and a trophy case, in the `standard` theme, with the
+holidays on. The stub can set the choices made most often:
 
-| Stack  | `lint-command`                      | `test-command`  | `build-command`         |
-| :----- | :---------------------------------- | :-------------- | :---------------------- |
-| Go     | `golangci-lint run`                 | `go test ./...` | `go build ./...`        |
-| Rust   | `cargo clippy -- -D warnings`       | `cargo test`    | `cargo build --release` |
-| Python | `ruff check .`                      | `pytest`        | `python -m build`       |
-| Node   | `npm run lint`                      | `npm test`      | `npm run build`         |
-| .NET   | `dotnet format --verify-no-changes` | `dotnet test`   | `dotnet build`          |
+| Input           | Default          | What it does                                                                |
+| :-------------- | :--------------- | :-------------------------------------------------------------------------- |
+| `mode`          | (guessed)        | `profile` or `repository`. A repository named after its owner is a profile. |
+| `theme`         | `standard`       | `standard`, a print, `rainbowprint`, a print of your own, or a collection.  |
+| `sign`          | (the month's)    | The sign of the zodiac a collection's headers carry all year, as `leo`.     |
+| `holidays`      | `true`           | `'false'` keeps the holiday sets away.                                      |
+| `holiday-days`  | `3`              | How long each holiday's set is up, 3 to 7 days.                             |
+| `check`         | `false`          | Only check that the committed page is current. See below.                   |
+| `commit`        | `push`           | `pr` opens or updates one pull request instead of pushing.                  |
+| `commit-branch` | `chore/markdown` | The branch that pull request rides on.                                      |
 
-You do not have to fill in all of them - one real command is enough.
+Everything else a page can set lives in `.github/markdown.yaml`, and
+[`docs/Settings.md`](docs/Settings.md) has every key.
 
 > [!TIP]
-> Prefer a `Makefile`? Add one with `lint`, `test`, `build`, and `docs` targets,
-> then delete the `with:` block entirely: the `ci` job falls back to `make <target>`
-> whenever no explicit command is given.
+> **`MARKDOWN_TOKEN` is optional.** `GITHUB_TOKEN` reads everything public, so
+> a public page needs nothing. A read-only personal token saved as
+> `MARKDOWN_TOKEN` is read instead when it is there, which also lets a profile
+> count private contributions (`trophies: private: true`).
 
 ---
 
-## 🤖 No AI Infrastructure, On Purpose
+## 🧭 How A Run Draws A Page
 
-This template ships **no agent instruction files and no agent configuration**.
-That is a decision, not an omission.
+<!-- markdown:element:how-it-runs:start -->
+<picture>
+  <source media="(max-width: 585px) and (prefers-color-scheme: dark)" srcset="assets/elements/how-it-runs-narrow-dark.svg">
+  <source media="(max-width: 585px)" srcset="assets/elements/how-it-runs-narrow-day.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/elements/how-it-runs-dark.svg">
+  <img alt="How a run draws a page. A repository&#x27;s stub calls the kit&#x27;s workflow, which reads the settings, measures the page over GitHub&#x27;s API and git, draws every file, keeps what it measured in the lock, and commits the page once." src="assets/elements/how-it-runs-day.svg">
+</picture>
+<!-- markdown:element:how-it-runs:end -->
 
-Agent instructions are **always loaded**. Every byte is paid on every session, in
-every repository, forever. They also carry conventions that belong to a project
-rather than to a scaffold: how you write commits, what must never be touched by
-hand, which commands actually build the thing. Shipping a default set makes that
-choice on your behalf, invisibly, and the usual result is a file nobody wrote and
-nobody trusts.
+Each run measures everything again, so a run GitHub delays or drops loses
+nothing: the next one catches up. A day on which nothing the page shows has
+moved writes nothing at all. When something did move, the commit says what:
 
-**Nothing here depends on them.** Initialisation, CI, the rulesets, the release
-flow and every workflow behave identically with none of it present. Adding it is
-additive, and so is taking it away.
+```text
+chore(markdown): 🪧 redraw with release v1.4.0 and 212 stars
 
-When you do want it, there are two supported routes and no wrong answer:
+Measured octo/drift on 2026-10-03. The header reads DRIFT, with project
+octo/drift, release v1.4.0, 212 stars, 18 forks, 3 open issues, language
+Rust and license MIT. The footer dates the last change 2026-10-01.
 
-| Route                                                       | You commit                  | Updates arrive by                            |
-| :----------------------------------------------------------- | :-------------------------- | :------------------------------------------- |
-| **By hand**                                                 | the instructions themselves | you editing them                             |
-| **[`tannergolden/intelligence`](https://github.com/tannergolden/intelligence)** | one workflow stub | a release moving a tag, with no pull request |
+Changed since the last drawing: release v1.4.0 (was v1.3.2) and 212
+stars (was 198).
+```
 
-Writing them by hand suits conventions that are specific to one project. The
-publisher suits several repositories that share one set, for the same reason the
-workflows here are called rather than copied: the law lives in one place, and a
-fix reaches everything pinned to it. Its README carries the stub to copy and the
-version to pin.
-
-> [!IMPORTANT]
-> **Whichever route you take, confirm the tools you actually use load what you
-> wrote.** They do not agree on which filename to read, and some will not find a
-> shared file at all unless a small per-tool file points them at it. Instructions
-> nothing loads are worse than none, because they look finished.
-
-> [!TIP]
-> **Either route stays reversible.** What you write by hand is yours to delete.
-> What the publisher delivers is listed with digests in a lockfile, so the
-> inventory of what arrived is also the manifest for removing it.
+The kit owns only what sits between its markers in the README, so every word
+of yours around them stays yours. On a first run the header goes at the top,
+the badges under it, the trophy case over the footer and the footer at the
+foot; an element goes where you put its markers.
 
 ---
 
-## 🎉 What Happens On Its Own
+## 🎨 One Theme For The Whole Page
 
-**"Use this template" substitutes nothing.** GitHub copies every file verbatim,
-so a generated repository would otherwise carry the template author's licence
-holder, funding target, and documentation footers forever.
+One setting colours everything, so the header, the badges and the body read as
+one family:
 
-The `init` job in `lifecycle.yml` fixes that on its own, once. It rewrites the identity to
-**your** account, rewrites the bare "Initial commit" into a proper Conventional
-Commit describing the new repository, and then deletes `.github/TEMPLATE_INIT`,
-which is what stops it ever running again.
+- **`standard`**, the default: the original badges' own look at the size of a
+  header. Its header opens with one badge the width of the page, the title in
+  its black and the release in its accent, and its figures stand along the foot
+  as the badges a README would carry for them. Every letter holds 4.5:1 against
+  its ground.
+- **Eleven prints**, the colours a drawing is reproduced in: `redprint`
+  through `pinkprint` along the spectrum, `blueprint` among them, then
+  `brownprint` and `blackprint`. Each draws the page as a drafting sheet, its
+  lines on white by day and its sheet by night.
+- **`rainbowprint`** moves to the next colour of the spectrum each time
+  something the page shows changes.
+- **Your own prints**, a name and three colours in the settings.
+- **Collections**, one subject drawn as pixel art twelve ways, a design for
+  each month. `medieval` draws the page in the month's design and changes on
+  the first of every month: a longship under the northern lights in January,
+  stained glass at Easter, the jousts of May, the Bayeux charge in October,
+  a dragon on its hoard in December. Naming one design, like
+  `medieval-forge`, keeps it all year. The trophy case keeps its standard
+  look. See [Collections](docs/Settings.md#-collections).
 
-Two things it deliberately leaves alone. The first is any reference to a
-repository on the template's account - `tannergolden/standards`, whose shared
-workflows every repository calls, the agent instruction publisher, and this
-template itself - because each belongs to that account rather than yours, so it
-is correct for everyone. The second is your email address, which GitHub keeps
-private. Commits use the `noreply` form, which always routes to you and
-publishes nothing.
+The header, the footer and the body each come as a **day** file and a
+**dark** file, and the README shows one through a `<picture>` that follows the
+reader's theme, with a still file for reduced motion and a narrow one for a
+phone.
 
-> [!NOTE]
-> GitHub does not reliably fire an event when a repository is created from a
-> template. If nothing happens within a minute or two, dispatch **🎯 Standards
-> Lifecycle** from the Actions tab - the `init` job inside it is what claims the
-> repository. Running it twice is harmless: the marker file is what permits
-> it, and it is only removed on success.
+Around each holiday its own set takes over the page, then hands it back: New
+Year's Day, Valentine's Day, Juneteenth, Independence Day, Halloween,
+Thanksgiving and Christmas. A set redraws the banners, the badges and the
+elements as pixel art, in the same files.
+
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#standard"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/standard/h2-still-dark.svg"><img src="docs/themes/standard/h2-still-day.svg" alt="The H2 header in standard, the default theme" width="100%"></picture></a>
+      <br /><sub><code>standard</code>, the default</sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#blueprint"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/blueprint/h2-still-dark.svg"><img src="docs/themes/blueprint/h2-still-day.svg" alt="The H2 header in blueprint, this page's print" width="100%"></picture></a>
+      <br /><sub><code>blueprint</code>, this page's print</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#halloween"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/halloween/h2-still-dark.svg"><img src="docs/themes/halloween/h2-still-day.svg" alt="The H2 header in Halloween's set" width="100%"></picture></a>
+      <br /><sub>Halloween's set, October 30 to November 1</sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#christmas"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/christmas/h2-still-dark.svg"><img src="docs/themes/christmas/h2-still-day.svg" alt="The H2 header in Christmas's set" width="100%"></picture></a>
+      <br /><sub>Christmas's set, December 24 to 26</sub>
+    </td>
+  </tr>
+</table>
+
+**[See every theme, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html)**:
+the theme-sets page shows each theme's headers, phone files, footers, elements
+and badges on GitHub's light and dark grounds, at the size a README shows them.
+The page is [`docs/themes/index.html`](docs/themes/index.html) in this
+repository, and the link opens it through raw.githack.com, because GitHub
+shows an HTML file as its source.
 
 ---
 
-## 🚀 The First Five Minutes
+## 🔍 Checking A Page
 
-> [!TIP]
-> Every step below, plus signing and the token, is kept as one canonical
-> checklist in the standards:
-> [🙋 What You Do By Hand](https://github.com/tannergolden/standards/blob/Development/docs/introduction/What-You-Do-By-Hand.md).
+The lock, `.github/markdown.lock.json`, keeps what each run measured. So the
+committed page can be drawn again with no token and no network, and compared
+with what is committed: a hand-edited image, a missing one, a README block that
+drifted, or settings changed without a run all show up. For pull-request CI:
 
-1. **Check that init ran** - `.github/TEMPLATE_INIT` should be gone and the
-   `LICENSE` should carry your name and the current year. If not, dispatch
-   **🎯 Standards Lifecycle** from the Actions tab.
-2. **Sign your commits off.** `git commit -s` adds the `Signed-off-by` trailer
-   that the DCO check requires. Once branch protection is on, a commit without
-   it blocks the merge. `git config alias.ci 'commit -s'` and forget about it.
-3. **Configure the `ci` job in `checks.yml`**, as above, once you have
-   something to build.
-4. **Apply the settings, then the protection** - run **🎯 Apply Standards**
-   from the Actions tab. `apply-settings` writes the repository settings
-   (squash-only merges, head branches deleted on merge, auto-merge, the
-   security features); `apply-rulesets` writes branch protection.
-   **Both ship switched OFF, and `dry-run` ships on.** Turning `dry-run` off
-   on its own applies only the labels, on a green run that looks like it did
-   everything - so tick the job you want as well. Do settings first: they are
-   checkboxes, while a wrong ruleset blocks every merge. See the token note
-   below before you do.
-5. **Enable private vulnerability reporting** under Settings → Security. The
-   issue chooser gains a "Report a vulnerability" entry automatically, which is
-   why no security contact link is hard-coded.
-6. **Uncomment the rules you want in `.github/CODEOWNERS`**, replacing
-   `@your-org/your-team` with a real owner. A rule naming an owner without write
-   access is a GitHub error, which is why every rule ships commented out.
-7. **Enable ecosystems in `.github/dependabot.yml`** as you add manifests. Only
-   `github-actions` is on, because it is the only one guaranteed to apply.
-8. **Add a `BOT_ACCESS_TOKEN` secret** so 🔄 Template Sync, whenever you run
-   it, can update the workflow stubs too - the default token cannot write
-   `.github/workflows/`, so without it those files wait in an issue instead.
-   While you are there, put a `#` in front of anything in
-   `.github/template-sync` you want to own outright.
-9. **Replace this README.** Everything above describes the template, not your
-   project. Nothing rewrites it for you, because only you know what this
-   repository is for. The sections worth keeping are the workflow table and
-   the token note; the rest is scaffolding that has done its job.
+```yaml
+on: pull_request
+
+jobs:
+  page:
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: tannergolden/markdown/.github/workflows/markdown.yml@v1
+    with:
+      check: true
+```
+
+---
+
+## 🖥️ On Your Own Machine
+
+The kit is standard-library Python, 3.10 or later, with nothing to install:
+
+```bash
+python3 src/markdown-kit.py preview --root /tmp/page       # a sample page, the way a run draws it
+python3 src/markdown-kit.py settings --root .              # a repository's settings, every default filled in
+python3 src/markdown-kit.py check --root .                 # is the committed page current?
+python3 src/markdown-kit.py set --root . status=Paused     # write a badge's value into the settings
+python3 src/markdown-kit.py holidays --year 2026 --days 5  # every holiday's window
+python3 src/markdown-kit.py collections                    # each collection's design for every month
+```
+
+`python3 src/markdown-kit.py --help` lists the rest: `run`, `render`,
+`measure`, `lint`, `catalogue`, `calibrate`, `palette`, `icons` and `version`.
+
+---
+
+## 📦 What's Inside
+
+| Path                             | Purpose                                                                                                      |
+| :------------------------------- | :----------------------------------------------------------------------------------------------------------- |
+| `.github/workflows/markdown.yml` | **The workflow** every stub calls: checkout, the kit, the commit                                             |
+| `actions/markdown/`              | **The action** the workflow runs: one run of the kit on the checkout                                         |
+| `src/markdown-kit.py`            | **The kit's** command line, and the one place its layers meet                                                |
+| `src/domain/`                    | What a page looks like: the palette, the lettering, the themes and every drawing                             |
+| `src/app/`                       | What a run does: the settings, the measurement, the plan and the commit                                      |
+| `src/infra/`                     | Files, git, GitHub's API, the clock, and the kit's data files                                                |
+| `docs/`                          | [Settings](docs/Settings.md), the trophies' [catalogue](docs/Catalogue.md), and the decisions behind the kit |
+| `docs/themes/`                   | The theme-sets page: every theme as the kit draws it, from `make themes`                                     |
+| `tests/`                         | Unit, integration and end-to-end suites, and the fixtures they check against                                 |
+
+`make lint test` runs everything CI runs, and `make draw` draws a sample profile
+and a sample repository page into `preview/`, which git leaves alone.
+`make themes` draws every theme into `docs/themes`, which is committed, so run
+it after changing a theme.
+[`docs/technical/Source-Code.md`](docs/technical/Source-Code.md) lays out the
+layers and the rules between them.
+
+---
+
+## 🌿 How The Workflows Work
+
+Most workflows here are **triggers**. Their logic lives in
+[`tannergolden/standards`](https://github.com/tannergolden/standards) and is
+pulled in by `uses:`. GitHub only runs a workflow that lives in the repository
+being pushed to, which is why these small files exist here at all. They are
+grouped by what they do, so one push produces one run with every check in it.
+Four are the kit's own: the workflow every page calls, this repository's own
+page, the release, and the calibration.
+
+| Workflow                   | Gives you                                                                |
+| :------------------------- | :----------------------------------------------------------------------- |
+| `markdown.yml`             | The reusable workflow every page's stub calls                            |
+| `own-page.yml`             | This README, drawn every night by the stub above, at `v1`                |
+| `cut-release.yml`          | Cuts `vX.Y.Z` and moves `v1`, by calling the standards                   |
+| `calibrate.yml`            | Measures, each quarter, the repositories the trophies are set against    |
+| `checks.yml`               | The gates: lint/test/build, secret scan, CodeQL, workflow lint           |
+| `governance.yml`           | PR title and DCO checks, onboarding, triage, stale sweep, slash commands |
+| `release.yml`              | Draft notes, publish assets, registries, prune superseded releases       |
+| `maintenance.yml`          | Prunes stale deployments; deletes draft releases on request              |
+| `prune-runs.yml`           | Prunes workflow run history, with its logs and artifacts                 |
+| `lifecycle.yml`            | Claims this repository once; tells you when a new major exists           |
+| `dependabot-automerge.yml` | Approves and queues Dependabot's patch and minor updates                 |
+| `ci-failure-alert.yml`     | Opens an issue when a watched workflow fails, closes it on green         |
+| `apply-standards.yml`      | Dispatch-only. The label taxonomy and branch protection                  |
+| `auto-format.yml`          | Formats what a push touched                                              |
+| `auto-index.yml`           | Redraws the folder logs in `assets/` after a push, as one pull request   |
+| `preview-deploy.yml`       | Deploys pushes to a preview target, once one is configured               |
+| `verify-stubs.yml`         | Proves every job's permission ceiling matches its called workflow        |
+
+**Do not rename the job ids** `ci` and `secrets` (in `checks.yml`) or `pr`
+(in `governance.yml`). A called workflow reports its checks as
+`<job id> / <job name>`, so branch protection depends on them - the file a
+job lives in does not matter, but its id does.
 
 > [!IMPORTANT]
 > **🎯 Apply Standards needs a token for two of its three jobs.** Applying the
@@ -319,211 +362,13 @@ publishes nothing.
 > You can skip it entirely by applying the settings and rulesets yourself,
 > where your own rights are already enough.
 
----
-
-## 📦 What's Inside
-
-<!-- AUTO-INDEX:BEGIN dir=. style=log -->
-
-| Entry                                       | Purpose                                                                                                                                              |
-| :------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`.devcontainer/`](.devcontainer/README.md) | The language-neutral development container this repository ships, and how to give it the toolchain your project needs.                               |
-| [`.github/`](.github/)                      | Community health files, forms, CODEOWNERS, Dependabot, scripts and workflows - logged below                                                          |
-| [`.vscode/`](.vscode/README.md)             | The VS Code settings and extension recommendations this repository shares, and why every other file in this folder stays out of git.                 |
-| [`assets/`](assets/README.md)               | Where this project keeps everything that presents it: a folder for every kind of asset, the rules every file follows, and what lives somewhere else. |
-| [`benchmarks/`](benchmarks/README.md)       | The benchmark suites and recorded results that defend the performance budgets of this project.                                                       |
-| [`docs/`](docs/README.md)                   | Where this project keeps its own documents, and where the engineering standards it follows actually live.                                            |
-| [`packages/`](packages/README.md)           | Workspace packages, one folder each, for when a second consumer needs shared code.                                                                   |
-| [`src/`](src/README.md)                     | The application source, split into three layers whose dependencies point inward.                                                                     |
-| [`tests/`](tests/README.md)                 | The test suites, from isolated units to whole user journeys, and how CI comes to run them.                                                           |
-| [`.editorconfig`](.editorconfig)            | Editor defaults every editor honours: UTF-8, LF, a final newline, and indentation per language                                                       |
-| [`.env.example`](.env.example)              | Environment variable template for this project.                                                                                                      |
-| [`.gitattributes`](.gitattributes)          | Git attributes - line endings, diffs, and what counts as binary                                                                                      |
-| [`.gitignore`](.gitignore)                  | &#x1F5C4;&#xFE0F; Universal Ignore Patterns                                                                                                          |
-| [`.markdownlint.json`](.markdownlint.json)  | Repository-wide markdownlint rules. Discovered by mechanism, which is why this lives at the root.                                                    |
-| [`LICENSE`](LICENSE)                        | MIT License                                                                                                                                          |
-| [`README.md`](README.md)                    | This file.                                                                                                                                           |
-
-<!-- AUTO-INDEX:END -->
-
-The root carries only what a tool discovers there by mechanism.
-
-**Every folder carries a `README.md` that logs each file inside it**, with one
-exception. GitHub shows a README in `.github/` in place of this page, so that
-folder's own files are logged here instead. 🗂️ Machined Indexes redraws both
-tables after every push:
-
-<!-- AUTO-INDEX:BEGIN dir=./.github style=log -->
-
-| Entry                                                           | Purpose                                                                                                                             |
-| :-------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
-| [`DISCUSSION_TEMPLATE/`](.github/DISCUSSION_TEMPLATE/README.md) | The discussion category forms, each bound by its file name to the category it shapes.                                               |
-| [`ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE/README.md)           | The issue forms a reporter chooses from, and the chooser configuration that offers them.                                            |
-| [`scripts/`](.github/scripts/README.md)                         | The checks this repository runs on its own configuration, and the tests that guard them.                                            |
-| [`workflows/`](.github/workflows/README.md)                     | Every workflow in this repository: the name it shows in the Actions tab, what triggers it, and what it does.                        |
-| [`CODE_OF_CONDUCT.md`](.github/CODE_OF_CONDUCT.md)              | The code of conduct governing participation in this project.                                                                        |
-| [`CODEOWNERS`](.github/CODEOWNERS)                              | CODEOWNERS - Folder-based ownership rules                                                                                           |
-| [`CONTRIBUTING.md`](.github/CONTRIBUTING.md)                    | How to contribute, covering branching, commits, code style, testing, and the pull-request process.                                  |
-| [`dependabot.yml`](.github/dependabot.yml)                      | Dependabot - automated dependency updates                                                                                           |
-| [`FUNDING.yml`](.github/FUNDING.yml)                            | &#x1F496; Funding Options                                                                                                           |
-| [`GOVERNANCE.md`](.github/GOVERNANCE.md)                        | How this project is led, who decides what, how access continues, and the review and security standards every change meets.          |
-| [`pull_request_template.md`](.github/pull_request_template.md)  | This template becomes the body of your pull request.                                                                                |
-| [`release.yml`](.github/release.yml)                            | GitHub auto-generated release notes configuration.                                                                                  |
-| [`SECURITY.md`](.github/SECURITY.md)                            | Supported versions and how to report vulnerabilities privately.                                                                     |
-| [`SUPPORT.md`](.github/SUPPORT.md)                              | Where to get help with this repository - the right channel for every kind of question.                                              |
-| [`template-sync`](.github/template-sync)                        | Every path tannergolden/path ships, and whether &#x1F504; Template Sync, when you run it, keeps it current in this repository.      |
-| [`template-sync.md`](.github/template-sync.md)                  | How this repository takes its template's later fixes when you run &#x1F504; Template Sync, what you control, and what waits on you. |
-| [`TEMPLATE_INIT`](.github/TEMPLATE_INIT)                        | This repository has not been initialised yet.                                                                                       |
-
-<!-- AUTO-INDEX:END -->
-
----
-
-## 🌿 How The Workflows Work
-
-Your repository holds **triggers**. The logic lives in
-[`tannergolden/standards`](https://github.com/tannergolden/standards) and is
-pulled in by `uses:`. GitHub only runs a workflow that lives in the repository
-being pushed to, which is why these fifteen small files exist here at all. They
-are grouped by what they do - everything that verifies a change in one file,
-everything that reacts to humans in another - so one push produces one run
-with every check in it, not four runs to read separately.
-
-| Workflow                   | Gives you                                                         |
-| :------------------------- | :---------------------------------------------------------------- |
-| `checks.yml`               | The gates: lint/test/build, secret scan, CodeQL, workflow lint    |
-| `governance.yml`           | PR title and DCO checks, onboarding, triage, stale sweep, slash commands |
-| `release.yml`              | Draft notes, publish assets, registries, prune superseded releases |
-| `maintenance.yml`          | Prunes stale deployments; deletes draft releases on request        |
-| `prune-runs.yml`           | Prunes workflow run history, with its logs and artifacts          |
-| `lifecycle.yml`            | Claims this repository once; tells you when a new major exists    |
-| `dependabot-automerge.yml` | Approves and queues Dependabot's patch and minor updates          |
-| `ci-failure-alert.yml`     | Opens an issue when a watched workflow fails, closes it on green  |
-| `apply-standards.yml`      | Dispatch-only. The label taxonomy and branch protection           |
-| `auto-format.yml`          | Formats what a push touched                                       |
-| `preview-deploy.yml`       | Deploys pushes to a preview target, once one is configured        |
-| `verify-stubs.yml`         | Proves every job's permission ceiling matches its called workflow |
-| `auto-index.yml`           | Redraws every folder log and index after a push, as a pull request |
-| `template-sync.yml`        | Proposes the template's later fixes as one pull request, when run |
-| `cut-release.yml`          | Template only. Publishes the releases generated repositories follow |
-
-**Do not rename the job ids** `ci` and `secrets` (in `checks.yml`) or `pr`
-(in `governance.yml`). A called workflow reports its checks as
-`<job id> / <job name>`, so branch protection depends on them - the file a
-job lives in does not matter, but its id does.
-
-Every workflow ships installed, and **almost all of them are inert here on
-purpose**: nearly every job carries an `is_template` guard, so it is silent
-in this template and comes alive in every repository generated from it. Three
-run in the template exactly as they will in yours - `prune-runs.yml`, because a
-template accumulates run history like any other repository, `verify-stubs.yml`,
-because a stub with a wrong ceiling should be caught here rather than
-downstream, and `auto-index.yml`, because the template's own folder logs need
-keeping too. Two more run here differently: `template-sync.yml` checks that the
-template's list names every file it ships instead of syncing, and
-`cut-release.yml` runs only here, publishing the releases your copy follows.
-Delete any file that does not fit your project - each one is yours, and nothing
-reinstalls it: 🔄 Template Sync switches a deleted file off rather than bringing
-it back.
-
-> [!IMPORTANT]
-> **The guard covers the required checks too.** `ci`, `secrets` and `pr` -
-> the three job ids branch protection names - are guarded like everything
-> else, so they do not run while a repository is marked as a template. That
-> is right for this one, which has no source code to check. But if you keep
-> your own repository flagged as a template and apply the rulesets from step
-> 4, every pull request will wait forever on three checks that never report.
-> Un-flag it, or leave those checks out of the ruleset.
-
 ### Staying current takes no effort
 
-`@v1` is a **moving major tag**. Every fix and feature in the v1 line reaches
-this repository the moment it is published - no pull request, no update
-command, nothing to maintain. Breaking changes never arrive that way, because a
-new major is a different tag.
-
-That leaves exactly one gap, and the `standards` job in `lifecycle.yml` fills
-it: when `v2` is published it opens **one issue** telling you, and changes
-nothing. Adopting a
-major is a decision, not a chore.
-
-The files copied here - the stubs themselves among them - cannot follow a tag.
-They keep up a different way, and only when you ask: see
-**🔄 Template Sync: Fixes When You Ask** below.
-
-Almost nothing here pins a third-party action, either. Every `uses:` in the
-stubs points at `tannergolden/standards`, so the SHA pins behind them are
-maintained once, there, rather than in every repository built from this one.
-The exception is `verify-stubs.yml`, which runs steps of its own and pins
-`actions/checkout` to a commit three times. Those three are why
-`.github/dependabot.yml` ships with `github-actions` enabled: it keeps them
-current, and it is the one ecosystem that is correct for every repository
-from the moment it is generated.
-
-> [!NOTE]
-> **If this repository goes quiet for 60 days, GitHub disables its scheduled
-> workflows.** That is a platform rule for public repositories, not something a
-> workflow can opt out of, and it takes the weekly checks sweep, the governance
-> sweep, and the new-major alarm in `lifecycle.yml` with it. GitHub emails you
-> when it happens, and one commit or a manual dispatch turns them back on.
->
-> The safety net is that **Dependabot is not subject to that rule**. It keeps
-> reading `.github/dependabot.yml`, and because a moving major tag only changes
-> when the major changes, a `v2` still arrives as a pull request even with
-> every cron asleep. So a dormant repository still finds out; it just finds out
-> through Dependabot instead of through an issue.
-
-If you would rather pin exact versions (`@v1.4.2`) for an auditable record of
-what ran when, do that instead - Dependabot updates reusable-workflow
-references natively, and the `dependabot-automerge` stub will merge them on
-green CI.
-
----
-
-## 🔄 Template Sync: Fixes When You Ask
-
-This template keeps improving after you generate from it - a stub gains a
-guard, the repository validator learns a check, a seeded document gets
-clearer. **🔄 Template Sync** is how those fixes reach your copy, and it runs
-only when you run it.
-
-**Nothing happens on its own.** There is no schedule. When you want the
-template's latest release, run **🔄 Template Sync** from the Actions tab: it
-compares this repository with that release and proposes whatever changed as
-**one pull request** on `chore/template-sync`, which you review and merge like
-any other. If you never run it, nothing in this repository ever changes.
-
-| It always...                     | Because                                                                                                        |
-| :------------------------------- | :------------------------------------------------------------------------------------------------------------- |
-| Merges rather than overwrites    | Each file is merged with whatever you changed in it, by the same three-way merge git uses                      |
-| Writes in your identity          | The template is rewritten exactly as initialisation rewrote it, so footers and contact links stay yours        |
-| Leaves a conflict untouched      | A file you and the template changed in the same place stays as you have it; the pull request shows the change |
-| Respects a deletion              | A file you delete is switched off, under its old name or a new one, until you take the `#` off its line again  |
-| Leaves your structure alone      | `src/`, `tests/`, `packages/`, `benchmarks/`, `assets/`, this README and the licence start switched off        |
-
-Three files describe it, and only one of them is yours to edit:
-
-| File                                                   | What it is                                                                                         |
-| :----------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
-| [`.github/template-sync`](.github/template-sync)       | Every path the template ships, in `.gitignore` syntax. Put a `#` in front of a line to keep that file as yours |
-| `.github/template-sync.lock`                           | Where each file was last synced from. Written by the sync alone; never edit it                     |
-| [`.github/template-sync.md`](.github/template-sync.md) | The full explanation: every outcome, every option, and what to do when something waits on you      |
-
-> [!IMPORTANT]
-> **Workflow files need a `BOT_ACCESS_TOKEN`.** GitHub's default token cannot
-> write anything under `.github/workflows/`, so without the secret those files
-> wait - named in the pull request and in one issue, never dropped - while
-> everything else arrives. With it, they arrive like any other file, and CI
-> runs on the pull request.
-
-**You follow a major, and a new one is your decision.** This template publishes
-versions with 🏷️ Cut Release, moving `v1` to each new one, and a sync takes
-whatever `v1` points at. A breaking change ships as `v2`, which nothing follows
-until you change `ref:` in `.github/workflows/template-sync.yml`. To remove the
-option altogether, delete that file.
-
-The engine lives in [`tannergolden/standards`](https://github.com/tannergolden/standards/blob/Development/docs/distribution/automation/Template-Sync.md),
-called rather than copied, like every other workflow here.
+`@v1` is a **moving major tag**, both ways. Every fix in the kit's v1 line
+reaches every README whose stub pins `v1` the next time it runs, and every fix
+in the standards' v1 line reaches the workflows here the moment it is
+published. Breaking changes never arrive that way, because a new major is a
+different tag.
 
 ---
 
@@ -531,26 +376,179 @@ called rather than copied, like every other workflow here.
 
 Everything about how to branch, review, release, and secure a repository lives
 in the [Standards Index](https://github.com/tannergolden/standards/blob/Development/docs/README.md).
-Follow it **by link**. A standard copied into your repository is a standard that
-starts going stale the moment you paste it.
-
-The one exception is [`docs/templates/`](docs/templates/README.md), which is
-meant to be copied: those are fill-in documents that become _your_ project's
-decisions. A fill-in **standard** instantiates at its own path minus
-`templates/`; the **work-product forms** - an ADR, a post-mortem, a user
-story - go where a numbered or dated record belongs instead. The
-[catalogue](docs/templates/README.md) gives each destination.
+This repository follows it **by link**.
 
 ---
 
+<!-- markdown:trophies:start -->
+<p align="center">
+  <picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/level.svg"><img src="assets/trophies/level-day.svg" alt="tannergolden/markdown: level 20, 6,633 XP, case 26% complete, released 0 days ago"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/next-up.svg"><img src="assets/trophies/next-up-day.svg" alt="Next up: Signed I 94%, Night Shift 66%, Contributors to Bronze 50%"></picture>
+</p>
+
+<p align="center">
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-stars"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/stars.svg"><img src="assets/trophies/stars-day.svg" alt="Stars trophy: Unranked, 0, 0% to Bronze"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-forks"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/forks.svg"><img src="assets/trophies/forks-day.svg" alt="Forks trophy: Unranked, 0, 0% to Bronze"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-contributors"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/contributors.svg"><img src="assets/trophies/contributors-day.svg" alt="Contributors trophy: Unranked, 1, 50% to Bronze"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-commits"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/commits.svg"><img src="assets/trophies/commits-day.svg" alt="Commits trophy: Bronze, 120, 5% to Silver, top 6.2%, newly reached"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-releases"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/releases.svg"><img src="assets/trophies/releases-day.svg" alt="Releases trophy: Bronze, 1, 0% to Silver, top 10%, newly reached"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-merged"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/merged.svg"><img src="assets/trophies/merged-day.svg" alt="Merged PRs trophy: Unranked, 0, 0% to Bronze"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-resolved"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/resolved.svg"><img src="assets/trophies/resolved-day.svg" alt="Issues Resolved trophy: Unranked, 1, 10% to Bronze"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-active"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/active.svg"><img src="assets/trophies/active-day.svg" alt="Active Days trophy: Unranked, 4 days, 13% to Bronze"></picture></a>
+</p>
+
+<details>
+<summary><b>Achievements</b> · 28 of 100 earned · next: Signed I, 94%</summary>
+
+<p align="center"><b>Launch</b></p>
+<p align="center">
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-first-release"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/first-release.svg"><img src="assets/trophies/achievements/first-release-day.svg" alt="First Release: earned, Rare"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-filed"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/filed.svg"><img src="assets/trophies/achievements/filed-day.svg" alt="Filed: earned, Uncommon"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-first-tag"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/first-tag.svg"><img src="assets/trophies/achievements/first-tag-day.svg" alt="First Tag: earned, Uncommon"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-stranger-report"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/stranger-report.svg"><img src="assets/trophies/achievements/stranger-report-day.svg" alt="Stranger Report: earned, Uncommon"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-named"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/named.svg"><img src="assets/trophies/achievements/named-day.svg" alt="Named: earned, Common"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-first-fork"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/first-fork.svg"><img src="assets/trophies/achievements/first-fork-day.svg" alt="First Fork: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-first-merge"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/first-merge.svg"><img src="assets/trophies/achievements/first-merge-day.svg" alt="First Merge: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-first-star"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/first-star.svg"><img src="assets/trophies/achievements/first-star-day.svg" alt="First Star: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-first-watcher"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/first-watcher.svg"><img src="assets/trophies/achievements/first-watcher-day.svg" alt="First Watcher: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-front-door"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/front-door.svg"><img src="assets/trophies/achievements/front-door-day.svg" alt="Front Door: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-outside-help"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/outside-help.svg"><img src="assets/trophies/achievements/outside-help-day.svg" alt="Outside Help: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-poster"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/poster.svg"><img src="assets/trophies/achievements/poster-day.svg" alt="Poster: 0% (0 of 1)"></picture></a>
+</p>
+
+<p align="center"><b>Health</b></p>
+<p align="center">
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-gatekeeper"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/gatekeeper.svg"><img src="assets/trophies/achievements/gatekeeper-day.svg" alt="Gatekeeper: earned, Epic"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-locksmith"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/locksmith.svg"><img src="assets/trophies/achievements/locksmith-day.svg" alt="Locksmith: earned, Epic"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-paperwork"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/paperwork.svg"><img src="assets/trophies/achievements/paperwork-day.svg" alt="Paperwork: earned, Epic"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-support-line"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/support-line.svg"><img src="assets/trophies/achievements/support-line-day.svg" alt="Support Line: earned, Epic"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-auto-pilot"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/auto-pilot.svg"><img src="assets/trophies/achievements/auto-pilot-day.svg" alt="Auto-pilot: earned, Rare"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-form-filler"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/form-filler.svg"><img src="assets/trophies/achievements/form-filler-day.svg" alt="Form Filler: earned, Rare"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-house-rules"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/house-rules.svg"><img src="assets/trophies/achievements/house-rules-day.svg" alt="House Rules: earned, Rare"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-label-maker"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/label-maker.svg"><img src="assets/trophies/achievements/label-maker-day.svg" alt="Label Maker: earned, Rare"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-welcome-mat"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/welcome-mat.svg"><img src="assets/trophies/achievements/welcome-mat-day.svg" alt="Welcome Mat: earned, Rare"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-well-formed"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/well-formed.svg"><img src="assets/trophies/achievements/well-formed-day.svg" alt="Well-Formed: earned, Uncommon"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-clean-bill"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/clean-bill.svg"><img src="assets/trophies/achievements/clean-bill-day.svg" alt="Clean Bill: earned, Common"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-documented"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/documented.svg"><img src="assets/trophies/achievements/documented-day.svg" alt="Documented: earned, Common"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-licensed"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/licensed.svg"><img src="assets/trophies/achievements/licensed-day.svg" alt="Licensed: earned, Common"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-changelog"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/changelog.svg"><img src="assets/trophies/achievements/changelog-day.svg" alt="Changelog: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-open-hand"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/open-hand.svg"><img src="assets/trophies/achievements/open-hand-day.svg" alt="Open Hand: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-protected"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/protected.svg"><img src="assets/trophies/achievements/protected-day.svg" alt="Protected: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-roadmap"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/roadmap.svg"><img src="assets/trophies/achievements/roadmap-day.svg" alt="Roadmap: 0% (0 of 5)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-town-hall"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/town-hall.svg"><img src="assets/trophies/achievements/town-hall-day.svg" alt="Town Hall: 0% (0 of 1)"></picture></a>
+</p>
+
+<p align="center"><b>Craft</b></p>
+<p align="center">
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-follows-the-standards"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/follows-the-standards.svg"><img src="assets/trophies/achievements/follows-the-standards-day.svg" alt="Follows the Standards: earned, Legendary"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-golden-path"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/golden-path.svg"><img src="assets/trophies/achievements/golden-path-day.svg" alt="Golden Path: earned, Legendary"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-ready-room"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/ready-room.svg"><img src="assets/trophies/achievements/ready-room-day.svg" alt="Ready Room: earned, Epic"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-by-the-book"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/by-the-book.svg"><img src="assets/trophies/achievements/by-the-book-day.svg" alt="By the Book I: earned, Rare, 24% to By the Book II"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-green-machine"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/green-machine.svg"><img src="assets/trophies/achievements/green-machine-day.svg" alt="Green Machine I: earned, Rare, 10% to Green Machine II"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-test-suite"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/test-suite.svg"><img src="assets/trophies/achievements/test-suite-day.svg" alt="Test Suite: earned, Uncommon"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-wired"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/wired.svg"><img src="assets/trophies/achievements/wired-day.svg" alt="Wired: earned, Uncommon"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-squeaky"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/squeaky.svg"><img src="assets/trophies/achievements/squeaky-day.svg" alt="Squeaky: earned, Common"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-signed"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/signed.svg"><img src="assets/trophies/achievements/signed-day.svg" alt="Signed: 94% (94 of 100)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-release-notes"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/release-notes.svg"><img src="assets/trophies/achievements/release-notes-day.svg" alt="Release Notes: 10% (1 of 10)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-semver"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/semver.svg"><img src="assets/trophies/achievements/semver-day.svg" alt="Semver: 10% (1 of 10)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-containerized"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/containerized.svg"><img src="assets/trophies/achievements/containerized-day.svg" alt="Containerized: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-gitmoji"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/gitmoji.svg"><img src="assets/trophies/achievements/gitmoji-day.svg" alt="Gitmoji: 0% (0 of 100)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-packager"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/packager.svg"><img src="assets/trophies/achievements/packager-day.svg" alt="Packager: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-prerelease"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/prerelease.svg"><img src="assets/trophies/achievements/prerelease-day.svg" alt="Prerelease: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-small-steps"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/small-steps.svg"><img src="assets/trophies/achievements/small-steps-day.svg" alt="Small Steps: 0% (0 of 1)"></picture></a>
+</p>
+
+<p align="center"><b>Community</b></p>
+<p align="center">
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-triage"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/triage.svg"><img src="assets/trophies/achievements/triage-day.svg" alt="Triage: earned, Rare"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-crew"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/crew.svg"><img src="assets/trophies/achievements/crew-day.svg" alt="Crew: 20% (1 of 5)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-regulars"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/regulars.svg"><img src="assets/trophies/achievements/regulars-day.svg" alt="Regulars: 20% (1 of 5)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-ten-strong"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/ten-strong.svg"><img src="assets/trophies/achievements/ten-strong-day.svg" alt="Ten Strong: 10% (1 of 10)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-long-thread"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/long-thread.svg"><img src="assets/trophies/achievements/long-thread-day.svg" alt="Long Thread: 1% (1 of 100)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-talkative"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/talkative.svg"><img src="assets/trophies/achievements/talkative-day.svg" alt="Talkative: 0% (1 of 1,000)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-answered"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/answered.svg"><img src="assets/trophies/achievements/answered-day.svg" alt="Answered: 0% (0 of 10)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-fast-reply"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/fast-reply.svg"><img src="assets/trophies/achievements/fast-reply-day.svg" alt="Fast Reply: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-good-first-issues"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/good-first-issues.svg"><img src="assets/trophies/achievements/good-first-issues-day.svg" alt="Good First Issues: 0% (0 of 5)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-help-wanted"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/help-wanted.svg"><img src="assets/trophies/achievements/help-wanted-day.svg" alt="Help Wanted: 0% (0 of 5)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-mentor"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/mentor.svg"><img src="assets/trophies/achievements/mentor-day.svg" alt="Mentor: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-org-backed"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/org-backed.svg"><img src="assets/trophies/achievements/org-backed-day.svg" alt="Org Backed: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-outside-merges"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/outside-merges.svg"><img src="assets/trophies/achievements/outside-merges-day.svg" alt="Outside Merges: 0% (0 of 10)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-popular-opinion"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/popular-opinion.svg"><img src="assets/trophies/achievements/popular-opinion-day.svg" alt="Popular Opinion: 0% (0 of 50)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-reviewed"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/reviewed.svg"><img src="assets/trophies/achievements/reviewed-day.svg" alt="Reviewed: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-well-maintained"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/well-maintained.svg"><img src="assets/trophies/achievements/well-maintained-day.svg" alt="Well Maintained: 0% (0 of 25)"></picture></a>
+</p>
+
+<p align="center"><b>Reach</b></p>
+<p align="center">
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-big-name"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/big-name.svg"><img src="assets/trophies/achievements/big-name-day.svg" alt="Big Name: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-cloned"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/cloned.svg"><img src="assets/trophies/achievements/cloned-day.svg" alt="Cloned: not measured yet"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-downloaded"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/downloaded.svg"><img src="assets/trophies/achievements/downloaded-day.svg" alt="Downloaded: 0% (0 of 1,000)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-fork-magnet"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/fork-magnet.svg"><img src="assets/trophies/achievements/fork-magnet-day.svg" alt="Fork Magnet: not measured yet"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-forked-far"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/forked-far.svg"><img src="assets/trophies/achievements/forked-far-day.svg" alt="Forked Far: 0% (0 of 100)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-living-forks"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/living-forks.svg"><img src="assets/trophies/achievements/living-forks-day.svg" alt="Living Forks: 0% (0 of 10)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-referred"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/referred.svg"><img src="assets/trophies/achievements/referred-day.svg" alt="Referred: not measured yet"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-registry"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/registry.svg"><img src="assets/trophies/achievements/registry-day.svg" alt="Registry: not measured yet"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-star-of-the-week"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/star-of-the-week.svg"><img src="assets/trophies/achievements/star-of-the-week-day.svg" alt="Star of the Week: not measured yet"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-stargazer-streak"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/stargazer-streak.svg"><img src="assets/trophies/achievements/stargazer-streak-day.svg" alt="Stargazer Streak: 0% (0 of 12)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-trending"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/trending.svg"><img src="assets/trophies/achievements/trending-day.svg" alt="Trending: not measured yet"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-used-by"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/used-by.svg"><img src="assets/trophies/achievements/used-by-day.svg" alt="Used By: not measured yet"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-visited"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/visited.svg"><img src="assets/trophies/achievements/visited-day.svg" alt="Visited: not measured yet"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-watched"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/watched.svg"><img src="assets/trophies/achievements/watched-day.svg" alt="Watched: 0% (0 of 25)"></picture></a>
+</p>
+
+<p align="center"><b>Rhythm</b></p>
+<p align="center">
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-alive"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/alive.svg"><img src="assets/trophies/achievements/alive-day.svg" alt="Alive: earned, Uncommon"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-night-shift"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/night-shift.svg"><img src="assets/trophies/achievements/night-shift-day.svg" alt="Night Shift: 66% (33 of 50)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-long-game"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/long-game.svg"><img src="assets/trophies/achievements/long-game-day.svg" alt="Long Game: 33% (1 of 3)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-same-day-fix"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/same-day-fix.svg"><img src="assets/trophies/achievements/same-day-fix-day.svg" alt="Same-Day Fix: 10% (1 of 10)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-monthly-release"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/monthly-release.svg"><img src="assets/trophies/achievements/monthly-release-day.svg" alt="Monthly Release: 8% (1 of 12)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-streak"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/streak.svg"><img src="assets/trophies/achievements/streak-day.svg" alt="Streak: 6% (2 of 30)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-weekend-project"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/weekend-project.svg"><img src="assets/trophies/achievements/weekend-project-day.svg" alt="Weekend Project: 3% (1 of 26)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-weekly-beat"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/weekly-beat.svg"><img src="assets/trophies/achievements/weekly-beat-day.svg" alt="Weekly Beat: 3% (2 of 52)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-big-week"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/big-week.svg"><img src="assets/trophies/achievements/big-week-day.svg" alt="Big Week: 3% (3 of 100)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-marathon-day"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/marathon-day.svg"><img src="assets/trophies/achievements/marathon-day-day.svg" alt="Marathon Day: 2% (1 of 50)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-comeback"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/comeback.svg"><img src="assets/trophies/achievements/comeback-day.svg" alt="Comeback: 0% (0 of 1)"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-friday-deploy"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/friday-deploy.svg"><img src="assets/trophies/achievements/friday-deploy-day.svg" alt="Friday Deploy: 0% (0 of 1)"></picture></a>
+</p>
+
+<p align="center"><b>Secret</b></p>
+<p align="center">
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-birthday"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/birthday.svg"><img src="assets/trophies/achievements/birthday-day.svg" alt="Secret achievement"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-constellation"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/constellation.svg"><img src="assets/trophies/achievements/constellation-day.svg" alt="Secret achievement"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-friday-the-13th"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/friday-the-13th.svg"><img src="assets/trophies/achievements/friday-the-13th-day.svg" alt="Secret achievement"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-full-house"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/full-house.svg"><img src="assets/trophies/achievements/full-house-day.svg" alt="Secret achievement"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-ghost"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/ghost.svg"><img src="assets/trophies/achievements/ghost-day.svg" alt="Secret achievement"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-green-wall"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/green-wall.svg"><img src="assets/trophies/achievements/green-wall-day.svg" alt="Secret achievement"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-leap-day"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/leap-day.svg"><img src="assets/trophies/achievements/leap-day-day.svg" alt="Secret achievement"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-midnight-oil"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/midnight-oil.svg"><img src="assets/trophies/achievements/midnight-oil-day.svg" alt="Secret achievement"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-new-year"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/new-year.svg"><img src="assets/trophies/achievements/new-year-day.svg" alt="Secret achievement"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-palindrome"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/palindrome.svg"><img src="assets/trophies/achievements/palindrome-day.svg" alt="Secret achievement"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-round-number"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/round-number.svg"><img src="assets/trophies/achievements/round-number-day.svg" alt="Secret achievement"></picture></a>
+  <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository-the-answer"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/achievements/the-answer.svg"><img src="assets/trophies/achievements/the-answer-day.svg" alt="Secret achievement"></picture></a>
+</p>
+
+</details>
+
+<p align="center"><sub>Refreshed daily by <a href="https://github.com/tannergolden/markdown">tannergolden/markdown</a> · Every trophy and achievement, what it is for and how to earn it: <a href="https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md#repository">the catalogue</a>. Click any card for its entry.</sub></p>
+<!-- markdown:trophies:end -->
+
+<!-- markdown:footer:start -->
 <div align="center">
 
-**Structure, not opinions. Standards by link, not by copy.**
+<a href="#top">
+<picture>
+  <source media="(max-width: 585px) and (prefers-color-scheme: dark)" srcset="assets/banners/footer-narrow-dark.svg">
+  <source media="(max-width: 585px)" srcset="assets/banners/footer-narrow-day.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/banners/footer-dark.svg">
+  <img alt="Drawn at both ends. Fetched at neither. Back to Top. Built with love by @tannergolden. Distributed under the MIT License. Last updated October 10, 2026." src="assets/banners/footer-day.svg">
+</picture>
+</a>
 
-[↑ Back to Top](#top)
-
-<br />
-
-Built with ❤️ by [@tannergolden](https://github.com/tannergolden). Distributed under the MIT License.
+<a href="https://github.com/tannergolden/markdown/issues"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/banners/link-issues-dark.svg"><img alt="Issues" src="assets/banners/link-issues-day.svg"></picture></a>
+<a href="https://github.com/tannergolden/markdown/pulls"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/banners/link-pull-requests-dark.svg"><img alt="Pull Requests" src="assets/banners/link-pull-requests-day.svg"></picture></a>
+<a href="https://github.com/tannergolden/markdown/releases"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/banners/link-releases-dark.svg"><img alt="Releases" src="assets/banners/link-releases-day.svg"></picture></a>
+<a href="https://github.com/tannergolden/markdown/actions"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/banners/link-actions-dark.svg"><img alt="Actions" src="assets/banners/link-actions-day.svg"></picture></a>
 
 </div>
+<!-- markdown:footer:end -->

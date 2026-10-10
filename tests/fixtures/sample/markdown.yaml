@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2026 Tanner Golden
+# SPDX-License-Identifier: MIT
+#
+# The settings `make draw` gives both sample pages in preview/: a row of
+# badges and the trophy case's core between the header and the footer, from
+# the kit's sample measurements, with no network. The achievements are left
+# out to keep the sample small; a real page shows all of them.
+
+badges:
+  - name: status
+    label: Status
+    message: Active
+    icon: pulse
+    message_color: green
+  - name: license
+    label: License
+    message: MIT
+    icon: scale
+    message_color: yellow
+  - name: ci
+    label: CI
+    icon: check
+    measure:
+      workflow: checks.yml
+  - name: last-commit
+    label: Last Commit
+    icon: commit
+    measure: last-commit
+
+trophies:
+  achievements: none

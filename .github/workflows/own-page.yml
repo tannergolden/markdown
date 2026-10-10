@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2026 Tanner Golden
+# SPDX-License-Identifier: MIT
+#
+# This repository's own page, drawn by the stub its README tells every
+# repository to copy, word for word. Only the file name differs: here
+# .github/workflows/markdown.yml is the kit's workflow itself, the one the
+# stub calls, so the stub lives beside it under this name.
+#
+# It calls the kit at v1 like every other page, so this README shows what the
+# release draws, and a broken release shows here first. .github/markdown.yaml
+# chooses the blueprint and keeps the holidays on.
+#
+# Once a day, at midnight UTC. Every run measures everything again, so a run
+# GitHub delays or drops loses nothing: the next one catches up. A day on
+# which nothing the page shows has moved writes nothing.
+
+name: '📝 Markdown'
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # every night at midnight UTC
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  markdown:
+    permissions:
+      contents: write        # the images, the README's blocks and the lock
+      pull-requests: write   # only used with commit: pr
+    uses: tannergolden/markdown/.github/workflows/markdown.yml@v1 # zizmor: ignore[unpinned-uses] - first-party workflow on its moving major, the way every stub calls it.
+    secrets: inherit # zizmor: ignore[secrets-inherit] - first-party callee at the ref pinned above.
