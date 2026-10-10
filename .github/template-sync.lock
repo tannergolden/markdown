@@ -1,0 +1,544 @@
+{
+  "//": "Where each file here was last synced from. Written by 🔄 Template Sync alone; never edit it by hand.",
+  "format": 1,
+  "template": "tannergolden/path",
+  "version": "",
+  "commit": "",
+  "identity": {
+    "owner": "tannergolden",
+    "repository": "tannergolden/markdown",
+    "name": "Tanner Golden",
+    "year": 2026
+  },
+  "files": {
+    ".devcontainer/README.md": {
+      "blob": "92152b1f04c9a063890494cbed276b58a4570bea",
+      "mode": "100644"
+    },
+    ".devcontainer/devcontainer.json": {
+      "blob": "b80fce1a5f7e5c02320156f24baecbb5687d9bcc",
+      "mode": "100644"
+    },
+    ".editorconfig": {
+      "blob": "57cc87d48d23ded7dfdb78cf8b08f5f7fbe9b438",
+      "mode": "100644"
+    },
+    ".env.example": {
+      "blob": "5dded8c3b24d3730defdad0edb8069433eb9bcc1",
+      "mode": "100644"
+    },
+    ".gitattributes": {
+      "blob": "91b694e527b9bbef76257f8dfe8722218577df30",
+      "mode": "100644"
+    },
+    ".github/CODEOWNERS": {
+      "blob": "0a48c41a1c602cefc6377028c934a1ad4116dca0",
+      "mode": "100644"
+    },
+    ".github/CODE_OF_CONDUCT.md": {
+      "blob": "2ed15c5c69546581c377be5368de368e89dabec1",
+      "mode": "100644"
+    },
+    ".github/CONTRIBUTING.md": {
+      "blob": "564f259f8cef2e1f3ea664de98373ca145fbc711",
+      "mode": "100644"
+    },
+    ".github/DISCUSSION_TEMPLATE/README.md": {
+      "blob": "5098ea8f4c466ec91b89f049692c8a652ac9817e",
+      "mode": "100644"
+    },
+    ".github/DISCUSSION_TEMPLATE/accessibility.yaml": {
+      "blob": "9279eda1d4e6789c810e575051cd2a18f10879f5",
+      "mode": "100644"
+    },
+    ".github/DISCUSSION_TEMPLATE/announcements.yaml": {
+      "blob": "ff3c0b77acb549bdf4d754031e9cf186a34a6ba3",
+      "mode": "100644"
+    },
+    ".github/DISCUSSION_TEMPLATE/community.yaml": {
+      "blob": "714cd054bf97da044d12b08faf6c1cc7e4c5d84a",
+      "mode": "100644"
+    },
+    ".github/DISCUSSION_TEMPLATE/ideas.yaml": {
+      "blob": "1b356ef459b97720d3197062b18a07d72ca005ae",
+      "mode": "100644"
+    },
+    ".github/DISCUSSION_TEMPLATE/internationalization-i18n.yaml": {
+      "blob": "e235805d91cda58e3445707b3168b93182cfdaf4",
+      "mode": "100644"
+    },
+    ".github/DISCUSSION_TEMPLATE/polls.yaml": {
+      "blob": "5af07fe312b13208309d58375ae6722351eb6aaf",
+      "mode": "100644"
+    },
+    ".github/DISCUSSION_TEMPLATE/q-a.yaml": {
+      "blob": "af6651185245f529fde2df6a3ec2b0183383158d",
+      "mode": "100644"
+    },
+    ".github/DISCUSSION_TEMPLATE/roadmap.yaml": {
+      "blob": "5e91751375d1da72a1fe5885dd468a18ba484dba",
+      "mode": "100644"
+    },
+    ".github/DISCUSSION_TEMPLATE/showcase.yaml": {
+      "blob": "23cc080f1f88d677406ef3ca160edb7a6d62b183",
+      "mode": "100644"
+    },
+    ".github/DISCUSSION_TEMPLATE/tooling-setup.yaml": {
+      "blob": "a94bb88c3cf6ae7ebb0816f9c5d7e23caf28b79c",
+      "mode": "100644"
+    },
+    ".github/FUNDING.yml": {
+      "blob": "45deccefc582df5219e21872bc64ba31f8795a67",
+      "mode": "100644"
+    },
+    ".github/GOVERNANCE.md": {
+      "blob": "7e0b170397c1856c282bd7cc162f5608962025d0",
+      "mode": "100644"
+    },
+    ".github/ISSUE_TEMPLATE/Accessibility-Report.yaml": {
+      "blob": "393dffbbb1988f3d301bb729ad8537b0253f6e24",
+      "mode": "100644"
+    },
+    ".github/ISSUE_TEMPLATE/Bug-Report.yaml": {
+      "blob": "3a9029ceacc2c5fb7a8d350c7842f513b7f13f81",
+      "mode": "100644"
+    },
+    ".github/ISSUE_TEMPLATE/Documentation-Report.yaml": {
+      "blob": "ce6708ba688c135474fc9744dc0dbaa90b32da7a",
+      "mode": "100644"
+    },
+    ".github/ISSUE_TEMPLATE/Feature-Request.yaml": {
+      "blob": "bac647c4e2cec35fd27b126b5ebe862f240f9cc6",
+      "mode": "100644"
+    },
+    ".github/ISSUE_TEMPLATE/Feedback-Report.yaml": {
+      "blob": "46b60fef5aff720877c392e7874644e7222b5ab9",
+      "mode": "100644"
+    },
+    ".github/ISSUE_TEMPLATE/Performance-Report.yaml": {
+      "blob": "8fe150679ce6c1f79ec02380f70f744e5fe57dce",
+      "mode": "100644"
+    },
+    ".github/ISSUE_TEMPLATE/README.md": {
+      "blob": "fb955320b236e86a7d0fe4efdcfaac90906d20ff",
+      "mode": "100644"
+    },
+    ".github/ISSUE_TEMPLATE/Vulnerability-Report.yaml": {
+      "blob": "8cf62f4750946ccd3b46b51d13d4d871024ac6b4",
+      "mode": "100644"
+    },
+    ".github/ISSUE_TEMPLATE/config.yml": {
+      "blob": "b72da7621db00cceedece04743175f32a5fb8ddd",
+      "mode": "100644"
+    },
+    ".github/SECURITY.md": {
+      "blob": "a07336c6155c27679dd1aafa0315433b682dbd95",
+      "mode": "100644"
+    },
+    ".github/SUPPORT.md": {
+      "blob": "c9627a6a3324053ad935faa2dd137f0863498e96",
+      "mode": "100644"
+    },
+    ".github/dependabot.yml": {
+      "blob": "d7eb62f30fcf447f63f66d25c48a9c996e102240",
+      "mode": "100644"
+    },
+    ".github/pull_request_template.md": {
+      "blob": "bcfa8d08ba67de23ea0f43e0bbd789f708fd2cb0",
+      "mode": "100644"
+    },
+    ".github/release.yml": {
+      "blob": "6781d3a047fe4f3eb868259f93c13663b0638646",
+      "mode": "100644"
+    },
+    ".github/scripts/README.md": {
+      "blob": "5eebcf9e0571d40c2efc687b46532d7d29bf9629",
+      "mode": "100644"
+    },
+    ".github/scripts/test_gitignore.py": {
+      "blob": "b29402db9d6463d298744e1ef9d01225deac79c2",
+      "mode": "100644"
+    },
+    ".github/scripts/test_validate_repository.py": {
+      "blob": "83abcbacac32581a4f1c7d6f1192b91741181813",
+      "mode": "100644"
+    },
+    ".github/scripts/test_verify_stub_ceilings.py": {
+      "blob": "cee7e49d43afd0e37e9ecf50d67f25119455eb43",
+      "mode": "100644"
+    },
+    ".github/scripts/validate-repository.py": {
+      "blob": "853f0a589afe6a7a2793a7d7479d34d06c131653",
+      "mode": "100755"
+    },
+    ".github/scripts/verify-stub-ceilings.py": {
+      "blob": "3154ef581a1262743187fc3583dc38280a11b526",
+      "mode": "100644"
+    },
+    ".github/template-sync": {
+      "blob": "c5a8a3a573fa22172eb19b3a430a1918fcac0b3e",
+      "mode": "100644"
+    },
+    ".github/template-sync.md": {
+      "blob": "7bcc2edecc5a34db4486b55a17d809e51f49376d",
+      "mode": "100644"
+    },
+    ".github/workflows/README.md": {
+      "blob": "157beb1bd7bbfc5dce36fa3efb2127945782c122",
+      "mode": "100644"
+    },
+    ".github/workflows/apply-standards.yml": {
+      "blob": "08f4019ef0b6d759d9aeabb166117077aa788f06",
+      "mode": "100644"
+    },
+    ".github/workflows/auto-format.yml": {
+      "blob": "1beed5c8df4923242faaac1b9828aa4eaea8bd1a",
+      "mode": "100644"
+    },
+    ".github/workflows/auto-index.yml": {
+      "blob": "a761499f5b121f7731b32c27e50a023cf3d2ae5a",
+      "mode": "100644"
+    },
+    ".github/workflows/checks.yml": {
+      "blob": "765fcc2b05a448209252701b2f00367fde795833",
+      "mode": "100644"
+    },
+    ".github/workflows/ci-failure-alert.yml": {
+      "blob": "1b3cbe010aa13811fee75a38569e18de9e52c2ad",
+      "mode": "100644"
+    },
+    ".github/workflows/cut-release.yml": {
+      "blob": "70e754a6cdbbe50c4485a0726a52ab6e1c30d8d3",
+      "mode": "100644"
+    },
+    ".github/workflows/dependabot-automerge.yml": {
+      "blob": "dcce7c92bd149fd2376883e6214edc54952c115c",
+      "mode": "100644"
+    },
+    ".github/workflows/governance.yml": {
+      "blob": "a82071441d5a8604fe28b7b5fcd4260b4800b471",
+      "mode": "100644"
+    },
+    ".github/workflows/lifecycle.yml": {
+      "blob": "405905e7e328df6649061f66ad3c9bf8df55f9ba",
+      "mode": "100644"
+    },
+    ".github/workflows/maintenance.yml": {
+      "blob": "82478f5d0f4742f86904188e73ab1acd36ba1119",
+      "mode": "100644"
+    },
+    ".github/workflows/preview-deploy.yml": {
+      "blob": "2a5f26c3e2bc28a73748e0f1406ae94f73bac008",
+      "mode": "100644"
+    },
+    ".github/workflows/prune-runs.yml": {
+      "blob": "f3354ec0fb1b4bcbef5dc87fe9a54be5cfd9d93f",
+      "mode": "100644"
+    },
+    ".github/workflows/release.yml": {
+      "blob": "fc7adb3ff2e6cd96b181919418125daadb1bcbf8",
+      "mode": "100644"
+    },
+    ".github/workflows/template-sync.yml": {
+      "blob": "5ec960c97571e86e7644c7278a8ed481c881943c",
+      "mode": "100644"
+    },
+    ".github/workflows/verify-stubs.yml": {
+      "blob": "720543ccbfb421a99c78911c0261cb33bfa2edbe",
+      "mode": "100644"
+    },
+    ".gitignore": {
+      "blob": "60c40be926fd8fd3f12036b721014ccb3a8354bc",
+      "mode": "100644"
+    },
+    ".markdownlint.json": {
+      "blob": "42c24a286ebfe1b04fb3ea98e57914f55673e0e4",
+      "mode": "100644"
+    },
+    ".vscode/README.md": {
+      "blob": "6d2f9167841a48d90c97ec4d34b8d0baca4c2cfb",
+      "mode": "100644"
+    },
+    ".vscode/extensions.json": {
+      "blob": "bdaf793df7fe05ee187d21080d60fd68a4495172",
+      "mode": "100644"
+    },
+    ".vscode/settings.json": {
+      "blob": "aa52f74c78b07cc56a76b0a950f98f515e8890fb",
+      "mode": "100644"
+    },
+    "LICENSE": {
+      "blob": "88c3c4239b660fbb9c5579036731ab66eda9f581",
+      "mode": "100644"
+    },
+    "README.md": {
+      "blob": "0a57fa22ab286bdfff5ffa8b86685bfb95a4e930",
+      "mode": "100644"
+    },
+    "assets/README.md": {
+      "blob": "7e9c3128630a9109d17bb6e81b0c404e4db35e5e",
+      "mode": "100644"
+    },
+    "assets/animations/README.md": {
+      "blob": "d0e41b92bf1b38490193244ed7d26c43358a8033",
+      "mode": "100644"
+    },
+    "assets/audio/README.md": {
+      "blob": "e008476142f3c7993ca0f96ef15a939a113aea4c",
+      "mode": "100644"
+    },
+    "assets/badges/README.md": {
+      "blob": "bd1ee3a8fc469a9ed0e7db86e32bbe4f232172e5",
+      "mode": "100644"
+    },
+    "assets/badges/dynamic/README.md": {
+      "blob": "c3972a2b366aec459b4a26310b9785ae11b6fc9b",
+      "mode": "100644"
+    },
+    "assets/badges/static/README.md": {
+      "blob": "fca9007302c9b781dadbc8d3955c27bafdeff95a",
+      "mode": "100644"
+    },
+    "assets/banners/README.md": {
+      "blob": "eebe78805a20e5d82683f899e5e8e8ec24b9efd4",
+      "mode": "100644"
+    },
+    "assets/branding/README.md": {
+      "blob": "443026f806c730163bdc1f572e1816bd0515dd39",
+      "mode": "100644"
+    },
+    "assets/diagrams/README.md": {
+      "blob": "d8cb394d83a2958ee456da1a38900d5c1e7cc656",
+      "mode": "100644"
+    },
+    "assets/elements/README.md": {
+      "blob": "aa2a44bdfa2aa749e56ddd5aa547bc37ab4b3fd8",
+      "mode": "100644"
+    },
+    "assets/fonts/README.md": {
+      "blob": "f91e52c1588f3e61eeaa299089d781bf26d87e6e",
+      "mode": "100644"
+    },
+    "assets/html/README.md": {
+      "blob": "6c16bdf84b809b7429698d22985afc39ed92abfa",
+      "mode": "100644"
+    },
+    "assets/icons/README.md": {
+      "blob": "bf99cd9bc66c16359cd2454ae3cec2d365633ae0",
+      "mode": "100644"
+    },
+    "assets/illustrations/README.md": {
+      "blob": "796161dacbc3eeeb3b75513702b391f505eeade0",
+      "mode": "100644"
+    },
+    "assets/mockups/README.md": {
+      "blob": "91229df234e227c22fc1fabdf29a9ef2367a53f0",
+      "mode": "100644"
+    },
+    "assets/photos/README.md": {
+      "blob": "39e8a7be6bc62dcd4c82472b40e678f61e50f962",
+      "mode": "100644"
+    },
+    "assets/print/README.md": {
+      "blob": "9258e634db7a68c643c20ae59114c7135c65c06e",
+      "mode": "100644"
+    },
+    "assets/screenshots/README.md": {
+      "blob": "6e7f4bad4740b813846b1558029d404ab199908f",
+      "mode": "100644"
+    },
+    "assets/slides/README.md": {
+      "blob": "d574d60b9f79aeb60fedb19b686cdcce775c1fa8",
+      "mode": "100644"
+    },
+    "assets/social/README.md": {
+      "blob": "6df92cb97a42d6ddda513d70e015983184b200ed",
+      "mode": "100644"
+    },
+    "assets/trophies/README.md": {
+      "blob": "4e0c44c588be041259b8938a511d95c7f848dfd9",
+      "mode": "100644"
+    },
+    "assets/video/README.md": {
+      "blob": "de7c52d01b6e528f7f0378a0a7cd783f0071f151",
+      "mode": "100644"
+    },
+    "benchmarks/README.md": {
+      "blob": "52bfea09d122e7a795a0065a15f67f1c553454b8",
+      "mode": "100644"
+    },
+    "docs/README.md": {
+      "blob": "537f1d5982bfc9fae145ca1e4ea88b8b330bfb8c",
+      "mode": "100644"
+    },
+    "docs/adrs/README.md": {
+      "blob": "e897085c28a0b505a6b4c27c113f687caa85fcf9",
+      "mode": "100644"
+    },
+    "docs/templates/ADR.md": {
+      "blob": "90b854898209a4e012548b2fb7624b901b44dcf1",
+      "mode": "100644"
+    },
+    "docs/templates/Communication.md": {
+      "blob": "f3c78d18278c42b515095fca1654fda3021331e3",
+      "mode": "100644"
+    },
+    "docs/templates/Implementation-Plan.md": {
+      "blob": "0107e10e0241aabe531257040ae01cb266c25c6d",
+      "mode": "100644"
+    },
+    "docs/templates/Post-Mortem.md": {
+      "blob": "90a94469379dfcbf165c67df701ef8e9d746654f",
+      "mode": "100644"
+    },
+    "docs/templates/README.md": {
+      "blob": "000b48b53639bf78ecd41a6e6711012f4f3fddb1",
+      "mode": "100644"
+    },
+    "docs/templates/Research-Log.md": {
+      "blob": "25592d7bac7546255c8ae7311a897ed1e35ae9e3",
+      "mode": "100644"
+    },
+    "docs/templates/Technical-Design.md": {
+      "blob": "8daa6725a8bb21f12784ccef19bec883c59cd524",
+      "mode": "100644"
+    },
+    "docs/templates/User-Story.md": {
+      "blob": "39659a5b8b032f94a2bf9311949547a06298afe9",
+      "mode": "100644"
+    },
+    "docs/templates/technical/Packages-&-Workspaces.md": {
+      "blob": "b7a09614580b46189aa5161629cb675b1a093dab",
+      "mode": "100644"
+    },
+    "docs/templates/technical/README.md": {
+      "blob": "2288f130468348a0d3990dde46cf567701f10409",
+      "mode": "100644"
+    },
+    "docs/templates/technical/Source-Code.md": {
+      "blob": "1df10fdaa9bd297bdbed579cc8d065d8808dd464",
+      "mode": "100644"
+    },
+    "docs/templates/technical/Technology-Stack-&-Tooling.md": {
+      "blob": "859b5ac3db15107411c3e9aae086068cf8d45315",
+      "mode": "100644"
+    },
+    "docs/templates/technical/backend/API-Design-Standards.md": {
+      "blob": "65d18399a07f3333c2ec9741d40db74a45b1d23c",
+      "mode": "100644"
+    },
+    "docs/templates/technical/backend/Authentication-&-Security.md": {
+      "blob": "7f320fec48600ee40f8a33ba3075f10cd2538d1f",
+      "mode": "100644"
+    },
+    "docs/templates/technical/backend/README.md": {
+      "blob": "418a8be79f372cff1fd91b4c8cc9b0c37311331d",
+      "mode": "100644"
+    },
+    "docs/templates/technical/backend/Schema-&-Validation.md": {
+      "blob": "ad5ec7a6ed21a14658bd39bdf7f72469e9929df1",
+      "mode": "100644"
+    },
+    "docs/templates/technical/benchmarks/Performance-Benchmarks.md": {
+      "blob": "dbe148f6a647658e0c56dd3cbea95965289f7320",
+      "mode": "100644"
+    },
+    "docs/templates/technical/benchmarks/README.md": {
+      "blob": "8711a2fd62cf6134f980ffec9a17f07b512d885d",
+      "mode": "100644"
+    },
+    "docs/templates/technical/database/Data-Models-&-Entities.md": {
+      "blob": "c9e2dc0aed8ac115fbe32c145e573d841d31bd63",
+      "mode": "100644"
+    },
+    "docs/templates/technical/database/Migration-Policies.md": {
+      "blob": "1e4b3bf094fbc34460e5862ce6bec55cfa3b06d3",
+      "mode": "100644"
+    },
+    "docs/templates/technical/database/README.md": {
+      "blob": "b3fabe4c5e4a7823a07571ed15073dc890a6a8b6",
+      "mode": "100644"
+    },
+    "docs/templates/technical/infrastructure/CI-CD-Pipelines.md": {
+      "blob": "6926dc243b863e3c2b58dba087b6bba3ca824b8f",
+      "mode": "100644"
+    },
+    "docs/templates/technical/infrastructure/Deployment-Protocols.md": {
+      "blob": "ad93c1fb86c225e08ced4de778532e7c51aa0a33",
+      "mode": "100644"
+    },
+    "docs/templates/technical/infrastructure/Environment-Configuration.md": {
+      "blob": "bb4e9cfead59a2b69bcf21dce2e8eb6e49691aab",
+      "mode": "100644"
+    },
+    "docs/templates/technical/infrastructure/README.md": {
+      "blob": "1d1dd41a0ae64f8c3d1040309fac8881f1905360",
+      "mode": "100644"
+    },
+    "docs/templates/technical/interface/Formatting-&-Standards.md": {
+      "blob": "a601fcdd803ab6f2d7f4f62c02393a8aa1396fee",
+      "mode": "100644"
+    },
+    "docs/templates/technical/interface/README.md": {
+      "blob": "0f20ebadf79d82b091ed70c019573bc3f8d54f26",
+      "mode": "100644"
+    },
+    "docs/templates/technical/interface/Styling-&-Theming.md": {
+      "blob": "f95f243d4760689525f61603a189df4fc39924a8",
+      "mode": "100644"
+    },
+    "docs/templates/technical/interface/UI-Setup-&-Environment.md": {
+      "blob": "11547566e11fb91db99f10293a24750a84c25752",
+      "mode": "100644"
+    },
+    "docs/templates/technical/testing/E2E-Testing.md": {
+      "blob": "7692b23fa21bbb7112fe32ea99fc0a3807beac5c",
+      "mode": "100644"
+    },
+    "docs/templates/technical/testing/README.md": {
+      "blob": "d9388f4c7c39d5ab954ccfa47e3d3c74c9bc0508",
+      "mode": "100644"
+    },
+    "docs/templates/technical/testing/Unit-Test-Standards.md": {
+      "blob": "f5914d27a94359aaed035647872c1ebcd45fdb94",
+      "mode": "100644"
+    },
+    "packages/README.md": {
+      "blob": "cd230d10f3febc4e45539f5dd10c561f9c38e071",
+      "mode": "100644"
+    },
+    "src/README.md": {
+      "blob": "6441765096500ef480a3f158b310397acd2a2fa3",
+      "mode": "100644"
+    },
+    "src/app/README.md": {
+      "blob": "182e64102b4c5a567e34522b2ef40bbaeba9275c",
+      "mode": "100644"
+    },
+    "src/domain/README.md": {
+      "blob": "bc94739e47a15ff4909ca8cdb2b7a78890eeb6f6",
+      "mode": "100644"
+    },
+    "src/infra/README.md": {
+      "blob": "fc754ea08239a5f60498c144e6e27d34a9e6ec21",
+      "mode": "100644"
+    },
+    "tests/README.md": {
+      "blob": "e1e5a2ff6b88146c2173d786afccde01e86ed4ca",
+      "mode": "100644"
+    },
+    "tests/e2e/README.md": {
+      "blob": "66e490a1dea9fb3973a7e9ecf8fe0c499c9d7f67",
+      "mode": "100644"
+    },
+    "tests/integration/README.md": {
+      "blob": "c06fd6e2fcc8250eeb1b95b76bf2914fc405cc9c",
+      "mode": "100644"
+    },
+    "tests/unit/README.md": {
+      "blob": "12a33dd02fb6cddb4c98b3f64d9a5e0e540c9f0d",
+      "mode": "100644"
+    }
+  },
+  "pending": {}
+}
