@@ -339,8 +339,9 @@ page, the release, and the calibration.
 | `dependabot-automerge.yml` | Approves and queues Dependabot's patch and minor updates                 |
 | `ci-failure-alert.yml`     | Opens an issue when a watched workflow fails, closes it on green         |
 | `apply-standards.yml`      | Dispatch-only. The label taxonomy and branch protection                  |
+| `template-sync.yml`        | Dispatch-only. The template's later fixes, as one pull request           |
 | `auto-format.yml`          | Formats what a push touched                                              |
-| `auto-index.yml`           | Redraws the folder logs in `assets/` after a push, as one pull request   |
+| `auto-index.yml`           | Redraws every folder's log after a push, as one pull request             |
 | `preview-deploy.yml`       | Deploys pushes to a preview target, once one is configured               |
 | `verify-stubs.yml`         | Proves every job's permission ceiling matches its called workflow        |
 
@@ -369,6 +370,13 @@ reaches every README whose stub pins `v1` the next time it runs, and every fix
 in the standards' v1 line reaches the workflows here the moment it is
 published. Breaking changes never arrive that way, because a new major is a
 different tag.
+
+The stubs themselves came from the
+[`tannergolden/path`](https://github.com/tannergolden/path) template, and its
+later fixes arrive whenever you run 🔄 Template Sync, as one pull request
+merged with whatever changed here. [`.github/template-sync`](.github/template-sync)
+lists what it keeps current, and
+[`.github/template-sync.md`](.github/template-sync.md) says how.
 
 ---
 

@@ -50,9 +50,16 @@ trade-offs that shaped it before changing it.
 
 <!-- AUTO-INDEX:BEGIN dir=. style=log fields=status,date,evidence -->
 
-| Entry                    | Status | Date | Evidence | Purpose    |
-| :----------------------- | :----- | :--- | :------- | :--------- |
-| [`README.md`](README.md) | -      | -    | -        | This file. |
+| Entry                                                                                                | Status   | Date       | Evidence | Purpose                                                                                                                                                                                          |
+| :--------------------------------------------------------------------------------------------------- | :------- | :--------- | :------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`ADR-0001-One-Kit-One-Stub.md`](ADR-0001-One-Kit-One-Stub.md)                                       | Accepted | 2026-09-28 | N/A      | Banners, badges, elements and trophies become one kit, run from one stub, in one daily run that makes one commit.                                                                                |
+| [`ADR-0002-Standard-Library-Only.md`](ADR-0002-Standard-Library-Only.md)                             | Accepted | 2026-09-28 | N/A      | The kit is Python and its standard library, with nothing to install, and reads its own YAML.                                                                                                     |
+| [`ADR-0003-Holiday-Windows.md`](ADR-0003-Holiday-Windows.md)                                         | Accepted | 2026-09-28 | N/A      | The holiday sets are on by default and take over for 3 to 7 days centred on each holiday; New Year's Day always runs 3.                                                                          |
+| [`ADR-0004-Standard-As-The-Default-Theme.md`](ADR-0004-Standard-As-The-Default-Theme.md)             | Accepted | 2026-09-28 | N/A      | A page that names no theme is drawn in standard, the original badges' own look.                                                                                                                  |
+| [`ADR-0005-The-Kit-Measures-Live-Badges.md`](ADR-0005-The-Kit-Measures-Live-Badges.md)               | Accepted | 2026-09-28 | N/A      | A live badge names what it measures, and every run measures it, instead of another workflow setting its value.                                                                                   |
+| [`ADR-0006-A-Collection-Changes-With-The-Month.md`](ADR-0006-A-Collection-Changes-With-The-Month.md) | Accepted | 2026-10-07 | N/A      | A collection is twelve pixel designs on one subject; a page that picks it is drawn in the month's design, which changes on the first of every month.                                             |
+| [`ADR-0007-A-Collection-Is-Drawn-By-One-Hand.md`](ADR-0007-A-Collection-Is-Drawn-By-One-Hand.md)     | Accepted | 2026-10-08 | N/A      | The twelve designs of a collection keep their own subjects and share one hand: the same light, inks, ground, flame, people, motion and the month's mark, so the year reads as one artist's work. |
+| [`README.md`](README.md)                                                                             | -        | -          | -        | This file.                                                                                                                                                                                       |
 
 <!-- AUTO-INDEX:END -->
 

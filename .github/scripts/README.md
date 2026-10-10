@@ -35,14 +35,20 @@ only Python 3, plus PyYAML for the ones that read YAML.
 
 <!-- AUTO-INDEX:BEGIN dir=. style=log -->
 
-| Entry                                                          | Purpose                                                              |
-| :------------------------------------------------------------- | :------------------------------------------------------------------- |
-| [`README.md`](README.md)                                       | This file.                                                           |
-| [`test_gitignore.py`](test_gitignore.py)                       | Tests for this repository's .gitignore.                              |
-| [`test_validate_repository.py`](test_validate_repository.py)   | Tests for the repository validator.                                  |
-| [`test_verify_stub_ceilings.py`](test_verify_stub_ceilings.py) | Tests for the stub ceiling checker.                                  |
-| [`validate-repository.py`](validate-repository.py)             | Validate this repository's own configuration.                        |
-| [`verify-stub-ceilings.py`](verify-stub-ceilings.py)           | Check every stub's permission ceiling against the workflow it calls. |
+| Entry                                                          | Purpose                                                                                                                           |
+| :------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| [`build-collection.py`](build-collection.py)                   | Draw a collection's year: its twelve designs, a month to each, and the page that shows them.                                      |
+| [`build-theme-sets.py`](build-theme-sets.py)                   | Draw every theme the kit draws a page in, and the page that shows them.                                                           |
+| [`collection.html`](collection.html)                           | The page `build-collection.py` fills in: a collection's twelve designs, each drawn by the kit on GitHub's light and dark grounds. |
+| [`README.md`](README.md)                                       | This file.                                                                                                                        |
+| [`test_build_collection.py`](test_build_collection.py)         | Tests for the collection page builder.                                                                                            |
+| [`test_build_theme_sets.py`](test_build_theme_sets.py)         | Tests for the theme-sets page builder.                                                                                            |
+| [`test_gitignore.py`](test_gitignore.py)                       | Tests for this repository's .gitignore.                                                                                           |
+| [`test_validate_repository.py`](test_validate_repository.py)   | Tests for the repository validator.                                                                                               |
+| [`test_verify_stub_ceilings.py`](test_verify_stub_ceilings.py) | Tests for the stub ceiling checker.                                                                                               |
+| [`theme-sets.html`](theme-sets.html)                           | The page `build-theme-sets.py` fills in: every theme the kit draws a README in, on GitHub's light and dark grounds.               |
+| [`validate-repository.py`](validate-repository.py)             | Validate this repository's own configuration.                                                                                     |
+| [`verify-stub-ceilings.py`](verify-stub-ceilings.py)           | Check every stub's permission ceiling against the workflow it calls.                                                              |
 
 <!-- AUTO-INDEX:END -->
 

@@ -41,9 +41,11 @@ guardrails against flakiness belong in the fill-in
 
 <!-- AUTO-INDEX:BEGIN dir=. style=log -->
 
-| Entry                    | Purpose    |
-| :----------------------- | :--------- |
-| [`README.md`](README.md) | This file. |
+| Entry                        | Purpose                                                                                         |
+| :--------------------------- | :---------------------------------------------------------------------------------------------- |
+| [`__init__.py`](__init__.py) | Makes the suite a package, so `make test` discovers it from the repository's root.              |
+| [`README.md`](README.md)     | This file.                                                                                      |
+| [`test_cli.py`](test_cli.py) | The kit as a person runs it: `python3 src/markdown-kit.py &lt;command&gt;`, in a fresh process. |
 
 <!-- AUTO-INDEX:END -->
 

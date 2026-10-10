@@ -5,13 +5,13 @@
 #
 # 🏷️ Cut Release
 #
-# Publishes a version of the kit and moves the major tag every stub pins. The
-# work happens in tannergolden/standards' release.yml, called rather than
-# copied, so the guards live in one place: it refuses a commit that is not on
-# the default branch and a version that does not move forward, proves the
+# Purpose: Publishes a version of the kit and moves the major tag every stub
+# pins. The work happens in tannergolden/standards' release.yml, called rather
+# than copied, so the guards live in one place: it refuses a commit that is not
+# on the default branch and a version that does not move forward, proves the
 # files below exist at the commit and that the check passes, then tags the
-# immutable vX.Y.Z, force-moves vX, publishes the release with generated
-# notes and prunes every older release, page and tag.
+# immutable vX.Y.Z, force-moves vX, publishes the release with generated notes
+# and prunes every older release, page and tag.
 #
 # ⚠️ Moving `v1` changes what every repository pinned to it runs next,
 # without anyone on their side doing anything. Treat a release as a

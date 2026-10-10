@@ -36,9 +36,17 @@ composition root that wires the two together at startup.
 
 <!-- AUTO-INDEX:BEGIN dir=. style=log -->
 
-| Entry                    | Purpose    |
-| :----------------------- | :--------- |
-| [`README.md`](README.md) | This file. |
+| Entry                          | Purpose                                                                                                         |
+| :----------------------------- | :-------------------------------------------------------------------------------------------------------------- |
+| [`parts/`](parts/README.md)    | Each part of a page measured and planned on its own: the banners, the badges, the elements and the trophy case. |
+| [`__init__.py`](__init__.py)   | The application: the command line and what each command does, start to finish.                                  |
+| [`calibrate.py`](calibrate.py) | Measure the repository population the repository-mode tiers are set against: `markdown-kit calibrate`.          |
+| [`cli.py`](cli.py)             | The command line: `markdown-kit &lt;command&gt;`.                                                               |
+| [`config.py`](config.py)       | Reading a repository's settings: the file, the stub's inputs, and the defaults under both.                      |
+| [`page.py`](page.py)           | One run's page: whose it is, which mode, what day, where its files go, and which theme it is drawn in.          |
+| [`ports.py`](ports.py)         | Everything the application is handed to reach outside itself.                                                   |
+| [`README.md`](README.md)       | This file.                                                                                                      |
+| [`run.py`](run.py)             | A run, start to finish: measure the page, draw every part, write what changed, and say what moved.              |
 
 <!-- AUTO-INDEX:END -->
 

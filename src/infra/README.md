@@ -37,9 +37,16 @@ in, which is what lets one adapter be replaced without touching a use case.
 
 <!-- AUTO-INDEX:BEGIN dir=. style=log -->
 
-| Entry                    | Purpose    |
-| :----------------------- | :--------- |
-| [`README.md`](README.md) | This file. |
+| Entry                              | Purpose                                                                          |
+| :--------------------------------- | :------------------------------------------------------------------------------- |
+| [`__init__.py`](__init__.py)       | The infrastructure: every way the kit touches the world outside its own memory.  |
+| [`clock.py`](clock.py)             | What day it is where the page is read.                                           |
+| [`files.py`](files.py)             | Reading and writing the files a run leaves in the repository.                    |
+| [`git.py`](git.py)                 | The repository the kit runs in, through the `git` on the machine.                |
+| [`github.py`](github.py)           | A small GitHub client on urllib: GraphQL, REST, retries and a cost meter.        |
+| [`README.md`](README.md)           | This file.                                                                       |
+| [`resources.py`](resources.py)     | The kit's own data files, read from `src/domain/data/` and handed to the domain. |
+| [`yaml_reader.py`](yaml_reader.py) | The YAML the settings file is written in, read with the standard library alone.  |
 
 <!-- AUTO-INDEX:END -->
 

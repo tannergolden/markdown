@@ -5,6 +5,8 @@
 #
 # 📐 Calibrate
 #
+# Purpose: Measures, each quarter, the repositories the trophies are set against.
+#
 # The repository-mode trophies say "top 10%" of starred public repositories.
 # This measures that population rather than modelling it: it counts stars
 # and forks directly through the search API, samples forty repositories
