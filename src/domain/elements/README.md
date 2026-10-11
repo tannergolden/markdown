@@ -24,8 +24,8 @@ _No coordinate in a data file._
 The six blueprint elements a page's body is made of: the schematic, the
 instruments, the milestones, the roster, the certificate and the placards
 ([`draw.py`](draw.py)), drawn on the same paper as the page's header and footer.
-A seventh, the chess board ([`chess.py`](chess.py)), is drawn on
-@tannergolden's profile alone, for the game played there.
+Two more, the chess board and its Hall of Fame ([`chess/`](chess/README.md)),
+are drawn on @tannergolden's profile alone, for the game played there.
 What each draws from is the `elements:` section of the page's settings
 ([`data.py`](data.py)).
 
@@ -38,14 +38,14 @@ coordinate.
 
 <!-- AUTO-INDEX:BEGIN dir=. style=log -->
 
-| Entry                        | Purpose                                                                                             |
-| :--------------------------- | :-------------------------------------------------------------------------------------------------- |
-| [`__init__.py`](__init__.py) | The elements: the body of a README, drawn on the same paper as its header and footer.               |
-| [`chess.py`](chess.py)       | The chess element: the game on @tannergolden's profile, drawn as a sheet of the page's print.       |
-| [`data.py`](data.py)         | The `elements:` section of a page's settings: which elements it draws, and what each is drawn from. |
-| [`draw.py`](draw.py)         | The blueprint elements: six drawings a README makes from its own repository.                        |
-| [`layout.py`](layout.py)     | Layout the kit computes, so a data file never carries a coordinate.                                 |
-| [`README.md`](README.md)     | This file.                                                                                          |
+| Entry                        | Purpose                                                                                                             |
+| :--------------------------- | :------------------------------------------------------------------------------------------------------------------ |
+| [`chess/`](chess/README.md)  | The chess elements: the game on @tannergolden's profile and its Hall of Fame, one layout in every theme.            |
+| [`__init__.py`](__init__.py) | The elements: the body of a README, drawn on the same paper as its header and footer.                               |
+| [`data.py`](data.py)         | The `elements:` section of a page's settings: which elements it draws, and what each is drawn from.                 |
+| [`draw.py`](draw.py)         | The blueprint elements: six drawings a README makes from its own repository.                                        |
+| [`layout.py`](layout.py)     | Layout the kit computes, so a data file never carries a coordinate.                                                 |
+| [`README.md`](README.md)     | This file.                                                                                                          |
 
 <!-- AUTO-INDEX:END -->
 

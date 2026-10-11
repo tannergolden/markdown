@@ -953,9 +953,15 @@ def certificate(d: dict, tone: str, th: dict, variant: str = "wide", height: flo
 # --- the registry -------------------------------------------------------------------------------
 
 def chess(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
-    """The game on @tannergolden's profile: drawn in elements/chess.py, which borrows this module's sheet."""
+    """The game on @tannergolden's profile, drawn by elements/chess in the page's theme, standard or a print."""
     from . import chess as game  # imported here: it imports this module's pieces of a sheet itself
-    return game.draw(d, tone, th, variant)
+    return game.draw("chess", d, tone, "dark" if th["dark"] else "day", variant)
+
+
+def chess_hall(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
+    """The game's Hall of Fame, and a badge for each of its winners, drawn by elements/chess."""
+    from . import chess as game
+    return game.draw("chess-hall", d, tone, "dark" if th["dark"] else "day", variant)
 
 
 KINDS = {
@@ -965,7 +971,8 @@ KINDS = {
     "roster": (roster, ("wide", "narrow"), "sheet"),
     "certificate": (certificate, ("wide", "narrow"), "sheet"),
     "placard": (placard, ("wide",), "card"),
-    "chess": (chess, ("wide", "narrow"), "sheet"),
+    "chess": (chess, ("wide", "narrow", "still", "narrow-still"), "sheet"),
+    "chess-hall": (chess_hall, ("wide", "narrow", "still", "narrow-still"), "sheet"),
 }
 
 
@@ -975,6 +982,9 @@ HALF_HEIGHTS = {"roster": roster_height, "certificate": certificate_height}
 def variants(kind: str, d: dict) -> tuple[str, ...]:
     """The files an element writes. `size: half` makes a roster or certificate one half-page file."""
     _, vs, _ = KINDS[kind]
+    if kind == "chess-hall":
+        from . import chess as game
+        return game.variants(kind, d)
     if d.get("size") == "half" and kind in HALF_HEIGHTS:
         return ("half",)
     return vs
@@ -1017,6 +1027,9 @@ def describe(kind: str, d: dict) -> dict:
     elif kind == "chess":
         from . import chess as game
         d = game.describe(d)
+    elif kind == "chess-hall":
+        from . import chess as game
+        d = game.describe_hall(d)
     return d
 
 

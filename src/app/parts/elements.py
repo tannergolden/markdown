@@ -5,7 +5,8 @@
 Each measuring function returns the dict the matching element draws from, so
 the settings name an element and leave the numbers to this. Most of it is
 read from git, through the `git` the run is handed; what git cannot say, a
-placard's description or whether CI passed, is read from the GitHub client.
+placard's description, whether CI passed or a winner's name in the Hall of
+Fame, is read from the GitHub client.
 Everything measured is kept in the lock, so `check` can redraw without either.
 """
 from __future__ import annotations
@@ -17,6 +18,7 @@ from collections import Counter
 
 from domain.elements import data as ED
 from domain.elements import draw as E
+from domain.elements.chess import game as CG
 
 LOCK_KEY = "elements"
 
@@ -189,6 +191,20 @@ def placard(gh, full: str) -> dict | None:
                       ["Stars", f"{repo.get('stargazers_count', 0):,}"]]}
 
 
+def winners(gh, people) -> dict:
+    """The Hall of Fame's winners by the names their profiles give, where the sheet can letter one; the rest keep
+    their logins."""
+    names = {}
+    for row in people or []:
+        login = str(row[0]) if isinstance(row, list) and row else ""
+        if not CG.LOGIN.fullmatch(login) or login.casefold() == CG.OWNER:
+            continue
+        name = " ".join(str((gh.rest(f"/users/{login}") or {}).get("name") or "").split())
+        if name and CG.NAME.fullmatch(name):
+            names[login] = name
+    return names
+
+
 def inherited_policy(gh, owner: str) -> str | None:
     """The security policy GitHub serves for every repository of `owner` from the owner's .github repository, if any."""
     for path in ("SECURITY.md", ".github/SECURITY.md", "docs/SECURITY.md"):
@@ -266,6 +282,8 @@ def measure(section: dict, before: dict, *, git, gh, subject: str, today: dt.dat
                 out = placard(gh, full) or {}
                 if not out:
                     notes.append(f"element {eid}: cannot read {full}; drawn from the settings alone")
+        elif kind == "chess-hall" and gh is not None:
+            out = {"names": winners(gh, spec.get("people"))}
         if out:
             measured[eid] = out
     return measured

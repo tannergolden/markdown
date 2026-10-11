@@ -31,11 +31,11 @@ REQUIRED = {
     "schematic": ("boxes", "wires"), "instruments": ("histogram", "dial", "materials", "counters"),
     "milestones": ("events",), "roster": ("people",), "certificate": ("checks", "ring_top", "ring_bottom", "name"),
     "placard": ("owner", "name", "desc", "cells"),
-    "chess": ("fen",),
+    "chess": ("fen",), "chess-hall": (),
 }
-# Kinds no holiday or collection draws yet, and the standard theme has no sheet for: drawn in the page's print
-# whatever set is up, and in the blueprint where the theme is the standard one.
-PRINT_ONLY = frozenset({"chess"})
+# Kinds that draw themselves in the standard theme and every print, and that no holiday or collection draws yet:
+# they keep the page's own theme whatever set is up.
+OWN_THEMES = frozenset({"chess", "chess-hall"})
 # Kinds the elements kit once drew, and the release that retired each, so settings that still name one
 # are told what happened rather than that the kind is unknown.
 RETIRED = {"plan": "1.3.0", "seal": "1.4.0"}
@@ -103,10 +103,10 @@ def validate(section: dict, measured: dict, *, subject: str = "") -> list[str]:
             errors.append(f"{eid}: icon {d['icon']!r} is not in the set")
         if kind == "roster" and any(p.get("icon") and p["icon"] not in ICONS for p in d["people"]):
             errors.append(f"{eid}: a person names an icon that is not in the set")
-        if kind == "chess":
+        if kind in chess.KINDS:
             if subject.casefold() != chess.OWNER:
-                errors.append(f"{eid}: the chess element is drawn on @{chess.OWNER}'s profile alone")
-            errors += [f"{eid}: {problem}" for problem in chess.check(d)]
+                errors.append(f"{eid}: the {kind} element is drawn on @{chess.OWNER}'s profile alone")
+            errors += [f"{eid}: {problem}" for problem in (chess.check if kind == "chess" else chess.check_hall)(d)]
     return errors
 
 
@@ -134,7 +134,7 @@ def render(elements: dict, tone: str, holiday: str = "") -> dict[str, str]:
     files = {}
     for eid, d in elements.items():
         kind = d["kind"]
-        own = kind in PRINT_ONLY
+        own = kind in OWN_THEMES
         for variant in E.variants(kind, d):
             for theme in ("day", "dark"):
                 svg = None
@@ -164,6 +164,11 @@ def picture(eid: str, d: dict, rel: str) -> str:
         return f"{rel}/{file_name(eid, v, t)}"
 
     lines = ["<picture>"]
+    if "narrow-still" in vs:
+        lines.append(f'  <source media="(max-width: 585px) and (prefers-reduced-motion: reduce) and '
+                     f'(prefers-color-scheme: dark)" srcset="{src("narrow-still", "dark")}">')
+        lines.append(f'  <source media="(max-width: 585px) and (prefers-reduced-motion: reduce)" '
+                     f'srcset="{src("narrow-still", "day")}">')
     if "narrow" in vs:
         lines.append(f'  <source media="(max-width: 585px) and (prefers-color-scheme: dark)" srcset="{src("narrow", "dark")}">')
         lines.append(f'  <source media="(max-width: 585px)" srcset="{src("narrow", "day")}">')
@@ -181,10 +186,15 @@ def picture(eid: str, d: dict, rel: str) -> str:
 
 
 def block(eid: str, d: dict, rel: str) -> str:
-    """The README block: the picture, and for the game, every legal move under it as a link."""
+    """The README block: the picture; for the game, its turn's banner above and every legal move under it; for its
+    Hall of Fame, a badge per winner under it, each linking to that player's profile."""
     snippet = picture(eid, d, rel)
     if d["kind"] == "chess":
         from . import chess
-        below = chess.text(d)
-        snippet += f"\n\n{below}" if below else ""
+        above, below = chess.text(d)
+        snippet = "\n\n".join(part for part in (above, snippet, below) if part)
+    elif d["kind"] == "chess-hall":
+        from . import chess
+        row = chess.badges(eid, d, rel)
+        snippet += f"\n\n{row}" if row else ""
     return readme.block(f"element:{eid}", snippet)
