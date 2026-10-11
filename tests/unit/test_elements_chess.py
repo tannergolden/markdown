@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 """The chess element: the game on @tannergolden's profile, in every variant, theme and print, and nowhere else.
 
-The position is the one after 1. e4 e5 2. Nf3 Nc6 3. Bc4 Nd4 4. Nxe5 Qg5 5. Bxf7+: Black to move and in check,
+The position is the one after 1. e4 e5 2. Nf3 Nc6 3. Bc4 Nb4 4. Nxe5 Qg5 5. Bxf7+: Black to move and in check,
 with two of Black's pawns taken, so every mark the board can carry is on it at once."""
 from __future__ import annotations
 
@@ -22,11 +22,11 @@ support.install()
 DASHES = ("–", "—", "―")
 LINK = "https://github.com/tannergolden/play/issues/new?template=move.yml&title=chess%3A%20g5g2%20%C2%B7%20game%203%20%C2%B7%20move%2010"
 GAME = {
-    "kind": "chess", "fen": "r1b1kbnr/pppp1Bpp/8/4N1q1/3nP3/8/PPPP1PPP/RNBQK2R b KQkq - 0 5",
+    "kind": "chess", "fen": "r1b1kbnr/pppp1Bpp/8/4N1q1/1n2P3/8/PPPP1PPP/RNBQK2R b KQkq - 0 5",
     "game": 3, "move": 10, "white": "tannergolden", "black": "GitHub",
     "last": "c4f7", "last_san": "5. Bxf7+", "last_by": "tannergolden", "check": "e8",
     "turn_note": "Anyone but tannergolden can play",
-    "history": [["1", "e4", "e5"], ["2", "Nf3", "Nc6"], ["3", "Bc4", "Nd4"], ["4", "Nxe5", "Qg5"], ["5", "Bxf7+", ""]],
+    "history": [["1", "e4", "e5"], ["2", "Nf3", "Nc6"], ["3", "Bc4", "Nb4"], ["4", "Nxe5", "Qg5"], ["5", "Bxf7+", ""]],
     "hall": [["1", "0-1", "@octocat", "Qh4#"], ["2", "1-0", "tannergolden", "Qxf7#"]],
     "prompt": "**GitHub's move.** Anyone but @tannergolden can play.",
     "moves": [{"piece": "king", "links": [["Kxf7", LINK]]}, {"piece": "queen", "links": [["Qxg2", LINK], ["Qe7", LINK]]}],
