@@ -31,7 +31,11 @@ REQUIRED = {
     "schematic": ("boxes", "wires"), "instruments": ("histogram", "dial", "materials", "counters"),
     "milestones": ("events",), "roster": ("people",), "certificate": ("checks", "ring_top", "ring_bottom", "name"),
     "placard": ("owner", "name", "desc", "cells"),
+    "chess": ("fen",),
 }
+# Kinds no holiday or collection draws yet, and the standard theme has no sheet for: drawn in the page's print
+# whatever set is up, and in the blueprint where the theme is the standard one.
+PRINT_ONLY = frozenset({"chess"})
 # Kinds the elements kit once drew, and the release that retired each, so settings that still name one
 # are told what happened rather than that the kind is unknown.
 RETIRED = {"plan": "1.3.0", "seal": "1.4.0"}
@@ -69,9 +73,10 @@ def merged(section: dict, measured: dict, *, subject: str = "", today: str = "")
     return out
 
 
-def validate(section: dict, measured: dict) -> list[str]:
+def validate(section: dict, measured: dict, *, subject: str = "") -> list[str]:
     """What the section gets wrong, said precisely: an unknown kind, a field an element cannot draw without,
-    a wire to a box that is not there, an icon that is not one of the 64."""
+    a wire to a box that is not there, an icon that is not one of the 64, a game on a page not its own."""
+    from . import chess
     errors = []
     for eid, d in merged(section, measured).items():
         kind = d.get("kind")
@@ -98,6 +103,10 @@ def validate(section: dict, measured: dict) -> list[str]:
             errors.append(f"{eid}: icon {d['icon']!r} is not in the set")
         if kind == "roster" and any(p.get("icon") and p["icon"] not in ICONS for p in d["people"]):
             errors.append(f"{eid}: a person names an icon that is not in the set")
+        if kind == "chess":
+            if subject.casefold() != chess.OWNER:
+                errors.append(f"{eid}: the chess element is drawn on @{chess.OWNER}'s profile alone")
+            errors += [f"{eid}: {problem}" for problem in chess.check(d)]
     return errors
 
 
@@ -125,17 +134,18 @@ def render(elements: dict, tone: str, holiday: str = "") -> dict[str, str]:
     files = {}
     for eid, d in elements.items():
         kind = d["kind"]
+        own = kind in PRINT_ONLY
         for variant in E.variants(kind, d):
             for theme in ("day", "dark"):
                 svg = None
-                if held:
+                if held and not own:
                     MISSING.clear()
                     svg = held.element(kind, E.describe(kind, d), THEMES[theme], variant, held_half)
                     if MISSING or lint(svg, budget=BUDGET[E.KINDS[kind][2]], tokens=held.tokens):
                         svg = None
                     MISSING.clear()
                 files[file_name(eid, variant, theme)] = svg or (
-                    SE.draw(kind, d, theme, variant, height=half) if std else
+                    SE.draw(kind, d, theme, variant, height=half) if std and not own else
                     E.draw(kind, d, tone, theme, variant, height=half))
     return files
 
@@ -171,4 +181,10 @@ def picture(eid: str, d: dict, rel: str) -> str:
 
 
 def block(eid: str, d: dict, rel: str) -> str:
-    return readme.block(f"element:{eid}", picture(eid, d, rel))
+    """The README block: the picture, and for the game, every legal move under it as a link."""
+    snippet = picture(eid, d, rel)
+    if d["kind"] == "chess":
+        from . import chess
+        below = chess.text(d)
+        snippet += f"\n\n{below}" if below else ""
+    return readme.block(f"element:{eid}", snippet)

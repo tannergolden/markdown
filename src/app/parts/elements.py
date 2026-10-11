@@ -274,7 +274,7 @@ def measure(section: dict, before: dict, *, git, gh, subject: str, today: dt.dat
 def plan(section: dict, measured: dict, *, subject: str, today: str, tone: str, out: str, readme: str,
          draw: bool = True, holiday: str = "") -> dict:
     """Every element's files by path, its README block, and notes on anything drawn short."""
-    problems = ED.validate(section, measured)
+    problems = ED.validate(section, measured, subject=subject)
     if problems:
         raise ED.ElementsError("elements: " + "; ".join(problems))
     elements = ED.merged(section, measured, subject=subject, today=today)

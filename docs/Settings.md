@@ -336,6 +336,7 @@ its markers, because only the README's author knows which section it belongs in:
 | `roster`      | The people who made it, by commit count.                                     | git: `most` (4), `bots` (true), and `rename` to correct a name.                                 |
 | `certificate` | The checks a repository passes, with the evidence for each.                  | git and GitHub: licence, security policy, pinned actions, Conventional Commits, and `ci: main`. |
 | `placard`     | A card that links to another repository.                                     | GitHub: `measure: owner/name`.                                                                  |
+| `chess`       | The game on @tannergolden's profile, with every legal move linked under it.  | Nothing: the profile's own workflow writes it after every move.                                 |
 
 What the settings write wins over what was measured, so any element can carry
 a `title`, a `caption` or a `desc` of its own, and a roster or a certificate
@@ -343,6 +344,16 @@ takes `size: half` to stand beside the other at half the page's width. The
 fields each kind draws from are in
 [`tests/fixtures/driftmark`](../tests/fixtures/driftmark/.github/markdown.yaml),
 a made-up project that writes every one of them by hand.
+
+**The `chess` element is @tannergolden's own.** It is drawn on that profile
+alone, and a page anywhere else that names it is told so. The game is played by
+the profile's own workflow, which writes what the sheet draws after every move:
+the position as `fen`, the last move as `last`, `last_san` and `last_by`, any
+`check`, the score sheet's `history` and the Hall of Fame's `hall`. Under the
+board the README carries a `prompt`, every legal move as a link to its
+ready-made issue (`moves`), and a `note`, since an image cannot be clicked
+square by square. It is drawn in the page's print whatever holiday or
+collection is up.
 
 ---
 

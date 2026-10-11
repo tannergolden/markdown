@@ -952,6 +952,12 @@ def certificate(d: dict, tone: str, th: dict, variant: str = "wide", height: flo
 
 # --- the registry -------------------------------------------------------------------------------
 
+def chess(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
+    """The game on @tannergolden's profile: drawn in elements/chess.py, which borrows this module's sheet."""
+    from . import chess as game  # imported here: it imports this module's pieces of a sheet itself
+    return game.draw(d, tone, th, variant)
+
+
 KINDS = {
     "schematic": (schematic, ("wide", "narrow"), "sheet"),
     "instruments": (instruments, ("wide", "narrow"), "sheet"),
@@ -959,6 +965,7 @@ KINDS = {
     "roster": (roster, ("wide", "narrow"), "sheet"),
     "certificate": (certificate, ("wide", "narrow"), "sheet"),
     "placard": (placard, ("wide",), "card"),
+    "chess": (chess, ("wide", "narrow"), "sheet"),
 }
 
 
@@ -1007,6 +1014,9 @@ def describe(kind: str, d: dict) -> dict:
                      + (f"; not met: {', '.join(failed)}." if failed else ", each met."))
     elif kind == "placard":
         d.setdefault("title", f"{d.get('owner', '')}/{d.get('name', '')}")
+    elif kind == "chess":
+        from . import chess as game
+        d = game.describe(d)
     return d
 
 
