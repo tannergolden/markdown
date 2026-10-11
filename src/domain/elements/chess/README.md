@@ -50,8 +50,8 @@ top of GitHub's ten leading players.
 | [`game.py`](game.py)         | What the chess sheets are drawn from: the game as the profile's own engine hands it over, checked and read.     |
 | [`layout.py`](layout.py)     | The chess sheets' one layout, which every theme draws: the board and its panel, and the Hall of Fame.           |
 | [`motion.py`](motion.py)     | The motion every theme shares: one choreography, so a board moves the same way in every skin.                   |
-| [`readme.py`](readme.py)     | What the README carries round the chess sheets: the banner, every legal move, the badges and the leaderboard.   |
 | [`README.md`](README.md)     | This file.                                                                                                      |
+| [`readme.py`](readme.py)     | What the README carries round the chess sheets: the banner, every legal move, the badges and the leaderboard.   |
 | [`shapes.py`](shapes.py)     | The pieces' shapes, shared by every theme: one set of silhouettes, so a knight is the same knight in each skin. |
 | [`skins.py`](skins.py)       | What the chess sheets are made of, per theme: the standard theme's skin and the prints'.                        |
 
