@@ -50,7 +50,9 @@ OPENING = {"kind": "chess", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR 
 HALL = {"kind": "chess-hall", "games": 12, "house": 5, "world": 6, "draws": 1,
         "people": [["tannergolden", 5, "2 Oct", 12], ["imvale", 2, "19 Sep", 7], ["tokafor", 2, "27 Sep", 5],
                    ["wrencastellan", 1, "4 Sep", 6], ["jhalloran", 1, "8 Oct", 3]],
-        "names": {"imvale": "Imogen Vale", "tokafor": "Tomas Okafor"}}
+        "names": {"imvale": "Imogen Vale", "tokafor": "Tomas Okafor"},
+        "leaders": [["tannergolden", 1204, 5, 12], ["imvale", 40, 2, 7], ["tokafor", 31, 2, 5],
+                    ["wrencastellan", 52, 1, 6], ["jhalloran", 12, 1, 3], ["octocat", 9, 0, 2]]}
 EMPTY = {"kind": "chess-hall", "games": 0, "house": 0, "world": 0, "draws": 0, "people": []}
 # The densest board the contract accepts: queens wherever a pawn could have been crowned, every letter and digit in
 # the panel's words and logins, and every number at its longest.
@@ -207,6 +209,28 @@ class Settings(unittest.TestCase):
         self.assertIn("at most 5 winners", " ".join(ED.validate({"h": {**HALL, "people": six}}, {},
                                                                 subject="tannergolden")))
 
+    def test_what_the_leaderboard_lists_is_checked(self):
+        house = ["tannergolden", 9, 1, 2]
+        cases = {
+            "a row that is not a login and three counts": [house, ["octocat", "9", 0, 2]],
+            "more wins than games": [["tannergolden", 9, 3, 2]],
+            "more games than moves": [house, ["octocat", 1, 0, 2]],
+            "a login that could break the table": [house, ["octo|cat", 9, 0, 2]],
+            "the house not on top": [["octocat", 9, 0, 2], house],
+            "the house twice": [house, ["TannerGolden", 9, 0, 2]],
+            "a player without a move": [house, ["octocat", 0, 0, 0]],
+            "players out of order": [house, ["octocat", 9, 0, 2], ["hubot", 3, 1, 1]],
+            "eleven players": [house] + [[f"p{i}", 20 - i, 0, 1] for i in range(11)],
+            "not a list": "tannergolden",
+        }
+        for case, leaders in cases.items():
+            with self.subTest(case=case):
+                errors = ED.validate({"h": {**HALL, "leaders": leaders}}, {}, subject="tannergolden")
+                self.assertTrue(errors and all(e.startswith("h: leaders") for e in errors), errors)
+        for fine in ([], [house], [["tannergolden", 0, 0, 0], ["octocat", 1, 0, 1]], HALL["leaders"]):
+            with self.subTest(leaders=fine):
+                self.assertEqual(ED.validate({"h": {**HALL, "leaders": fine}}, {}, subject="tannergolden"), [])
+
 
 class Readme(unittest.TestCase):
     def test_the_board_has_its_turns_banner_above_and_every_move_folded_under(self):
@@ -250,6 +274,24 @@ class Readme(unittest.TestCase):
         self.assertEqual(text.count("(prefers-reduced-motion: reduce)"), 6,
                          "the hall's wide and phone still files, and the leader's badge, by day and night")
         self.assertNotIn("badge", ED.block("chess-hall", EMPTY, "assets/elements"))
+
+    def test_the_leaderboard_is_folded_under_the_badges_with_the_house_on_top(self):
+        text = ED.block("chess-hall", HALL, "assets/elements")
+        self.assertIn("</picture></a>\n\n</div>\n\n<details>\n<summary>🏆 <b>Leaderboard</b> · @tannergolden and GitHub's"
+                      " top 5 · ranked by wins, then moves</summary>\n\n|  | Player | Moves | Wins | Games |\n"
+                      "| :-: | :--- | --: | --: | --: |\n| ♔ | **[@tannergolden](https://github.com/tannergolden)** | "
+                      "**1,204** | **5** | **12** |\n| 🥇 | [@imvale](https://github.com/imvale) | 40 | 2 | 7 |\n", text)
+        self.assertIn("| 🥉 | [@wrencastellan](https://github.com/wrencastellan) | 52 | 1 | 6 |\n"
+                      "| 4 | [@jhalloran](https://github.com/jhalloran) | 12 | 1 | 3 |\n", text)
+        self.assertTrue(text.endswith("| 5 | [@octocat](https://github.com/octocat) | 9 | 0 | 2 |\n\nA win is a mating"
+                                      " move of one's own; a move or a mate the Arbiter plays, for either side, counts"
+                                      " for nobody.\n\n</details>\n<!-- markdown:element:chess-hall:end -->"))
+        alone = ED.block("chess-hall", {**EMPTY, "leaders": [["tannergolden", 1, 0, 1]]}, "assets/elements")
+        self.assertIn("</picture>\n\n<details>\n<summary>🏆 <b>Leaderboard</b> · @tannergolden · GitHub's players join"
+                      " with their first move</summary>", alone)
+        one = C.leaderboard({**EMPTY, "leaders": [["tannergolden", 1, 0, 1], ["octocat", 1, 0, 1]]})
+        self.assertIn("· @tannergolden and GitHub's top player · ranked by wins, then moves</summary>", one)
+        self.assertNotIn("Leaderboard", ED.block("chess-hall", EMPTY, "assets/elements"))
 
 
 class Sets(unittest.TestCase):

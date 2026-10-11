@@ -35,6 +35,7 @@ WHO = re.compile(r"@[A-Za-z0-9][A-Za-z0-9-]{0,38}|the Arbiter")
 DATE = re.compile(r"[1-9][0-9]? [A-Za-z]{3}")  # 18 Oct
 NAME = re.compile(r"[^<>|\n\r\[\]()`*_\\]{1,40}")
 PEOPLE = 5  # the hall's places: a podium of three, and two more beside it
+LEADERS = 10  # the leaderboard's places for GitHub's players, under the house's own row
 
 
 def placement(fen: str) -> dict[str, str]:
@@ -59,6 +60,10 @@ def captured(fen: str) -> tuple[str, str]:
     white_took = "".join(k * max(0, n - left.count(k)) for k, n in full.items())
     black_took = "".join(k.upper() * max(0, n - left.count(k.upper())) for k, n in full.items())
     return white_took, black_took
+
+
+def _count(n) -> bool:
+    return isinstance(n, int) and not isinstance(n, bool) and n >= 0
 
 
 def _int(d: dict, key: str, low: int = 0) -> int:
@@ -205,7 +210,27 @@ def check_hall(d: dict) -> list[str]:
     if not isinstance(names, dict) or not all(LOGIN.fullmatch(str(k)) and NAME.fullmatch(str(v))
                                               for k, v in names.items()):
         errors.append("names gives a login its name, in plain text")
-    return errors
+    return errors + check_leaders(d.get("leaders") or [])
+
+
+def check_leaders(leaders) -> list[str]:
+    """What the leaderboard's rows get wrong: the house's own row first, then GitHub's players by their wins and
+    then their moves, each a login with the moves, wins and games they played."""
+    if not isinstance(leaders, list) or len(leaders) > LEADERS + 1:
+        return [f"leaders is @{OWNER}'s row, then at most {LEADERS} of GitHub's players"]
+    errors = []
+    for i, row in enumerate(leaders):
+        if not (isinstance(row, list) and len(row) == 4 and isinstance(row[0], str) and LOGIN.fullmatch(row[0])
+                and all(_count(n) for n in row[1:]) and row[2] <= row[3] <= row[1]):
+            errors.append(f"leaders: {row!r} is not a login, then the moves, wins and games they played")
+        elif (row[0].casefold() == OWNER) != (i == 0):
+            errors.append(f"leaders: @{OWNER}'s row is the first, and the only one of theirs")
+        elif i and not row[1]:
+            errors.append(f"leaders: @{row[0]} is on it without a move")
+    if errors:
+        return errors
+    ranks = [(-row[2], -row[1]) for row in leaders[1:]]
+    return [] if ranks == sorted(ranks) else ["leaders: GitHub's players are ranked by their wins, then their moves"]
 
 
 def initials(name: str, login: str) -> str:
@@ -217,7 +242,8 @@ def initials(name: str, login: str) -> str:
 
 
 def hall_state(d: dict) -> dict:
-    """The Hall of Fame as the sheet draws it: the series between the house and GitHub, and its winners in order."""
+    """The Hall of Fame as the sheet draws it: the series between the house and GitHub, and its winners in order;
+    and its leaderboard as the README lists it."""
     names = d.get("names") or {}
     people = []
     for login, wins, last, games in d.get("people") or []:
@@ -229,8 +255,10 @@ def hall_state(d: dict) -> dict:
                        "badge": f"@{login}",
                        "wins": wins, "house": house, "initials": initials(name, login), "last": last.upper(),
                        "games": games})
+    leaders = [{"login": login, "moves": moves, "wins": wins, "games": games, "house": login.casefold() == OWNER}
+               for login, moves, wins, games in d.get("leaders") or []]
     return {"games": _int(d, "games"), "house": _int(d, "house"), "world": _int(d, "world"),
-            "draws": _int(d, "draws"), "people": people}
+            "draws": _int(d, "draws"), "people": people, "leaders": leaders}
 
 
 def describe_hall(d: dict) -> dict:

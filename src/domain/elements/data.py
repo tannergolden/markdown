@@ -187,7 +187,7 @@ def picture(eid: str, d: dict, rel: str) -> str:
 
 def block(eid: str, d: dict, rel: str) -> str:
     """The README block: the picture; for the game, its turn's banner above and every legal move under it; for its
-    Hall of Fame, a badge per winner under it, each linking to that player's profile."""
+    Hall of Fame, a badge per winner under it, each linking to that player's profile, and the leaderboard."""
     snippet = picture(eid, d, rel)
     if d["kind"] == "chess":
         from . import chess
@@ -195,6 +195,5 @@ def block(eid: str, d: dict, rel: str) -> str:
         snippet = "\n\n".join(part for part in (above, snippet, below) if part)
     elif d["kind"] == "chess-hall":
         from . import chess
-        row = chess.badges(eid, d, rel)
-        snippet += f"\n\n{row}" if row else ""
+        snippet = "\n\n".join(part for part in (snippet, chess.badges(eid, d, rel), chess.leaderboard(d)) if part)
     return readme.block(f"element:{eid}", snippet)

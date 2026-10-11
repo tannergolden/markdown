@@ -34,8 +34,9 @@ and only what they are made of changes. The pieces are one set of silhouettes
 ([`shapes.py`](shapes.py)), and the motion one choreography
 ([`motion.py`](motion.py)), with a still file of each sheet for anyone who asks
 for reduced motion. Round the pictures the README carries the game's words
-([`readme.py`](readme.py)): the turn's banner, every legal move named, and a
-badge linking each winner's profile.
+([`readme.py`](readme.py)): the turn's banner, every legal move named, a badge
+linking each winner's profile, and the leaderboard, @tannergolden's own row on
+top of GitHub's ten leading players.
 
 ---
 
@@ -49,7 +50,7 @@ badge linking each winner's profile.
 | [`game.py`](game.py)         | What the chess sheets are drawn from: the game as the profile's own engine hands it over, checked and read.     |
 | [`layout.py`](layout.py)     | The chess sheets' one layout, which every theme draws: the board and its panel, and the Hall of Fame.           |
 | [`motion.py`](motion.py)     | The motion every theme shares: one choreography, so a board moves the same way in every skin.                   |
-| [`readme.py`](readme.py)     | What the README carries round the chess sheets: the turn's banner, every legal move, and a badge per winner.    |
+| [`readme.py`](readme.py)     | What the README carries round the chess sheets: the banner, every legal move, the badges and the leaderboard.   |
 | [`README.md`](README.md)     | This file.                                                                                                      |
 | [`shapes.py`](shapes.py)     | The pieces' shapes, shared by every theme: one set of silhouettes, so a knight is the same knight in each skin. |
 | [`skins.py`](skins.py)       | What the chess sheets are made of, per theme: the standard theme's skin and the prints'.                        |

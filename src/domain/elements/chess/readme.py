@@ -1,13 +1,14 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
-"""What the README carries round the chess sheets: the turn's banner, every legal move, and a badge per winner.
+"""What the README carries round the chess sheets: the banner, every legal move, the badges and the leaderboard.
 
 An image cannot be clicked square by square, so the board's README block puts the game's words round it: the
 turn's banner above, green on GitHub's turn and red on the house's; under it every legal move as a row of its
 emoji, its title and notation, what it does in plain words, and a link that opens its ready-made issue, folded
 shut under one line saying whose moves they are and how many; then the note. A turn with more than ten moves is
 grouped by piece. The Hall of Fame's block follows its sheet with a row of badges, one per winner, each linking to
-that player's profile, since the names in a sheet cannot be clicked either.
+that player's profile, since the names in a sheet cannot be clicked either; then the leaderboard, folded shut like
+the moves: the house's own moves, wins and games on top, and GitHub's leading players under it.
 """
 from __future__ import annotations
 
@@ -19,6 +20,7 @@ SIGN = {"black": {"king": "♚", "queen": "♛", "rook": "♜", "bishop": "♝",
         "white": {"king": "♔", "queen": "♕", "rook": "♖", "bishop": "♗", "knight": "♘", "pawn": "♙"}}
 GROUP = {"king": "King", "queen": "Queen", "rook": "Rooks", "bishop": "Bishops", "knight": "Knights", "pawn": "Pawns"}
 FEW = 10  # a list this long or shorter is one table; a longer one is grouped by piece
+MEDALS = ("🥇", "🥈", "🥉")
 
 
 def to_move(d: dict) -> str:
@@ -84,3 +86,26 @@ def badges(eid: str, d: dict, rel: str) -> str:
         lines.append(f'<a href="https://github.com/{p["login"]}"><picture>{still}<source media="(prefers-color-scheme: '
                      f'dark)" srcset="{base}-dark.svg"><img alt="{escape(alt)}" src="{base}-day.svg"></picture></a>')
     return "\n".join(lines + ["", "</div>"])
+
+
+def leaderboard(d: dict) -> str:
+    """The leaderboard, folded shut under one line: the house's own row on top, then GitHub's leading players by
+    their wins and then their moves, each linking to their profile."""
+    rows = hall_state(d)["leaders"]
+    if not rows:
+        return ""
+    k = len(rows) - 1
+    if k:
+        line = (f"🏆 <b>Leaderboard</b> · @{OWNER} and GitHub's top {k if k > 1 else 'player'}"
+                " · ranked by wins, then moves")
+    else:
+        line = f"🏆 <b>Leaderboard</b> · @{OWNER} · GitHub's players join with their first move"
+    lines = ["|  | Player | Moves | Wins | Games |", "| :-: | :--- | --: | --: | --: |"]
+    for i, r in enumerate(rows):
+        place = SIGN["white"]["king"] if r["house"] else MEDALS[i - 1] if i <= len(MEDALS) else str(i)
+        cells = [f"[@{r['login']}](https://github.com/{r['login']})", f"{r['moves']:,}", f"{r['wins']:,}",
+                 f"{r['games']:,}"]
+        lines.append(f"| {place} | " + " | ".join(f"**{c}**" if r["house"] else c for c in cells) + " |")
+    rule = ("A win is a mating move of one's own; a move or a mate the Arbiter plays, for either side, counts for"
+            " nobody.")
+    return f"<details>\n<summary>{line}</summary>\n\n" + "\n".join(lines) + f"\n\n{rule}\n\n</details>"

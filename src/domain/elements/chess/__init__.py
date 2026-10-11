@@ -15,14 +15,14 @@ from __future__ import annotations
 
 from ...prints import STANDARD
 from . import motion as M
-from .game import (OWNER, PEOPLE, board_state, captured, check, check_hall, describe, describe_hall, hall_state,
-                   placement)
+from .game import (LEADERS, OWNER, PEOPLE, board_state, captured, check, check_hall, describe, describe_hall,
+                   hall_state, placement)
 from .layout import board_sheet, hall_sheet
-from .readme import badges, text
+from .readme import badges, leaderboard, text
 from .skins import Print, Standard
 
-__all__ = ["OWNER", "PEOPLE", "badges", "board_state", "captured", "check", "check_hall", "describe",
-           "describe_hall", "draw", "hall_state", "placement", "text", "variants"]
+__all__ = ["LEADERS", "OWNER", "PEOPLE", "badges", "board_state", "captured", "check", "check_hall", "describe",
+           "describe_hall", "draw", "hall_state", "leaderboard", "placement", "text", "variants"]
 
 KINDS = ("chess", "chess-hall")
 SHEETS = ("wide", "narrow", "still", "narrow-still")  # each sheet's files: wide and a phone's, moving and still

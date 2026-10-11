@@ -337,7 +337,7 @@ its markers, because only the README's author knows which section it belongs in:
 | `certificate` | The checks a repository passes, with the evidence for each.                  | git and GitHub: licence, security policy, pinned actions, Conventional Commits, and `ci: main`. |
 | `placard`     | A card that links to another repository.                                     | GitHub: `measure: owner/name`.                                                                  |
 | `chess`       | The game on @tannergolden's profile, with every legal move named under it.   | Nothing: the profile's own workflow writes it after every move.                                 |
-| `chess-hall`  | That game's Hall of Fame, with a badge linking each winner's profile.        | GitHub: each winner's name, from their profile.                                                 |
+| `chess-hall`  | That game's Hall of Fame, a badge for each winner and the leaderboard.       | GitHub: each winner's name, from their profile.                                                 |
 
 What the settings write wins over what was measured, so any element can carry
 a `title`, a `caption` or a `desc` of its own, and a roster or a certificate
@@ -360,8 +360,11 @@ it does in plain words and a link to its ready-made issue, folded shut, then a
 `note`. The Hall of Fame takes the `games` played and the wins of the `house`,
 of GitHub (`world`) and the `draws`, and its five leading winners as `people`;
 `measure: {}` reads each winner's name from their profile, and its README block
-adds a badge for each, linking to it. Both are drawn in the standard theme or the
-page's print, as one layout, whatever holiday or collection is up.
+adds a badge for each, linking to it. Under the badges it folds shut the
+`leaders`: @tannergolden's own moves, wins and games on top, then GitHub's ten
+leading players by their wins and then their moves, each linking to their
+profile. Both are drawn in the standard theme or the page's print, as one
+layout, whatever holiday or collection is up.
 
 ---
 
