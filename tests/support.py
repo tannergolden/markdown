@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
-"""What every test shares: `src/` on the import path, and the kit's data handed to the domain once.
+"""What every test shares: `src/` on the import path, git without its background maintenance, and the kit's data
+handed to the domain once.
 
 The tests stand where the composition root stands: they may import `infra`
 to build what the application is handed, and `install()` reads the outlines
@@ -9,6 +10,7 @@ and prints the way a run does.
 from __future__ import annotations
 
 import io
+import os
 import sys
 from pathlib import Path
 
@@ -17,6 +19,14 @@ SRC = ROOT / "src"
 LAUNCHER = SRC / "markdown-kit.py"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
+
+# Since git 2.47 a commit, a fetch or a push leaves `git maintenance run --auto` working on in the background, and
+# a test that ends at once can find that process writing into its repository's .git while the temporary directory
+# is being removed. No test needs maintenance, so every git a test starts, itself or through the kit, runs without
+# it: one more entry in git's environment config, after any the environment already holds.
+_entry = int(os.environ.get("GIT_CONFIG_COUNT") or 0)
+os.environ.update({"GIT_CONFIG_COUNT": str(_entry + 1), f"GIT_CONFIG_KEY_{_entry}": "maintenance.auto",
+                   f"GIT_CONFIG_VALUE_{_entry}": "false"})
 
 _catalogue: dict | None = None
 

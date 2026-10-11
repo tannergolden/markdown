@@ -25,6 +25,9 @@ class GitTest(unittest.TestCase):
         base = Path(self.tmp.name)
         self.remote, self.root = base / "remote.git", base / "work"
         sh(base, "init", "--quiet", "--bare", "--initial-branch=main", str(self.remote))
+        # A push starts the remote's side in a git that drops the environment's config, so the remote is told in
+        # its own that it needs no background maintenance either (see tests.support).
+        sh(self.remote, "config", "maintenance.auto", "false")
         sh(base, "clone", "--quiet", str(self.remote), str(self.root))
         # A clone of an empty repository takes this machine's default branch name; the test wants main.
         sh(self.root, "symbolic-ref", "HEAD", "refs/heads/main")
