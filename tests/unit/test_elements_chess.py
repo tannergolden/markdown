@@ -52,6 +52,16 @@ HALL = {"kind": "chess-hall", "games": 12, "house": 5, "world": 6, "draws": 1,
                    ["wrencastellan", 1, "4 Sep", 6], ["jhalloran", 1, "8 Oct", 3]],
         "names": {"imvale": "Imogen Vale", "tokafor": "Tomas Okafor"}}
 EMPTY = {"kind": "chess-hall", "games": 0, "house": 0, "world": 0, "draws": 0, "people": []}
+# The densest board the contract accepts: queens wherever a pawn could have been crowned, every letter and digit in
+# the panel's words and logins, and every number at its longest.
+LETTERS = "abcdefghijklmnopqrstuvwxyz0123456789"
+DENSE = dict(GAME, fen="rqqqkqqr/qqqqqqqq/8/8/8/8/QQQQQQQQ/RQQQKQQR b - - 0 987654321", game=123456789,
+             move=987654321, players=102345678, check="e8", taken={"white": "qrbnp" * 3, "black": "qrbnp" * 3},
+             last={"san": "Qa1xb2+", "from": "a1", "to": "b2", "piece": "queen", "captured": "knight",
+                   "words": "The quick brown fox jumps over a lazy dog 0123456789 THE QUICK BROWN FOX JUMPS V",
+                   "by": "@" + LETTERS[:39], "when": "27 Oct"},
+             history=[[987654319, "Qa1xb2+", "exd8=Q#", "@" + LETTERS[3:] + "-xy"],
+                      [987654320, "O-O-O+", "Nb1xc3+", "@" + LETTERS[::-1][:39]], [987654321, "Rh8xg7#", "", ""]])
 TONES = (STANDARD, *sorted(PRINTS))
 
 
@@ -66,9 +76,19 @@ class EveryFile(unittest.TestCase):
                             minidom.parseString(svg)
                             self.assertEqual(svg, E.draw(d["kind"], d, tone, theme, variant))
                             self.assertNotIn("<text", svg)
-                            self.assertEqual(lint(svg, budget=BUDGET["sheet"]), [])
+                            self.assertEqual(lint(svg, budget=BUDGET[E.KINDS[d["kind"]][2]]), [])
                             for ch in DASHES:
                                 self.assertNotIn(ch, svg)
+
+    def test_the_densest_board_the_contract_accepts_is_drawn_with_room_to_spare(self):
+        # A board over budget fails the whole run, and the page's moves stay a turn behind, so the densest board
+        # the data allows keeps clear of the board's budget in every tone and every file.
+        self.assertEqual(C.check(DENSE), [])
+        for tone in TONES:
+            for variant in E.variants("chess", DENSE):
+                with self.subTest(tone=tone, variant=variant):
+                    svg = E.draw("chess", DENSE, tone, "dark", variant)
+                    self.assertLess(len(svg.encode()), BUDGET["board"] * 0.97)
 
     def test_the_still_files_stand_still_and_the_rest_move(self):
         for d in (GAME, HALL):
@@ -85,7 +105,7 @@ class EveryFile(unittest.TestCase):
             for tone in (STANDARD, "blackprint"):
                 for variant in E.variants(d["kind"], d):
                     svg = E.draw(d["kind"], d, tone, "dark", variant)
-                    self.assertEqual(lint(svg, budget=BUDGET["sheet"]), [], (d["kind"], tone, variant))
+                    self.assertEqual(lint(svg, budget=BUDGET[E.KINDS[d["kind"]][2]]), [], (d["kind"], tone, variant))
 
 
 class Board(unittest.TestCase):

@@ -35,10 +35,15 @@ THEMES = {"day": DAY, "dark": DARK}
 # titles in the family need, a link under the footer to a button's worth, an
 # element sheet to a chart's, a card beside another to half of that, a
 # badge to a header's (a plate embeds each letter it uses once, and a long
-# label and value in mixed case use most of the alphabet), and a trophy to
-# what the richest card, a medallion in its laurel, needs.
+# label and value in mixed case use most of the alphabet), a trophy to what
+# the richest card, a medallion in its laurel, needs, and a chess board to
+# what the densest board its data allows needs: up to 32 pieces drawn and set
+# in motion, and a panel whose words and logins can use every letter there
+# is. A board over budget fails the whole run and leaves the page's moves a
+# turn behind, so the board's budget clears the densest board by over a
+# tenth.
 BUDGET = {"header": 48_000, "footer": 48_000, "link": 12_000, "sheet": 72_000, "card": 32_000, "badge": 48_000,
-          "trophy": 40_000}
+          "trophy": 40_000, "board": 96_000}
 
 
 def c(token: str) -> str:

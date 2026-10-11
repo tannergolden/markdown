@@ -971,7 +971,7 @@ KINDS = {
     "roster": (roster, ("wide", "narrow"), "sheet"),
     "certificate": (certificate, ("wide", "narrow"), "sheet"),
     "placard": (placard, ("wide",), "card"),
-    "chess": (chess, ("wide", "narrow", "still", "narrow-still"), "sheet"),
+    "chess": (chess, ("wide", "narrow", "still", "narrow-still"), "board"),
     "chess-hall": (chess_hall, ("wide", "narrow", "still", "narrow-still"), "sheet"),
 }
 
