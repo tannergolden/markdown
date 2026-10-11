@@ -193,7 +193,7 @@ class Readme(unittest.TestCase):
         text = ED.block("chess", GAME, "assets/elements")
         self.assertTrue(text.startswith("<!-- markdown:element:chess:start -->\n> [!TIP]\n> 🟢 **GitHub's turn!**"))
         self.assertIn("by 18 Oct.\n\n<picture>", text)
-        self.assertIn("</picture>\n\n<details>\n<summary>♚ <b>GitHub's moves</b> · 4 legal moves · open to choose one"
+        self.assertIn("</picture>\n\n<details>\n<summary>♚ <b>GitHub's Turn</b> · 4 legal moves · open to choose one"
                       "</summary>\n\n|  | Move | What it does | Play |\n| :-: | :--- | :--- | :-: |\n", text)
         self.assertIn(f"| 🏰 | **The Royal Retreat** `Kb8` | King from c8 to b8 | [Play ↗]({LINK}) |", text)
         self.assertTrue(text.endswith("</details>\n\nThe first move to arrive is the one played.\n"
@@ -202,7 +202,7 @@ class Readme(unittest.TestCase):
     def test_the_houses_turn_is_a_caution_and_its_moves_are_the_houses_alone(self):
         text = ED.block("chess", HOUSE, "assets/elements")
         self.assertIn("> [!CAUTION]\n> 🛑 **@tannergolden's turn!**", text)
-        self.assertIn("♔ <b>@tannergolden's moves</b> · 4 legal moves · only @tannergolden can play these", text)
+        self.assertIn("♔ <b>@tannergolden's Turn</b> · 4 legal moves · only @tannergolden can play these", text)
 
     def test_a_busy_turn_is_grouped_by_piece(self):
         many = [{"piece": "knight", "list": [["🐴", f"Ride {i}", "Nf3", "Knight from g1 to f3", LINK] for i in range(7)]},

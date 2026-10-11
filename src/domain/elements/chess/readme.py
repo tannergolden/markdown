@@ -39,7 +39,7 @@ def table(moves: list) -> str:
 
 
 def move_list(d: dict) -> str:
-    """Every legal move, folded shut under the line that says whose they are and how many."""
+    """Every legal move, folded shut under the line that says whose turn it is and how many moves it has."""
     groups = [g for g in d.get("moves") or [] if g.get("list")]
     n = sum(len(g["list"]) for g in groups)
     if not n:
@@ -47,9 +47,9 @@ def move_list(d: dict) -> str:
     side = to_move(d)
     count = f"{n} legal move{'s' if n != 1 else ''}"
     if side == "black":
-        line = f"{SIGN['black']['king']} <b>GitHub's moves</b> · {count} · open to choose one"
+        line = f"{SIGN['black']['king']} <b>GitHub's Turn</b> · {count} · open to choose one"
     else:
-        line = f"{SIGN['white']['king']} <b>@{OWNER}'s moves</b> · {count} · only @{OWNER} can play these"
+        line = f"{SIGN['white']['king']} <b>@{OWNER}'s Turn</b> · {count} · only @{OWNER} can play these"
     if n <= FEW:
         inside = table([move for g in groups for move in g["list"]])
     else:
