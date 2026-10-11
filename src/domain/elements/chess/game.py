@@ -223,8 +223,10 @@ def hall_state(d: dict) -> dict:
     for login, wins, last, games in d.get("people") or []:
         house = login.casefold() == OWNER
         name = names.get(login) or names.get(login.casefold()) or ""
+        # a winner with no name on their profile is named by their login, and the line under it says their side
         people.append({"login": login, "name": f"@{OWNER.upper()}" if house else (name or f"@{login}").upper(),
-                       "handle": "the house  ·  white" if house else f"@{login}", "badge": f"@{login}",
+                       "handle": "the house  ·  white" if house else f"@{login}" if name else "github  ·  black",
+                       "badge": f"@{login}",
                        "wins": wins, "house": house, "initials": initials(name, login), "last": last.upper(),
                        "games": games})
     return {"games": _int(d, "games"), "house": _int(d, "house"), "world": _int(d, "world"),

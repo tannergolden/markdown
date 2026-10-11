@@ -133,7 +133,8 @@ class Hall(unittest.TestCase):
         self.assertEqual([(p["name"], p["initials"], p["house"]) for p in people[:4]],
                          [("@TANNERGOLDEN", "TA", True), ("IMOGEN VALE", "IV", False), ("TOMAS OKAFOR", "TO", False),
                           ("@WRENCASTELLAN", "WR", False)])
-        self.assertEqual(people[0]["handle"], "the house  ·  white")
+        self.assertEqual([p["handle"] for p in people[:4]],
+                         ["the house  ·  white", "@imvale", "@tokafor", "github  ·  black"])
 
     def test_each_winner_has_a_badge_and_the_leaders_has_a_still_twin(self):
         self.assertEqual(E.variants("chess-hall", HALL), ("wide", "narrow", "still", "narrow-still", "badge-1",
