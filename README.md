@@ -88,7 +88,7 @@ with the holidays on, from one stub and one settings file:
 | **Banners**  | A header read from GitHub, the name and the bio, with a motto, a note and six figures; a footer with its closing words, and four buttons under it.                                                                                     |
 | **Badges**   | Four static badges, and two live ones the run measures: whether the standards pass their own checks, and how long ago the last commit was.                                                                                             |
 | **Elements** | A schematic of how its repositories fit together, written by hand, and placards for the two latest releases and two good first issues, which its own scripts rewrite weekly.                                                           |
-| **Games**    | Tic-Tac-Toe, Connect Four, Checkers and Chess, @tannergolden against GitHub, played live: each board after every move, every legal move a link that plays it, and the Hall of Fame with its leaderboard, drawn for this profile alone. |
+| **Games**    | Chess, Checkers, Connect Four and Tic-Tac-Toe, @tannergolden against GitHub, played live: each board after every move, every legal move a link that plays it, and the Hall of Fame with its leaderboard, drawn for this profile alone. |
 | **Trophies** | The case in profile mode: five core trophies in one row, the level and next-up cards over them, and the achievements under them.                                                                                                       |
 
 Its stub is the one below with `mode: profile` and `theme: blackprint`, and
@@ -303,37 +303,41 @@ shows an HTML file as its source.
 > the next move.
 
 The kit draws four games for one page, @tannergolden, the house, against
-everyone else on GitHub, in four tiers, from a game anyone can see to the
-bottom of to one nobody ever will:
+everyone else on GitHub, from the deepest to the quickest:
 
-| Tier | Game         | Positions                            | The house plays                                | Who opens                               |
-| :--: | :----------- | :----------------------------------- | :--------------------------------------------- | :-------------------------------------- |
-| 1    | Tic-Tac-Toe  | 765                                  | X when the Arbiter opens for it, else O        | The Arbiter, for a side drawn at random |
-| 2    | Connect Four | about 4.5 × 10¹² (4,531,985,219,092) | Dark when the Arbiter opens for it, else Light | The Arbiter, for a side drawn at random |
-| 3    | Checkers     | about 5 × 10²⁰                       | Dark, the dark men                             | The house                               |
-| 4    | Chess        | about 10⁴³ to 10⁵⁰                   | White                                          | The house                               |
+| Game         | Positions                            | The house plays | GitHub plays | Who opens                               |
+| :----------- | :----------------------------------- | :-------------- | :----------- | :-------------------------------------- |
+| Chess        | about 10⁴³ to 10⁵⁰                   | White           | Black        | The house                               |
+| Checkers     | about 5 × 10²⁰                       | White           | Black        | GitHub, as Black moves first            |
+| Connect Four | about 4.5 × 10¹² (4,531,985,219,092) | White           | Black        | The Arbiter, for a side drawn at random |
+| Tic-Tac-Toe  | 765                                  | X               | O            | The Arbiter, for a side drawn at random |
 
 A player picks a move under a board on the profile, its link opens a
 ready-made issue in [tannergolden/play](https://github.com/tannergolden/play),
 and the profile's own engine plays it and has the kit draw the page again.
 
-**Who opens.** The side that moves first always plays a game's first colour:
-X, the dark discs, the dark men, White. The house opens Checkers and Chess,
-whose first move gives little away. In the other two the first player has a
-far higher chance of winning, so **the Arbiter opens every game of Tic-Tac-Toe
-and Connect Four, for a side drawn at random, with a random legal move**, and
-neither side is favoured: the side it opened for plays X or the dark discs, the
-other O or the light, and the house's colour changes from game to game.
+**Who plays what, and who opens.** Each player's colour is fixed: the house
+always plays White in Chess, Checkers and Connect Four, and X in Tic-Tac-Toe,
+and GitHub the other side. Only who moves first can change. The house opens
+Chess, as White does. Checkers follows American checkers, where Black moves
+first, so GitHub opens it. In the other two the first player has a far higher
+chance of winning, so **the Arbiter opens every game of Connect Four and
+Tic-Tac-Toe, for a side drawn at random, with a random legal move**, and neither
+side is favoured: a game opened for GitHub starts with a black disc, or an O.
 
 - **Connect Four is solved**: whoever drops the first disc can force a win with
   perfect play, by opening in the centre column (James D. Allen and Victor
   Allis, independently, in 1988).
 - **Tic-Tac-Toe is a draw with perfect play**, but its first player wins far
-  more often whenever anyone slips: of the 255,168 possible games, X wins
-  131,184 (about 51%), O wins 77,904 (about 31%) and 46,080 are drawn.
+  more often whenever anyone slips: of the 255,168 possible games, the first
+  player wins 131,184 (about 51%), the second 77,904 (about 31%) and 46,080
+  are drawn.
 - **Checkers** was weakly solved as a draw in 2007, and its first move's edge is
-  small; **in Chess**, White scores about 55% in master play. The house opens
-  both.
+  small; **in Chess**, White scores about 55% in master play. Neither needs the
+  Arbiter's draw.
+
+These reasons belong to the kit's documentation and the play repository's ADR
+alone: a board, its banner and its note say only who opens.
 
 The Arbiter's opening move is its own and counts for nobody: a fresh board of
 Tic-Tac-Toe or Connect Four comes with it already played, and the other side to
@@ -354,76 +358,79 @@ of, and the score sheet), and the same motion as each file opens:
 
 | Game             | A move is written                                                                                   | The panel counts                                                     | As the file opens                                                                                                                    |
 | :--------------- | :-------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
-| **Tic-Tac-Toe**  | Its mark and its cell, named as chess names squares: `Xb2`, with `+` for a threat and `#` for a win | What perfect play says from here, and where each side would win next | The last mark draws itself stroke by stroke, a cell the side to move must block is marked, and a won line is struck through          |
-| **Connect Four** | Its column, numbered 1 to 7 from the left: `4`, with `+` for a threat and `#` for four in a row     | Each side's discs left, a rack of twenty-one emptying                | The last disc is held over its column, falls behind the frame and lands with a bounce, and a won four are ringed and joined          |
-| **Checkers**     | As checkers writes it, its 32 dark squares numbered: `11-15` a step, `22x15x8` a jump               | The men each side has taken, and the kings each has made             | The last man slides, or hops each man it takes, its path drawn in behind it, and is crowned if it lands on the far row               |
 | **Chess**        | In SAN: `Nf3`, `exd5`, `O-O`, `Qxf7#`                                                               | What each side has taken, and the lead                               | The last piece comes in from its square, a knight leaping and a castling king bringing its rook round, and a king in check is marked |
+| **Checkers**     | As checkers writes it, its 32 dark squares numbered: `11-15` a step, `22x15x8` a jump               | The men each side has taken, and the kings each has made             | The last man slides, or hops each man it takes, its path drawn in behind it, and is crowned if it lands on the far row               |
+| **Connect Four** | Its column, numbered 1 to 7 from the left: `4`, with `+` for a threat and `#` for four in a row     | Each side's discs left, a rack of twenty-one emptying                | The last disc is held over its column, falls behind the frame and lands with a bounce, and a won four are ringed and joined          |
+| **Tic-Tac-Toe**  | Its mark and its cell, named as chess names squares: `Xb2`, with `+` for a threat and `#` for a win | What perfect play says from here, and where each side would win next | The last mark draws itself stroke by stroke, a cell the side to move must block is marked, and a won line is struck through          |
 
 - **Every tone**: the standard theme's enamel, chess's own board and lit pieces
   under one lamp, the last move marked amber and whatever the side to move must
   answer (a king in check, a mark or a disc to block, a man that must jump)
-  glowing red; Tic-Tac-Toe's cells and bars are chess's light and dark squares,
-  its X always light and its O always dark whoever plays them, Connect Four's
-  frame is the theme's cobalt, and Checkers plays on chess's own board. Or a
-  print's drawing on drafting paper: poché for the dark squares, the bars and
-  the frame, line shading for the light pieces, phantom lines where a piece
-  stood and a revision cloud round whatever must be answered. A holiday's set or
-  a collection's design leaves the games in the standard theme's look or the
-  page's print.
+  glowing red; the house's pieces are the light ones in every game, White's men
+  and discs and the X, and GitHub's the dark, Black's and the O; Tic-Tac-Toe's
+  cells and bars are chess's light and dark squares, Connect Four's frame is the
+  theme's cobalt, and Checkers plays on chess's own board, White at the foot as
+  chess's White is. Or a print's drawing on drafting paper: poché for the dark
+  squares, the bars and the frame, line shading for the light pieces, phantom
+  lines where a piece stood and a revision cloud round whatever must be
+  answered. A holiday's set or a collection's design leaves the games in the
+  standard theme's look or the page's print.
 - **The Hall of Fame** of all four games: the series between the house and
-  GitHub, each game on its own row under the four together, each named by its
-  two pieces in the order they move; then a podium of the three leading winners
-  across all four and two more beside it, each with their wins by game and
-  named as their GitHub profile names them. Under it in the README, a badge for
-  each winner, the leader's glinting, and the leaderboard folded shut, with a
-  column of wins for each game.
+  GitHub, each game on its own row under the four together, in the README's
+  order and each named by its two pieces, the house's first; then a podium of
+  the three leading winners across all four and two more beside it, each with
+  their wins by game and named as their GitHub profile names them. Under it in
+  the README, a badge for each winner, the leader's glinting, and the
+  leaderboard folded shut: a column of wins for each game, then moves, then
+  wins in all. A win counts only for the player who makes the winning move,
+  and nothing the Arbiter plays counts for anyone.
 
 Each sheet comes as a **day** file and a **dark** file, wide and on a phone,
 moving as it opens and still for reduced motion, like a header. Round the
 pictures the README carries each game's words, since an image cannot be
 clicked square by square: the turn's banner, and every legal move with a link
 that opens its ready-made issue, folded shut under one line saying whose turn
-it is, signed with what that side plays: ❌ or ⭕, ⚫ or ⚪, ⛂ or ⛀, ♔ or ♚.
+it is, signed with what that side plays: ♔ or ♚, ⛀ or ⛂, ⚪ or ⚫, ❌ or ⭕.
 
 <table>
   <tr>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#tictactoe"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/tictactoe/tictactoe-wide-blackprint-still-dark.svg"><img src="docs/themes/tictactoe/tictactoe-wide-blackprint-still-day.svg" alt="The Tic-Tac-Toe board in blackprint, the profile's print, from a sample game the Arbiter opened for GitHub" width="100%"></picture></a>
-      <br /><sub>Tic-Tac-Toe, in <code>blackprint</code>, the profile's print</sub>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-wide-blackprint-still-dark.svg"><img src="docs/themes/chess/chess-wide-blackprint-still-day.svg" alt="The chess board in blackprint, from a sample game" width="100%"></picture></a>
+      <br /><sub>Chess, in <code>blackprint</code>, the profile's print</sub>
     </td>
-    <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#connectfour"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/connectfour/connectfour-wide-blackprint-still-dark.svg"><img src="docs/themes/connectfour/connectfour-wide-blackprint-still-day.svg" alt="The Connect Four frame in blackprint, from a sample game the Arbiter opened for GitHub" width="100%"></picture></a>
-      <br /><sub>Connect Four, in <code>blackprint</code></sub>
-    </td>
-  </tr>
-  <tr>
     <td width="50%" align="center">
       <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#checkers"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/checkers/checkers-wide-blackprint-still-dark.svg"><img src="docs/themes/checkers/checkers-wide-blackprint-still-day.svg" alt="The Checkers board in blackprint, from a sample game" width="100%"></picture></a>
       <br /><sub>Checkers, in <code>blackprint</code></sub>
     </td>
+  </tr>
+  <tr>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-wide-blackprint-still-dark.svg"><img src="docs/themes/chess/chess-wide-blackprint-still-day.svg" alt="The chess board in blackprint, from a sample game" width="100%"></picture></a>
-      <br /><sub>Chess, in <code>blackprint</code></sub>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#connectfour"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/connectfour/connectfour-wide-blackprint-still-dark.svg"><img src="docs/themes/connectfour/connectfour-wide-blackprint-still-day.svg" alt="The Connect Four frame in blackprint, from a sample game the Arbiter opened for GitHub" width="100%"></picture></a>
+      <br /><sub>Connect Four, in <code>blackprint</code></sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#tictactoe"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/tictactoe/tictactoe-wide-blackprint-still-dark.svg"><img src="docs/themes/tictactoe/tictactoe-wide-blackprint-still-day.svg" alt="The Tic-Tac-Toe board in blackprint, the profile's print, from a sample game the Arbiter opened for GitHub" width="100%"></picture></a>
+      <br /><sub>Tic-Tac-Toe, in <code>blackprint</code></sub>
     </td>
   </tr>
   <tr>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#tictactoe"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/tictactoe/tictactoe-wide-standard-still-dark.svg"><img src="docs/themes/tictactoe/tictactoe-wide-standard-still-day.svg" alt="The Tic-Tac-Toe board in standard, from a sample game the Arbiter opened for GitHub" width="100%"></picture></a>
-      <br /><sub>Tic-Tac-Toe, in <code>standard</code></sub>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-wide-standard-still-dark.svg"><img src="docs/themes/chess/chess-wide-standard-still-day.svg" alt="The chess board in standard, from a sample game" width="100%"></picture></a>
+      <br /><sub>Chess, in <code>standard</code></sub>
     </td>
-    <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#connectfour"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/connectfour/connectfour-wide-standard-still-dark.svg"><img src="docs/themes/connectfour/connectfour-wide-standard-still-day.svg" alt="The Connect Four frame in standard, from a sample game the Arbiter opened for GitHub" width="100%"></picture></a>
-      <br /><sub>Connect Four, in <code>standard</code></sub>
-    </td>
-  </tr>
-  <tr>
     <td width="50%" align="center">
       <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#checkers"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/checkers/checkers-wide-standard-still-dark.svg"><img src="docs/themes/checkers/checkers-wide-standard-still-day.svg" alt="The Checkers board in standard, from a sample game" width="100%"></picture></a>
       <br /><sub>Checkers, in <code>standard</code></sub>
     </td>
+  </tr>
+  <tr>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-wide-standard-still-dark.svg"><img src="docs/themes/chess/chess-wide-standard-still-day.svg" alt="The chess board in standard, from a sample game" width="100%"></picture></a>
-      <br /><sub>Chess, in <code>standard</code></sub>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#connectfour"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/connectfour/connectfour-wide-standard-still-dark.svg"><img src="docs/themes/connectfour/connectfour-wide-standard-still-day.svg" alt="The Connect Four frame in standard, from a sample game the Arbiter opened for GitHub" width="100%"></picture></a>
+      <br /><sub>Connect Four, in <code>standard</code></sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#tictactoe"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/tictactoe/tictactoe-wide-standard-still-dark.svg"><img src="docs/themes/tictactoe/tictactoe-wide-standard-still-day.svg" alt="The Tic-Tac-Toe board in standard, from a sample game the Arbiter opened for GitHub" width="100%"></picture></a>
+      <br /><sub>Tic-Tac-Toe, in <code>standard</code></sub>
     </td>
   </tr>
   <tr>
@@ -438,7 +445,7 @@ it is, signed with what that side plays: ❌ or ⭕, ⚫ or ⚪, ⛂ or ⛀, ♔
   </tr>
 </table>
 
-**[See the games in every tone, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#tictactoe)**:
+**[See the games in every tone, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess)**:
 the theme-sets page shows each game's board and its phone files, and the Hall
 of Fame of all four with its phone files and the winners' badges, in the
 standard theme and every print, each from a sample whose players are as
