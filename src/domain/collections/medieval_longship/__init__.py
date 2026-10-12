@@ -28,6 +28,7 @@ import math
 
 from ...holidays.designs import WIDE
 from ...holidays.designs.badges import inside
+from ...holidays.designs.materials import Podium, Stuff
 from ...holidays.pixel import sphere, tube
 from ..hand import CollectionSet
 from . import art as A
@@ -828,8 +829,17 @@ class Longship(CollectionSet):
 
     # ---- the games
     def game_squares(self, night):
-        """A board of the fjord's sea on cream, by night the deep water under the fells."""
-        return (RAMP["fell"][4], RAMP["deep"][5]) if night else (RAMP["cream"][4], RAMP["sea"][3])
+        """A board of the fjord's sea painted on ash planks, by night the deep water under the fells."""
+        return ((Stuff(RAMP["fell"], 4, "wood"), Stuff(RAMP["deep"], 5, "wood")) if night else
+                (Stuff(RAMP["cream"], 4, "wood"), Stuff(RAMP["sea"], 3, "wood")))
+
+    def game_frame(self, night):
+        """A frame of oak, mitred, as a ship's timbers are joined."""
+        return Stuff(RAMP["oak"], 3), "wood"
+
+    def game_podium(self, night):
+        """A podium of tarred timber, as her hull is, her shields along its rail."""
+        return Podium(Stuff(RAMP["tar"], 5 if night else 4, "wood"), "shields", Stuff(RAMP["red"], 3))
 
 
 SET = Longship()

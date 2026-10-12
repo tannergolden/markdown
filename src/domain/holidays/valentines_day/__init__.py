@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from ..designs import NARROW, Holiday
 from ..designs.badges import inside
+from ..designs.materials import Podium, Stuff
 from ..pixel import Paint, Pix
 from . import art as A
 from .palette import C, NIGHT_SKY, RAMP, TOKENS, X, step
@@ -494,8 +495,16 @@ class ValentinesDay(Holiday):
 
     # ---- the games
     def game_squares(self, night):
-        """A board of blush on lace, a love letter's own."""
-        return (RAMP["lace"][3], RAMP["blush"][2]) if night else (RAMP["lace"][4], RAMP["blush"][3])
+        """A board of blush velvet on lace."""
+        return (Stuff(RAMP["lace"], 3 if night else 4, "lace"), Stuff(RAMP["blush"], 2 if night else 3, "velvet"))
+
+    def game_frame(self, night):
+        """A gilt frame, beaded, as a valentine's card is edged."""
+        return Stuff(RAMP["gold"], 3), "gilt"
+
+    def game_podium(self, night):
+        """A podium of rose velvet, edged in lace."""
+        return Podium(Stuff(RAMP["rose"], 2 if night else 3, "velvet"), "lace", Stuff(RAMP["lace"], 4 if night else 5))
 
 
 SET = ValentinesDay()

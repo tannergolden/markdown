@@ -18,6 +18,7 @@ from functools import partial
 
 from ..designs import NARROW, Holiday
 from ..designs.badges import inside
+from ..designs.materials import Podium, Stuff
 from . import art as A
 from .palette import C, CONFETTI, NIGHT_SKY, RAMP, TOKENS, X, step
 
@@ -505,8 +506,17 @@ class NewYearsDay(Holiday):
 
     # ---- the games
     def game_squares(self, night):
-        """A board of midnight on champagne."""
-        return (RAMP["champagne"][4], RAMP["midnight"][5]) if night else (RAMP["champagne"][5], RAMP["midnight"][5])
+        """A board of midnight lacquer glittering with gold on champagne satin."""
+        return (Stuff(RAMP["champagne"], 4 if night else 5, "satin"),
+                Stuff(RAMP["midnight"], 5, "flecks", RAMP["gold"][5]))
+
+    def game_frame(self, night):
+        """A gilt frame, beaded."""
+        return Stuff(RAMP["gold"], 3), "gilt"
+
+    def game_podium(self, night):
+        """A podium of midnight lacquer glittering with gold, as the board's dark squares are."""
+        return Podium(Stuff(RAMP["midnight"], 4 if night else 3, "flecks", RAMP["gold"][5]))
 
 
 SET = NewYearsDay()

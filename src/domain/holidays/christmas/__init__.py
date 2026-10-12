@@ -16,6 +16,7 @@ import random
 
 from ..designs import NARROW, WIDE, Holiday
 from ..designs.badges import inside
+from ..designs.materials import Podium, Stuff
 from ..pixel import LX, LZ, Pix, sphere, tube
 from . import art as A
 from .palette import BULBS, C, NIGHT_SKY, RAMP, TOKENS, X, near, step
@@ -423,8 +424,16 @@ class Christmas(Holiday):
 
     # ---- the games
     def game_squares(self, night):
-        """A board of pine on snow."""
-        return (RAMP["snow"][2], RAMP["pine"][3]) if night else (RAMP["snow"][4], RAMP["pine"][3])
+        """A board of pine needles on sparkling snow."""
+        return (Stuff(RAMP["snow"], 2 if night else 4, "snow"), Stuff(RAMP["pine"], 3, "needles"))
+
+    def game_frame(self, night):
+        """A frame striped as a candy cane."""
+        return Stuff(RAMP["red"], 3, fleck=RAMP["snow"][5]), "stripes"
+
+    def game_podium(self, night):
+        """A podium of presents wrapped in red and tied with gold ribbon."""
+        return Podium(Stuff(RAMP["red"], 2 if night else 3, "satin"), "ribbon", Stuff(RAMP["gold"], 3 if night else 4))
 
 
 SET = Christmas()

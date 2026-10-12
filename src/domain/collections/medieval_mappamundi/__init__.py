@@ -35,6 +35,7 @@ from __future__ import annotations
 
 from ...holidays.designs import WIDE
 from ...holidays.designs.badges import inside
+from ...holidays.designs.materials import Podium, Stuff
 from ..hand import CollectionSet
 from . import art as A
 from .palette import C, RAMP, TOKENS, X, step
@@ -500,8 +501,16 @@ class MappaMundi(CollectionSet):
         return p.text(x, y, s, self.ink(night)["title"], "57", scale, **self.lit(night))
 
     def game_squares(self, night):
-        """A board of the chart's green sea on parchment."""
-        return (RAMP["parch"][5], RAMP["sea"][2]) if night else (RAMP["parch"][6], RAMP["sea"][2])
+        """A board of the chart's green sea, its waves drawn in, on parchment."""
+        return (Stuff(RAMP["parch"], 5 if night else 6, "vellum"), Stuff(RAMP["sea"], 2, "wave"))
+
+    def game_frame(self, night):
+        """A chart's neatline, in alternate bars."""
+        return Stuff(RAMP["ink"], 1, fleck=RAMP["parch"][6]), "ink"
+
+    def game_podium(self, night):
+        """A podium of the chart's green sea, its waves drawn in."""
+        return Podium(Stuff(RAMP["sea"], 2 if night else 3, "wave"))
 
 
 SET = MappaMundi()

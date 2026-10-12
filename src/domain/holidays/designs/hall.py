@@ -5,10 +5,12 @@
 The Hall reads as it does in the standard theme and every print, a match card, top to bottom: the house and GitHub
 facing each other across the top on their medallions; the series under them, all four games together and then each
 on a row of its own, Chess first, each named by its two pieces, the house's first, its two counts either side of a
-bar of the share; then the podium, three blocks struck in the trophies' gold, silver and bronze, second, first and
-third from the left, each winner standing on theirs as the set draws a person, its avatar, in a ring of its metal,
-with their wins and their wins in every game; and the two places after it. What the set adds is its world: its paper,
-frame and tag, its lettering, its avatars and its tags for every count.
+bar of the share; then the podium, three blocks second, first and third from the left, a plaque of the trophies'
+gold, silver and bronze set in each, each winner standing on theirs as the set draws a person, its avatar, in a ring
+of its metal, with their wins and their wins in every game; and the two places after it. What the set adds is its
+world: its paper, frame and tag, its lettering, its avatars and its tags for every count, and what its podium is cut
+from and how it is worked (`game_podium`): a castle's crenellated ashlar, presents tied with ribbon, tarred timber
+with a ship's shields along its rail, a graveyard's stone cobwebbed, garnets set in gold cells.
 
 As the file opens the series fills row by row, the blocks rise out of the floor, third, second, first, the winners
 appear on them, and a glint runs round the gold ring every so often, on the hand's period in a collection's design.
@@ -21,13 +23,14 @@ import math
 from ...elements.chess.game import OWNER
 from ...elements.hall import record as R
 from ..pixel import GLYPHS, Pix, fold, measure
+from . import materials as MT
 from . import pieces as PC
 from .boards import put, ring_cells
 from .games import _nothing, _paths, _t, appear, steps
 from .trophies import FLARE, METALS
 
 STAND = (1, 0, 2)            # the podium's blocks from the left: second, first, third
-BLOCKS = {"wide": (30, 23, 17), "narrow": (21, 16, 12)}
+BLOCKS = {"wide": (42, 36, 30), "narrow": (30, 25, 21)}
 METAL = (3, 2, 1)            # the place each block's metal is struck for: gold, silver, bronze
 RISE = {2: 1.0, 1: 1.2, 0: 1.4}
 STEP = 6                      # how far a game's second piece stands to the right of its first
@@ -130,10 +133,11 @@ def shares(h, p, s: dict, x0: int, x1: int, y: int, night: bool) -> None:
             part = round(w * s[key] / s["games"]) if key != "github" else inner1 - x
             if part <= 0:
                 continue
+            grain = MT.surface(b["dark_stuff"], part, hgt) if ramp is None else {}
             for xx in range(x, min(inner1, x + part)):
                 for j in range(hgt):
                     if ramp is None:
-                        c = b["dark"] if 0 < j < hgt - 1 else (b["light"] if j == 0 else b["edge"])
+                        c = grain[(xx - x, j)] if 0 < j < hgt - 1 else (b["light"] if j == 0 else b["edge"])
                     else:
                         c = ramp[5] if j == 0 else ramp[2 if ramp is PC.IVORY else 1] if j == hgt - 1 else ramp[4 if ramp is PC.IVORY else 3]
                     p.px(xx, y + 1 + j, c)
@@ -180,28 +184,246 @@ def gold_glint(h, p, cx: int, cy: int, r: float) -> None:
     p.raw(26, "".join(frames), "")
 
 
-def block(h, p, x: int, w: int, ground: int, ht: int, place: int, night: bool, L: str = "base") -> None:
-    """A block of the podium: its front struck in its place's metal, lit along its top and down its left, its
-    number on its face."""
-    ramp = METALS[METAL[place]]
+def block(h, p, x: int, w: int, ground: int, ht: int, place: int, night: bool, scale: int, L: str = "base") -> None:
+    """A block of the podium cut from what the set's podium is made of, seen a little from above: its lid lit and its
+    front edge catching the light, its front in the stuff's grain, lit down its left and shaded down its right and
+    along its foot, and worked as the set works its podium; and set in its front a plaque of its place's metal with the
+    place struck into it at `scale`, a star of the first's metal either side of the first's where there is room."""
+    pod = h.game_podium(night)
+    s, style = pod.stuff, pod.style
+    m = METALS[METAL[place]]
     top = ground - ht
-    for yy in range(top, ground):
-        for xx in range(x, x + w):
-            tone = 4 if yy < top + 2 else 3
-            if xx == x:
-                tone = 5
-            elif xx >= x + w - 2:
-                tone = 2
-            if yy == ground - 1:
-                tone = 1
-            p.px(xx, yy, ramp[tone], L)
-    p.hline(x, x + w, top, ramp[6], L)
-    p.hline(x, x + w, top + 1, ramp[5], L)
+    body = top + ((4 if scale == 2 else 3) if style == "crenels" else 0)    # the wall walk, behind a parapet
+    lid = 2 if style == "crenels" or ht < 20 else 3
+    f0 = body + 1 + lid                   # the front's first row, under the lid's edge
+    for (fx, fy), c in MT.surface(s, w - 2, ground - f0, variant=place).items():
+        p.px(x + 1 + fx, f0 + fy, c, L)
+    for yy in range(f0, ground - 2):
+        p.px(x + 1, yy, s.tone(1), L)
+        p.px(x + w - 2, yy, s.tone(-1), L)
+    for xx in range(x + 1, x + w - 1):
+        p.px(xx, body, s.tone(-3), L)
+        for yy in range(body + 1, f0):
+            p.px(xx, yy, s.tone(3) if yy == f0 - 1 else s.tone(2), L)
+        p.px(xx, ground - 2, s.tone(-1), L)
+        p.px(xx, ground - 1, s.tone(-2), L)
+    if style == "crenels":
+        merlons(p, s, x, w, top, body, f0, L)
+    p.vline(x, top + 1 if style == "crenels" else body + 1, ground, s.tone(-3), L)
+    p.vline(x + w - 1, top + 1 if style == "crenels" else body + 1, ground, s.tone(-3), L)
+    # the plaque, and what the podium is worked with round it
     label = str(place + 1)
-    scale = 2 if ht >= 16 else 1
     lw = measure(label, "57", scale)
-    lx, ly = x + (w - lw) // 2, top + (ht - 7 * scale) // 2 + 1
-    p.text(lx, ly, label, ramp[0], "57", scale, L=L, shadow=ramp[5])
+    pw, ph = 5 * scale + 8, 7 * scale + 5
+    px0 = x + (w - pw) // 2
+    py0 = f0 + (ground - 2 - f0 - ph + 1) // 2
+    clear = (px0 - 3, px0 + pw + 3)
+    star = GLYPHS[7]["star"]
+    sw = len(star[0])
+    starred = place == 0 and not (style == "banners" and scale == 1)    # where the banners leave no room, no stars
+    if style == "ribbon":
+        ribbon(p, pod.trim or s, x, w, body, f0, ground, py0 + ph // 2, scale, L)
+    elif style in ("bunting", "shields", "garland", "lace"):
+        frieze(h, p, pod, style, x, w, f0, scale, clear, night, L)
+    elif style == "banners":
+        banners(h, p, pod, x, w, f0, ground, scale, (clear[0] - sw - 4, clear[1] + sw + 4) if starred else clear,
+                night, L)
+    elif style == "cobwebs":
+        cobwebs(h, p, pod, x, w, f0, ground, scale, night, L)
+    for yy in range(py0, py0 + ph):
+        for xx in range(px0, px0 + pw):
+            rim = xx in (px0, px0 + pw - 1) or yy in (py0, py0 + ph - 1)
+            if rim and xx in (px0, px0 + pw - 1) and yy in (py0, py0 + ph - 1):
+                continue
+            c = (m[0] if rim else m[5] if yy == py0 + 1 else m[1] if yy == py0 + ph - 2 else
+                 m[4] if xx == px0 + 1 else m[2] if xx == px0 + pw - 2 else m[3])
+            p.px(xx, yy, c, L)
+    p.text(px0 + (pw - lw) // 2, py0 + 2, label, m[0], "57", scale, L=L, shadow=m[5])
+    if starred:
+        cy = py0 + ph // 2 - 3
+        for sx in (px0 - sw - 4, px0 + pw + 4):
+            p.sprite(sx + 1, cy + 1, star, {"#": m[0]}, L=L)
+            p.sprite(sx, cy, star, {"#": m[5]}, L=L)
+
+
+def merlons(p, s, x: int, w: int, top: int, body: int, f0: int, L: str) -> None:
+    """A parapet along a block's top, its merlons standing over the wall walk between them, the end ones flush with
+    the block's sides: each lit along its top, its face in the stuff's grain down into the block's."""
+    mw, cw = (7, 4) if w >= 60 else (5, 3)
+    n = max(2, (w + cw) // (mw + cw))
+    slack = w - (n * mw + (n - 1) * cw)
+    a = x
+    for i in range(n):
+        width = mw + (slack // 2 if i == 0 else slack - slack // 2 if i == n - 1 else 0)
+        face = MT.surface(s, width, f0 - top - 2, variant=i)
+        for xx in range(a, a + width):
+            edge = xx in (a, a + width - 1)
+            p.px(xx, top, s.tone(-3), L)
+            for yy in range(top + 1, f0):
+                if edge and yy < body + 1:
+                    c = s.tone(-3)
+                elif yy == top + 1:
+                    c = s.tone(2)
+                else:
+                    c = face.get((xx - a, yy - top - 2), s.base)
+                    if xx == a + 1 and yy < body + 1:
+                        c = s.tone(1)
+                    elif xx == a + width - 2 and yy < body + 1:
+                        c = s.tone(-1)
+                p.px(xx, yy, c, L)
+        a += width + cw
+
+
+def ribbon(p, t, x: int, w: int, body: int, f0: int, ground: int, cy: int, scale: int, L: str) -> None:
+    """A ribbon tied round a block as round a present: down over its lid and front, and round it across the middle of
+    its plaque, lit along one edge and shaded along the other, in the shade of the block's foot where it passes."""
+    rw = 4 if scale == 2 else 3
+    rx = x + (w - rw) // 2
+    for yy in range(body + 1, ground):
+        for i in range(rw):
+            c = t.tone(1) if i == 0 else t.tone(-1) if i == rw - 1 else t.base
+            if yy < f0:
+                c = t.tone(3) if yy == f0 - 1 else t.tone(2)
+            elif yy >= ground - 2:
+                c = t.tone(-1) if yy == ground - 2 else t.tone(-2)
+            p.px(rx + i, yy, c, L)
+    ry = cy - rw // 2
+    for xx in range(x + 1, x + w - 1):
+        for j in range(rw):
+            c = t.tone(1) if j == 0 else t.tone(-1) if j == rw - 1 else t.base
+            p.px(xx, ry + j, c, L)
+
+
+def frieze(h, p, pod, style: str, x: int, w: int, f0: int, scale: int, clear: tuple, night: bool, L: str) -> None:
+    """A row of things hung along a block's top, under its lid's edge and clear of its plaque: bunting in the board's
+    two colours; a ship's shields along its rail, or a garland of leaves, the trim's and the board's light square's
+    turn about; or an edge of lace."""
+    b = h.game_board(night)
+    s = pod.stuff
+    if style == "lace":
+        t = pod.trim or b["light_stuff"]
+        d = 5 if scale == 2 else 4
+        for xx in range(x + 1, x + w - 1):
+            p.px(xx, f0, t.base, L)
+            k = (xx - x - 1) % d
+            depth = (1, 2, 3, 2, 1)[k * 5 // d]
+            for yy in range(f0 + 1, f0 + 1 + depth):
+                hole = scale == 2 and k == d // 2 and yy == f0 + 1
+                p.px(xx, yy, s.tone(-1) if hole else t.base if yy < f0 + depth else t.tone(-1), L)
+        return
+    trim = pod.trim or b["dark_stuff"]
+    if style == "bunting":
+        cols, pw, pitch = (b["dark"], b["light"]), (7 if scale == 2 else 5), (9 if scale == 2 else 7)
+    elif style == "shields":
+        cols, pw, pitch = (trim.base, b["light"]), (11 if scale == 2 else 7), (10 if scale == 2 else 6)
+    else:
+        cols, pw, pitch = (trim, b["light_stuff"]), (7 if scale == 2 else 5), (10 if scale == 2 else 7)
+    n = (w - 4 - pw) // pitch + 1
+    x0 = x + (w - (n - 1) * pitch - pw) // 2
+    if style in ("bunting", "garland"):
+        p.hline(x + 1, x + w - 1, f0, s.tone(-3), L)
+    for i in range(n):
+        sx = x0 + i * pitch
+        if sx + pw > clear[0] and sx < clear[1]:
+            continue
+        if style == "bunting":
+            for j in range((pw + 1) // 2):
+                for xx in range(sx + j, sx + pw - j):
+                    p.px(xx, f0 + 1 + j, cols[i % 2] if xx < sx + pw - j - 1 else s.tone(-3), L)
+        elif style == "shields":
+            shield(p, sx, f0 - 2, pw, cols[i % 2], cols[1 - i % 2], s, L)
+        else:
+            leaf(p, sx, f0, pw, cols[i % 2], i, L)
+
+
+def shield(p, x: int, y: int, d: int, face: str, quarter: str, s, L: str) -> None:
+    """A round shield `d` across with its top-left at (x, y), as a ship carries them along her rail: its face in
+    `face`, quartered in `quarter`, its rim and its boss iron, the boss lit."""
+    r = d / 2
+    for yy in range(d):
+        for xx in range(d):
+            e = math.hypot(xx + .5 - r, yy + .5 - r)
+            if e > r:
+                continue
+            q = (xx < d // 2) == (yy < d // 2)
+            p.px(x + xx, y + yy, s.tone(-3) if e > r - 1 else quarter if q and d >= 7 else face, L)
+    m = d // 2
+    boss = 1 if d >= 9 else 0
+    for yy in range(m - boss, m + boss + 1):
+        for xx in range(m - boss, m + boss + 1):
+            p.px(x + xx, y + yy, s.tone(-3), L)
+    p.px(x + m - boss, y + m - boss, s.tone(3), L)
+
+
+LEAVES = {5: ("..#..", ".###.", "#####", ".###.", "..#.."),
+          7: ("...#...", ".#.#.#.", ".#####.", "#######", ".#####.", "..###..", "...#...")}
+
+
+def leaf(p, x: int, y: int, d: int, t, i: int, L: str) -> None:
+    """A maple leaf of a garland `d` wide, hanging from (x + d // 2, y): lit down its left, its vein down its middle
+    and its right in shade, every other one turned a little the other way."""
+    rows = LEAVES[d]
+    for j, row in enumerate(rows):
+        dx = (1 if i % 2 else -1) if j >= len(rows) - 2 and d == 7 else 0
+        for k, ch in enumerate(row):
+            if ch != "#":
+                continue
+            mid = d // 2
+            c = t.tone(-2) if k == mid and 0 < j < len(rows) - 1 else t.tone(1) if k < mid else \
+                t.tone(-1) if k > mid else t.base
+            p.px(x + k + dx, y + 1 + j, c, L)
+
+
+def cobwebs(h, p, pod, x: int, w: int, f0: int, ground: int, scale: int, night: bool, L: str) -> None:
+    """A cobweb across each of a block's top corners, under its lid: its threads out from the corner and the rings
+    strung between them, in the trim."""
+    b = h.game_board(night)
+    t = (pod.trim or b["light_stuff"]).base
+    r = min(13 if scale == 2 else 8, ground - 3 - f0)
+    for cx, dx in ((x + 1, 1), (x + w - 2, -1)):
+        ends = [(cx + dx * round(r * math.sin(a)), f0 + round(r * math.cos(a)))
+                for a in (math.pi / 2 * k / 3 for k in range(4))]
+        for ex, ey in ends:
+            line(p, cx, f0, ex, ey, t, L)
+        for frac in (.4, .7, 1.0):
+            pts = [(cx + round((ex - cx) * frac), f0 + round((ey - f0) * frac)) for ex, ey in ends]
+            for (ax, ay), (bx, by) in zip(pts, pts[1:]):
+                mx = (ax + bx) // 2 - dx * round(frac)    # the ring sagging a little toward the corner
+                my = (ay + by) // 2 - round(frac)
+                line(p, ax, ay, mx, my, t, L)
+                line(p, mx, my, bx, by, t, L)
+
+
+def line(p, x0: int, y0: int, x1: int, y1: int, c: str, L: str) -> None:
+    """A line a pixel thick from (x0, y0) to (x1, y1), both ends included."""
+    n = max(abs(x1 - x0), abs(y1 - y0), 1)
+    for i in range(n + 1):
+        p.px(round(x0 + (x1 - x0) * i / n), round(y0 + (y1 - y0) * i / n), c, L)
+
+
+def banners(h, p, pod, x: int, w: int, f0: int, ground: int, scale: int, clear: tuple, night: bool, L: str) -> None:
+    """Two banners hung from a block's lid either side of its plaque, swallow-tailed, the trim's and the board's dark
+    square's: each lit down its left and shaded down its right, crossed by a band of the board's light square, on a
+    rod."""
+    b = h.game_board(night)
+    s = pod.stuff
+    ramps = (pod.trim or b["dark_stuff"], b["dark_stuff"])
+    bw = 11 if scale == 2 else 7
+    drop = max(6, (ground - 2 - f0) * 4 // 5)
+    band = (f0 + 1 + drop // 3, 2 if scale == 2 else 1)
+    for i, cx in enumerate(((x + clear[0]) // 2, (clear[1] + x + w) // 2)):
+        t = ramps[i]
+        bx = cx - bw // 2
+        p.hline(bx - 1, bx + bw + 1, f0, s.tone(-3), L)
+        for yy in range(f0 + 1, f0 + 1 + drop):
+            cut = yy - (f0 + drop - bw // 2)           # how far into the swallow tail's notch
+            for xx in range(bx, bx + bw):
+                if cut > 0 and abs(xx - (bx + bw // 2)) < cut:
+                    continue
+                c = t.tone(1) if xx == bx else t.tone(-1) if xx == bx + bw - 1 else t.base
+                if band[0] <= yy < band[0] + band[1]:
+                    c = b["light_stuff"].tone(-1) if xx == bx + bw - 1 else b["light"]
+                p.px(xx, yy, c, L)
 
 
 def winner(h, p, person: dict, i: int, cx: int, top: int, w: int, night: bool, small: bool, moving: bool,
@@ -455,15 +677,20 @@ def draw(h, p, hs: dict, night: bool, wide: bool, moving: bool, measure_only: bo
             L = p.once(f"block{place}", steps(offs, times, times[-1] + .05), z=.4, outer=f'clip-path="url(#{clip})"')
         else:
             L = "base"
-        block(h, p, bx + 1, bw - 2, ground, heights[place], place, night, L)
+        block(h, p, bx + 1, bw - 2, ground, heights[place], place, night, 2 if wide else 1, L)
         if place < len(people):
             with section(f"stand{place}", RISE[place] + .05):
                 winner(h, p, people[place], place, bx + bw // 2, top, bw, night, not wide, moving, rows, lift)
         else:
             with section(f"stand{place}", RISE[place] + .05):
                 vacant(h, p, place, bx + bw // 2, top, bw, night, not wide, lift)
-    p.hline(x0 - 2, x1 + 2, ground, b["shade"])
-    y = ground + 6
+    # the plinth the podium stands on, of what the set's boards are framed in, its edge lit
+    f = b["frame"]
+    if "plinth" not in p.layers:
+        p.layer("plinth", z=-.8)
+    for dy, tone in enumerate((1, 0, -1, -2)):
+        p.hline(x0 - 2, x1 + 2, ground + dy, f.tone(tone), "plinth")
+    y = ground + 8
     rest = people[3:]
     if rest:
         p.hline(x0, x1, y, k["rule"])

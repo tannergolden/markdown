@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from ...holidays.designs import WIDE
 from ...holidays.designs.badges import inside
+from ...holidays.designs.materials import Podium, Stuff
 from ..hand import CollectionSet
 from . import art as A
 from .palette import C, NIGHT_SKY, RAMP, TOKENS, X, step
@@ -600,8 +601,16 @@ class Hoard(CollectionSet):
 
     # ---- the games
     def game_squares(self, night):
-        """A board of the hoard's gold on bone."""
-        return (RAMP["bone"][4], RAMP["gold"][2]) if night else (RAMP["bone"][5], RAMP["gold"][2])
+        """A board of the hoard's gold, scaled as the dragon on it, on bone."""
+        return (Stuff(RAMP["bone"], 4 if night else 5, "ivory"), Stuff(RAMP["gold"], 2, "scales"))
+
+    def game_frame(self, night):
+        """A frame of gold, beaded."""
+        return Stuff(RAMP["gold"], 3), "gilt"
+
+    def game_podium(self, night):
+        """A podium of garnets set in gold cells, as the hoard's sword fittings are."""
+        return Podium(Stuff(RAMP["garnet"], 2 if night else 3, "cells", RAMP["gold"][2 if night else 3]))
 
 
 SET = Hoard()

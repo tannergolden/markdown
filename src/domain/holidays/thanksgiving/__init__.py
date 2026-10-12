@@ -19,6 +19,7 @@ import random
 
 from ..designs import NARROW, Holiday
 from ..designs.badges import inside
+from ..designs.materials import Podium, Stuff
 from ..pixel import FONTS, LX, LZ, clip, fold, measure, sphere
 from . import art as A
 from .palette import C, NIGHT_SKY, RAMP, TOKENS, X, step
@@ -613,8 +614,16 @@ class Thanksgiving(Holiday):
 
     # ---- the games
     def game_squares(self, night):
-        """A board of bark on wheat, the harvest's, by day and by night."""
-        return RAMP["wheat"][5], RAMP["bark"][4]
+        """A board of bark on woven wheat straw, the harvest's, by day and by night."""
+        return Stuff(RAMP["wheat"], 5, "weave"), Stuff(RAMP["bark"], 4, "wood")
+
+    def game_frame(self, night):
+        """A frame of the same bark, mitred."""
+        return Stuff(RAMP["bark"], 2), "wood"
+
+    def game_podium(self, night):
+        """A podium of the same bark, hung with a garland of autumn leaves."""
+        return Podium(Stuff(RAMP["bark"], 3, "wood"), "garland", Stuff(RAMP["squash"], 3))
 
 
 SET = Thanksgiving()

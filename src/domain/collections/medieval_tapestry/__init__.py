@@ -31,6 +31,7 @@ import math
 from ...holidays.designs import NARROW, WIDE
 from ...holidays.designs.badges import inside
 from ...holidays.designs.banners import MARK_Y
+from ...holidays.designs.materials import Podium, Stuff
 from ..hand import CollectionSet
 from . import art as A
 from .palette import C, RAMP, TOKENS, WOOLS, X, step
@@ -595,8 +596,16 @@ class Tapestry(CollectionSet):
 
     # ---- the games
     def game_squares(self, night):
-        """A board of terracotta wool on linen."""
-        return (RAMP["linen"][3], RAMP["terracotta"][3]) if night else (RAMP["linen"][4], RAMP["terracotta"][3])
+        """A board of terracotta wool laid and couched on linen."""
+        return (Stuff(RAMP["linen"], 3 if night else 4, "weave"), Stuff(RAMP["terracotta"], 3, "stitch"))
+
+    def game_frame(self, night):
+        """A plain border of olive wool."""
+        return Stuff(RAMP["olive"], 2), "plain"
+
+    def game_podium(self, night):
+        """A podium worked in terracotta wool, laid and couched, as the tapestry fills its grounds."""
+        return Podium(Stuff(RAMP["terracotta"], 2 if night else 3, "laid"))
 
 
 SET = Tapestry()

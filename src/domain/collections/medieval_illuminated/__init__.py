@@ -17,6 +17,7 @@ from __future__ import annotations
 from ...holidays.designs import NARROW
 from ...holidays.designs.badges import inside
 from ...holidays.designs.banners import MARK_Y
+from ...holidays.designs.materials import Podium, Stuff
 from ...holidays.pixel import fold, measure, sphere
 from ..hand import CollectionSet
 from . import art as A
@@ -681,8 +682,16 @@ class Illuminated(CollectionSet):
         return p.text(x, y, s, self.ink(night)["title"], "57", scale, **self.lit(night))
 
     def game_squares(self, night):
-        """A board of lapis on vellum, the page's own blue."""
-        return (RAMP["vellum"][4], RAMP["lapis"][4]) if night else (RAMP["vellum"][5], RAMP["lapis"][4])
+        """A board of lapis flecked with gold on vellum, the page's own blue."""
+        return (Stuff(RAMP["vellum"], 4 if night else 5, "vellum"), Stuff(RAMP["lapis"], 4, "flecks", RAMP["gold"][5]))
+
+    def game_frame(self, night):
+        """A frame of gold leaf, beaded, as a miniature is framed."""
+        return Stuff(RAMP["gold"], 3), "gilt"
+
+    def game_podium(self, night):
+        """A podium of purple vellum, as a codex written in gold is."""
+        return Podium(Stuff(RAMP["tyrian"], 2 if night else 3, "flecks", RAMP["gold"][5]))
 
 
 SET = Illuminated()

@@ -15,6 +15,7 @@ import random
 
 from ..designs import NARROW, Holiday
 from ..designs.badges import inside
+from ..designs.materials import Podium, Stuff
 from ..pixel import LX, LY, LZ, Pix, sphere, tube
 from . import art as A
 from .palette import BULBS, C, NIGHT_SKY, RAMP, TOKENS, X, ramp_for, step
@@ -527,6 +528,19 @@ class Halloween(Holiday):
 
     def plate_edge(self, block):
         return step(block, -1)
+
+    # ---- the games
+    def game_squares(self, night):
+        """A board of pumpkin, its ribs running down it, on a ghost's grey stone."""
+        return (Stuff(RAMP["ghost"], 3 if night else 4, "stone"), Stuff(RAMP["pumpkin"], 2 if night else 3, "wood"))
+
+    def game_frame(self, night):
+        """A frame striped purple and orange, as the sheet's own stocking frame is."""
+        return Stuff(RAMP["purple"], 3, fleck=RAMP["pumpkin"][4]), "stripes"
+
+    def game_podium(self, night):
+        """A podium of a graveyard's stone, cobwebbed."""
+        return Podium(Stuff(RAMP["stone"], 3, "stone"), "cobwebs", Stuff(RAMP["ghost"], 4 if night else 5))
 
 
 TINY_PUMPKIN = [".s.", "454", "321"]

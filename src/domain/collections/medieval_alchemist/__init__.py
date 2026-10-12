@@ -48,6 +48,7 @@ from __future__ import annotations
 
 from ...holidays.designs import NARROW
 from ...holidays.designs.badges import inside
+from ...holidays.designs.materials import Podium, Stuff
 from ...holidays.pixel import sphere, tube
 from ..hand import CollectionSet
 from . import art as A
@@ -540,8 +541,16 @@ class Alchemist(CollectionSet):
 
     # ---- the games
     def game_squares(self, night):
-        """A board of the green lion on limewash."""
-        return (RAMP["lime"][3], RAMP["green"][3]) if night else (RAMP["lime"][5], RAMP["green"][3])
+        """A board of the green lion's malachite on limewash."""
+        return (Stuff(RAMP["lime"], 3 if night else 5, "stone"), Stuff(RAMP["green"], 3, "veins"))
+
+    def game_frame(self, night):
+        """A frame of the laboratory's brass, beaded."""
+        return Stuff(RAMP["brass"], 3), "gilt"
+
+    def game_podium(self, night):
+        """A podium of the green lion's malachite."""
+        return Podium(Stuff(RAMP["green"], 2 if night else 3, "veins"))
 
 
 SET = Alchemist()

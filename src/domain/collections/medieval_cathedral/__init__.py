@@ -29,6 +29,7 @@ from __future__ import annotations
 from ...holidays.designs import WIDE
 from ...holidays.designs.badges import inside
 from ...holidays.designs.banners import MARK_Y
+from ...holidays.designs.materials import Podium, Stuff
 from ...holidays.pixel import tube
 from ..hand import CollectionSet
 from . import art as A
@@ -512,8 +513,17 @@ class Cathedral(CollectionSet):
 
     # ---- the games
     def game_squares(self, night):
-        """A board of violet glass on the nave's stone."""
-        return (RAMP["stone"][4], RAMP["violet"][3]) if night else (RAMP["stone"][5], RAMP["violet"][4])
+        """A board of violet glass in its lead on the nave's stone."""
+        return (Stuff(RAMP["stone"], 4 if night else 5, "stone"),
+                Stuff(RAMP["violet"], 3 if night else 4, "glass", RAMP["lead"][1]))
+
+    def game_frame(self, night):
+        """A frame of the nave's stone, in courses."""
+        return Stuff(RAMP["stone"], 3), "stone"
+
+    def game_podium(self, night):
+        """A podium of the rose window's blue glass, in its lead."""
+        return Podium(Stuff(RAMP["cobalt"], 2 if night else 3, "glass", RAMP["lead"][1]))
 
 
 SET = Cathedral()

@@ -19,6 +19,7 @@ import random
 
 from ..designs import NARROW, Holiday
 from ..designs.badges import TOP, inside
+from ..designs.materials import Podium, Stuff
 from ..pixel import LX, LZ, sphere
 from . import art as A
 from .palette import C, NIGHT_SKY, RAMP, TOKENS, X, step
@@ -610,8 +611,16 @@ class IndependenceDay(Holiday):
 
     # ---- the games
     def game_squares(self, night):
-        """A board of navy on white cloth, the flag's field."""
-        return (RAMP["cloth"][3], RAMP["navy"][4]) if night else (RAMP["cloth"][4], RAMP["navy"][4])
+        """A board of the flag's red and white stripes, in cloth."""
+        return (Stuff(RAMP["cloth"], 3 if night else 4, "weave"), Stuff(RAMP["red"], 3, "weave"))
+
+    def game_frame(self, night):
+        """A frame of the flag's blue field, starred in white."""
+        return Stuff(RAMP["navy"], 3, fleck=RAMP["cloth"][5]), "stars"
+
+    def game_podium(self, night):
+        """A podium of the flag's blue field, starred in white, hung with red and white bunting."""
+        return Podium(Stuff(RAMP["navy"], 3, "flecks", RAMP["cloth"][5]), "bunting")
 
 
 SET = IndependenceDay()

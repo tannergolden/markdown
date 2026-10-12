@@ -54,6 +54,7 @@ badge is a plaque of tesserae in a gold rim, its label in deep blue tiles and it
 from __future__ import annotations
 
 from ...holidays.designs.badges import inside
+from ...holidays.designs.materials import Podium, Stuff
 from ..hand import CollectionSet
 from . import art as A
 from .palette import C, RAMP, TOKENS, X, step
@@ -716,8 +717,16 @@ class Mosaic(CollectionSet):
 
     # ---- the games
     def game_squares(self, night):
-        """A board of imperial porphyry on gold tesserae."""
-        return (RAMP["tile"][2], RAMP["porphyry"][4]) if night else (RAMP["tile"][6], RAMP["porphyry"][4])
+        """A board laid in tesserae, imperial porphyry on gold."""
+        return (Stuff(RAMP["tile"], 2 if night else 6, "tile"), Stuff(RAMP["porphyry"], 4, "tile"))
+
+    def game_frame(self, night):
+        """A frame of gold, beaded."""
+        return Stuff(RAMP["gold"], 3), "gilt"
+
+    def game_podium(self, night):
+        """A podium laid in porphyry tesserae."""
+        return Podium(Stuff(RAMP["porphyry"], 3 if night else 4, "tile"))
 
 
 SET = Mosaic()

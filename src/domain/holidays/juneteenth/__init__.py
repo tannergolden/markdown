@@ -17,6 +17,7 @@ import random
 
 from ..designs import NARROW, Holiday
 from ..designs.badges import inside
+from ..designs.materials import Podium, Stuff
 from ..pixel import GLYPHS, LX, LZ, Paint
 from . import art as A
 from .palette import C, CONFETTI, NIGHT_SKY, RAMP, TOKENS, X, step
@@ -522,8 +523,16 @@ class Juneteenth(Holiday):
 
     # ---- the games
     def game_squares(self, night):
-        """A board of the Gulf on sand, Galveston's."""
-        return (RAMP["sand"][3], RAMP["sea"][3]) if night else (RAMP["sand"][5], RAMP["sea"][4])
+        """A board of the Gulf's waves on Galveston's sand."""
+        return (Stuff(RAMP["sand"], 3 if night else 5, "sand"), Stuff(RAMP["sea"], 3 if night else 4, "wave"))
+
+    def game_frame(self, night):
+        """A frame of oak, as a cookout's table is."""
+        return Stuff(RAMP["oak"], 3), "wood"
+
+    def game_podium(self, night):
+        """A podium of Galveston's brick, laid in courses."""
+        return Podium(Stuff(RAMP["brick"], 2 if night else 3, "tile", RAMP["linen"][2 if night else 3]))
 
 
 SET = Juneteenth()

@@ -35,6 +35,7 @@ import math
 
 from ...holidays.designs import NARROW, WIDE
 from ...holidays.designs.badges import inside
+from ...holidays.designs.materials import Podium, Stuff
 from ...holidays.pixel import Pix, measure, tube
 from ..hand import CollectionSet
 from . import art as A
@@ -759,8 +760,16 @@ class Forge(CollectionSet):
 
     # ---- the games
     def game_squares(self, night):
-        """A board of the smithy's brass on bright steel, by day and by night."""
-        return RAMP["steel"][5], RAMP["brass"][2]
+        """A board of the smithy's brass on bright steel, riveted, by day and by night."""
+        return Stuff(RAMP["steel"], 5, "metal"), Stuff(RAMP["brass"], 2, "metal")
+
+    def game_frame(self, night):
+        """A frame of iron, riveted."""
+        return Stuff(RAMP["iron"], 3), "iron"
+
+    def game_podium(self, night):
+        """A podium of the smithy's iron, riveted."""
+        return Podium(Stuff(RAMP["iron"], 3, "metal"))
 
 
 SET = Forge()

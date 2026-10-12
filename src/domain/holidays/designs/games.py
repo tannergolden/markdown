@@ -9,15 +9,20 @@ ringed, the turn's plate and when the move is due, the last move in its notation
 and the score sheet. It keeps its words, its files and its README block. What changes is its world: it stands on the
 set's own paper inside the set's own frame, by night under the set's sky, named on the set's own tag with the set's
 touch along its rule; its words are lettered in the set's two faces and its inks, the move in the set's own title
-lettering; its plates are the set's tags; and the board is in the set's colours.
+lettering; its plates are the set's tags; and the board is built of the set's own world.
 
-  the board    its dark squares in the set's own colour, the hue of its tag at a lightness every piece holds on,
-               its light squares a light tone the set has, the two picked from the set's closed palette so a board
-               is in no colour the set does not have (`game_board`); framed and lit from the upper left
+  the board    its squares of what the set says they are made of (`game_squares`), each a `materials.Stuff`, a
+               ramp of the set's own tones, the tone it stands at and its grain: planks, ashlar, slate, tesserae,
+               weave, glass in its lead; no two squares alike and a wooden board's dark ones turned across the grain.
+               Its frame of what the set frames it in and how (`game_frame`): oak mitred, gilt beaded, ashlar in
+               courses, iron riveted, a chart's neatline. A set that names no squares has them picked from its
+               closed palette, the dark in its tag's hue at a lightness every piece holds on and the light near its
+               paper (`game_board`), so a board is in no colour the set does not have; lit from the upper left
   the pieces   ivory and ebony in every set (`pieces`), as the trophies are struck in one set of metals: the house's
                always ivory, GitHub's ebony, whoever moves first
   the marks    the last move's two squares in the set's accent; what the side to move must answer (a king in check,
-               a cell or a column to block, a man that must jump) glowing in the set's red
+               a cell or a column to block, a man that must jump) glowing in the set's red; either, where it would
+               be lost on a square of its colour, in the first of the set's inks that stands clear of both
   the motion   the last move is played again as the file opens, in the engine's discrete steps: a chessman steps
                from its square, a knight hopping; a man hops each man it takes; a disc drops down its column and
                bounces; a mark is drawn in stroke by stroke. The square it lands on flashes, what must be answered
@@ -25,7 +30,8 @@ lettering; its plates are the set's tags; and the board is in the set's colours.
                and a glint crosses the turn's plate every eight seconds. A still file holds it all at rest
 
 The Hall of Fame is drawn on the same sheet (`hall`): the series of every game, each named by its two pieces, and
-the podium, the set's own avatars standing on blocks of the trophies' gold, silver and bronze.
+the podium, the set's own avatars standing on blocks cut from what the set says its podium is made of and worked as
+its world works it (`game_podium`, a `materials.Podium`), a plaque of the trophies' gold, silver and bronze on each.
 
 Every colour a game file of the set paints is the set's or the pieces' and metals' (`game_tokens`), and every word
 is set in the set's inks, so a collection's design draws its games in its hand. A file the set cannot letter, a
@@ -40,6 +46,7 @@ from ...canvas import BUDGET
 from ..pixel import GLYPHS, MISSING, Pix, clip, fold, measure, num, wrap
 from . import pieces as PC
 from .badges import _lab
+from .materials import Podium, Stuff, surface
 from .banners import NARROW, WIDE
 from .trophies import METAL_TOKENS
 
@@ -136,21 +143,74 @@ def nearest_tone(tokens, hue: float, light: float, *, least: float = 0, most: fl
     return best[1] if best else None
 
 
+def _delta(a: str, b: str) -> float:
+    """How far apart two colours are, CIELAB's distance."""
+    return math.dist(_lab(a), _lab(b))
+
+
+def _clear_of(colour: str, grounds: tuple, others: tuple, least: float = 28) -> str:
+    """`colour`, or when it lies within `least` of any of `grounds`, the first of `others` that does not; failing
+    that, whichever of them stands furthest from the nearest ground."""
+    def gap(c):
+        return min(_delta(c, g) for g in grounds)
+    if gap(colour) >= least:
+        return colour
+    others = tuple(c for c in others if c)
+    return next((c for c in others if gap(c) >= least), max((colour, *others), key=gap))
+
+
+def _hued(tokens, hue: float, avoid: tuple, light: float, least: float = 28) -> str | None:
+    """The colour of `tokens` of hue near `hue`, strong, near lightness `light`, standing clear of every one of
+    `avoid`: an amber for the last move, a red for what must be answered, when the set's own is lost on its board."""
+    best = None
+    for t in tokens:
+        L, C, h = lab(t)
+        if C < 35 or _hue_gap(h, hue) > 40 or min(_delta(t, a) for a in avoid) < least:
+            continue
+        score = _hue_gap(h, hue) + abs(L - light) * .5
+        if best is None or score < best[0]:
+            best = (score, t)
+    return best[1] if best else None
+
+
+def _ramped(colour: str, tokens) -> Stuff:
+    """A bare colour as a stuff with no grain, its ramp the set's tones of its family, darkest first: so a frame
+    worked in it can still be lit and shaded."""
+    L0, C0, h0 = lab(colour)
+    kin = {t for t in tokens if (lab(t)[1] < 8) == (C0 < 8) and (C0 < 8 or _hue_gap(lab(t)[2], h0) <= 25)}
+    ramp = tuple(sorted(kin | {colour}, key=lambda t: lab(t)[0]))
+    return Stuff(ramp, ramp.index(colour))
+
+
 # --------------------------------------------------------------------------- the mixin
 class Games:
     """The games' layouts. Every drawing hook a set overrides is listed first, with its default."""
 
     # ------------------------------------------------------------------------------------------ hooks
     def game_squares(self, night: bool) -> tuple | None:
-        """The board's light and dark squares, when the set chooses them from its own world, as (light, dark); None
-        has the board picked from the set's palette (see `game_board`)."""
+        """What the board's light and dark squares are made of, when the set names them from its own world: (light,
+        dark), each a `materials.Stuff`, a ramp of the set's tones with the tone it stands at and its grain, or a
+        bare colour; None has the board picked from the set's palette, in flat colour (see `game_board`)."""
         return None
+
+    def game_frame(self, night: bool) -> tuple | None:
+        """What the board's frame is made of and how it is worked: (stuff, style), the style one of
+        `materials.FRAMES`; None frames the board plainly, in a darker tone of its dark squares."""
+        return None
+
+    def game_podium(self, night: bool) -> Podium:
+        """What the Hall's podium is cut from and how it is worked, a `materials.Podium`: by default plainly, of what
+        the board's dark squares are. Each block carries a plaque of its place's metal, so a podium of gold should
+        not be asked for."""
+        return Podium(self.game_board(night)["dark_stuff"])
 
     def game_board(self, night: bool) -> dict:
         """The board's colours, picked from the set's own palette, so a board is in no colour the set does not
         have: its dark squares (`dark`) in the family of the set's tag, the colour that names every element, at a
         middling lightness every piece holds on; its light squares (`light`) in the family of its paper; and the
-        edge it is framed in (`edge`, and `shade`, darker). By night the board stands a little dimmer."""
+        edge it is framed in (`edge`, and `shade`, darker). By night the board stands a little dimmer. With them,
+        what each is made of: the squares' stuffs (`light_stuff`, `dark_stuff`), and the frame's (`frame`) and how
+        it is worked (`style`)."""
         kept = self.__dict__.setdefault("_game_boards", {})
         if night not in kept:
             kept[night] = self._board_colours(night)
@@ -164,6 +224,10 @@ class Games:
         chosen = self.game_squares(night)
         if chosen:
             light, dark = chosen
+            if isinstance(light, Stuff):
+                light, dark, stuffs = light.base, dark.base, (light, dark)
+            else:
+                stuffs = (_ramped(light, tokens), _ramped(dark, tokens))
         else:
             tag = self._tag_colour(night)
             hue = lab(tag)[2]
@@ -175,10 +239,14 @@ class Games:
                     or nearest_tone(tokens, hue, lo, least=6, span=40) or tag)
             light = (nearest_tone(tokens, lab(paper)[2], hi, most=40, span=40, avoid={paper})
                      or nearest_tone(tokens, hue, hi, most=36) or self.ink(False)["fill"])
+            stuffs = (_ramped(light, tokens), _ramped(dark, tokens))
         L, _, h = lab(dark)
         edge = nearest_tone(tokens, h, L - 18, least=6, span=40, avoid={dark}) or self.ink(night)["body"]
         shade = nearest_tone(tokens, h, L - 32, least=4, span=60, avoid={dark, edge}) or edge
-        return {"light": light, "dark": dark, "edge": edge, "shade": shade}
+        framed = self.game_frame(night)
+        frame, style = framed if framed else (Stuff(stuffs[1].ramp, max(0, stuffs[1].at - 2)), "plain")
+        return {"light": light, "dark": dark, "edge": edge, "shade": shade, "light_stuff": stuffs[0],
+                "dark_stuff": stuffs[1], "frame": frame, "style": style}
 
     def game_title(self, p: Pix, x: int, y: int, s: str, night: bool, scale: int) -> int:
         """The last move's notation, and the Hall's totals, lettered as the set letters its titles. A set whose titles
@@ -188,8 +256,17 @@ class Games:
 
     def game_marks(self, night: bool) -> dict:
         """The marks a board carries: the last move's (`last`, the set's accent), and what the side to move must
-        answer (`alert`, the set's red)."""
-        return {"last": self.ink(night)["accent"], "alert": self.badge_states()["red"][0]}
+        answer (`alert`, the set's red). A mark too near the colour of either square for its square to show it, as a
+        red accent on a red board, takes instead the first of the set's inks that stands clear of both."""
+        b = self.game_board(night)
+        k = self.ink(night)
+        squares = (b["light"], b["dark"])
+        tokens = sorted(self.game_tokens)
+        last = _clear_of(k["accent"], squares, (_hued(tokens, 75, squares, 62 if night else 52), k["title"]))
+        red = self.badge_states()["red"][0]
+        alert = _clear_of(red, squares + (last,), (_hued(tokens, 25, squares + (last,), 60 if night else 45),
+                                                   k["title"], k["body"]))
+        return {"last": last, "alert": alert}
 
     @property
     def game_tokens(self) -> frozenset:
@@ -318,9 +395,11 @@ class Games:
                 p.px(x, y, colour, name)
 
     def tray(self, p: Pix, x: int, y: int, w: int, h: int, night: bool, L: str = "base") -> None:
-        """The strip a game's count stands on: the board's light square, edged, so both sides' pieces hold on it."""
+        """The strip a game's count stands on: the board's light square, in its grain, edged, so both sides' pieces
+        hold on it. Laid pixel by pixel, under whatever is set on it in the same layer."""
         b = self.game_board(night)
-        p.rect(x, y, w, h, b["light"], L)
+        for (dx, dy), c in surface(b["light_stuff"], w, h).items():
+            p.px(x + dx, y + dy, c, L)
         p.box(x, y, w, h, b["edge"], L, notch=True)
 
     def chip(self, p: Pix, x: int, y: int, s: str, night: bool, L: str = "base") -> int:

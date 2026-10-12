@@ -54,6 +54,7 @@ from __future__ import annotations
 
 from ...holidays.designs import WIDE
 from ...holidays.designs.badges import inside
+from ...holidays.designs.materials import Podium, Stuff
 from ..hand import CollectionSet
 from . import art as A
 from .palette import C, RAMP, TOKENS, X, step
@@ -787,8 +788,16 @@ class Tournament(CollectionSet):
 
     # ---- the games
     def game_squares(self, night):
-        """A board of vert on the pavilions' canvas."""
-        return (RAMP["canvas"][4], RAMP["vert"][3]) if night else (RAMP["canvas"][5], RAMP["vert"][3])
+        """A board of vert silk on the pavilions' canvas."""
+        return (Stuff(RAMP["canvas"], 4 if night else 5, "weave"), Stuff(RAMP["vert"], 3, "weave"))
+
+    def game_frame(self, night):
+        """A frame of the lists' timber."""
+        return Stuff(RAMP["wood"], 3), "wood"
+
+    def game_podium(self, night):
+        """A podium of the lists' timber, hung with the field's banners."""
+        return Podium(Stuff(RAMP["wood"], 2 if night else 3, "wood"), "banners", Stuff(RAMP["gules"], 3, "weave"))
 
 
 SET = Tournament()

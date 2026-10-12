@@ -21,6 +21,7 @@ from __future__ import annotations
 
 from ...holidays.designs import WIDE
 from ...holidays.designs.badges import inside
+from ...holidays.designs.materials import Podium, Stuff
 from ...holidays.pixel import Pix, sphere, tube
 from ..hand import CollectionSet
 from . import art as A
@@ -639,8 +640,16 @@ class Stronghold(CollectionSet):
 
     # ---- the games
     def game_squares(self, night):
-        """A board of the castle's slate on dressed stone."""
-        return (RAMP["cloud"][1], RAMP["slate"][4]) if night else (RAMP["cloud"][3], RAMP["slate"][4])
+        """A board of the castle's split slate on dressed stone."""
+        return (Stuff(RAMP["cloud"], 1 if night else 3, "stone"), Stuff(RAMP["slate"], 4, "slate"))
+
+    def game_frame(self, night):
+        """A frame of ashlar, in courses."""
+        return Stuff(RAMP["stone"], 3), "stone"
+
+    def game_podium(self, night):
+        """A podium of ashlar, crenellated, darker than the wall behind it."""
+        return Podium(Stuff(RAMP["stone"], 2, "stone"), "crenels")
 
 
 SET = Stronghold()

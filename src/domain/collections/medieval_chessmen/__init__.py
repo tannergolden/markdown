@@ -40,6 +40,7 @@ faces stay ivory and red bone."""
 from __future__ import annotations
 
 from ...holidays.designs.badges import inside
+from ...holidays.designs.materials import Podium, Stuff
 from ...holidays.pixel import Pix, clip, fold
 from ..hand import CollectionSet
 from . import art as A
@@ -543,8 +544,16 @@ class Chessmen(CollectionSet):
 
     # ---- the games
     def game_squares(self, night):
-        """A board of ivory and ivory stained red, as the chessmen themselves are."""
-        return (RAMP["ivory"][4], RAMP["stain"][3]) if night else (RAMP["ivory"][5], RAMP["stain"][4])
+        """A board of walrus ivory and ivory stained red, as the chessmen themselves are."""
+        return (Stuff(RAMP["ivory"], 4 if night else 5, "ivory"), Stuff(RAMP["stain"], 3 if night else 4, "ivory"))
+
+    def game_frame(self, night):
+        """A frame of oak, the chessmen's chest."""
+        return Stuff(RAMP["oak"], 3), "wood"
+
+    def game_podium(self, night):
+        """A podium of ivory stained red, as the chessmen's red side is."""
+        return Podium(Stuff(RAMP["stain"], 2 if night else 3, "ivory"))
 
 
 SET = Chessmen()

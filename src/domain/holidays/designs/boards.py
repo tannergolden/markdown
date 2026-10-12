@@ -36,6 +36,7 @@ from ...elements.games import data as GD
 from ...elements.games.sides import GITHUB, HOUSE, name, other, playing
 from ...elements.tictactoe import game as TT
 from ..pixel import GLYPHS, fold, measure
+from . import materials as MT
 from . import pieces as PC
 from .games import LAND, _nothing, appear, brief, gone, pulse, steps
 
@@ -103,18 +104,27 @@ def landing(h, p, cx: float, cy: float, s: int, box: tuple, night: bool) -> None
         p.raw(.9, brief(within(cells, box), LAND + .06 + i * .07, .07), "")
 
 
-def framed(h, p, x0: int, y0: int, w: int, ht: int, night: bool) -> None:
-    """A board's frame: its shadow cast down and to the right, away from the lamp, a rim two pixels wide lit along
-    its top and left and shaded along its foot and right, and its outline."""
+FRAME = {False: 4, True: 3}     # how wide a board's frame is, wide and on a phone
+
+
+def framed(h, p, x0: int, y0: int, w: int, ht: int, night: bool, small: bool = False) -> None:
+    """A board's frame, in what the set makes it of and worked in its style (`game_frame`): its shadow cast down and
+    to the right, away from the lamp, lit along its top and left, shaded along its foot and right, and outlined."""
     b = h.game_board(night)
-    for y in range(y0 + 1, y0 + ht + 5):
-        for x in range(x0 + 1, x0 + w + 5):
-            if x >= x0 + w + 3 or y >= y0 + ht + 3:
-                p.px(x, y, f"{b['shade']}:{'0.5' if night else '0.28'}")
-    p.rect(x0 - 2, y0 - 2, w + 4, ht + 4, b["edge"])
-    p.hline(x0 - 2, x0 + w + 2, y0 - 2, b["dark"])
-    p.vline(x0 - 2, y0 - 2, y0 + ht + 2, b["dark"])
-    p.box(x0 - 3, y0 - 3, w + 6, ht + 6, b["shade"])
+    MT.frame(p, b["frame"], b["style"], x0, y0, w, ht, FRAME[small], night)
+
+
+def squares(h, p, x0: int, y0: int, s: int, files: int, ranks: int, night: bool) -> None:
+    """A chequered board of `files` by `ranks` squares `s` wide from (x0, y0), its light and dark squares in what the
+    set makes them of, each laid in one of a few variants of its grain so no two neighbours are alike; wood laid as
+    parquet, the dark squares' grain turned across the light's."""
+    b = h.game_board(night)
+    for r in range(ranks):
+        for f in range(files):
+            dark = (f + r) % 2 == 1
+            stuff = b["dark_stuff"] if dark else b["light_stuff"]
+            MT.lay(p, stuff, x0 + f * s, y0 + r * s, s, s, variant=(f * 7 + r * 3) % 3,
+                   turned=dark and stuff.grain == "wood")
 
 
 class Game:
@@ -179,15 +189,19 @@ class Game:
         raise NotImplementedError
 
     @staticmethod
-    def labels(h, p, x0: int, y0: int, step: int, cell: int, files: str, ranks: int, night: bool) -> None:
+    def labels(h, p, x0: int, y0: int, step: int, cell: int, files: str, ranks: int, night: bool,
+               small: bool = False) -> None:
         """The files under a board, lower case as chess writes them, and the ranks up its left, quietly: each
-        centred on its square, `step` apart, `cell` wide."""
+        centred on its square, `step` apart, `cell` wide, a unit clear of the board's frame, or the files close under
+        it where the sheet's own frame leaves no more room."""
         k = h.ink(night)
+        t = FRAME[small]
         foot = y0 + (ranks - 1) * step + cell
+        y = min(foot + t + 2, h._trophy_room(p).y1 - 10)     # a descender's nine rows, a unit clear of the room
         for i, f in enumerate(files):
-            h.say(p, x0 + i * step + cell // 2 + 1, foot + 3, f, k["muted"], "57", anchor="middle")
+            h.say(p, x0 + i * step + cell // 2 + 1, y, f, k["muted"], "57", anchor="middle")
         for i in range(ranks):
-            h.say(p, x0 - 7, y0 + i * step + cell // 2 - 2, str(ranks - i), k["muted"], anchor="middle")
+            h.say(p, x0 - t - 2, y0 + i * step + cell // 2 - 2, str(ranks - i), k["muted"], anchor="end")
 
 
 def started(p, x: int, y: int, s: int, colour: str) -> None:
@@ -244,12 +258,9 @@ class Chess(Game):
         x0, y0, n = box
         s = n // 8
         size = "narrow" if small else "wide"
-        b = h.game_board(night)
         marks = h.game_marks(night)
-        framed(h, p, x0, y0, n, n, night)
-        for r in range(8):
-            for f in range(8):
-                p.rect(x0 + f * s, y0 + r * s, s, s, b["dark"] if (f + r) % 2 == 1 else b["light"])
+        framed(h, p, x0, y0, n, n, night, small)
+        squares(h, p, x0, y0, s, 8, 8, night)
 
         def at(sq: str) -> tuple:
             return x0 + CG.FILES.index(sq[0]) * s, y0 + (8 - int(sq[1])) * s
@@ -290,7 +301,7 @@ class Chess(Game):
                 p.raw(.75, gone(PC.placed(d, gx + (s - d[1]) // 2, gy + s - d[2] - 1), LAND), "")
             tx_, ty_ = at(last["to"])
             landing(h, p, tx_ + s / 2, ty_ + s / 2, s, (x0, y0, x0 + n, y0 + n), night)
-        self.labels(h, p, x0, y0, s, s, CG.FILES, 8, night)
+        self.labels(h, p, x0, y0, s, s, CG.FILES, 8, night, small)
 
     @staticmethod
     def arrive(p, d, key, px_, py_, frm, to, leap, s, start, end, name) -> None:
@@ -360,10 +371,8 @@ class Checkers(Game):
         size = "narrow" if small else "wide"
         b = h.game_board(night)
         marks = h.game_marks(night)
-        framed(h, p, x0, y0, n, n, night)
-        for r in range(8):
-            for f in range(8):
-                p.rect(x0 + f * s, y0 + r * s, s, s, b["dark"] if (f + r) % 2 == 1 else b["light"])
+        framed(h, p, x0, y0, n, n, night, small)
+        squares(h, p, x0, y0, s, 8, 8, night)
 
         def at(sq: int) -> tuple:
             r, col = CK.rc(sq)
@@ -592,21 +601,13 @@ class ConnectFour(Game):
                 put(p, d, ("c4", "disc", rd, mat), x, y, L)
                 continue
             put(p, d, ("c4", "disc", rd, mat), x, y, p.layer("discs", z=.2))
-        # the plate: the frame's face with every hole cut through it, lit from the upper left
+        # the plate: the frame's face in the dark stuff, every hole cut through it, its wall shaded where it faces
+        # away from the lamp and lit where it faces it, the plate lit along its top and left
         plate = p.layer("plate", z=.5)
         r = g["r"]
-        for y in range(g["y"], g["y"] + g["h"]):
-            for x in range(g["x"], g["x"] + g["w"]):
-                hx, hy = min(holes.values(), key=lambda c: abs(c[0] - x - .5) + abs(c[1] - y - .5))
-                d = math.hypot(x + .5 - hx, y + .5 - hy)
-                if d < r:
-                    continue
-                c = b["dark"]
-                if d < r + 1.2:
-                    c = b["shade"] if (x + .5 - hx) * -.7 + (y + .5 - hy) * -.7 > 0 else b["edge"]
-                p.px(x, y, c, plate)
-        p.hline(g["x"], g["x"] + g["w"], g["y"], b["light"], plate)
-        p.vline(g["x"], g["y"], g["y"] + g["h"], b["light"], plate)
+        self.face(p, b["dark_stuff"], g, plate)
+        p.hline(g["x"], g["x"] + g["w"], g["y"], b["dark_stuff"].tone(1), plate)
+        p.vline(g["x"], g["y"], g["y"] + g["h"], b["dark_stuff"].tone(1), plate)
         p.hline(g["x"], g["x"] + g["w"], g["y"] + g["h"] - 1, b["shade"], plate)
         p.vline(g["x"] + g["w"] - 1, g["y"], g["y"] + g["h"], b["shade"], plate)
         p.box(g["x"] - 1, g["y"] - 1, g["w"] + 2, g["h"] + 2, b["shade"], plate)
@@ -650,6 +651,34 @@ class ConnectFour(Game):
             h.say(p, cx, under, str(col), k["muted"], anchor="middle")
         for row in range(1, C4.ROWS + 1):
             h.say(p, g["x"] - 6, round(holes[(1, row)][1]) - 2, str(row), k["muted"], anchor="middle")
+
+    @staticmethod
+    def face(p, stuff: MT.Stuff, g: dict, L: str) -> None:
+        """The frame's face: a cell of the stuff round each hole, drawn once in each of three variants and set at
+        every hole, and the margins round them laid in the stuff."""
+        P, m, r = g["p"], g["m"], g["r"]
+        for v in range(3):
+            key = ("c4cell", stuff.key, P, v)
+            if key in p.syms:
+                continue
+            cells = {}
+            c0 = P / 2
+            for (x, y), col in MT.surface(stuff, P, P, v).items():
+                d = math.hypot(x + .5 - c0, y + .5 - c0)
+                if d < r:
+                    continue
+                if d < r + 1.2:
+                    away = (x + .5 - c0) * -.7 + (y + .5 - c0) * -.7 > 0
+                    col = stuff.tone(-3) if away else stuff.tone(1)
+                cells[(x, y)] = col
+            p.symbol(key, cells)
+        for col in range(C4.COLS):
+            for row in range(C4.ROWS):
+                p.use(("c4cell", stuff.key, P, (col * 2 + row) % 3), g["x"] + m + col * P, g["y"] + m + row * P, L)
+        x0, y0, w, ht = g["x"], g["y"], g["w"], g["h"]
+        for (x, y, ww, hh, turned) in ((x0, y0, w, m, False), (x0, y0 + ht - m, w, m, False),
+                                       (x0, y0 + m, m, ht - 2 * m, True), (x0 + w - m, y0 + m, m, ht - 2 * m, True)):
+            MT.lay(p, stuff, x, y, ww, hh, turned=turned and stuff.grain == "wood", L=L)
 
     def count(self, h, p, st, x0, x1, y, night, small) -> int:
         """Each side's discs left, a rack of twenty-one emptying as the frame fills, the house's White first."""
@@ -710,8 +739,11 @@ class TicTacToe(Game):
         c, bar = self.geometry(n, small)
         b = h.game_board(night)
         marks = h.game_marks(night)
-        framed(h, p, x0, y0, n, n, night)
-        p.rect(x0, y0, n, n, b["dark"])
+        framed(h, p, x0, y0, n, n, night, small)
+        dark, light = b["dark_stuff"], b["light_stuff"]
+        for i in (1, 2):         # the bars, in the dark stuff, the uprights' grain turned
+            MT.lay(p, dark, x0 + i * c + (i - 1) * bar, y0, bar, n, turned=True)
+            MT.lay(p, dark, x0, y0 + i * c + (i - 1) * bar, n, bar)
 
         def cell(name: str) -> tuple:
             i, j = TT.FILES.index(name[0]), 3 - int(name[1])
@@ -720,7 +752,7 @@ class TicTacToe(Game):
         for row in (1, 2, 3):
             for f in TT.FILES:
                 x, y = cell(f"{f}{row}")
-                p.rect(x, y, c, c, b["light"])
+                MT.lay(p, light, x, y, c, c, L="cells", z=-.9)
         last = st["last"]
         if last:
             x, y = cell(last["cell"])
@@ -778,7 +810,7 @@ class TicTacToe(Game):
         if last and moving:
             x, y = cell(last["cell"])
             landing(h, p, x + c / 2, y + c / 2, c, (x0, y0, x0 + n, y0 + n), night)
-        self.labels(h, p, x0, y0, c + bar, c, TT.FILES, 3, night)
+        self.labels(h, p, x0, y0, c + bar, c, TT.FILES, 3, night, small)
 
     @staticmethod
     def drawn_in(p, d: tuple, mark: str, x: int, y: int) -> None:
