@@ -57,6 +57,9 @@ class Forge(CollectionSet):
     key = "medieval-forge"
     name = "Forge"
     collection = "medieval"
+    # How deep the riveted iron frame and the blocks at its corners reach into a trophy file, in units: its top, its
+    # sides, its foot and its corners.
+    trophy_frame = (6, 4, 5, 10)
     # What the design is, in words, for the page that shows the collection.
     tagline = (
         "Iron, fire and the hammer's beat.")

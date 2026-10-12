@@ -79,6 +79,9 @@ class Tournament(CollectionSet):
     collection = "medieval"
     key = "medieval-tournament"
     name = "Tournament"
+    # How deep the lists' barriers and the gilded rail along the top reach into a trophy file, in units: its top, its
+    # sides, its foot and its corners.
+    trophy_frame = (6, 6, 4, 7)
     # What the design is, in words, for the page that shows the collection.
     tagline = (
         "The lists in May: a joust at the moment of impact before a stand of ladies and lords, in silk, gold cord and "

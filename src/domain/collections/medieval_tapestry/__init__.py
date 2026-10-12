@@ -55,6 +55,9 @@ class Tapestry(CollectionSet):
     collection = "medieval"
     key = "medieval-tapestry"
     name = "Tapestry"
+    # How deep the rod and woven band along the top and the fringe along the foot reach into a trophy file, in units:
+    # its top, its sides, its foot and its corners.
+    trophy_frame = (8, 3, 5, 8)
     # What the design is, in words, for the page that shows the collection.
     tagline = (
         "An embroidered hanging after Bayeux: knights set pixel by pixel at the gallop between borders of beasts, lit "

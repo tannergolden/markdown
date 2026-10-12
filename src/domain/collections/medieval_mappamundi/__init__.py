@@ -49,6 +49,9 @@ class MappaMundi(CollectionSet):
     collection = "medieval"
     key = "medieval-mappamundi"
     name = "Mappa Mundi"
+    # How deep the chart's banded border reaches into a trophy file, in units: its top, its sides, its foot and its
+    # corners.
+    trophy_frame = (5, 5, 5, 5)
     # What the design is, in words, for the page that shows the collection.
     tagline = (
         "Here be dragons: a sea chart in ink and verdigris, its islands inked and its beasts at the edge, read at "

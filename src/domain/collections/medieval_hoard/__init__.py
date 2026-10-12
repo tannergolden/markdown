@@ -16,6 +16,9 @@ class Hoard(CollectionSet):
     key = "medieval-hoard"
     name = "Hoard"
     collection = "medieval"
+    # How deep the chain along the top and the cave's stone reach into a trophy file, in units: its top, its sides,
+    # its foot and its corners.
+    trophy_frame = (7, 5, 3, 7)
     # What the design is, in words, for the page that shows the collection.
     tagline = ("The dragon asleep on its mountain of gold in a snowbound barrow through midwinter, in gold set with "
                "garnets.")

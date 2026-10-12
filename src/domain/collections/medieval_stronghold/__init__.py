@@ -38,6 +38,9 @@ class Stronghold(CollectionSet):
     collection = "medieval"
     key = "medieval-stronghold"
     name = "Stronghold"
+    # How deep the battlements along the top and the footing reach into a trophy file, in units: its top, its sides,
+    # its foot and its corners.
+    trophy_frame = (6, 4, 6, 6)
     # What the design is, in words, for the page that shows the collection.
     tagline = (
         "Castle stone: carved titles, waving pennants, torches and a dragon by night.")

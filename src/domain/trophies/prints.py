@@ -8,12 +8,15 @@ the way a draughtsman draws a part: each card is a small sheet from the set,
 its trophy in elevation over a title block, on the same paper the page's
 banners are drawn on, with its grid, its border and its zone marks.
 
-  a tier      how far the drawing has got. Unranked is a phantom, dashed where
-              the trophy will stand; bronze is drawn in outline, silver gains
-              line shading on the side the lamp does not reach, gold its
-              section lining, a solid enamel and a glint, platinum its
-              ornament, and diamond the rays and the double lining of a
-              finished sheet
+  a tier      how far the drawing has got, and how dark its shaded side is
+              inked, so a tier reads at a glance as a metal does. Unranked
+              is a phantom, dashed where the trophy will stand; bronze is
+              drawn in outline, silver gains line shading on the side the
+              lamp does not reach, gold its section lining, a solid enamel
+              and a glint, platinum the lining crossed and its ornament, and
+              diamond its shaded side inked solid, the lining cut back
+              through it in the paper (the draughtsman's poché), with the
+              rays of a finished sheet
   progress    a bar along the title block, lined as far as the next tier
   the light   the kit's one lamp, up and to the left: heavier lines, line
               shading and section lining where its shadow falls
@@ -37,12 +40,12 @@ from html import escape
 from .. import KIT, KIT_VERSION
 from ..canvas import DARK, DAY, Canvas, c, prose
 from ..drafting import sheet
-from ..lettering import cap_height, f1, fx, width
+from ..lettering import f1, fx, width
 from ..palette import contrast, hexof, letters_on
 from ..prints import colours
-from .art import (CARD_H, CARD_K, CARD_W, PIN_H, PIN_W, alt_text, case_title, fmt, hex_pts, hexagon, level_label,
-                  level_stats, level_xp, next_up_items, next_up_label, pct_label, pin_caption, pin_label, star4,
-                  star5, status_text, top_pct)
+from .art import (CARD_H, CARD_K, CARD_W, PIN_H, PIN_W, alt_text, case_title, fmt, hex_pts, level_label, level_stats,
+                  level_xp, next_up_items, next_up_label, pct_label, pin_caption, pin_label, star4, star5, status_text,
+                  top_pct)
 from .catalogue import ICONS, TIER_NAMES, Core, ach_state, measure
 
 B = 8            # a card's border, as wide as its zone marks need
@@ -138,16 +141,30 @@ class Drawing(Canvas):
                 + (f"<defs>{defs}</defs>" if defs else "") + "".join(self.body) + "</svg>\n")
 
     # -- materials
-    def hatch(self, angle: float = 45, gap: float = 3, sw: float = .8, op: float = .8) -> str:
-        """Section lining, the draughtsman's tone: lines at an angle in the print's line, each kind defined once."""
-        key = (angle, gap, sw, op)
+    def hatch(self, angle: float = 45, gap: float = 3, sw: float = .8, op: float = .8,
+              colour: str | None = None) -> str:
+        """Section lining, the draughtsman's tone: lines at an angle in the print's line (or `colour`), each kind
+        defined once."""
+        colour = colour or self.line
+        key = (angle, gap, sw, op, colour)
         if key not in self._hatch:
             pid = self.uid("h")
             self.defs.append(f'<pattern id="{pid}" width="{fx(gap)}" height="{fx(gap)}" patternUnits="userSpaceOnUse" '
                              f'patternTransform="rotate({fx(angle)})"><path d="M{fx(gap / 2)} 0V{fx(gap)}" '
-                             f'stroke="{self.line}" stroke-width="{fx(sw)}" stroke-opacity="{fx(op)}"/></pattern>')
+                             f'stroke="{colour}" stroke-width="{fx(sw)}" stroke-opacity="{fx(op)}"/></pattern>')
             self._hatch[key] = pid
         return f"url(#{self._hatch[key]})"
+
+    def lining(self, t: int, d: str, gap: float = 3) -> str:
+        """The tone the shaded side `d` of a part takes as its tier rises: section lining from gold, crossed at
+        platinum, and at diamond inked solid, its lining cut back through it in the paper."""
+        if t >= 5:
+            return (f'<path d="{d}" fill="{self.line}" fill-opacity=".9"/>'
+                    f'<path d="{d}" fill="{self.hatch(45, gap, .7, .7, self.paper)}"/>')
+        if t < 3:
+            return ""
+        return (f'<path d="{d}" fill="{self.hatch(45, gap, .7, .75)}"/>'
+                + (f'<path d="{d}" fill="{self.hatch(-45, gap, .6, .6)}"/>' if t >= 4 else ""))
 
     def glint_band(self) -> str:
         """The band of light a glint sweeps across a part: white, fading out at both edges."""
@@ -376,11 +393,14 @@ def trophy(tone: str, case: str, core: Core, value: int, o: dict | None = None) 
         if t >= 2:   # line shading down the side the lamp does not reach
             d = "".join(f"M{f1(90 + 34 * k)} 30V122" for k in TURNED)
             cv.add(f'<g clip-path="url(#{cup})"><path d="{d}" stroke="{cv.line}" stroke-width=".75" stroke-opacity=".8"/></g>')
-        if t >= 3:   # section lining over the shaded half, and its double lining once the trophy is diamond
-            fill = cv.hatch(45, 3, .7, .75)
-            cv.add(f'<g clip-path="url(#{cup})"><rect x="96" y="30" width="40" height="95" fill="{fill}"/>'
-                   + (f'<rect x="96" y="30" width="40" height="95" fill="{cv.hatch(-45, 3, .6, .6)}"/>' if t >= 5 else "")
-                   + "</g>")
+        if t >= 3:   # the shaded half inked as the tier rises: lined, crossed, then solid
+            cv.add(f'<g clip-path="url(#{cup})">' + cv.lining(t, rect_d(96, 30, 40, 95)) + "</g>")
+        if t >= 4:   # the ornament: a beaded band turned round the bowl
+            beads = "".join(circle_d(x, 47.5 + 12 * (x - 56) / 68 * (1 - (x - 56) / 68), 1.1)
+                            for x in range(60, 121, 6))
+            cv.add(f'<g clip-path="url(#{cup})"><path d="M56 44Q90 50 124 44M56 51Q90 57 124 51" fill="none" '
+                   f'stroke="{cv.line}" stroke-width=".8"/><path d="{beads}" fill="{cv.paper}" stroke="{cv.line}" '
+                   f'stroke-width=".6"/></g>')
         cv.add(cv.heavy(body, 90, 66) + cv.edge(BOWL, fill="none") + cv.edge(FOOT, fill="none"))
         cv.add(f'<path d="{ellipse_d(90, 36, 34, 5.5)}" fill="{cv.paper}"/>'
                f'<path d="{ellipse_d(90, 36.6, 30, 4)}" fill="{cv.hatch(45, 2.2, .7, .8)}"/>'
@@ -431,6 +451,7 @@ def crest(tone: str, case: str, core: Core, value: int, o: dict | None = None) -
     cv.add(cv.burst(cx, cy) + cv.chain(cx, 12, cx, 160))
     if t == 0:
         cv.add(cv.phantom(outer) + cv.phantom(inner, .9) + cv.icon(core.icon, cx - 17.4, cy - 17.4, 34.8, sw=1.7, op=.55)
+               + f'<path d="{rect_d(40, 136, 100, 16)}" fill="{cv.paper}"/>'
                + cv.phantom(rect_d(40, 136, 100, 16)) + cv.say("UNRANKED", cx, 147.3, 8.5, anchor="middle", ls=2.2,
                                                                 quiet=True))
     else:
@@ -449,7 +470,7 @@ def crest(tone: str, case: str, core: Core, value: int, o: dict | None = None) -
         cv.add(f'<path d="{guides}" fill="none" stroke="{cv.line}" stroke-opacity=".3" stroke-width=".6"/>')
         field = cv.clip(inner)
         if t >= 3:
-            cv.add(f'<g clip-path="url(#{field})"><path d="M90 46L140 96L90 146Z" fill="{cv.hatch(45, 3, .6, .55)}"/></g>')
+            cv.add(f'<g clip-path="url(#{field})">' + cv.lining(t, "M90 46L140 96L90 146Z") + "</g>")
         cv.add(cv.heavy(outer, cx, cy, 2.4) + cv.icon(core.icon, cx - 17.4, cy - 17.4, 34.8, sw=1.7))
         if t >= 3:
             cv.add(cv.glint(field, 40, 40, 16, 120))
@@ -501,7 +522,7 @@ def medallion(tone: str, case: str, core: Core, value: int, o: dict | None = Non
         (ax, ay), (bx, by), (qx, qy), (px, py) = pts
         mid = [(ax + (bx - ax) * .36, ay), (ax + (bx - ax) * .64, ay), (px + (qx - px) * .64, py),
                (px + (qx - px) * .36, py)]
-        cv.add(cv.edge(poly_d(pts), sw=1, fill=cv.paper, op=1 if t else .6, dash="" if t else "4 2"))
+        cv.add(cv.edge(poly_d(pts), sw=1, fill=cv.paper if t else "none", op=1 if t else .6, dash="" if t else "4 2"))
         if t:
             cv.add(f'<path d="{poly_d(mid)}" fill="{cv.hatch(-60 if shade else 60, 2.2, .7, .8)}"/>'
                    + f'<path d="M{f1(ax + (bx - ax) * .12)} {ay}L{f1(px + (qx - px) * .12)} {py}'
@@ -533,9 +554,11 @@ def medallion(tone: str, case: str, core: Core, value: int, o: dict | None = Non
                  f'stroke-dasharray=".9 1.5"/>'
                + cv.edge(circle_d(cx, cy, 39.5), sw=.8) + cv.edge(circle_d(cx, cy, 36), sw=1))
         face = cv.clip(circle_d(cx, cy, 36))
-        if t >= 2:
-            cv.add(f'<g clip-path="url(#{face})"><path d="M{cx - 40} {cy + 6}L{cx + 40} {cy - 14}V{cy + 40}H{cx - 40}Z" '
-                   f'fill="{cv.hatch(45, 3, .6, .55)}"/></g>')
+        shade = f"M{cx - 40} {cy + 6}L{cx + 40} {cy - 14}V{cy + 40}H{cx - 40}Z"
+        if t == 2:
+            cv.add(f'<g clip-path="url(#{face})"><path d="{shade}" fill="{cv.hatch(45, 3, .6, .55)}"/></g>')
+        elif t >= 3:
+            cv.add(f'<g clip-path="url(#{face})">' + cv.lining(t, shade) + "</g>")
         # The laurel: two sprigs of leaves round the face, each leaf drawn in outline with its rib.
         leaves = ""
         for side in (-1, 1):
@@ -616,8 +639,13 @@ def crystal(tone: str, case: str, core: Core, value: int, o: dict | None = None)
                 cv.add(f'<g clip-path="url(#{clip})"><path d="M60 {f1(level)}H120" stroke="{cv.mark}" stroke-width="1.2"/></g>'
                        f'<path d="M{lx + 2} {f1(level)}H{lx + 16}" stroke="{cv.line}" stroke-width=".7"/>'
                        f'<path d="M{lx + 6} {f1(level - 5)}h7l-3.5 5Z" fill="none" stroke="{cv.line}" stroke-width=".8"/>')
-        cv.add(f'<g clip-path="url(#{clip})">' + "".join(f'<path d="{poly_d(pts(k))}" fill="{cv.hatch(-45, 3, .55, .45)}"/>'
-                                                       for k in SHADED) + "</g>")
+        dark = "".join(poly_d(pts(k)) for k in SHADED)
+        if t >= 5:
+            facets = cv.lining(5, dark, 2.6)
+        else:
+            facets = f'<path d="{dark}" fill="{cv.hatch(-45, 3, .55, .45)}"/>' + (
+                f'<path d="{dark}" fill="{cv.hatch(45, 3, .55, .5)}"/>' if t >= 4 else "")
+        cv.add(f'<g clip-path="url(#{clip})">{facets}</g>')
         cv.add(f'<path d="{"".join(poly_d(pts(k)) for k in FACES)}" fill="none" stroke="{cv.line}" stroke-width=".7" '
                f'stroke-linejoin="round"/>' + cv.edge(sil, sw=1.4) + cv.heavy(sil, 90, 86, 2.2))
         cv.add(f'<circle cx="90" cy="88" r="12.5" fill="{cv.paper}" stroke="{cv.line}" stroke-width=".8"/>'
@@ -647,10 +675,14 @@ def plaque(tone: str, case: str, core: Core, value: int, o: dict | None = None) 
     # The plate's left: a panel lined as the tier is reached, its trophy cut through it.
     panel = rect_d(5, 5, 75, H - 10)
     if t:
-        cv.add(f'<path d="{panel}" fill="{cv.hatch(45, 3.2 if t < 3 else 2.4, .8, .8)}"/>'
-               + (f'<path d="{panel}" fill="{cv.hatch(-45, 3.2, .6, .6)}"/>' if t >= 5 else "")
-               + f'<path d="{circle_d(42.5, 44, 24)}" fill="{cv.line if t >= 3 else cv.paper}" stroke="{cv.line}" stroke-width="1.2"/>'
-               + cv.icon("trophy", 25.7, 27.2, 33.6, sw=1.5, stroke=cv.on_block if t >= 3 else cv.line))
+        solid = 3 <= t < 5
+        if t >= 5:
+            lined = cv.lining(5, panel, 3.2)
+        else:
+            lined = f'<path d="{panel}" fill="{cv.hatch(45, 3.2 if t < 3 else 2.4, .8, .8)}"/>' + (
+                f'<path d="{panel}" fill="{cv.hatch(-45, 3.2, .6, .6)}"/>' if t >= 4 else "")
+        cv.add(lined + f'<path d="{circle_d(42.5, 44, 24)}" fill="{cv.line if solid else cv.paper}" stroke="{cv.line}" '
+               f'stroke-width="1.2"/>' + cv.icon("trophy", 25.7, 27.2, 33.6, sw=1.5, stroke=cv.on_block if solid else cv.line))
         if t >= 3:
             cv.add(cv.glint(cv.clip(panel), -10, 0, 16, 88))
     else:
@@ -714,7 +746,9 @@ def pin(tone: str, case: str, a, cur) -> str:
         if t >= 2:
             cv.add(f'<circle cx="{cx}" cy="{cy}" r="29.6" fill="none" stroke="{cv.line}" stroke-width="1.4" '
                    f'stroke-dasharray=".9 1.4"/>')
-        if t >= 3:
+        if t >= 5:
+            cv.add(f'<g fill-rule="evenodd">{cv.lining(5, disc + circle_d(cx, cy, 25), 2.2)}</g>')
+        elif t >= 3:
             cv.add(f'<path d="{disc}{circle_d(cx, cy, 25)}" fill-rule="evenodd" fill="{cv.hatch(45, 2.2, .7, .85)}"/>')
         solid = t >= 4
         cv.add(cv.edge(circle_d(cx, cy, 25), sw=1, fill=cv.line if solid else cv.paper)
@@ -796,14 +830,14 @@ def next_up_card(tone: str, case: str, cores: list, values: dict, ach: list, cur
     W, H = 328, 152
     items = next_up_items(cores, values, ach, curs)
     cv = Drawing(tone, case, W, H, next_up_label(items))
-    sheet(cv, cv.col, W=W, H=H, border=8, zones=5, rx=12, plain=((8, 46, W - 16, H - 54),))
+    sheet(cv, cv.col, W=W, H=H, border=8, zones=5, rx=12, plain=((8, 40, W - 16, H - 48),))
     # The title in a solid cell, as a sheet's title strip carries its name, and the rows ruled as a schedule.
     tw = width("NEXT UP", "num", 9.5, 2.2) + 22
-    cv.add(f'<rect x="16" y="20" width="{f1(tw)}" height="18" fill="{cv.line}"/>'
-           + cv.say("NEXT UP", 27, 32.4, 9.5, ls=2.2, fill=cv.on_block)
-           + f'<path d="M8 46H{W - 8}" stroke="{cv.line}" stroke-opacity=".85" stroke-width="1.2"/>')
+    cv.add(f'<rect x="16" y="15" width="{f1(tw)}" height="18" fill="{cv.line}"/>'
+           + cv.say("NEXT UP", 27, 27.4, 9.5, ls=2.2, fill=cv.on_block)
+           + f'<path d="M8 40H{W - 8}" stroke="{cv.line}" stroke-opacity=".85" stroke-width="1.2"/>')
     for i, it in enumerate(items):
-        y = 66 + i * 28
+        y = 58 + i * 30
         cv.add(f'<circle cx="30" cy="{y - 4}" r="7.5" fill="none" stroke="{cv.line}" stroke-width="1"/>'
                + cv.icon(it["icon"], 25.4, y - 8.6, 9.1, sw=2.8)
                + cv.say(it["name"], 44, y, 10.5)

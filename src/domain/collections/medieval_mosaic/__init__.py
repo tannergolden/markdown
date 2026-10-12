@@ -65,6 +65,9 @@ class Mosaic(CollectionSet):
     collection = "medieval"
     key = "medieval-mosaic"
     name = "Mosaic"
+    # How deep the tesserae border and the jewels at its corners reach into a trophy file, in units: its top, its
+    # sides, its foot and its corners.
+    trophy_frame = (5, 5, 5, 8)
     tagline = (
         "A Byzantine mosaic in burnished August gold that glitters as the light crosses it, where peacocks drink at a "
         "marble fountain and the empress's court stands in the palace arcade.")

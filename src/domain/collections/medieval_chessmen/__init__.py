@@ -55,6 +55,9 @@ class Chessmen(CollectionSet):
     key = "medieval-chessmen"
     name = "Chessmen"
     collection = "medieval"
+    # How deep the inlaid border and the squares at its corners reach into a trophy file, in units: its top, its
+    # sides, its foot and its corners.
+    trophy_frame = (5, 5, 5, 8)
     tagline = "A winter's game in a hall of oak and wool, the Lewis chessmen in walrus ivory and bone stained red."
     about = ("Every header is the Norse hall itself: a wall of upright oak planks under a crossbeam, the hall's posts "
              "at its ends, and a woven hanging of natural wool bordered in tablet weave hung behind the words. Across "

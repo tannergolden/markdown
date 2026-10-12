@@ -63,6 +63,9 @@ class Illuminated(CollectionSet):
     collection = "medieval"
     key = "medieval-illuminated"
     name = "Illuminated"
+    # How deep the illuminated border reaches into a trophy file, in units: its top, its sides, its foot and its
+    # corners.
+    trophy_frame = (4, 4, 4, 4)
     # What the design is, in words, for the page that shows the collection.
     tagline = (
         "A page from the scriptorium: gold leaf, lapis and a monk at his desk by candlelight.")

@@ -14,11 +14,15 @@ lit by its one lamp, up and to the left.
 
   a tier       the metal it is struck in: the case's bronze, silver, gold,
                platinum and diamond, each a seven-tone ramp on the engine's
-               light, so gold is gold in every set. Unranked is a ghost, its
-               outline dotted where it will stand. Gold glints; platinum
-               gains its ornament and its sparkles, diamond its prism and its
-               stars, as the standard look does
+               light, so gold is gold in every set, and diamond a prism from
+               violet in its shadows to ice in its lights. Unranked is a ghost:
+               the trophy's place washed faintly, its outline dashed round it.
+               Gold glints; platinum gains its ornament and its sparkles,
+               diamond its prism and its stars, as the standard look does
   progress     a bar along the card's foot, filled as far as the next tier
+  the frame    a file keeps a unit clear of the set's frame, and its words
+               two, told how deep the frame reaches (`trophy_frame`); the
+               trophy grows to fill the room left inside it
   the hand     a collection's design letters every word in its hand's two
                inks on its own ground, so its trophies keep the hand too
 
@@ -29,30 +33,32 @@ trophies in metals of its own (`trophy_metals`), stand them on another ground
 
 A card's motion is its own, in CSS rather than the engine's SMIL, so it holds
 still for a reader who asks for reduced motion even though a trophy has no
-still file: a glint passes across a gold trophy, in the engine's discrete
-steps, and a platinum one's sparkles twinkle on the engine's cadence. A
-collection's design glints on its hand's period.
+still file: a glint passes across a gold trophy's metal, in the engine's
+discrete steps and never across a word, and a platinum one's sparkles twinkle
+on the engine's cadence. A collection's design glints on its hand's period.
 """
 from __future__ import annotations
 
 import math
+from dataclasses import dataclass
 
 from ... import KIT, KIT_VERSION
 from ...canvas import BUDGET
 from ...trophies.art import (alt_text, case_title, fmt, level_label, level_stats, level_xp, next_up_items,
                              next_up_label, pct_label, pin_caption, pin_label, status_text, top_pct)
 from ...trophies.catalogue import TIER_NAMES, ach_state, measure
-from ..pixel import GLYPHS, LX, LY, LZ, MISSING, Pix, clip, fold, make_ramp, measure as tw, tube, wrap
+from ..pixel import GLYPHS, LX, LY, LZ, MISSING, Pix, clip, contrast, fold, make_ramp, measure as tw, tube
 from .badges import nearest
 
-# The case's metals, one seven-tone ramp for each tier on the engine's light, dark to light: bronze, silver,
-# gold, platinum and diamond. Diamond catches the light in two more, its prism.
+# The case's metals, one seven-tone ramp for each tier on the engine's light, dark to light: bronze, a red copper
+# whose lights stay peach where gold's turn to straw; silver; gold; platinum, a cool steel; and diamond, a prism
+# from violet in its shadows to ice in its lights. Diamond catches the light in two more, its prism's own.
 METALS = {
-    1: make_ramp("#B4703A"),
+    1: ["#3B1308", "#5E2210", "#8A3C1C", "#B5622F", "#D98C55", "#F0B98A", "#FCE2C8"],
     2: make_ramp("#A8B3C0"),
     3: make_ramp("#E3A62A"),
-    4: make_ramp("#93C6E4"),
-    5: make_ramp("#6FC2F0"),
+    4: ["#1E2B45", "#33496E", "#557399", "#87A8CC", "#B9D4EE", "#E1EEFB", "#FFFFFF"],
+    5: ["#1B1150", "#33228A", "#5A44C8", "#7C78F0", "#7FC8FF", "#BDF0FF", "#FFFFFF"],
 }
 PRISM = (make_ramp("#B697FF"), make_ramp("#F496D4"))
 METAL_TOKENS = frozenset(c.upper() for ramp in (*METALS.values(), *PRISM) for c in ramp)
@@ -72,11 +78,39 @@ STAR = ["..#..", ".###.", "#####", ".#.#.", "#...#"]
 SMALL_STAR = ["..#..", "#####", ".###.", ".#.#."]
 FLARE = ["..#..", "..#..", "##.##", "..#..", "..#.."]
 UP = [".#.", "###"]
+CROWN = ["#...#...#", "##.###.##", "#########", ".#######."]
+SHARD = [".#.", "###", "###", "##.", ".#."]
 
 CARD, PIN, LEVEL, NEXT, PLAQUE = (82, 111), (52, 62), (210, 76), (164, 76), (132, 44)
-EDGE = 5    # how far inside the canvas a card's content keeps, clear of the set's frame
 TAG = 9     # a tag's height, as every set draws one, its letters two rows in and four along
-ART = EDGE + TAG + 1    # the row a card's trophy starts at: the rows above it are its tags', the rank's and NEW's
+# The rows each card's drawing is at its best in, at its smallest: below them a card's foot closes up a row a gap.
+WANTED = {"trophy": 53, "crest": 51, "medallion": 50, "crystal": 50}
+
+
+@dataclass(frozen=True)
+class Room:
+    """Where a file's drawing goes: inside the set's frame and a unit clear of it, out of the squares its corner
+    pieces take, and its words a unit further in still."""
+
+    x0: int
+    y0: int
+    x1: int          # the first column past the room
+    y1: int          # the first row past the room
+    corner: int      # the side of the square at each corner the room leaves to the frame
+    w: int
+    h: int
+
+    @property
+    def foot(self) -> int:
+        """The last row a word may take."""
+        return self.y1 - 2
+
+    def span(self, y: int, rows: int) -> tuple[int, int]:
+        """The columns, from and past, that `rows` rows from row `y` may take: the room's, narrower where they
+        reach into the corner squares."""
+        if y < self.corner or y + rows > self.h - self.corner:
+            return max(self.x0, self.corner), min(self.x1, self.w - self.corner)
+        return self.x0, self.x1
 
 
 def glyph(name: str) -> list:
@@ -110,23 +144,63 @@ def outline(p: Pix, cells, ramp: list, cx: float, cy: float, L: str = "base"):
             p.px(q[0], q[1], ramp[0] if far else ramp[1], L)
 
 
-def ghost(p: Pix, cells, colour: str, cx: float, cy: float):
-    """An unranked trophy's outline, dashed where it will stand: every other short arc of the pixels round
-    `cells`, by their angle about (cx, cy), so a slanted edge is dashed as a straight one is."""
-    for (x, y) in list(cells):
+def ring_of(cells) -> set:
+    """The pixels round `cells`, just outside them: where an outline is drawn."""
+    out = set()
+    for (x, y) in cells:
         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-            q = (x + dx, y + dy)
-            if q in cells:
-                continue
-            a = math.degrees(math.atan2(q[1] + .5 - cy, q[0] + .5 - cx)) % 360
-            if int(a / 10) % 2 == 0:
-                p.px(q[0], q[1], colour)
+            if (x + dx, y + dy) not in cells:
+                out.add((x + dx, y + dy))
+    return out
+
+
+def walk(ring) -> list[list]:
+    """The pixels of `ring` in order round it, as a pen would draw them: from its top-left pixel, each step to the
+    neighbour that turns least from the way it was going. A ring that branches comes back as several walks."""
+    order = ((1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1))
+    left, walks = set(ring), []
+    while left:
+        cur = min(left, key=lambda q: (q[1], q[0]))
+        left.discard(cur)
+        path, d = [cur], 0
+        while True:
+            for turn in (0, 1, -1, 2, -2, 3, -3):
+                k = (d + turn) % 8
+                q = (cur[0] + order[k][0], cur[1] + order[k][1])
+                if q in left:
+                    break
+            else:
+                break
+            left.discard(q)
+            path.append(q)
+            cur, d = q, k
+        walks.append(path)
+    return walks
+
+
+def ghost(p: Pix, cells, colour: str, wash: float = .12):
+    """An unranked trophy's place: washed faintly in `colour`, its outline dashed round it two pixels on and two
+    off, traced along its edge so a curve or a stem is dashed as evenly as a straight."""
+    if wash:
+        for (x, y) in cells:
+            p.apx(x, y, colour, wash, L="base")
+    for path in walk(ring_of(cells)):
+        if len(path) > 2:
+            for i, (x, y) in enumerate(path):
+                if i % 4 < 2:
+                    p.px(x, y, colour)
 
 
 def lines_of(name: str, room: int) -> list[tuple[str, int]]:
     """A name set in the small capitals on at most two lines of `room`, as (line, tracking): broken at its spaces
-    and hyphens, a word too wide for a line set tighter, and cut only if even that cannot fit it."""
+    and hyphens, a word too wide for a line set tighter, a lone word too wide even so broken across both lines
+    with a hyphen, and cut only if even that cannot fit it."""
     words, out, cur = fold(name.upper(), "35").replace("-", "- ").split(), [], ""
+    if len(words) == 1 and tw(words[0], "35", 1, 0) > room:
+        w = words[0]
+        cut = max((i for i in range(2, len(w) - 1) if tw(w[:i] + "-", "35") <= room), default=0)
+        if cut and tw(w[cut:], "35") <= room:
+            return [(w[:cut] + "-", 1), (w[cut:], 1)]
     for w in words:
         joined = (cur + ("" if cur.endswith("-") else " ") + w) if cur else w
         if tw(joined, "35") <= room:
@@ -154,6 +228,12 @@ def hex_in(x: float, y: float, cx: float, cy: float, r: float) -> bool:
     """Whether the point lies inside a pointy-topped hexagon of circumradius `r`."""
     dx, dy = abs(x - cx), abs(y - cy)
     return dx <= r * .866 and dy <= r - dx * .57735
+
+
+def disc(cx: float, cy: float, r: float) -> set:
+    """The pixels of a disc."""
+    return {(x, y) for y in range(math.floor(cy - r) - 1, math.ceil(cy + r) + 1)
+            for x in range(math.floor(cx - r) - 1, math.ceil(cx + r) + 1) if math.hypot(x + .5 - cx, y + .5 - cy) <= r}
 
 
 def centred(p: Pix, cx: float, y: int, s: str, colour: str, font: str = "35", scale: int = 1) -> int:
@@ -196,6 +276,11 @@ class Trophies:
     """The trophy case's layouts. Every drawing hook a set overrides is listed first, with its default."""
 
     # ------------------------------------------------------------------------------------------ hooks
+    # How deep the set's frame reaches into a trophy file, in units: its top, its sides and its foot, and the side
+    # of the square its corner pieces take. A holiday's set has a frame four units deep all round; a design with a
+    # deeper one says so, and its files keep a unit clear of it and their words two (see `_room`).
+    trophy_frame = (4, 4, 4, 4)
+
     def trophy_metals(self) -> dict:
         """The ramps a trophy is struck in, by tier, 1 for bronze to 5 for diamond."""
         return METALS
@@ -204,7 +289,8 @@ class Trophies:
         """What a card stands on: the set's paper, by night its sky with a few faint stars, inside its frame."""
         self.paper(p, night, uid="tg")
         if night:
-            self.stars(p, EDGE + 2, EDGE + 2, p.w - EDGE - 2, p.h - EDGE - 2, max(4, p.w * p.h // 900), seed=7,
+            top, side, foot, _ = self.trophy_frame
+            self.stars(p, side + 3, top + 3, p.w - side - 3, p.h - foot - 3, max(4, p.w * p.h // 900), seed=7,
                        twinkling=False, faint=True)
         self.frame(p, night)
 
@@ -261,14 +347,30 @@ class Trophies:
         p.ground = set(p.layers["base"].values())   # the colours a glow may lie on
         return p
 
+    def _trophy_room(self, p: Pix) -> Room:
+        """The room a file's drawing has: a unit clear of the set's frame all round, and of its corner pieces."""
+        top, side, foot, corner = self.trophy_frame
+        return Room(side + 1, top + 1, p.w - side - 1, p.h - foot - 1, corner + 1, p.w, p.h)
+
+    def _tint(self, t: int, night: bool) -> str:
+        """The colour a tier's metal marks a bar, a pip or a ring in: its middle tone by day, a lighter by night."""
+        return self.trophy_metals()[t][4 if night else 3]
+
     def _shine(self, p: Pix, cx: float, cy: float, r: float, ramp: list, t: int, night: bool):
         """The light a trophy throws round itself, as a lamp's halo: stepped, strongest at its middle, by night
-        from bronze and by day from gold, laid on the ground only, so it never tints the trophy or a word."""
+        from bronze and by day from gold, laid on the ground inside the frame only, so it never tints the trophy, a
+        word or the frame."""
         if not t or (not night and t < 3):
             return
         alphas = (.05, .09, .14) if night else (.04, .07, .1)
-        p.halo(cx, cy, r, r * .92, ramp[5 if night else 4], alphas=alphas, L="base",
-               only=getattr(p, "ground", None) or set(), shape=False)
+        room = self._trophy_room(p)
+        ground, base = getattr(p, "ground", None) or set(), p.layers["base"]
+        for y in range(max(room.y0, math.floor(cy - r)), min(room.y1, math.ceil(cy + r) + 1)):
+            x0, x1 = room.span(y, 1)
+            for x in range(max(x0, math.floor(cx - r)), min(x1, math.ceil(cx + r) + 1)):
+                d = math.hypot((x + .5 - cx) / r, (y + .5 - cy) / (r * .92))
+                if d < 1 and base.get((x, y)) in ground:
+                    p.apx(x, y, ramp[5 if night else 4], alphas[min(2, int((1 - d) * 3))], "base")
 
     def _twinkles(self, p: Pix, motion: Motion, spots, ramp: list):
         """Sparkles that twinkle on the engine's cadence, each on its own beat."""
@@ -281,7 +383,8 @@ class Trophies:
         motion.used.add("tw")
 
     def _glint(self, p: Pix, motion: Motion, cells, ramp: list, uid: str):
-        """A glint across a trophy: a band of light two pixels wide that steps across it, clipped to its shape."""
+        """A glint across a trophy's metal: a band of light two pixels wide that steps across it, clipped to the
+        metal alone, so it never crosses an enamel or a word."""
         if not cells:
             return
         ys = [y for _, y in cells]
@@ -306,15 +409,58 @@ class Trophies:
         p.text(x + 4, y + 2, word, self.ink(night)["tag_ink"], "35")
         return w
 
-    def _rank(self, p: Pix, core, m: dict, o: dict, night: bool):
-        """The card's rank, TOP 2.8%, on a tag at the top left."""
-        if o.get("rank") and m["t"]:
-            self._tagged(p, EDGE, EDGE, pct_label(top_pct(core, m["v"])), night)
+    def _tag_reach(self, w: int, night: bool) -> tuple[int, int, int, int]:
+        """How far past its box the set dresses a tag `w` wide, to its left, its right, above and below: a strap's
+        buckle, say."""
+        scratch = Pix(w + 24, TAG + 8)
+        self.tag(scratch, 12, 4, w, TAG, night)
+        cells = list(scratch.layers["base"])
+        if not cells:
+            return 0, 0, 0, 0
+        xs, ys = [x for x, _ in cells], [y for _, y in cells]
+        return (max(0, 12 - min(xs)), max(0, max(xs) - (11 + w)), max(0, 4 - min(ys)), max(0, max(ys) - (3 + TAG)))
 
-    def _new(self, p: Pix, m: dict, o: dict, night: bool, right: int):
-        """A tier newly reached: NEW on a tag at the top right."""
-        if o.get("new") and m["t"]:
-            self._tagged(p, right - tw("NEW", "35") - 8, EDGE, "NEW", night)
+    def _top_row(self, room: Room, night: bool) -> tuple[int, int]:
+        """The row a card's top row of tags sits on, low enough that all the set dresses a tag in keeps inside the
+        room, and the first row under it all."""
+        _, _, up, down = self._tag_reach(24, night)
+        return room.y0 + up, room.y0 + up + TAG + down
+
+    def _tags(self, p: Pix, room: Room, core, m: dict, o: dict, night: bool):
+        """A card's top row: NEW on a tag at the right for a tier newly reached, and the rank on one at the left,
+        TOP 2.8%, set as 2.8% or left off where the two would meet; both clear of the frame's corner pieces, and
+        placed by all the set dresses them in."""
+        y, _ = self._top_row(room, night)
+        x0, x1 = room.span(room.y0, TAG + y - room.y0 + 1)
+        new = bool(o.get("new") and m["t"])
+        right = x1
+        if new:
+            w = tw("NEW", "35") + 8
+            lead, trail, _, _ = self._tag_reach(w, night)
+            right = x1 - trail - w
+            self._tagged(p, right, y, "NEW", night)
+            right -= lead + 2
+        if o.get("rank") and m["t"]:
+            lab = pct_label(top_pct(core, m["v"]))
+            for s in (lab, lab.split(" ", 1)[-1]):
+                w = tw(s, "35") + 8
+                lead, trail, _, _ = self._tag_reach(w, night)
+                if x0 + lead + w + trail <= right:
+                    self._tagged(p, x0 + lead, y, s, night)
+                    break
+
+    def _line(self, p: Pix, room: Room, y: int, s: str, colour: str, cx: float | None = None) -> int:
+        """A line of small capitals on row `y`, centred on `cx` (or set from the room's left): two units clear of the
+        frame and its corner pieces on its own row, set tighter where it would not fit, and cut only if even that
+        cannot fit it. Returns its width."""
+        x0, x1 = room.span(y - 1, 7)
+        x0, x1 = x0 + 1, x1 - 1
+        track = 1 if tw(s, "35") <= x1 - x0 else 0
+        if tw(s, "35", 1, track) > x1 - x0:
+            s, track = clip(s, x1 - x0, "35"), 1
+        w = tw(s, "35", 1, track)
+        x = x0 if cx is None else max(x0, min(x1 - w, round(cx - w / 2)))
+        return p.text(x, y, s, colour, "35", 1, track=track)
 
     def _plate(self, p: Pix, cx: float, y: int, word: str, night: bool, stars: int = 0):
         """A tier engraved on the set's plate, its stars after it, centred on `cx`, and the set's own touch along
@@ -341,6 +487,25 @@ class Trophies:
             if n < w:
                 p.vline(x + n - 1, y, y + h, k["body"])
 
+    def _gauge(self, p: Pix, cx: float, cy: float, r: float, share: float, colour: str, night: bool, n: int = 160):
+        """A ring round a medal or a pin, filled from its top as far as `share` in `colour`, its head a spark of
+        light, and its track the set's quiet ink washed in, so the whole ring reads at any share."""
+        k = self.ink(night)
+        drawn, head = set(), None
+        for i in range(n):
+            a = 2 * math.pi * i / n - math.pi / 2
+            q = (round(cx - .5 + r * math.cos(a)), round(cy - .5 + r * math.sin(a)))
+            if q in drawn:
+                continue
+            drawn.add(q)
+            if i / n < share:
+                p.px(*q, colour)
+                head = q
+            else:
+                p.apx(*q, k["muted"], .35, L="base")
+        if head and share < 1:
+            p.px(*head, k["body"])
+
     def _pips(self, p: Pix, cx: float, y: int, m: dict, night: bool):
         """The five tiers as five diamonds: struck in each tier's metal once reached, outlined in the next, and
         dotted for those still to come; diamond's stars after them."""
@@ -352,9 +517,9 @@ class Trophies:
         for i in range(5):
             ramp = metals[i + 1]
             if m["t"] > i:
-                p.sprite(x, y, DIAMOND, {"#": ramp[4]})
-                p.px(x + 2, y + 1, ramp[6])
-                p.px(x + 2, y + 3, ramp[2])
+                p.sprite(x, y, DIAMOND, {"#": ramp[3]})
+                p.sprite(x + 1, y + 1, [".#.", "##.", "..."], {"#": ramp[5]})
+                p.px(x + 2, y + 3, ramp[1])
             elif m["t"] == i:
                 p.sprite(x, y, ["..#..", ".#.#.", "#...#", ".#.#.", "..#.."], {"#": k["accent"]})
             else:
@@ -362,24 +527,32 @@ class Trophies:
             x += 7
         x += 2
         for _ in range(stars):
-            p.sprite(x, y, STAR, {"#": metals[5][5]})
+            p.sprite(x, y, STAR, {"#": metals[5][4]})
             x += 6
 
-    def _footer(self, p: Pix, core, m: dict, o: dict, night: bool, kind: str, top: int):
+    def _foot_at(self, room: Room, kind: str, gap: int) -> dict:
+        """Where a card's foot sits, from the bottom up: its status on the last rows a word may take, then its bar,
+        its value and the trophy's name over it, `gap` rows between each."""
+        status = room.foot - 4
+        bar = status - gap - 3 if kind in ("bar", "seg") else None
+        value = (status if bar is None else bar) - gap - 14
+        return {"status": status, "bar": bar, "value": value, "title": value - gap - 5}
+
+    def _footer(self, p: Pix, room: Room, core, m: dict, o: dict, night: bool, kind: str, at: dict):
         """A card's foot: the trophy's name, its value and how it moved this week, its progress, and where it
         stands."""
         k = self.ink(night)
         W = p.w
-        centred(p, W / 2, top, core.title.upper(), k["muted"], "35")
+        centred(p, W / 2, at["title"], core.title.upper(), k["muted"], "35")
         vs = fmt(m["v"])
         delta = o.get("delta")
         extra = (tw(fmt(delta), "35") + 6) if delta else 0
-        scale = 2 if tw(vs, "57", 2) + extra <= W - 2 * EDGE - 6 else 1
+        scale = 2 if tw(vs, "57", 2) + extra <= room.x1 - room.x0 - 4 else 1
         vw = tw(vs, "57", scale)
         unit = core.unit.upper() if core.unit else ""
         uw = tw(unit, "35") + 2 if unit else 0
         x = round(W / 2 - (vw + uw + extra) / 2)
-        vy = top + 8 + (0 if scale == 2 else 4)
+        vy = at["value"] + (0 if scale == 2 else 4)
         p.text(x, vy, vs, k["body"], "57", scale)
         if unit:
             p.text(x + vw + 2, vy + 7 * scale - 5, unit, k["muted"], "35")
@@ -387,118 +560,120 @@ class Trophies:
             dx = x + vw + uw + 3
             p.sprite(dx, vy + 1, UP, {"#": k["accent"]})
             p.text(dx + 4, vy, fmt(delta), k["accent"], "35")
-        bar_y = top + 24
-        metals = self.trophy_metals()
-        nxt = metals[min(5, m["t"] + 1)]
+        bx0, bx1 = room.x0 + 3, room.x1 - 3
         if kind == "bar":
-            self._bar(p, EDGE + 4, bar_y, W - 2 * EDGE - 8, m["pct"] if m["next"] else 1.0, night, nxt[4])
+            self._bar(p, bx0, at["bar"], bx1 - bx0, m["pct"] if m["next"] else 1.0, night,
+                      self._tint(min(5, m["t"] + 1), night))
         elif kind == "seg":
-            room = W - 2 * EDGE - 8
-            sw = (room - 4 * 2) // 5
+            sw = (bx1 - bx0 - 8) // 5
             x0 = round(W / 2 - (5 * sw + 8) / 2)
             for i in range(5):
                 share = 1 if m["t"] > i else (m["pct"] if m["t"] == i else 0)
-                self._bar(p, x0 + i * (sw + 2), bar_y, sw, share, night, metals[i + 1][4])
-        status = status_text(m)
-        if tw(status, "35") > W - 2 * EDGE - 2:
-            status = clip(status, W - 2 * EDGE - 2, "35")
-        centred(p, W / 2, top + (29 if kind != "none" else 27), status, k["muted"], "35")
+                self._bar(p, x0 + i * (sw + 2), at["bar"], sw, share, night, self._tint(i + 1, night))
+        self._line(p, room, at["status"], status_text(m), k["muted"], W / 2)
 
     # ------------------------------------------------------------------------------------ the trophies
-    def _cup(self, p: Pix, motion: Motion, core, m: dict, night: bool, cx: int = 41, top: int = ART + 3):
+    def _cup(self, p: Pix, motion: Motion, core, m: dict, night: bool, cx: int, top: int, bottom: int):
         """The trophy, a cup: a turned bowl on its stem and foot, two handles, the trophy's enamel on its bowl, on
-        a plinth whose plate is engraved with its tier."""
+        a plinth whose plate is engraved with its tier, and the five tiers in pips under it; as tall as the rows
+        from `top` to `bottom` let it be."""
         t, k = m["t"], self.ink(night)
-        R, H = 17, 24
-        rows = []
-        for i in range(H + 1):
-            hw = max(2.6, R * max(0.0, 1 - (i / H) ** 2.4) ** .55)
-            rows.append((top + i, round(hw)))
-        stem = [(top + H + 1 + i, 2 if i != 2 else 3) for i in range(5)]
-        foot = [(top + H + 6 + i, 4 + i * 2) for i in range(4)]
-        shape = {(x, y) for y, n in rows + stem + foot for x in range(cx - n, cx + n)}
+        R = 17
+        H = max(16, min(23, bottom - top + 1 - 33))    # the bowl's height; the rim, stem, foot, plinth and pips take 33
+        y = top + 3 + max(0, (bottom - top + 1 - 33 - H) // 2)
+        rows = [(y + i, round(max(2.6, R * max(0.0, 1 - (i / H) ** 2.4) ** .55))) for i in range(H + 1)]
+        stem = [(y + H + 1 + i, 2 if i != 2 else 3) for i in range(5)]
+        foot = [(y + H + 6 + i, 4 + i * 2) for i in range(4)]
+        half = dict(rows + stem + foot)
+        body = {(x, yy) for yy, n in half.items() for x in range(cx - n, cx + n)}
+        s = H / 24
+
+        def handle(side: int) -> list:
+            return [(cx + side * (R + dx), y + dy * s) for dx, dy in ((-1, 3), (3, 2.5), (6, 5.5), (6, 10), (3, 14.5),
+                                                                       (-3, 17))]
+
+        rim = set()
+        for yy in range(y - 3, y + 3):
+            for x in range(cx - R - 1, cx + R + 1):
+                if ((x + .5 - cx) / (R + .5)) ** 2 + ((yy + .5 - y) / 2.6) ** 2 <= 1:
+                    rim.add((x, yy))
+        ey = y + round(11 * s)
         if t == 0:
-            ghost(p, shape, k["muted"], cx, top + 14)
+            scratch = Pix(p.w, p.h)
             for side in (-1, 1):
-                for i in range(12):
-                    a = math.radians(-90 + i * 15)
-                    hx, hy = cx + side * (R + 1 + 4.5 * math.cos(a)), top + 9 + 6.5 * math.sin(a)
-                    if i % 2 == 0:
-                        p.px(round(hx) - (1 if side < 0 else 0), round(hy), k["muted"])
-            p.sprite(cx - 4, top + 8, glyph(core.icon), {"#": k["muted"]})
+                tube(scratch, handle(side), 1.5, lambda *a: "#000000", outline="#000000")
+            handles = set(scratch.layers["base"]) - body - rim
+            ghost(p, body | rim | handles, k["muted"], wash=0)
+            for (x, yy) in body | rim:
+                p.apx(x, yy, k["muted"], .12, L="base")
+            p.sprite(cx - 3, ey - 3, glyph(core.icon), {"#": k["muted"]})
         else:
             ramp = self.trophy_metals()[t]
             for side in (-1, 1):   # the handles, as tubes on the same light
-                path = [(cx + side * (R - 1), top + 3), (cx + side * (R + 3), top + 2.5), (cx + side * (R + 6), top + 5.5),
-                        (cx + side * (R + 6), top + 10), (cx + side * (R + 3), top + 14.5), (cx + side * (R - 3), top + 17)]
-                tube(p, path, 1.5, lambda s, o, lam, x, y: ramp[max(1, min(6, 1 + round(5 * lam)))], outline=ramp[0])
-            for (x, y) in shape:
-                n = dict(rows + stem + foot)[y]
+                tube(p, handle(side), 1.5, lambda s_, o, lam, x, yy: ramp[max(1, min(6, 1 + round(5 * lam)))],
+                     outline=ramp[0])
+            for (x, yy) in body:
+                n = half[yy]
                 nx = (x + .5 - cx) / max(1, n)
                 nz = math.sqrt(max(0.0, 1 - nx * nx))
                 lam = max(0.0, nx * LX + nz * LZ + .1)
                 v = 1.2 + 4.6 * lam ** 1.15
-                if abs(nx + .45) < .14 and y < top + H - 3:
+                if abs(nx + .45) < .14 and yy < y + H - 3:
                     v = 6.2     # the glint down the bowl where the lamp lands
-                p.px(x, y, ramp[tone(v, x, y, 1, 6)])
-            # The rim, and the cup's inside in shadow.
-            rim = set()
-            for y in range(top - 3, top + 3):
-                for x in range(cx - R - 1, cx + R + 1):
-                    d = ((x + .5 - cx) / (R + .5)) ** 2 + ((y + .5 - top) / 2.6) ** 2
-                    if d > 1:
-                        continue
-                    rim.add((x, y))
-                    inside = ((x + .5 - cx) / (R - 2.5)) ** 2 + ((y + .5 - top + .3) / 1.5) ** 2 <= 1
-                    if inside:
-                        p.px(x, y, ramp[1] if y >= top - 1 else ramp[2])
-                    else:
-                        p.px(x, y, ramp[6] if x < cx - 3 and y < top else ramp[5] if x < cx + 6 else ramp[3])
-            outline(p, shape | rim, ramp, cx, top + 14)
+                p.px(x, yy, ramp[tone(v, x, yy, 1, 6)])
+            for (x, yy) in rim:   # the rim, and the cup's inside in shadow
+                inside = ((x + .5 - cx) / (R - 2.5)) ** 2 + ((yy + .5 - y + .3) / 1.5) ** 2 <= 1
+                if inside:
+                    p.px(x, yy, ramp[1] if yy >= y - 1 else ramp[2])
+                else:
+                    p.px(x, yy, ramp[6] if x < cx - 3 and yy < y else ramp[5] if x < cx + 6 else ramp[3])
+            outline(p, body | rim, ramp, cx, y + 14)
             # The enamel, a disc on the bowl, its icon cut in the enamel's ink.
             block, ink = self.trophy_enamel(core.hue)
-            ey = top + 11
-            for y in range(ey - 7, ey + 7):
-                for x in range(cx - 7, cx + 7):
-                    d = math.hypot(x + .5 - cx, y + .5 - ey)
-                    if d <= 5.4:
-                        p.px(x, y, block)
-                    elif d <= 6.6:
-                        p.px(x, y, ramp[1] if lit(x + .5 - cx, y + .5 - ey) < 0 else ramp[5])
-            p.sprite(cx - 4, ey - 4, glyph(core.icon), {"#": ink})
-            self._shine(p, cx, top + 14, 30, ramp, t, night)
+            enamel = disc(cx, ey, 6.6)
+            for (x, yy) in enamel:
+                d = math.hypot(x + .5 - cx, yy + .5 - ey)
+                p.px(x, yy, block if d <= 5.4 else ramp[1] if lit(x + .5 - cx, yy + .5 - ey) < 0 else ramp[5])
+            p.sprite(cx - 3, ey - 3, glyph(core.icon), {"#": ink})
+            self._shine(p, cx, y + 14, 30, ramp, t, night)
             if t >= 3:
-                self._glint(p, motion, shape, ramp, "c")
-            if t >= 5:
-                for (x, y) in ((cx - 12, top + 6), (cx - 9, top + 15), (cx + 10, top + 4)):
-                    p.px(x, y, PRISM[0][5])
-                    p.px(x + 1, y, PRISM[1][5])
+                self._glint(p, motion, (body | rim) - enamel, ramp, "c")
+            if t >= 5:   # the prism, where the bowl catches the light
+                for (x, yy) in ((cx - 12, y + 6), (cx - 9, y + 15), (cx + 10, y + 4), (cx + 6, y + 18),
+                                (cx - 14, y + 1)):
+                    p.px(x, yy, PRISM[0][5])
+                    p.px(x + 1, yy, PRISM[1][5])
         # The plinth, in the set's own card, and the plate its tier is engraved on.
-        py = top + H + 10
+        py = y + H + 10
         light, dark = self.card_bevel(night)
         for (x0, y0, w, h) in ((cx - 15, py, 30, 2), (cx - 22, py + 2, 44, TAG + 2)):
             p.rect(x0, y0, w, h, k["fill"])
             p.bevel(x0, y0, w, h, light, dark)
             p.box(x0 - 1, y0 - 1, w + 2, h + 2, k["rule"], notch=True)
         self._plate(p, cx, py + 3, TIER_NAMES[t].upper(), night, 0)
+        self._pips(p, cx, py + 15, m, night)
         if t >= 4:
             ramp = self.trophy_metals()[t]
-            self._twinkles(p, motion, [(cx - 32, top + 1, True), (cx + 27, top + 1, False), (cx + 27, top + 21, True),
-                                       (cx - 31, top + 24, False)] + ([(cx - 30, top + 12, False)] if t == 5 else []),
+            self._twinkles(p, motion, [(cx - 32, y + 1, True), (cx + 27, y + 1, False), (cx + 27, y + 21, True),
+                                       (cx - 31, y + 24, False)] + ([(cx - 30, y + 12, False)] if t == 5 else []),
                            ramp)
-        return py + 11
 
-    def _crest(self, p: Pix, motion: Motion, core, m: dict, night: bool, cx: int = 41, cy: int = ART + 23):
+    def _crest(self, p: Pix, motion: Motion, core, m: dict, night: bool, cx: int, top: int, bottom: int):
         """The crest: a hexagon, its frame bevelled in the tier's metal round the trophy's enamel, on a banner
-        engraved with its tier; rivets from silver, a gem from gold, wings from platinum and a crown at diamond."""
+        engraved with its tier; rivets from silver, a gem from gold, wings from platinum and a crown at diamond;
+        as big as the rows from `top` to `bottom` let it be."""
         t, k = m["t"], self.ink(night)
-        R, rim = 19, 4.5
+        by = bottom - TAG + 1             # the banner's plate, on the last rows
+        R = max(15, min(19, (by - top - 5) // 2))
+        cy = by - R - 1
+        rim = 4.5 if R >= 18 else 4.0
+        shape = {(x, y) for y in range(cy - R - 1, cy + R + 2) for x in range(cx - R, cx + R + 1)
+                 if hex_in(x + .5, y + .5, cx, cy, R)}
         if t == 0:
-            ghost(p, {(x, y) for y in range(cy - R - 1, cy + R + 2) for x in range(cx - R, cx + R + 1)
-                      if hex_in(x + .5, y + .5, cx, cy, R)}, k["muted"], cx, cy)
+            ghost(p, shape, k["muted"])
             p.sprite(cx - 7, cy - 7, glyph(core.icon), {"#": k["muted"]}, 2)
-            self._plate(p, cx, cy + R + 1, "UNRANKED", night)
-            return cy + R + 1 + TAG
+            self._plate(p, cx, by, "UNRANKED", night)
+            return
         metals = self.trophy_metals()
         ramp = metals[t]
         if t >= 4:   # wings, three feathers a side, behind the frame
@@ -514,25 +689,22 @@ class Trophies:
                             v = 4.8 - i * 2.6 / length - j * .9
                             p.px(x, y + j, ramp[tone(v, x, y + j, 1, 6)])
                         p.px(x, y + thick, ramp[0])
-        cells = set()
         block, ink = self.trophy_enamel(core.hue)
-        for y in range(cy - R - 1, cy + R + 2):
-            for x in range(cx - R, cx + R + 1):
-                px_, py_ = x + .5, y + .5
-                if not hex_in(px_, py_, cx, cy, R):
-                    continue
-                cells.add((x, y))
-                if hex_in(px_, py_, cx, cy, R - rim):
-                    p.px(x, y, block)
-                    continue
-                a = math.degrees(math.atan2(py_ - cy, px_ - cx)) % 360
-                face = math.radians(round(a / 60) * 60 % 360)
-                v = 3.4 + 2.6 * lit(math.cos(face), math.sin(face))
-                if not hex_in(px_, py_, cx, cy, R - rim + 1.1):
-                    p.px(x, y, ramp[tone(v, x, y, 1, 6)])
-                else:
-                    p.px(x, y, ramp[0])
-        outline(p, cells, ramp, cx, cy)
+        frame = set()
+        for (x, y) in shape:
+            px_, py_ = x + .5, y + .5
+            if hex_in(px_, py_, cx, cy, R - rim):
+                p.px(x, y, block)
+                continue
+            frame.add((x, y))
+            a = math.degrees(math.atan2(py_ - cy, px_ - cx)) % 360
+            face = math.radians(round(a / 60) * 60 % 360)
+            v = 3.4 + 2.6 * lit(math.cos(face), math.sin(face))
+            if not hex_in(px_, py_, cx, cy, R - rim + 1.1):
+                p.px(x, y, ramp[tone(v, x, y, 1, 6)])
+            else:
+                p.px(x, y, ramp[0])
+        outline(p, shape, ramp, cx, cy)
         self._shine(p, cx, cy, 31, ramp, t, night)
         p.sprite(cx - 7, cy - 7, glyph(core.icon), {"#": ink}, 2)
         if t >= 2:   # rivets at the corners
@@ -550,105 +722,133 @@ class Trophies:
             p.px(cx - 1, cy - R - 1, gem[5])
             p.px(cx, cy - R + 1, gem[1])
         if t >= 5:   # and at diamond a crown in its place, its jewels the prism's
-            crown = ["#..#..#", "#.###.#", "#######", ".#####."]
-            cells_ = {(cx - 4 + i, cy - R - 4 + j) for j, row in enumerate(crown) for i, ch in enumerate(row) if ch == "#"}
-            for (x, y) in cells_:
-                p.px(x, y, ramp[tone(5.2 - (y - (cy - R - 4)) * .7 - (x - cx) * .12, x, y, 1, 6)])
-            outline(p, cells_, ramp, cx, cy - R - 2)
-            for x, c in ((cx - 4, PRISM[0][5]), (cx - 1, PRISM[1][5]), (cx + 2, PRISM[0][5])):
-                p.px(x, cy - R - 4, c)
+            cells = {(cx - 4 + i, cy - R - 5 + j) for j, row in enumerate(CROWN) for i, ch in enumerate(row)
+                     if ch == "#"}
+            for (x, y) in cells:
+                p.px(x, y, ramp[tone(5.4 - (y - (cy - R - 5)) * .8 - (x - cx) * .12, x, y, 1, 6)])
+            outline(p, cells, ramp, cx, cy - R - 3)
+            for x, c in ((cx - 4, PRISM[0][5]), (cx, PRISM[1][5]), (cx + 4, PRISM[0][5])):
+                p.px(x, cy - R - 5, c)
         if t >= 3:
-            self._glint(p, motion, cells, ramp, "h")
+            self._glint(p, motion, frame, ramp, "h")
         # The banner: its tails folded behind in the metal, the tier on the set's plate across it.
-        by = cy + R + 1
         for side in (-1, 1):
             for j in range(7):
                 for i in range(9):
                     x = cx + side * (17 + i) - (1 if side < 0 else 0)
                     if i >= 7 and abs(j - 3) < (i - 6):
                         continue
-                    p.px(x, by + 3 + j, ramp[2] if j else ramp[3])
-                p.px(cx + side * 17 - (1 if side < 0 else 0), by + 3 + j, ramp[0])
+                    p.px(x, by + 2 + j, ramp[2] if j else ramp[3])
+                p.px(cx + side * 17 - (1 if side < 0 else 0), by + 2 + j, ramp[0])
         self._plate(p, cx, by, TIER_NAMES[t].upper(), night, m["stars"])
         if t >= 4:
             self._twinkles(p, motion, [(cx - 33, cy - 20, True), (cx + 28, cy - 20, False), (cx + 28, cy + 12, True),
                                        (cx - 31, cy + 14, False)], ramp)
-        return by + TAG
 
-    def _medallion(self, p: Pix, motion: Motion, core, m: dict, night: bool, cx: int = 41, cy: int = ART + 23):
-        """The medallion: a struck medal on its ribbon, its laurel round the trophy's icon, the ring round it
-        filled as far as the next tier, and its tier on a plate below."""
+    def _ribbon(self, p: Pix, cx: int, top: int, bottom: int, night: bool, block: str, t: int):
+        """A medal's ribbon: two straps that cross to its ring, the far one in shadow, each edged in the set's rule
+        with the trophy's enamel down its middle; an unranked medal's only a ghost of one."""
+        k = self.ink(night)
+        straps = []
+        for side in (-1, 1):
+            cells = {}
+            for y in range(top, bottom + 1):
+                f = (y - top) / max(1, bottom - top)
+                outer = round(cx + side * (17 - 12 * f))
+                for i in range(7):
+                    cells[(outer - side * i, y)] = i
+            straps.append((side, cells))
+        if not t:
+            ghost(p, set(straps[0][1]) | set(straps[1][1]), k["muted"])
+            return
+        for side, cells in straps:   # the far strap first, so the near one crosses it
+            for (x, y), i in cells.items():
+                p.px(x, y, k["rule"] if i in (0, 6) else block if 2 <= i <= 4 else k["accent"])
+                if side < 0:
+                    p.apx(x, y, METALS[1][0], .3)
+
+    def _medallion(self, p: Pix, motion: Motion, core, m: dict, night: bool, cx: int, top: int, bottom: int):
+        """The medallion: a medal struck in the tier's metal, its rim reeded and its face sunk inside it, a laurel
+        up each side of the trophy's enamel, hung on its ribbon by a ring; the ring round it filled as far as the
+        next tier, and its tier on a plate below; as big as the rows from `top` to `bottom` let it be."""
         t, k = m["t"], self.ink(night)
         metals = self.trophy_metals()
         block, ink = self.trophy_enamel(core.hue)
-        # The ribbon: two straps from the top, the far one in shadow, each with its stripe.
-        for side, shade in ((-1, True), (1, False)):
-            for y in range(ART, cy - 8):
-                f = (y - ART) / max(1, cy - 8 - ART)
-                xa = cx + side * round(16 - 13 * f) - (0 if side > 0 else 1)
-                for i in range(8):
-                    x = xa - side * i
-                    p.px(x, y, (block if 2 <= i <= 5 else k["accent"]) if t else k["dim"])
-                    if shade:
-                        p.apx(x, y, metals[1][0], .35)
-        R = 18
-        p_ = m["pct"] if m["next"] else 1.0
-        nxt = metals[min(5, t + 1)]
-        for i in range(160):   # the ring round the medal, filled as far as it has got
-            a = 2 * math.pi * i / 160 - math.pi / 2
-            x, y = round(cx - .5 + R * math.cos(a)), round(cy - .5 + R * math.sin(a))
-            p.px(x, y, nxt[4] if i / 160 < p_ else k["dim"])
+        py = bottom - TAG + 1
+        G = max(13, min(19, (py - 3 - top - 7) // 2))      # the ring's radius; the medal's is three less
+        r = G - 3
+        cy = py - 3 - G
+        nxt = min(5, t + 1)
+        self._gauge(p, cx, cy, G, m["pct"] if m["next"] else 1.0, self._tint(nxt, night), night)
+        self._ribbon(p, cx, top, cy - r + 2, night, block, t)
+        medal = disc(cx, cy, r + .4)
         if t == 0:
-            ghost(p, {(x, y) for y in range(cy - 16, cy + 16) for x in range(cx - 16, cx + 16)
-                      if math.hypot(x + .5 - cx, y + .5 - cy) <= 14.5}, k["muted"], cx, cy)
-            p.sprite(cx - 4, cy - 4, glyph(core.icon), {"#": k["muted"]})
-            self._plate(p, cx, cy + R + 2, "UNRANKED", night)
-            return cy + R + 2 + TAG
+            ghost(p, medal, k["muted"])
+            p.sprite(cx - 3, cy - 3, glyph(core.icon), {"#": k["muted"]})
+            self._plate(p, cx, py, "UNRANKED", night)
+            return
         ramp = metals[t]
-        cells = set()
-        for y in range(cy - 16, cy + 16):
-            for x in range(cx - 16, cx + 16):
-                dx, dy = x + .5 - cx, y + .5 - cy
-                d = math.hypot(dx, dy)
-                if d > 15:
-                    continue
-                cells.add((x, y))
-                if d > 12.6:
-                    v = 3.4 + 2.6 * lit(dx / d, dy / d)
-                elif d > 11.6:
-                    v = 3.4 - 2.2 * lit(dx / d, dy / d)
-                else:
-                    v = 4.2 + 1.5 * lit(dx / 12, dy / 12)
-                p.px(x, y, ramp[tone(v, x, y, 1, 6)])
-        outline(p, cells, ramp, cx, cy)
-        self._shine(p, cx, cy, 28, ramp, t, night)
-        for side in (-1, 1):   # the laurel: a sprig of leaves up each side of the face
-            for i in range(6):
-                a = math.radians(110 + i * 24) if side < 0 else math.radians(70 - i * 24)
-                x, y = round(cx - .5 + 9.6 * math.cos(a)), round(cy - .5 + 9.6 * math.sin(a))
-                p.px(x, y, ramp[2])
-                p.px(x + side, y - 1, ramp[2])
-                p.px(x - side, y + 1, ramp[5])
-        g = glyph(core.icon)
-        p.sprite(cx - 3, cy - 3, g, {"#": ramp[6]})
-        p.sprite(cx - 4, cy - 4, g, {"#": ramp[0]})
+        for (x, y) in ((cx - 2, cy - r - 2), (cx - 1, cy - r - 2), (cx, cy - r - 2), (cx + 1, cy - r - 2),
+                       (cx - 2, cy - r - 1), (cx + 1, cy - r - 1)):   # the ring it hangs by
+            p.px(x, y, ramp[5] if x < cx else ramp[2])
+        enamel = disc(cx, cy, 6.6)
+        for (x, y) in medal:
+            dx, dy = x + .5 - cx, y + .5 - cy
+            d = max(.01, math.hypot(dx, dy))
+            light = lit(dx / d, dy / d)
+            if (x, y) in enamel:
+                p.px(x, y, block if d <= 5.4 else ramp[1] if lit(dx, dy) < 0 else ramp[5])
+            elif d > r - 1.4:      # the rim, lit along its top and left
+                p.px(x, y, ramp[6 if light > .45 else 5 if light > 0 else 3 if light > -.5 else 2])
+            elif d > r - 2.6:      # the face's sunk edge, in shadow where the rim is lit
+                p.px(x, y, ramp[2] if light > 0 else ramp[5])
+            else:                  # the field, a step lighter toward the lamp
+                v = lit(dx / r, dy / r)
+                p.px(x, y, ramp[5 if v > .3 else 3 if v < -.35 else 4])
+        outline(p, medal, ramp, cx, cy)
+        self._shine(p, cx, cy, r + 12, ramp, t, night)
+        lr = (6.6 + r - 2.6) / 2 - .5
+        wreath = {}
+        for i in range(260):   # the laurel: a wreath up each side of the enamel from its foot, open at its top
+            a = 2 * math.pi * i / 260
+            deg = math.degrees(a) % 360
+            if not (110 <= deg <= 245 or deg <= 70 or deg >= 295):
+                continue
+            for k_, rad in enumerate((lr, lr + 1)):
+                q = (round(cx - .5 + rad * math.cos(a)), round(cy - .5 + rad * math.sin(a)))
+                wreath[q] = (round(deg / 9) + k_) % 3
+        for q, beat in wreath.items():   # in herringbone, a leaf's light edge every third pixel
+            p.px(*q, ramp[5] if beat == 0 else ramp[2])
+        p.sprite(cx - 3, cy - 3, glyph(core.icon), {"#": ink})
         if t >= 3:
-            self._glint(p, motion, cells, ramp, "m")
+            self._glint(p, motion, medal - enamel, ramp, "m")
+        if t >= 5:
+            for (x, y) in ((cx - r + 3, cy - 4), (cx - 5, cy - r + 3), (cx + r - 5, cy + 5)):
+                p.px(x, y, PRISM[0][5])
+                p.px(x + 1, y, PRISM[1][5])
         if t >= 4:
-            self._twinkles(p, motion, [(cx - 33, cy - 21, True), (cx + 28, cy - 21, False), (cx + 27, cy + 8, True),
-                                       (cx - 31, cy + 10, False)], ramp)
-        self._plate(p, cx, cy + R + 2, TIER_NAMES[t].upper(), night, m["stars"])
-        return cy + R + 2 + TAG
+            self._twinkles(p, motion, [(cx - G - 13, cy - G + 1, True), (cx + G + 8, cy - G, False),
+                                       (cx + G + 7, cy + 5, True), (cx - G - 11, cy + 8, False)], ramp)
+        self._plate(p, cx, py, TIER_NAMES[t].upper(), night, m["stars"])
 
-    def _crystal(self, p: Pix, motion: Motion, core, m: dict, night: bool, cx: int = 41):
+    def _crystal(self, p: Pix, motion: Motion, core, m: dict, night: bool, cx: int, top: int, bottom: int):
         """The crystal: cut in the tier's metal, lit from within as far as its progress, its facets shaded by the
-        lamp, its shards about it, rings round it from platinum, and its tier on a plate below."""
+        lamp, the trophy's icon at its heart, its shards about it, rings round it from platinum, and its tier on a
+        plate below; as tall as the rows from `top` to `bottom` let it be."""
         t, k = m["t"], self.ink(night)
-        V = {"T": (41, ART), "LS": (29, 27), "FL": (36, 25), "FR": (46, 25), "RS": (53, 27), "LB": (31, 47),
-             "BL": (37, 50), "BR": (45, 50), "RB": (51, 47), "B": (41, 58)}
-        faces = [(("LS", "FL", "BL", "LB"), 4.6), (("FL", "FR", "BR", "BL"), 3.6), (("FR", "RS", "RB", "BR"), 2.2),
-                 (("T", "LS", "FL"), 5.6), (("T", "FL", "FR"), 4.8), (("T", "FR", "RS"), 3.0),
-                 (("LB", "BL", "B"), 2.6), (("BL", "BR", "B"), 2.0), (("BR", "RB", "B"), 1.4)]
+        py = bottom - TAG + 1
+        Hc = max(30, min(46, py - 2 - top))
+        y0 = top + max(0, (py - 2 - top - Hc) // 2)
+
+        def Y(f: float) -> int:
+            return y0 + round(f * (Hc - 1))
+
+        V = {"T": (cx, y0), "LS": (cx - 12, Y(.28)), "FL": (cx - 5, Y(.23)), "FR": (cx + 5, Y(.23)),
+             "RS": (cx + 12, Y(.28)), "LB": (cx - 10, Y(.74)), "BL": (cx - 4, Y(.81)), "BR": (cx + 4, Y(.81)),
+             "RB": (cx + 10, Y(.74)), "B": (cx, Y(1))}
+        faces = [(("LS", "FL", "BL", "LB"), 5), (("FL", "FR", "BR", "BL"), 4), (("FR", "RS", "RB", "BR"), 2),
+                 (("T", "LS", "FL"), 6), (("T", "FL", "FR"), 5), (("T", "FR", "RS"), 3),
+                 (("LB", "BL", "B"), 3), (("BL", "BR", "B"), 2), (("BR", "RB", "B"), 1)]
 
         def inside(px_, py_, keys):
             pts = [V[n] for n in keys]
@@ -664,59 +864,72 @@ class Trophies:
             return True
 
         cells = {}
-        for y in range(ART - 1, 61):
-            for x in range(27, 56):
+        for y in range(y0 - 1, Y(1) + 2):
+            for x in range(cx - 14, cx + 15):
                 for keys, v in faces:
                     if inside(x + .5, y + .5, keys):
                         cells[(x, y)] = v
                         break
+        mid = Y(.5)
         share = 1.0 if t == 5 else m["pct"]
-        level = round(58 - share * (58 - ART))
+        level = round(Y(1) - share * (Y(1) - y0))
+        g = glyph(core.icon)
         if t == 0:
-            ghost(p, set(cells), k["muted"], cx, 36)
-            p.sprite(cx - 4, 33, glyph(core.icon), {"#": k["muted"]})
-            self._plate(p, cx, 61, "UNRANKED", night)
-            return 61 + TAG
+            ghost(p, set(cells), k["muted"])
+            p.sprite(cx - 3, mid - 3, g, {"#": k["muted"]})
+            self._plate(p, cx, py, "UNRANKED", night)
+            return
         ramp = self.trophy_metals()[t]
+        ring_y = Y(.46)
         if t >= 4:   # a ring round it, its far half behind
             for i in range(120):
                 a = 2 * math.pi * i / 120
-                x, y = round(cx - .5 + 19 * math.cos(a)), round(36 + 4.5 * math.sin(a))
                 if math.sin(a) < 0:
-                    p.px(x, y, ramp[3])
+                    p.px(round(cx - .5 + 19 * math.cos(a)), round(ring_y + 4.5 * math.sin(a)), ramp[3])
         for (x, y), v in cells.items():
-            lift = 1.6 if y >= level else 0
-            p.px(x, y, ramp[tone(v + lift, x, y, 1, 6)])
+            p.px(x, y, ramp[tone(v + (1 if y >= level else 0), x, y, 1, 6)])
         if 0 < share < 1:
-            for x in range(27, 56):
+            for x in range(cx - 14, cx + 15):
                 if (x, level) in cells:
                     p.px(x, level, ramp[6])
-        outline(p, set(cells), ramp, cx, 36)
-        self._shine(p, cx, 37, 27, ramp, t, night)
-        for a_, b_ in (("T", "FL"), ("FL", "BL"), ("T", "FR")):
+        outline(p, set(cells), ramp, cx, mid)
+        self._shine(p, cx, mid, 27, ramp, t, night)
+        for a_, b_ in (("T", "FL"), ("FL", "BL"), ("T", "FR")):   # the edges the lamp finds
             (ax, ay), (bx, by) = V[a_], V[b_]
             n = max(abs(bx - ax), abs(by - ay))
             for i in range(n + 1):
                 x, y = round(ax + (bx - ax) * i / n), round(ay + (by - ay) * i / n)
                 if (x, y) in cells:
                     p.px(x, y, ramp[6] if a_ == "T" else ramp[5])
-        g = glyph(core.icon)
-        p.sprite(cx - 3, 34, g, {"#": ramp[1]})
-        p.sprite(cx - 4, 33, g, {"#": ramp[6]})
-        for (sx, sy) in ((18, 18), (62, 21), (60, 49), (20, 45)):   # shards
-            p.sprite(sx, sy, [".#", "##", "#."], {"#": ramp[4]})
-            p.px(sx, sy + 1, ramp[6])
+        # The trophy's icon at its heart, cut clear: the lightest tone inside an edge of the darkest.
+        icon = {(cx - 3 + i, mid - 3 + j) for j, row in enumerate(g) for i, ch in enumerate(row) if ch == "#"}
+        for (x, y) in icon:
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    if (x + dx, y + dy) not in icon:
+                        p.px(x + dx, y + dy, ramp[0])
+        for (x, y) in icon:
+            p.px(x, y, ramp[6])
+        for (sx, sy) in ((cx - 23, Y(.06)), (cx + 20, Y(.12)), (cx + 18, Y(.76)), (cx - 21, Y(.68))):   # shards
+            shard = {(sx + i, sy + j) for j, row in enumerate(SHARD) for i, ch in enumerate(row) if ch == "#"}
+            for (x, y) in shard:
+                p.px(x, y, ramp[5] if x - sx + y - sy < 3 else ramp[3])
+            outline(p, shard, ramp, sx + 1, sy + 2)
         if t >= 4:   # and its near half in front
             for i in range(120):
                 a = 2 * math.pi * i / 120
-                x, y = round(cx - .5 + 19 * math.cos(a)), round(36 + 4.5 * math.sin(a))
                 if math.sin(a) >= 0:
-                    p.px(x, y, ramp[6] if math.cos(a) < 0 else ramp[4])
-            self._twinkles(p, motion, [(10, 24, True), (67, 28, False), (64, 53, True), (12, 53, False)], ramp)
+                    p.px(round(cx - .5 + 19 * math.cos(a)), round(ring_y + 4.5 * math.sin(a)),
+                         ramp[6] if math.cos(a) < 0 else ramp[4])
+            self._twinkles(p, motion, [(cx - 31, Y(.22), True), (cx + 26, Y(.3), False), (cx + 23, Y(.88), True),
+                                       (cx - 29, Y(.86), False)], ramp)
+        if t >= 5:
+            for (x, y) in ((cx - 8, Y(.35)), (cx + 6, Y(.6)), (cx - 3, Y(.9))):
+                p.px(x, y, PRISM[0][5])
+                p.px(x + 1, y, PRISM[1][5])
         if t >= 3:
-            self._glint(p, motion, set(cells), ramp, "x")
-        self._plate(p, cx, 61, TIER_NAMES[t].upper(), night, m["stars"])
-        return 61 + TAG
+            self._glint(p, motion, set(cells) - icon, ramp, "x")
+        self._plate(p, cx, py, TIER_NAMES[t].upper(), night, m["stars"])
 
     # ------------------------------------------------------------------------------------ the entry points
     def trophy_card(self, style: str, core, value: int, o: dict, night: bool) -> str | None:
@@ -725,85 +938,101 @@ class Trophies:
         if style == "plaque":
             return self._trophy_file(lambda motion: self._plaque(motion, core, m, o, night), alt_text(core, m, o),
                                      night)
+        kind = {"trophy": "bar", "crest": "seg"}.get(style, "none")
+        art = {"trophy": self._cup, "crest": self._crest, "medallion": self._medallion, "crystal": self._crystal}[style]
 
         def draw(motion: Motion) -> Pix:
             p = self._card_canvas(CARD, night)
-            art = {"trophy": self._cup, "crest": self._crest, "medallion": self._medallion,
-                   "crystal": self._crystal}[style]
-            art(p, motion, core, m, night)
-            if style == "trophy":
-                self._pips(p, p.w / 2, 65, m, night)
-            self._rank(p, core, m, o, night)
-            self._new(p, m, o, night, p.w - EDGE - 1)
-            kind = {"trophy": "bar", "crest": "seg"}.get(style, "none")
-            self._footer(p, core, m, o, night, kind, 72)
+            room = self._trophy_room(p)
+            top = self._top_row(room, night)[1] + 1
+            at = self._foot_at(room, kind, 2)
+            if at["title"] - 2 - top < WANTED[style]:
+                at = self._foot_at(room, kind, 1)
+            art(p, motion, core, m, night, p.w // 2, top, at["title"] - 3)
+            self._tags(p, room, core, m, o, night)
+            self._footer(p, room, core, m, o, night, kind, at)
             return p
         return self._trophy_file(draw, alt_text(core, m, o), night)
 
     def _plaque(self, motion: Motion, core, m: dict, o: dict, night: bool) -> Pix:
         """The plaque, a plate across the row: its tier's metal at the left with a trophy struck in it, then the
-        trophy's name, its tier, its value and its progress."""
+        trophy's name and its tier, its value and how it moved this week, the five tiers, and how far it is to the
+        next with its rank."""
         t, k = m["t"], self.ink(night)
         p = self._card_canvas(PLAQUE, night)
-        W, H = p.w, p.h
-        x0, y0, x1, y1 = EDGE, EDGE, 37, H - EDGE
+        room = self._trophy_room(p)
+        y0, y1 = room.y0, room.y1
+        x0, _ = room.span(y0, y1 - y0)
+        x1 = x0 + 32
         cells = {(x, y) for x in range(x0, x1) for y in range(y0, y1)}
+        gx, gy = (x0 + x1) // 2 - 7, (y0 + y1) // 2 - 7
         if t:
             ramp = self.trophy_metals()[t]
             for (x, y) in cells:
                 v = 4.2 + (1.2 if (y - y0) % 4 == 0 else 0) - .9 * (x - x0) / (x1 - x0) - .6 * (y - y0) / (y1 - y0)
                 p.px(x, y, ramp[tone(v, x, y, 1, 6)])
-            g = glyph("trophy")
-            gx, gy = (x0 + x1) // 2 - 7, (y0 + y1) // 2 - 7
-            p.sprite(gx + 1, gy + 1, g, {"#": ramp[6]}, 2)
-            p.sprite(gx, gy, g, {"#": ramp[0]}, 2)
+            trophy = {(gx + 2 * i + a, gy + 2 * j + b) for j, row in enumerate(glyph("trophy")) for i, ch in
+                      enumerate(row) if ch == "#" for a in (0, 1) for b in (0, 1)}
+            for (x, y) in trophy:
+                p.px(x + 1, y + 1, ramp[6])
+            for (x, y) in trophy:
+                p.px(x, y, ramp[0])
             if t >= 3:
-                self._glint(p, motion, cells, ramp, "p")
+                self._glint(p, motion, cells - trophy, ramp, "p")
             if t >= 4:
                 self._twinkles(p, motion, [(x0 + 1, y0 + 1, False), (x1 - 6, y1 - 6, True)], ramp)
         else:
-            for x in range(x0, x1):
-                for y in range(y0, y1):
-                    if (x in (x0, x1 - 1) or y in (y0, y1 - 1)) and (x + y) % 2 == 0:
-                        p.px(x, y, k["muted"])
-            p.sprite((x0 + x1) // 2 - 7, (y0 + y1) // 2 - 7, glyph("trophy"), {"#": k["muted"]}, 2)
+            ghost(p, {(x, y) for (x, y) in cells if x0 < x < x1 - 1 and y0 < y < y1 - 1}, k["muted"])
+            p.sprite(gx, gy, glyph("trophy"), {"#": k["muted"]}, 2)
         p.vline(x1, y0, y1, k["rule"])
+        rx = x1 + 4
+        _, right = room.span(y0, TAG)
+        right -= 2          # the last column a word may take
+        # The trophy's name after its icon in its enamel's colour, and its tier lettered at the right, after its stars.
         block, ink = self.trophy_enamel(core.hue)
-        p.rect(x1 + 4, y0, 9, 9, block)
-        p.sprite(x1 + 5, y0 + 1, glyph(core.icon), {"#": ink})
-        p.text(x1 + 16, y0 + 2, core.title.upper(), k["muted"], "35")
-        right = W - EDGE - 2
+        mark = block if contrast(block, self.bg_at(p, night, y0 + 3)) >= 3 else k["body"]
+        p.sprite(rx, y0, glyph(core.icon), {"#": mark})
         word = TIER_NAMES[t].upper()
-        ww = tw(word, "35") + 6
-        self._tagged(p, right - ww - 2, y0, word, night, plate=True)
-        # The value on a row of its own, as big as it fits, how it moved this week and NEW beside it; under it how
-        # far it is to the next tier, and the rank where there is room; and the five tiers along the foot.
+        ww = tw(word, "35")
+        p.text(right - ww + 1, y0 + 1, word, k["accent"] if t else k["muted"], "35")
+        for i in range(m["stars"]):
+            p.sprite(right - ww - 7 - i * 6, y0 + 1, SMALL_STAR, {"#": self._tint(5, night)})
+        title_room = right - ww - 4 - m["stars"] * 6 - (rx + 10)
+        p.text(rx + 10, y0 + 1, clip(core.title.upper(), title_room, "35"), k["muted"], "35")
+        # The value as big as the room lets it be, the five tiers under it, and the status on the last rows; where
+        # the room is too short for all three at full size, the five tiers give way before the value does.
         vs = fmt(m["v"])
-        room = right - (x1 + 4)
-        scale = 2 if tw(vs, "57", 2) <= room - 20 else 1
-        vy = y0 + 10 + (0 if scale == 2 else 4)
-        p.text(x1 + 4, vy, vs, k["body"], "57", scale)
         delta = o.get("delta")
+        extra = (tw(fmt(delta), "35") + 6) if delta else 0
+        status_y = room.foot - 4
+        vy = y0 + 8
+        wide = tw(vs, "57", 2) + extra <= right - rx
+        if wide and vy + 18 <= status_y:
+            scale, bar_y = 2, vy + 15 + (1 if vy + 20 <= status_y else 0)
+        elif wide and vy + 16 <= status_y:
+            scale, bar_y = 2, None
+        else:
+            scale, bar_y = 1, vy + 9
+            vy += 1
+        p.text(rx, vy, vs, k["body"], "57", scale)
         if delta:
-            dx = x1 + 4 + tw(vs, "57", scale) + 3
+            dx = rx + tw(vs, "57", scale) + 3
             p.sprite(dx, vy + 1, UP, {"#": k["accent"]})
             p.text(dx + 4, vy, fmt(delta), k["accent"], "35")
-        if o.get("new") and t:
-            self._tagged(p, right - tw("NEW", "35") - 8, vy + 7 * scale - TAG, "NEW", night)
-        status = clip(status_text(m), room, "35")
-        sy = y0 + 25
-        p.text(x1 + 4, sy, status, k["muted"], "35")
+        if bar_y is not None:
+            sw = (right - rx - 8) // 5
+            for i in range(5):
+                share = 1 if t > i else (m["pct"] if t == i else 0)
+                self._bar(p, rx + i * (sw + 2), bar_y, sw, share, night, self._tint(i + 1, night), 2)
+        status = ("NEW · " if o.get("new") and t else "") + status_text(m)
+        _, status_right = room.span(status_y, 5)
+        status_right = min(right, status_right - 2)     # the last column a word on the status row may take
+        status = clip(status, status_right - rx, "35")
+        p.text(rx, status_y, status, k["muted"], "35")
         if o.get("rank") and t:
             rank = pct_label(top_pct(core, m["v"]))
-            if tw(status, "35") + 6 + tw(rank, "35") <= room:
-                p.text(right - tw(rank, "35"), sy, rank, k["muted"], "35")
-        sw = (room - 8) // 5
-        metals = self.trophy_metals()
-        for i in range(5):
-            share = 1 if t > i else (m["pct"] if t == i else 0)
-            self._bar(p, x1 + 4 + i * (sw + 2), H - EDGE - 3, sw, share, night, metals[i + 1][4], 2)
-        for i in range(m["stars"]):
-            p.sprite(right - ww - 9 - i * 6, y0 + 2, SMALL_STAR, {"#": metals[5][5]})
+            if tw(status, "35") + 6 + tw(rank, "35") <= status_right - rx:
+                p.text(status_right - tw(rank, "35") + 1, status_y, rank, k["muted"], "35")
         return p
 
     def trophy_pin(self, a, cur, night: bool) -> str | None:
@@ -812,61 +1041,66 @@ class Trophies:
 
         def draw(motion: Motion) -> Pix:
             p = self._card_canvas(PIN, night)
+            room = self._trophy_room(p)
             k = self.ink(night)
             metals = self.trophy_metals()
-            cx, cy = 26, 20
             earned, secret = st["earned"], st["secret"]
             t = st["rarity"] if earned else 0
             share = 1.0 if st["done"] else st["pct"]
-            if not secret and not st["done"]:   # how far along, as a ring round the pin
-                nxt = metals[st["next_rarity"] or 1]
-                for i in range(120):
-                    ang = 2 * math.pi * i / 120 - math.pi / 2
-                    x, y = round(cx - .5 + 15.5 * math.cos(ang)), round(cy - .5 + 15.5 * math.sin(ang))
-                    p.px(x, y, nxt[4] if i / 120 < share else k["dim"])
+            ringed = not secret and not st["done"]
+            # The words from the foot up: the caption on the last row a word may take, the name's lines over it.
+            wx0, wx1 = room.x0 + 1, room.x1 - 1
+            name = "???" if secret else a.name + (f" {st['tier']}" if st["tier"] else "")
+            lines = lines_of(name, wx1 - wx0)
+            whole = pin_caption(st)
+            cap_y = room.foot - 4
+            cx0, cx1 = room.span(cap_y - 1, 7)
+            room_w = cx1 - cx0 - 2
+            cap = next((c for k_ in (1, 0) for c in (whole, whole.split(" · ")[0], "NOT MEASURED", "UNMEASURED")
+                        if tw(c, "35", 1, k_) <= room_w), whole)
+            name_y = cap_y - 1 - 6 * len(lines)
+            # The pin in the room over the words, as big as it fits: its outline a unit round it, its ring two more.
+            rows, g = name_y - 1 - room.y0, 2 if ringed else 0
+            r = max(8, min(13, (rows - 2 - 2 * g) // 2))
+            cx = p.w // 2
+            cy = room.y0 + r + 1 + g + max(0, rows - (2 * r + 2 + 2 * g)) // 2
+            if ringed:
+                self._gauge(p, cx, cy, r + 2.5, share, self._tint(st["next_rarity"] or 1, night), night, 120)
+            face = disc(cx, cy, r)
             if secret or not earned:
-                ghost(p, {(x, y) for y in range(cy - 14, cy + 14) for x in range(cx - 14, cx + 14)
-                          if math.hypot(x + .5 - cx, y + .5 - cy) <= 12}, k["muted"], cx, cy)
-                p.sprite(cx - 4, cy - 4, glyph("q" if secret else a.icon), {"#": k["muted"]})
+                ghost(p, disc(cx, cy, r - 1), k["muted"])
+                p.sprite(cx - 3, cy - 3, glyph("q" if secret else a.icon), {"#": k["muted"]})
             else:
                 ramp = metals[t]
                 block, ink = self.trophy_enamel(a.hue)
-                cells = set()
-                for y in range(cy - 14, cy + 14):
-                    for x in range(cx - 14, cx + 14):
-                        dx, dy = x + .5 - cx, y + .5 - cy
-                        d = math.hypot(dx, dy)
-                        if d > 13:
-                            continue
-                        cells.add((x, y))
-                        if d <= 8.6:
-                            p.px(x, y, block)
-                        elif d <= 9.6:
-                            p.px(x, y, ramp[1])
-                        else:
-                            p.px(x, y, ramp[tone(3.4 + 2.6 * lit(dx / d, dy / d), x, y, 1, 6)])
-                outline(p, cells, ramp, cx, cy)
+                inner = r - 4.4
+                enamel = disc(cx, cy, inner + 1)
+                for (x, y) in face:
+                    dx, dy = x + .5 - cx, y + .5 - cy
+                    d = max(.01, math.hypot(dx, dy))
+                    if d <= inner:
+                        p.px(x, y, block)
+                    elif d <= inner + 1:
+                        p.px(x, y, ramp[1])
+                    else:
+                        p.px(x, y, ramp[tone(3.4 + 2.6 * lit(dx / d, dy / d), x, y, 1, 6)])
+                outline(p, face, ramp, cx, cy)
                 if t >= 2:   # a reeded edge from uncommon
                     for i in range(0, 64, 4):
                         ang = 2 * math.pi * i / 64
-                        p.px(round(cx - .5 + 11.4 * math.cos(ang)), round(cy - .5 + 11.4 * math.sin(ang)), ramp[6])
-                p.sprite(cx - 4, cy - 4, glyph(a.icon), {"#": ink})
+                        p.px(round(cx - .5 + (r - 1.6) * math.cos(ang)), round(cy - .5 + (r - 1.6) * math.sin(ang)),
+                             ramp[6])
+                p.sprite(cx - 3, cy - 3, glyph(a.icon), {"#": ink})
                 if t >= 3:
-                    self._glint(p, motion, cells, ramp, "a")
+                    self._glint(p, motion, face - enamel, ramp, "a")
                 if t >= 4:
-                    self._twinkles(p, motion, [(EDGE + 1, EDGE + 1, False), (p.w - EDGE - 6, EDGE + 2, True)], ramp)
-            name = "???" if secret else a.name + (f" {st['tier']}" if st["tier"] else "")
-            room = p.w - 2 * EDGE + 2
-            lines = lines_of(name, room)
-            y = 38 + (0 if len(lines) > 1 else 3)
+                    self._twinkles(p, motion, [(cx - r - 8, cy - r + 1, False), (cx + r + 3, cy - r + 2, True)], ramp)
+            y = name_y
             for line, track in lines:
                 w = tw(line, "35", 1, track)
                 p.text(round(p.w / 2 - w / 2), y, line, k["body"] if earned else k["muted"], "35", 1, track=track)
                 y += 6
-            whole = pin_caption(st)
-            cap = next((c for c in (whole, whole.split(" · ")[0], "NOT MEASURED", "UNMEASURED")
-                        if tw(c, "35") <= room), clip(whole, room, "35"))
-            centred(p, p.w / 2, y + 1, cap, k["accent"] if earned else k["muted"])
+            self._line(p, room, cap_y, cap, k["accent"] if earned else k["muted"], p.w / 2)
             return p
         return self._trophy_file(draw, pin_label(a, cur), night)
 
@@ -877,16 +1111,18 @@ class Trophies:
 
         def draw(motion: Motion) -> Pix:
             p = self._card_canvas(LEVEL, night)
+            room = self._trophy_room(p)
             k = self.ink(night)
             metals = self.trophy_metals()
             ramp = metals[st["bt"]]
-            cx, cy = 37, 38
+            cx, cy = room.x0 + 32, (room.y0 + room.y1) // 2
             for i in range(200):   # the ring of the level's progress
                 ang = 2 * math.pi * i / 200 - math.pi / 2
                 x, y = round(cx - .5 + 29 * math.cos(ang)), round(cy - .5 + 29 * math.sin(ang))
-                p.px(x, y, k["accent"] if i / 200 < st["lp"] else k["dim"])
-                p.px(x + (1 if math.cos(ang) > 0 else 0), y, k["accent"] if i / 200 < st["lp"] else k["dim"])
-            cells = set()
+                c = k["accent"] if i / 200 < st["lp"] else k["dim"]
+                p.px(x, y, c)
+                p.px(x + (1 if math.cos(ang) > 0 else 0), y, c)
+            cells, rim = set(), set()
             R = 25
             for y in range(cy - R - 1, cy + R + 2):
                 for x in range(cx - R, cx + R + 1):
@@ -896,11 +1132,12 @@ class Trophies:
                     cells.add((x, y))
                     if hex_in(px_, py_, cx, cy, R - 4.5):
                         continue
+                    rim.add((x, y))
                     a_ = math.degrees(math.atan2(py_ - cy, px_ - cx)) % 360
                     face = math.radians(round(a_ / 60) * 60 % 360)
                     v = 3.4 + 2.6 * lit(math.cos(face), math.sin(face))
-                    p.px(x, y, ramp[tone(v, x, y, 1, 6)] if not hex_in(px_, py_, cx, cy, R - 3.4) else ramp[0])
-            field = [(x, y) for (x, y) in cells if hex_in(x + .5, y + .5, cx, cy, R - 4.5)]
+                    p.px(x, y, ramp[tone(v, x, y)] if not hex_in(px_, py_, cx, cy, R - 3.4) else ramp[0])
+            field = cells - rim
             xs, ys = [x for x, _ in field], [y for _, y in field]
             plate = Pix(max(xs) - min(xs) + 1, max(ys) - min(ys) + 1)
             self.tag(plate, 0, 0, plate.w, plate.h, night)
@@ -912,33 +1149,35 @@ class Trophies:
             scale = 2 if tw(level, "57", 2) <= 30 else 1
             centred(p, cx, cy - 4 + (0 if scale == 2 else 3), level, k["tag_ink"], "57", scale)
             if st["bt"] >= 3:
-                self._glint(p, motion, cells, ramp, "l")
-            p.vline(72, EDGE + 1, p.h - EDGE - 1, k["rule"])
-            x0, right = 78, p.w - EDGE - 2
-            room = right - x0
+                self._glint(p, motion, rim, ramp, "l")
+            p.vline(cx + 35, room.y0, room.y1, k["rule"])
+            x0, right = cx + 41, room.x1 - 2
+            room_w = right - x0
+            ty = room.y0 + 3
             title = case_title(subject)
-            font = "57" if tw(title, "57") <= room else "35"
-            p.text(x0, 8, clip(title, room, font), k["title"], font)
-            xp = [f"LEVEL {st['L']} · {fmt(st['xp'])} XP · {fmt(level_xp(st['L'] + 1) - st['xp'])} TO LEVEL {st['L'] + 1}",
-                  f"LEVEL {st['L']} · {fmt(st['xp'])} XP · {fmt(level_xp(st['L'] + 1) - st['xp'])} TO GO",
-                  f"LEVEL {st['L']} · {fmt(st['xp'])} XP"]
-            p.text(x0, 19, next((s for s in xp if tw(s, "35") <= room), xp[-1]), k["muted"], "35")
-            self._bar(p, x0, 26, room, st["lp"], night)
+            title_w = min(right, room.span(ty - 1, 9)[1] - 2) - x0     # its row may reach a corner piece
+            font = "57" if tw(title, "57") <= title_w else "35"
+            p.text(x0, ty, clip(title, title_w, font), k["title"], font)
+            togo = fmt(level_xp(st['L'] + 1) - st['xp'])
+            xp = [f"LEVEL {st['L']} · {fmt(st['xp'])} XP · {togo} TO LEVEL {st['L'] + 1}",
+                  f"LEVEL {st['L']} · {fmt(st['xp'])} XP · {togo} TO GO", f"LEVEL {st['L']} · {fmt(st['xp'])} XP"]
+            p.text(x0, ty + 11, next((s for s in xp if tw(s, "35") <= room_w), xp[-1]), k["muted"], "35")
+            self._bar(p, x0, ty + 18, room_w, st["lp"], night)
             done = round(st["completion"] * 100)
             case = [f"CASE {done}% COMPLETE · {st['earned']} OF {len(ach)} ACHIEVEMENTS",
                     f"CASE {done}% COMPLETE · {st['earned']} OF {len(ach)}", f"CASE {done}% COMPLETE"] if ach else \
                 [f"CASE {done}% COMPLETE"]
-            p.text(x0, 34, next((s for s in case if tw(s, "35") <= room), case[-1]), k["muted"], "35")
-            self._bar(p, x0, 41, room, st["completion"], night, metals[4][4])
-            self.tag(p, x0, 50, 11, 11, night)
-            p.sprite(x0 + 2, 52, glyph(foot[0]), {"#": k["tag_ink"]})
+            p.text(x0, ty + 26, next((s for s in case if tw(s, "35") <= room_w), case[-1]), k["muted"], "35")
+            self._bar(p, x0, ty + 33, room_w, st["completion"], night, self._tint(4, night))
+            self.tag(p, x0, ty + 42, 11, 11, night)
+            p.sprite(x0 + 2, ty + 44, glyph(foot[0]), {"#": k["tag_ink"]})
             head = foot[2]
-            p.text(x0 + 15, 53, head, k["body"], "35")
+            p.text(x0 + 15, ty + 45, head, k["body"], "35")
             tail = foot[3].strip()
             if tail and x0 + 15 + tw(head, "35") + 4 + tw(tail, "35") <= right:
-                p.text(x0 + 15 + tw(head, "35") + 4, 53, tail, k["muted"], "35")
+                p.text(x0 + 15 + tw(head, "35") + 4, ty + 45, tail, k["muted"], "35")
             if st["bt"] >= 4:
-                self._twinkles(p, motion, [(EDGE + 2, EDGE + 2, True), (64, 60, False)], ramp)
+                self._twinkles(p, motion, [(cx - 27, cy - 27, True), (cx + 24, cy + 21, False)], ramp)
             return p
         return self._trophy_file(draw, level_label(st, subject, foot), night)
 
@@ -948,19 +1187,29 @@ class Trophies:
 
         def draw(motion: Motion) -> Pix:
             p = self._card_canvas(NEXT, night)
+            room = self._trophy_room(p)
             k = self.ink(night)
-            self._tagged(p, EDGE + 1, EDGE, "NEXT UP", night)
-            right = p.w - EDGE - 3
+            y, under = self._top_row(room, night)
+            x0, _ = room.span(room.y0, under - room.y0)
+            lead = self._tag_reach(tw("NEXT UP", "35") + 8, night)[0]
+            self._tagged(p, x0 + 1 + lead, y, "NEXT UP", night)
+            left, right = room.x0 + 1, room.x1 - 3
+            first = under + 3
+            last = room.foot - 13                         # the last row an item may start on, its words clear
+            if left + 1 < room.corner:                    # and its icon clear of the corner piece below it
+                last = min(last, p.h - room.corner - 11)
+            step = min(18, (last - first) // 2)
             for i, it in enumerate(items):
-                y = 18 + i * 18
+                y = first + i * step
                 block, ink = self.trophy_enamel(it["hue"])
-                p.rect(EDGE + 2, y, 11, 11, block)
-                p.sprite(EDGE + 4, y + 2, glyph(it["icon"]), {"#": ink})
+                p.rect(left + 1, y, 11, 11, block)
+                p.sprite(left + 3, y + 2, glyph(it["icon"]), {"#": ink})
                 pct = f"{int(it['pct'] * 100)}%"
-                room = right - tw(pct, "35") - 4 - (EDGE + 17)
-                p.text(EDGE + 17, y, clip(it["name"].upper(), room, "35"), k["body"], "35")
+                tx = left + 16
+                room_w = right - tw(pct, "35") - 4 - tx
+                p.text(tx, y, clip(it["name"].upper(), room_w, "35"), k["body"], "35")
                 p.text(right - tw(pct, "35"), y, pct, k["muted"], "35")
-                self._bar(p, EDGE + 17, y + 6, right - EDGE - 17, it["pct"], night, None, 2)
-                p.text(EDGE + 17, y + 10, clip(it["left"].upper(), right - EDGE - 17, "35"), k["muted"], "35")
+                self._bar(p, tx, y + 6, right - tx, it["pct"], night, None, 2)
+                p.text(tx, y + 9, clip(it["left"].upper(), right - tx, "35"), k["muted"], "35")
             return p
         return self._trophy_file(draw, next_up_label(items), night)

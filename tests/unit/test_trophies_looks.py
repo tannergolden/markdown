@@ -16,6 +16,7 @@ from tests import support
 
 from domain import collections, holidays, pixelsets, prints
 from domain.canvas import BUDGET, DARK, DAY, colours
+from domain.holidays.designs import trophies as T
 from domain.holidays.pixel import Pix
 from domain.palette import contrast, hexof, letters_on
 from domain.trophies import catalogue as C
@@ -191,6 +192,18 @@ class APrintsCase(unittest.TestCase):
         self.assertNotIn('class="sp"', gold)
         self.assertIn('class="sp"', platinum, "platinum sparkles")
 
+    def test_its_shaded_side_darkens_tier_by_tier(self):
+        # A print's tiers read as a metal's do: the shaded side lined at gold, the lining crossed at platinum, and
+        # at diamond inked solid with its lining cut back through it in the paper.
+        v = values(CORE)
+        for style in STYLES:
+            look = L.Drafted(style, "blueprint")
+            gold, platinum, diamond = (look.card("day", CORE, v[i], {}) for i in (3, 4, 5))
+            self.assertNotIn('patternTransform="rotate(-45)"', gold if style != "crystal" else "", style)
+            self.assertIn('patternTransform="rotate(-45)"', platinum, f"a platinum {style}'s lining is crossed")
+            self.assertNotIn('fill-opacity=".9"', gold + platinum, style)
+            self.assertIn('fill-opacity=".9"', diamond, f"a diamond {style}'s shaded side is inked solid")
+
 
 class APixelSetsCase(unittest.TestCase):
     def test_every_card_lints_keeps_the_sets_palette_and_the_standard_size(self):
@@ -258,6 +271,49 @@ class APixelSetsCase(unittest.TestCase):
                     for a in m["ach"][:6]:
                         look.pin(case, a, s["curs"].get(a.slug))
                     self.assertLessEqual(set(seen), inks, (key, case))
+
+    def test_every_file_keeps_clear_of_the_sets_frame(self):
+        # Nothing a file draws lies on the set's frame, within a unit of it or in the squares its corner pieces take,
+        # and no word comes within two units of it: a word's box, a unit all round it, keeps inside the room.
+        m = C.MODES["repository"]
+        pins = [a for a in m["ach"] if a.secret][:1] + [a for a in m["ach"] if a.goals][:1]
+        pins += [a for a in m["ach"] if a.slug in ("constellation", "well-formed", "used-by")]
+        for key in SETS:
+            held = pixelsets.drawn_by(key)
+            for night in (False, True):
+                jobs = [(T.PLAQUE if style == "plaque" else T.CARD,
+                         lambda st=style, v=v, i=i: held.trophy_card(st, CORE, v, {"rank": True, "delta": 14,
+                                                                                   "new": i in (1, 4)}, night))
+                        for style in STYLES for i, v in enumerate(values(CORE)) if i in (0, 1, 4, 5)]
+                jobs += [(T.PIN, lambda a=a, cur=cur: held.trophy_pin(a, cur, night))
+                         for a in pins for cur in (None, a.tiers[0], a.tiers[-1])]
+                for mode in ("repository", "profile"):
+                    sm, mm = sample(mode), C.MODES[mode]
+                    fm = P.foot_of(sm, TS.check({}))
+                    jobs += [(T.LEVEL, lambda sm=sm, mm=mm, fm=fm: held.trophy_level(
+                                 mm["core"], sm["values"], mm["ach"], sm["curs"], sm["subject"], fm, night)),
+                             (T.NEXT, lambda sm=sm, mm=mm: held.trophy_next_up(mm["core"], sm["values"], mm["ach"],
+                                                                               sm["curs"], night))]
+                for dims, draw in jobs:
+                    got = []
+                    real = type(held)._finish
+                    with mock.patch.object(type(held), "_finish", lambda self, p, n: (got.append(p), real(self, p, n))):
+                        draw()
+                    p = got[0]
+                    ground = held._card_canvas(dims, night)
+                    room = held._trophy_room(p)
+
+                    def inside(x, y, room=room, p=p):
+                        corner = (x < room.corner or x >= p.w - room.corner) and (y < room.corner or
+                                                                                  y >= p.h - room.corner)
+                        return room.x0 <= x < room.x1 and room.y0 <= y < room.y1 and not corner
+
+                    drawn = {xy for L, px in p.layers.items() for xy, c in px.items()
+                             if ground.layers.get(L, {}).get(xy) != c}
+                    self.assertEqual({xy for xy in drawn if not inside(*xy)}, set(), (key, night, dims))
+                    for x0, y0, x1, y1 in p.words:
+                        self.assertTrue(all(inside(x, y) for x in (x0, x1 - 1) for y in (y0, y1 - 1)),
+                                        (key, night, dims, (x0, y0, x1, y1)))
 
     def test_a_collections_design_letters_its_trophies_in_its_hands_two_inks(self):
         for key in collections.COLLECTIONS["medieval"].keys:

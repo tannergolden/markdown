@@ -62,6 +62,9 @@ class Alchemist(CollectionSet):
     collection = "medieval"
     key = "medieval-alchemist"
     name = "Alchemist"
+    # How deep the oak frame and its brass hinges reach into a trophy file, in units: its top, its sides, its foot and
+    # its corners.
+    trophy_frame = (6, 5, 6, 6)
     # What the design is, in words, for the page that shows the collection.
     tagline = (
         "The alchemist's laboratory, lit by its own fires and elixirs, where every title turns from lead to gold.")

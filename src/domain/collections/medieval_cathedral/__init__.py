@@ -46,6 +46,9 @@ class Cathedral(CollectionSet):
     collection = "medieval"
     key = "medieval-cathedral"
     name = "Cathedral"
+    # How deep the arcade along the top and the base along the foot reach into a trophy file, in units: its top, its
+    # sides, its foot and its corners.
+    trophy_frame = (6, 4, 6, 6)
     # What the design is, in words, for the page that shows the collection.
     tagline = (
         "Stained glass in stone tracery: a cathedral's east end, sunlit by day and candlelit by night.")
