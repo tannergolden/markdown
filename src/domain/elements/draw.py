@@ -964,6 +964,36 @@ def chess_hall(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
     return game.draw("chess-hall", d, tone, "dark" if th["dark"] else "day", variant)
 
 
+def game_of(kind: str):
+    """The package that draws one of the games beside chess on @tannergolden's profile: Tic-Tac-Toe, Connect Four or
+    Checkers, each drawn as chess is. Imported when asked for: each imports this module's pieces of a sheet itself."""
+    if kind == "tictactoe":
+        from . import tictactoe as game
+    elif kind == "connectfour":
+        from . import connectfour as game
+    else:
+        from . import checkers as game
+    return game
+
+
+def tictactoe(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
+    """Tic-Tac-Toe on @tannergolden's profile, drawn by elements/tictactoe in the page's theme, as chess is."""
+    return game_of("tictactoe").draw("tictactoe", d, tone, "dark" if th["dark"] else "day", variant)
+
+
+def connectfour(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
+    """Connect Four on @tannergolden's profile, drawn by elements/connectfour in the page's theme, as chess is."""
+    return game_of("connectfour").draw("connectfour", d, tone, "dark" if th["dark"] else "day", variant)
+
+
+def checkers(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
+    """Checkers on @tannergolden's profile, drawn by elements/checkers in the page's theme, as chess is."""
+    return game_of("checkers").draw("checkers", d, tone, "dark" if th["dark"] else "day", variant)
+
+
+# The games beside chess on @tannergolden's profile, in their tiers' order, each its own kind.
+GAMES = ("tictactoe", "connectfour", "checkers")
+
 KINDS = {
     "schematic": (schematic, ("wide", "narrow"), "sheet"),
     "instruments": (instruments, ("wide", "narrow"), "sheet"),
@@ -971,6 +1001,9 @@ KINDS = {
     "roster": (roster, ("wide", "narrow"), "sheet"),
     "certificate": (certificate, ("wide", "narrow"), "sheet"),
     "placard": (placard, ("wide",), "card"),
+    "tictactoe": (tictactoe, ("wide", "narrow", "still", "narrow-still"), "board"),
+    "connectfour": (connectfour, ("wide", "narrow", "still", "narrow-still"), "board"),
+    "checkers": (checkers, ("wide", "narrow", "still", "narrow-still"), "board"),
     "chess": (chess, ("wide", "narrow", "still", "narrow-still"), "board"),
     "chess-hall": (chess_hall, ("wide", "narrow", "still", "narrow-still"), "sheet"),
 }
@@ -1027,6 +1060,8 @@ def describe(kind: str, d: dict) -> dict:
     elif kind == "chess":
         from . import chess as game
         d = game.describe(d)
+    elif kind in GAMES:
+        d = game_of(kind).describe(d)
     elif kind == "chess-hall":
         from . import chess as game
         d = game.describe_hall(d)

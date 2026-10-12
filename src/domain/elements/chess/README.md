@@ -26,6 +26,9 @@ as it stands with the state of play beside it, and `chess-hall`, the series
 between the house and GitHub with its podium and everyone who has won. The
 profile's own engine plays the game and writes what both draw into the page's
 settings after every move ([`game.py`](game.py) checks every field of it).
+A finished game keeps its final board up for two days, as every game on the
+profile does: its `result`, who won and how, on the turn's plate, the day the
+`next` game's fresh board comes, and nothing to play.
 
 Both are one layout ([`layout.py`](layout.py)) in two materials
 ([`skins.py`](skins.py)): the standard theme's enamel and lit pieces, and a
@@ -36,7 +39,9 @@ and only what they are made of changes. The pieces are one set of silhouettes
 for reduced motion. Round the pictures the README carries the game's words
 ([`readme.py`](readme.py)): the turn's banner, every legal move named, a badge
 linking each winner's profile, and the leaderboard, @tannergolden's own row on
-top of GitHub's ten leading players.
+top of GitHub's ten leading players. Tic-Tac-Toe, Connect Four and Checkers
+are drawn by the same hand, on this sheet, in these two materials and to this
+motion ([`games/`](../games/README.md)).
 
 A player is known by their account, not their login, since a login can be given
 up and then taken by someone else. A row of the Hall of Fame may carry the
