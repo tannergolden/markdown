@@ -211,14 +211,14 @@ class TheGamesBesideChess(unittest.TestCase):
                     self.assertTrue((self.out / name).is_file(), name)
 
     def test_the_arbiter_opened_the_samples_of_the_games_it_opens_for_github(self) -> None:
-        self.assertEqual(builder.sample_game('tictactoe')['tictactoe']['x'], 'github')
+        self.assertEqual(builder.sample_game('tictactoe')['tictactoe']['opens'], 'github')
         self.assertEqual(builder.sample_game('connectfour')['connectfour']['opens'], 'github')
-        self.assertEqual(builder.sample_game('checkers')['checkers']['dark'], 'house', 'the house opens Checkers')
+        self.assertNotIn('dark', builder.sample_game('checkers')['checkers'], 'GitHub plays Black and opens Checkers')
         self.assertIn('The Arbiter opens every game for a side drawn at random', self.entries['tictactoe']['note'])
         self.assertIn('The Arbiter opens every game', builder.sample_game('connectfour')['connectfour']['note'])
 
     def test_a_sample_game_the_kit_would_turn_away_is_never_drawn(self) -> None:
-        bad = 'elements:\n  tictactoe:\n    kind: tictactoe\n    board: XXX/XXX/XXX\n    x: github\n'
+        bad = 'elements:\n  tictactoe:\n    kind: tictactoe\n    board: XXX/XXX/XXX\n    opens: github\n'
         with tempfile.TemporaryDirectory() as tmp:
             game = pathlib.Path(tmp) / 'chess.yaml'
             (pathlib.Path(tmp) / 'tictactoe.yaml').write_text(bad, encoding='utf-8')

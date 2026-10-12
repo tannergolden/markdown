@@ -4,12 +4,12 @@
 
   checkers  the board as it stands and the state of play beside it, with every legal move named in the README
 
-About 500 billion billion positions, weakly solved in 2007: a draw with perfect play, and the first move's edge is
-small, so the house opens every game with the dark men. Its sheet is chess's (`games.sheet`): the same card or
-drafting sheet, band, materials and panel, around chess's board numbered as checkers numbers it (`layout`), with
-men and kings of its own (`shapes`, `skins`) that slide, hop and are crowned as the file opens (`motion`), and a
-still file of each for anyone who asks for reduced motion. What it is drawn from is the profile's own engine's
-(`game`), and the README's words round it are `readme`'s. It is drawn on that profile alone.
+About 500 billion billion positions, played as American checkers: GitHub always plays Black, which moves first, and
+the house White. Its sheet is chess's (`games.sheet`): the same card or drafting sheet, band, materials and panel,
+around chess's board numbered as checkers numbers it (`layout`), with men and kings of its own (`shapes`, `skins`)
+that slide, hop and are crowned as the file opens (`motion`), and a still file of each for anyone who asks for
+reduced motion. What it is drawn from is the profile's own engine's (`game`), and the README's words round it are
+`readme`'s. It is drawn on that profile alone.
 """
 from __future__ import annotations
 

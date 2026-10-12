@@ -26,24 +26,23 @@ The game of Tic-Tac-Toe played on @tannergolden's profile, and only there:
 profile's own engine plays the game and writes what it draws into the page's
 settings after every move ([`game.py`](game.py) checks every field of it).
 
-Tic-Tac-Toe is a draw with perfect play, but its first player wins far more
-often whenever anyone slips: of the 255,168 possible games, X wins 131,184
-(about 51%), O wins 77,904 (about 31%) and 46,080 are drawn. So the Arbiter
-opens every game, for a side drawn at random, with a random move: that side
-plays X, the other O, and `x` says which it was. Nothing here assumes which.
+The house always plays X and GitHub always O. The Arbiter opens every game for a
+side drawn at random, with a random first move, and `opens` says which side that
+was: its mark moves first, so in a game opened for GitHub, O does. Nothing here
+assumes which side opened.
 
 Its sheet is chess's ([`../games/`](../games/README.md)): the same card or
 drafting sheet, band and panel, around a board of its own
 ([`layout.py`](layout.py)): three cells a side as wide as chess's board, named
 as chess names squares, a1 to c3, with the eight lines a game is won on drawn
-faint through them while a side can still win on them. A move is written as
-the mark and its cell, `Xb2`, `+` for a threat and `#` for a win. In place of
+faint through them while a side can still win on them. A move is written as the
+mark and its cell, `Xb2`, `+` for a threat and `#` for a win. In place of
 chess's taken pieces the panel says what perfect play says from here, and where
 each side would win next. The marks are pen strokes ([`shapes.py`](shapes.py))
 in the two materials ([`skins.py`](skins.py)): enamel on chess's board, its
 cells the light squares and its bars the dark, in the standard theme; ink and
-line shading on a print. X is always drawn light and O always dark, whoever
-plays them, since a game's colours never change: only who plays which side.
+line shading on a print. The house's X is always drawn light and GitHub's O
+always dark, and the matchup always has the house on the left as X.
 
 As the file opens ([`motion.py`](motion.py)) the last mark draws itself stroke
 by stroke as a pen would, its cell is marked as the pen lifts, a cell the side

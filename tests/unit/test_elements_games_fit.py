@@ -62,9 +62,9 @@ BOARDS = {
     "connectfour": [limits(G.C4_GITHUB, threats={"house": [1, 2, 3, 4, 5, 6, 7], "github": [1, 2, 3, 4, 5, 6, 7]}),
                     limits(G.C4_HOUSE), limits(G.C4_FRESH_HOUSE), limits(G.C4_WON),
                     limits(G.C4_WON, line=[[5, 1], [4, 2], [3, 3], [2, 4]])],
-    "checkers": [limits(G.CK_GITHUB, history=[[MOST - 2, JUMP, JUMP, "@" + W39], [MOST - 1, "3-8", JUMP, "@" + M39],
-                                              [MOST, "11x18", "", ""]]),
-                 # the most kings and the most men taken: twelve dark kings, and the light side down to one
+    "checkers": [limits(G.CK_GITHUB, history=[[MOST - 2, JUMP, JUMP, "@" + W39], [MOST - 1, "11x18", JUMP, "@" + M39],
+                                              [MOST, "", "", ""]]),
+                 # the most kings and the most men taken: twelve Black kings, and White down to one
                  limits(G.CK_GITHUB, fen="W:WK29:BK1,K2,K3,K4,K5,K6,K7,K8,K9,K10,K11,K12", alert="", moves=[],
                         kings={"house": 12, "github": 12},
                         last=dict(G.CK_GITHUB["last"], move="16-12", words="King from 16 to 12")),
@@ -206,7 +206,7 @@ class Words(unittest.TestCase):
     """The last move's words stand on a line or two of their own under the move, inside the panel, as chess's do: an
     engine's sentence keeps its size and every word, and only words two lines cannot hold end in an ellipsis."""
 
-    SAID = ("A dark disc down column 2 connects four on the diagonal",
+    SAID = ("A Black disc down column 2 connects four on the diagonal",
             "King from 19 jumps 15, 6, 10 and 14, landing on 23, crowned and safe")
     BOARDS = {"tictactoe": G.TTT_GITHUB, "connectfour": G.C4_GITHUB, "checkers": G.CK_GITHUB}
 
@@ -267,21 +267,16 @@ class Words(unittest.TestCase):
 
 
 class TurnRow(unittest.TestCase):
-    """The note across from the turn's plate, the day the move is due by, that no clock runs yet, or on a finished
-    board the day the fresh one comes, keeps clear of the plate in every state of the row, said in full where there
-    is room and short where there is not, never cut."""
+    """The note across from the turn's plate, the day the move is due by (a game's first move's too, since every
+    turn has its clock), or on a finished board the day the fresh one comes, keeps clear of the plate in every state
+    of the row, said in full where there is room and short where there is not, never cut."""
 
-    NOTES = ("due by 28 may", "by 28 may", "no clock until the first move", "no clock yet", "next game 28 may",
-             "next 28 may")
+    NOTES = ("due by 28 may", "by 28 may", "next game 28 may", "next 28 may")
 
     def states(self):
         for kind, (pkg, boards) in G.GAMES.items():
             for d in boards:
-                for due in ("", "28 May"):
-                    if d.get("result"):
-                        yield kind, dict(d, next=due or "28 May")
-                    else:
-                        yield kind, dict(d, due=due)
+                yield kind, dict(d, next="28 May") if d.get("result") else dict(d, due="28 May")
 
     def test_the_note_keeps_clear_of_the_plate(self):
         for kind, d in self.states():

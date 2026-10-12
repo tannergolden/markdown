@@ -26,20 +26,23 @@ The game of Checkers played on @tannergolden's profile, and only there:
 profile's own engine plays the game and writes what it draws into the page's
 settings after every move ([`game.py`](game.py) checks every field of it).
 
-Checkers was weakly solved as a draw in 2007, and its first move's edge is
-small, so the house opens every game, with the dark men, as chess's house opens
-with White. The position arrives as checkers writes one, PDN, its thirty-two
-dark squares numbered 1 to 32, and a move as checkers writes it, `11-15` for a
-step and `22x15x8` for a jump, a square for every landing.
+Checkers here is American checkers in every respect: Black's men start on
+squares 1 to 12 and White's on 21 to 32, and Black moves first. GitHub always
+plays Black, so GitHub opens every game, and the house always plays White. The
+position arrives as checkers writes one, PDN, its thirty-two dark squares
+numbered 1 to 32, and a move as checkers writes it, `11-15` for a step and
+`22x15x8` for a jump, a square for every landing.
 
 Its sheet is chess's ([`../games/`](../games/README.md)): the same card or
 drafting sheet, band and panel, around chess's own board drawn by chess's own
 skins, each dark square's number on a tab in its corner
-([`layout.py`](layout.py)), the house's men on the near side as chess's White
-is. In place of chess's taken pieces the panel counts the men each side has
-taken and the kings each has made. The men and kings ([`shapes.py`](shapes.py))
-come in the two materials ([`skins.py`](skins.py)): enamel lit as chess's
-pieces are, in the standard theme; ink and line shading on a print.
+([`layout.py`](layout.py)). It is drawn from the house's side, White at the foot
+as chess draws White, so it reads as American checkers' diagrams print it:
+Black's squares 1 to 4 at the head and White's 29 to 32 along the foot. In place
+of chess's taken pieces the panel counts the men each side has taken and the
+kings each has made, White's first. The men and kings ([`shapes.py`](shapes.py))
+come in the two materials ([`skins.py`](skins.py)): enamel lit as chess's pieces
+are, in the standard theme; ink and line shading on a print.
 
 As the file opens ([`motion.py`](motion.py)) the last move's man slides, or
 hops over each man it takes, those men fading as it passes and the jump's path

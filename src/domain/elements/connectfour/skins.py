@@ -5,13 +5,13 @@ sheets are (`games.skin`), with the frame's and the discs' own materials.
 
   standard  the frame in the theme's cobalt enamel, the colour of chess's dark squares, lit from the upper left as
             chess's board is, every hole cut clean through it and its wall in shade on the side the lamp misses; two
-            legs on a ground line; the discs enamel, light ones lit white edged in black and dark ones black with the
+            legs on a ground line; the discs enamel, White's lit white edged in black and Black's black with the
             lamp's highlight, as chess's pieces are; the last disc's hole ringed amber, a hole to block glowing red as
             chess's king in check, a won line joined in amber
   print     the frame drawn in elevation, as a part standing on the ground is: its face in section lining, as chess
             lines its dark squares, every hole cut through it with a centre mark while it is empty and a shade line
             on the side the lamp misses; two legs on a ground line hatched beneath; the whole casting its shadow down
-            and to the right; a light disc paper edged in ink and line-shaded, a dark one solid ink with a glint
+            and to the right; a White disc paper edged in ink and line-shaded, a Black one solid ink with a glint
 """
 from __future__ import annotations
 

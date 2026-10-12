@@ -11,9 +11,9 @@ the threatening mark in phantom lines inside it; a won line is struck through. I
 panel says what perfect play says: the game is solved, so the sheet says how this one ends if neither side errs
 from here, and where each side would win next; once it is over, how it ended and the line.
 
-X is drawn in the light material and O in the dark, whoever plays them, in the standard theme and every print:
-a game's colours never change, only who plays which side. X is played by the side the Arbiter opened for, and
-moves first, as White does in chess.
+The house always plays X, drawn in the light material, and GitHub always O, drawn in the dark, in the standard theme
+and every print, as chess draws White and Black: the matchup has the house as X on the left. Only who moves first
+changes, the side the Arbiter opened for, so O moves first in a game opened for GitHub.
 """
 from __future__ import annotations
 
@@ -32,8 +32,8 @@ glyph = glyph_width = None              # a move names its mark, Xb2, so the sco
 
 
 def material(mark: str) -> str:
-    """X is drawn in the light material and O in the dark, whoever plays them: a game's colours never change, only
-    who plays which side, as X always moves first."""
+    """X, the house's mark, is drawn in the light material and O, GitHub's, in the dark: a game's colours never
+    change, whichever side moves first."""
     return "light" if mark == "X" else "dark"
 
 
@@ -70,16 +70,17 @@ def height(n, small=False) -> float:
 
 
 def side_name(side, st) -> str:
-    return mark_of(st, side)
+    return mark_of(side)
 
 
 def first(st) -> str:
-    return "X moves first"
+    """Before the first mark, which mark moves first: the opener's, X for the house and O for GitHub."""
+    return f"{mark_of(st['opens'])} moves first"
 
 
 def medallion(cv, sk, st, cx, cy, r, side) -> str:
     """A side's medallion, holding the mark it plays this game, in that mark's own material."""
-    b, mark = 2 * r * 1.02, mark_of(st, side)
+    b, mark = 2 * r * 1.02, mark_of(side)
     return sk.medal(cv, cx, cy, r, material(mark)) + sk.pen_mark(cv, mark, material(mark), cx - b / 2, cy - b / 2, b,
                                                                   shadow=False, edge=.9)
 
@@ -126,7 +127,7 @@ def board(cv, sk, st, x0, y0, n, *, small=False) -> None:
                 drawn = pen(cv, drawn, mark, cx - box / 2, cy - box / 2, box)
             marks.append(drawn)
     cv.add("".join(marks))
-    threat = mark_of(st, other(st["to_move"]))
+    threat = mark_of(other(st["to_move"]))
     for cell in danger:
         # the cell the side to move must block, marked as chess marks a king in check, blooming as the mark lands,
         # with the threatening mark in phantom lines where it would fall
@@ -182,10 +183,10 @@ def count(cv, sk, st, x0, x1, y, *, small=False) -> float:
     cv.add(sk.caps(cv, "result" if res else "from here", x0, yy + mini / 2 + 3, 7.5, ls=.6, role="muted"))
     if res:
         w = res["winner"]
-        plate = sk.chip(f"{mark_of(st, w)} wins" if w else "drawn", "", size=7.5, lab="turn" if w else "label")
+        plate = sk.chip(f"{mark_of(w)} wins" if w else "drawn", "", size=7.5, lab="turn" if w else "label")
         say = f"{name(w)}, {res['how']}" if w else res["how"]
     elif st["outlook"] in (HOUSE, GITHUB):
-        plate = sk.chip(f"{mark_of(st, st['outlook'])} wins", "", size=7.5, lab="turn")
+        plate = sk.chip(f"{mark_of(st['outlook'])} wins", "", size=7.5, lab="turn")
         say = f"{name(st['outlook'])} wins with best play"
     else:
         plate = sk.chip("draw", "", size=7.5, lab="label")
@@ -195,9 +196,9 @@ def count(cv, sk, st, x0, x1, y, *, small=False) -> float:
     yy += mini + 7
     cv.add(sk.caps(cv, "the line" if res else "wins next", x0, yy + mini / 2 + 3, 7.5, ls=.6, role="muted"))
     if res:
-        items = [(mark_of(st, res["winner"]) if res["winner"] else "", cell) for cell in st["line"]]
+        items = [(mark_of(res["winner"]) if res["winner"] else "", cell) for cell in st["line"]]
     else:
-        items = [(mark_of(st, side), cell) for side in (st["to_move"], other(st["to_move"]))
+        items = [(mark_of(side), cell) for side in (st["to_move"], other(st["to_move"]))
                  for cell in st["threats"][side]]
     if not items:
         sk.tray(cv, px - 4, yy - 1, 58, mini + 2)

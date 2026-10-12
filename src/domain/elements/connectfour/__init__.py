@@ -4,13 +4,12 @@
 
   connectfour  the frame as it stands and the state of play beside it, with every open column named in the README
 
-About 4.5 trillion positions, solved in 1988: whoever drops the first disc can force a win with perfect play, so the
-Arbiter opens every game, for a side drawn at random, with a random move, and that side drops the dark discs.
-Nothing here assumes which side that is. Its sheet is chess's (`games.sheet`): the same card or drafting sheet,
-band, materials and panel, around a frame of its own (`layout`, `shapes`, `skins`) that its last disc falls down as
-the file opens (`motion`), with a still file of each for anyone who asks for reduced motion. What it is drawn from
-is the profile's own engine's (`game`), and the README's words round it are `readme`'s. It is drawn on that profile
-alone.
+About 4.5 trillion positions. The house always drops the White discs and GitHub the Black, and the Arbiter opens
+every game for a side drawn at random, with a random first move, so a game opens with a White disc or a Black one.
+Nothing here assumes which. Its sheet is chess's (`games.sheet`): the same card or drafting sheet, band, materials
+and panel, around a frame of its own (`layout`, `shapes`, `skins`) that its last disc falls down as the file opens
+(`motion`), with a still file of each for anyone who asks for reduced motion. What it is drawn from is the profile's
+own engine's (`game`), and the README's words round it are `readme`'s. It is drawn on that profile alone.
 """
 from __future__ import annotations
 

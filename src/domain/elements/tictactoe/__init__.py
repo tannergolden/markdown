@@ -4,12 +4,12 @@
 
   tictactoe  the board as it stands and the state of play beside it, with every open cell named in the README
 
-The simplest of the four: 765 positions once symmetry is set aside, solved, and drawn with perfect play. Its first
-player wins far more often whenever anyone slips, so the Arbiter opens every game, for a side drawn at random, with
-a random move: that side plays X. Its sheet is chess's (`games.sheet`): the same card or drafting sheet, band,
-materials and panel, around a board of its own (`layout`) and its marks (`shapes`, `skins`), drawn by hand as the
-file opens (`motion`), with a still file of each for anyone who asks for reduced motion. What it is drawn from is
-the profile's own engine's (`game`), and the README's words round it are `readme`'s. It is drawn on that profile
+The simplest of the four: 765 positions once symmetry is set aside, solved, and drawn with perfect play. The house
+always plays X and GitHub O, and the Arbiter opens every game for a side drawn at random, with a random first move,
+so O moves first in a game opened for GitHub. Its sheet is chess's (`games.sheet`): the same card or drafting sheet,
+band, materials and panel, around a board of its own (`layout`) and its marks (`shapes`, `skins`), drawn by hand as
+the file opens (`motion`), with a still file of each for anyone who asks for reduced motion. What it is drawn from
+is the profile's own engine's (`game`), and the README's words round it are `readme`'s. It is drawn on that profile
 alone.
 """
 from __future__ import annotations

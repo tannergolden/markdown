@@ -8,7 +8,8 @@ column, an arrow marking where it goes in, falls down it behind the plate, glimp
 lands with a bounce, its column's number set on a block and its hole ringed; a hole the side to move must block is
 marked as chess marks a king in check, with the disc that would land there in phantom lines; a won game's four are
 ringed one after another and joined by a line. In place of chess's taken pieces the panel counts each side's discs
-left, its rack emptying as the frame fills.
+left, its rack emptying as the frame fills. The house always drops the White discs and GitHub the Black, and every
+word on the sheet says so: WHITE and BLACK, the house's White first.
 """
 from __future__ import annotations
 
@@ -18,11 +19,11 @@ from ...lettering import f1, fx
 from ..games import sheet as S
 from ..games.sides import HOUSE, other
 from . import motion as M
-from .game import COLS, EACH, KIND, ROWS, material_of  # noqa: F401  (KIND: the sheet's stamp)
+from .game import COLOUR, COLS, EACH, KIND, ROWS, material_of  # noqa: F401  (KIND: the sheet's stamp)
 from .shapes import HOLE, LEG, MARGIN
 
 GAP = 8             # what keeps a label off its tray, chess's
-RACK = 86           # where a rack starts: past its widest label, LIGHT · GITHUB, in the standard theme's
+RACK = 86           # where a rack starts: past its widest label, BLACK · GITHUB, in the standard theme's
                     # letters and a gap, so the label is never set smaller, in any theme
 
 LABEL = "connect four"
@@ -66,16 +67,17 @@ def height(n, small=False) -> float:
 
 
 def side_name(side, st) -> str:
-    return material_of(st, side)
+    return COLOUR[side]
 
 
 def first(st) -> str:
-    return "the dark discs drop first"
+    """Before the first disc, which colour drops first: the opener's, White for the house and Black for GitHub."""
+    return f"{COLOUR[st['opens']]} drops first"
 
 
 def medallion(cv, sk, st, cx, cy, r, side) -> str:
-    """A side's medallion, holding a disc of its own."""
-    mat = material_of(st, side)
+    """A side's medallion, holding a disc of its own: White for the house, Black for GitHub."""
+    mat = material_of(side)
     return sk.medal(cv, cx, cy, r, mat) + sk.disc(cv, mat, cx, cy, 0, r=r * .72)
 
 
@@ -84,7 +86,7 @@ def glyph(cv, sk, st, side, x, base, size) -> tuple[str, float]:
     whose it is. Returns the disc and the room it takes."""
     r = size * .3
     cy = base - sk.cap(size) / 2
-    return sk.disc(cv, material_of(st, side), x + r + .5, cy, 0, r=r), glyph_width(size)
+    return sk.disc(cv, material_of(side), x + r + .5, cy, 0, r=r), glyph_width(size)
 
 
 def glyph_width(size) -> float:
@@ -158,14 +160,14 @@ def board(cv, sk, st, x0, y0, n, *, small=False) -> None:
 # --------------------------------------------------------------------------- the panel's count
 def count(cv, sk, st, x0, x1, y, *, small=False) -> float:
     """Each side's discs left, where chess counts what each side took: a rack of twenty-one, emptying as the frame
-    fills, in move order as every pair of the game's sides is listed: the opener's dark discs on top."""
+    fills, the house's White on top, as every pair of the game's sides is listed."""
     cv.add(sk.heading(cv, "discs left", x0, y))
     mini = 20 if not small else 18
     yy, px = y + 10, x0 + RACK
-    for side in (st["opens"], other(st["opens"])):
-        mat = material_of(st, side)
-        cv.add(sk.capped(cv, f"{mat} · {'house' if side == HOUSE else 'github'}", x0, yy + mini / 2 + 3, 7.5, 6,
-                         px - 4 - GAP - x0, ls=.6, role="muted")[0])
+    for side in (HOUSE, other(HOUSE)):
+        mat = material_of(side)
+        cv.add(sk.capped(cv, f"{COLOUR[side]} · {'house' if side == HOUSE else 'github'}", x0, yy + mini / 2 + 3, 7.5,
+                         6, px - 4 - GAP - x0, ls=.6, role="muted")[0])
         left = st["left"][side]
         chip = sk.chip(f"{left}", "", size=7.5, lab="accent" if left else "label")
         room = x1 - px - chip.w - 14

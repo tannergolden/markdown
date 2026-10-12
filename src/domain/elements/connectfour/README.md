@@ -26,24 +26,24 @@ The game of Connect Four played on @tannergolden's profile, and only there:
 profile's own engine plays the game and writes what it draws into the page's
 settings after every move ([`game.py`](game.py) checks every field of it).
 
-Connect Four is solved: whoever drops the first disc can force a win with
-perfect play, by opening in the centre column (James D. Allen and Victor Allis,
-independently, in 1988). So the Arbiter opens every game, for a side drawn at
-random, with a random move: `opens` says which side that was, and it drops the
-dark discs, as the first player always does; `light` names the other side.
-Nothing here assumes which side opened.
+The house always drops the White discs and GitHub always the Black. The Arbiter
+opens every game for a side drawn at random, with a random first move, and
+`opens` says which side that was, so a game opens with a White disc when it was
+opened for the house and a Black one when for GitHub. Nothing here assumes which
+side opened. The board's letters stay as they were: `L` is a White disc, the
+house's, and `D` a Black one, GitHub's.
 
 Its sheet is chess's ([`../games/`](../games/README.md)): the same card or
 drafting sheet, band and panel, around a frame of its own
 ([`layout.py`](layout.py)) as wide as chess's board, drawn in elevation: seven
-columns numbered under it and six rows up its side, on two legs on the ground.
-A move is written as its column, `4`, `+` for a threat and `#` for four in a
-row, with the disc that dropped it before it on the sheet. In place of chess's
-taken pieces the panel counts each side's discs left, a rack of twenty-one
-emptying as the frame fills, the opener's dark discs on top. The frame and the discs ([`shapes.py`](shapes.py))
-come in the two materials ([`skins.py`](skins.py)): the theme's cobalt enamel
-and discs lit as chess's pieces are, in the standard theme; section lining and
-ink on a print.
+columns numbered under it and six rows up its side, on two legs on the ground. A
+move is written as its column, `4`, `+` for a threat and `#` for four in a row,
+with the disc that dropped it before it on the sheet. In place of chess's taken
+pieces the panel counts each side's discs left, a rack of twenty-one emptying as
+the frame fills, the house's White on top. Every word on the sheet says White
+and Black. The frame and the discs ([`shapes.py`](shapes.py)) come in the two
+materials ([`skins.py`](skins.py)): the theme's cobalt enamel and discs lit as
+chess's pieces are, in the standard theme; section lining and ink on a print.
 
 As the file opens ([`motion.py`](motion.py)) the last disc is held over its
 column, let go, glimpsed through each hole it passes behind, and lands with a

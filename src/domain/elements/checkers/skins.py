@@ -6,12 +6,12 @@ sheets are (`games.skin`), with the men's own materials.
 The board is chess's board, drawn by chess's own skin in either material (its squares, its light and its edge),
 with each dark square's number set on a tab in its corner, as a numbered drawing tags its parts.
 
-  standard  the men enamel, lit as chess's pieces are: a light man white edged in black, its milled side shaded
-            heavier toward the right; a dark man black, its ridges and groove catching the lamp, with a highlight
+  standard  the men enamel, lit as chess's pieces are: a White man white edged in black, its milled side shaded
+            heavier toward the right; a Black man black, its ridges and groove catching the lamp, with a highlight
             on its upper left; the square a man set out from and the one it landed on amber, as chess marks a move,
             a man that must jump glowing red as chess's king in check, a jump's path in amber
-  print     a light man paper edged in ink, its milled side shaded heavier toward the right, as a white chessman is;
-            a dark man solid ink, its ridges and its groove catching the light, with a glint on its upper left;
+  print     a White man paper edged in ink, its milled side shaded heavier toward the right, as a white chessman is;
+            a Black man solid ink, its ridges and its groove catching the light, with a glint on its upper left;
             where a man stood drawn in phantom lines, as chess draws where its piece stood, and a jump's path a
             chain line through every square it lands on
 """

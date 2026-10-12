@@ -3,12 +3,13 @@
 """The Checkers sheet's layout: its board, and what its panel counts, inside the sheet every game shares.
 
 The board is chess's, in chess's place at chess's size, drawn by chess's own skins, with each of its thirty-two dark
-squares carrying its number, since that is how checkers writes its moves. The house's men stand on the near side, as
-chess's White does, and the numbers are checkers' own, so square 1 is in the house's back row. As the file opens the
-last move's man slides, or hops over each man it takes, those men fading on their squares as it passes, the jump's
-path drawn in behind it; a man reaching the far row is crowned as it lands; a man that must jump is marked as chess
-marks a king in check. In place of chess's taken pieces the panel counts the men each side has taken and the kings
-each has made.
+squares carrying its number, since that is how checkers writes its moves. It is drawn from the house's side, White
+at the foot as chess draws White, so it reads as American checkers' diagrams print it: Black's squares 1 to 4 at the
+head and White's 29 to 32 along the foot. GitHub plays Black and moves first; the house plays White. As the file
+opens the last move's man slides, or hops over each man it takes, those men fading on their squares as it passes,
+the jump's path drawn in behind it; a man reaching the far row is crowned as it lands; a man that must jump is
+marked as chess marks a king in check. In place of chess's taken pieces the panel counts the men each side has taken
+and the kings each has made.
 """
 from __future__ import annotations
 
@@ -19,19 +20,17 @@ from ...lettering import f1, fx
 from ..games import sheet as S
 from ..games.sides import HOUSE, other
 from . import motion as M
-from .game import KIND, colour_of, rc  # noqa: F401  (KIND: the sheet's stamp)
+from .game import COLOUR, KIND, OPENS, material_of, rc  # noqa: F401  (KIND: the sheet's stamp)
 from .shapes import SHADOW
 
 LABEL = "checkers"
-glyph = glyph_width = None              # dark moves first: the score sheet's columns say whose each move is
+glyph = glyph_width = None              # Black moves first: the score sheet's columns say whose each move is
 
 
 def xy(st, n: int, x0, y0, s) -> tuple[float, float]:
-    """A square's top-left corner on the board: the standard diagram, turned so the house's men are on the near
-    side."""
+    """A square's top-left corner on the board, as American checkers' diagrams print it: White, the house's, at the
+    foot, and Black's back row at the head."""
     r, col = rc(n)
-    if st["flip"]:
-        r, col = 7 - r, 7 - col
     return x0 + col * s, y0 + r * s
 
 
@@ -58,17 +57,18 @@ def height(n, small=False) -> float:
 
 
 def side_name(side, st) -> str:
-    return colour_of(st, side)
+    return COLOUR[side]
 
 
 def first(st) -> str:
-    return "dark moves first"
+    """Before the first move, which colour moves first: Black, GitHub's, as American checkers has it."""
+    return f"{COLOUR[OPENS]} moves first"
 
 
 def medallion(cv, sk, st, cx, cy, r, side) -> str:
-    """A side's medallion, holding a king of its own."""
+    """A side's medallion, holding a king of its own: White for the house, Black for GitHub."""
     k = 2 * r * 1.02
-    colour = colour_of(st, side)
+    colour = material_of(side)
     return sk.medal(cv, cx, cy, r, colour) + sk.man(cv, colour, True, cx - k / 2, cy - k / 2 - r * .02, k,
                                                     shadow=False)
 
@@ -173,15 +173,16 @@ def moving_man(cv, sk, st, piece, x0, y0, s) -> str:
 # --------------------------------------------------------------------------- the panel's count
 def count(cv, sk, st, x0, x1, y, *, small=False) -> float:
     """The men each side has taken and the kings each has made, where chess counts what each side took: the taken
-    men on a tray in their own colour, the side ahead marked as chess marks a lead, and the kings at the row's end."""
+    men on a tray in their own colour, the side ahead marked as chess marks a lead, and the kings at the row's end;
+    the house's White first, as every pair of sides is listed."""
     cv.add(sk.heading(cv, "taken", x0, y))
     mini = 20 if not small else 18
     yy, px = y + 10, x0 + 72
     lead = st["took"][HOUSE] - st["took"][other(HOUSE)]
     for side in (HOUSE, other(HOUSE)):
-        colour = colour_of(st, side)
-        lost = "light" if colour == "dark" else "dark"
-        cv.add(sk.caps(cv, f"{colour} took", x0, yy + mini / 2 + 3, 7.5, ls=.6, role="muted"))
+        colour = material_of(side)
+        lost = material_of(other(side))
+        cv.add(sk.caps(cv, f"{COLOUR[side]} took", x0, yy + mini / 2 + 3, 7.5, ls=.6, role="muted"))
         took = st["took"][side]
         kings = st["kings"][side]
         shown = kings if kings <= 3 else 1

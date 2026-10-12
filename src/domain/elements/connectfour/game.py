@@ -2,13 +2,14 @@
 # SPDX-License-Identifier: MIT
 """What the Connect Four sheet is drawn from: the game as the profile's own engine hands it over, checked and read.
 
-The board arrives as its six rows, the top row first, each seven cells of L (a light disc), D (a dark one) or a dot,
-as a FEN gives chess's ranks. Its columns are numbered 1 to 7 from the left and its rows 1 to 6 from the foot, and a
-move is the column a disc is dropped down, `4`, with a `+` when it makes a threat and a `#` when it connects four.
+The board arrives as its six rows, the top row first, each seven cells of L (a White disc, the house's), D (a Black
+one, GitHub's) or a dot, as a FEN gives chess's ranks. Its columns are numbered 1 to 7 from the left and its rows 1 to
+6 from the foot, and a move is the column a disc is dropped down, `4`, with a `+` when it makes a threat and a `#`
+when it connects four.
 
-Whoever drops the first disc can force a win, so the Arbiter opens every game, for a side drawn at random, with a
-random move: `opens` says which side that was, and that side drops the dark discs, as the first player always does;
-`light` names the other side, which drops the light ones. Nothing here assumes which side opened: the two sides are
+The house always drops the White discs and GitHub the Black. The Arbiter opens every game for a side drawn at
+random, with a random first move, and `opens` says which side that was, so a game opens with a White disc when it
+was opened for the house and a Black one when for GitHub. Nothing here assumes which side opened: the two sides are
 told apart by their discs, never by their order. What the engine knows that the board does not say comes with it:
 the columns each side `threatens` to win down next, and once a side has won, the four cells of the winning `line`.
 """
@@ -18,7 +19,7 @@ import re
 
 from ..chess.game import OWNER, is_number, is_text
 from ..games import data as D
-from ..games.sides import HOUSE, SIDES, name, other
+from ..games.sides import GITHUB, HOUSE, SIDES, name, other
 
 KIND = "connectfour"
 COLS, ROWS, EACH = 7, 6, 21          # the frame, and the discs each side has
@@ -44,15 +45,19 @@ def heights(board: dict) -> dict[int, int]:
     return {col: sum(1 for (c, _) in board if c == col) for col in range(1, COLS + 1)}
 
 
-def material_of(st: dict, side: str) -> str:
-    """The discs a side drops: the dark ones for the side that opened, the light ones for the other."""
-    return "light" if st["light"] == side else "dark"
+LETTER = {HOUSE: "L", GITHUB: "D"}          # each side's discs on the board: the house's White, GitHub's Black
+COLOUR = {HOUSE: "White", GITHUB: "Black"}   # and what a reader is told they are
+
+
+def material_of(side: str) -> str:
+    """The material a side's discs are drawn in: the light one for the house's White, the dark for GitHub's Black."""
+    return "light" if side == HOUSE else "dark"
 
 
 def to_move(discs: dict, opens: str) -> str:
     """Whose turn it is: the opener's when both sides have dropped as many discs, else the other side's."""
-    dark = sum(1 for v in discs.values() if v == "D")
-    return opens if dark == len(discs) - dark else other(opens)
+    first = sum(1 for v in discs.values() if v == LETTER[opens])
+    return opens if first == len(discs) - first else other(opens)
 
 
 def in_a_row(line) -> bool:
@@ -76,17 +81,19 @@ def check(d: dict) -> list[str]:
         if row > 1 and (col, row - 1) not in discs:
             errors.append(f"board has a disc in column {col}, row {row}, over an empty hole: discs fall")
             break
-    opens, light = d.get("opens"), d.get("light")
+    if "light" in d:
+        errors.append("light is gone: the house always drops the White discs and GitHub the Black, and opens names"
+                      " the side that dropped first")
+    opens = d.get("opens")
     if opens not in SIDES:
-        return errors + [f"opens {opens!r} is the side the Arbiter opened for, house or github, which drops the"
-                         " dark discs"]
-    if light != other(opens):
-        errors.append(f"light {light!r} is the side that did not open, {other(opens)}: the opener drops the dark"
-                      " discs")
-    dark = sum(1 for v in discs.values() if v == "D")
-    if dark - (len(discs) - dark) not in (0, 1):
-        errors.append(f"board has {dark} dark discs and {len(discs) - dark} light: the opener drops the dark ones,"
-                      " and the sides take turns")
+        return errors + [f"opens {opens!r} is the side the Arbiter opened for, which dropped the first disc: house,"
+                         " which drops White, or github, which drops Black"]
+    white = sum(1 for v in discs.values() if v == "L")
+    first = sum(1 for v in discs.values() if v == LETTER[opens])
+    if first - (len(discs) - first) not in (0, 1):
+        errors.append(f"board has {white} White discs and {len(discs) - white} Black: {COLOUR[opens]} dropped first,"
+                      f" the Arbiter having opened for {opens}, so it has as many as {COLOUR[other(opens)]} or one"
+                      " more")
     turn = to_move(discs, opens)
     tall = heights(discs)
     threats = d.get("threats") or {}
@@ -103,7 +110,7 @@ def check(d: dict) -> list[str]:
         errors.append("line is the four cells connected, one after another, each a column and a row, such as"
                       " [[2, 4], [3, 3], [4, 2], [5, 1]]")
     elif line and not (winner in SIDES
-                       and all(discs.get(tuple(p)) == ("D" if winner == opens else "L") for p in line)):
+                       and all(discs.get(tuple(p)) == LETTER[winner] for p in line)):
         errors.append("line: the winning line is the winner's four discs, and only a won game has one")
     elif winner in SIDES and not line:
         errors.append("line: a won game names its winning line, its four cells")
@@ -114,7 +121,7 @@ def check(d: dict) -> list[str]:
         top = max((row for (c, row) in discs if c == col), default=0)
         if not top:
             errors.append(f"last: move {move!r} is down a column with no disc in it")
-        elif discs[(col, top)] != ("L" if turn == opens else "D"):
+        elif discs[(col, top)] != LETTER[other(turn)]:
             errors.append(f"last: move {move!r} is not topped by a disc of the side that moved last")
     return errors + D.check(d, KIND, MOVE, CODE, ENDS, other(turn), ("must block",))
 
@@ -124,20 +131,19 @@ def state(d: dict) -> dict:
     the winning line, the discs each side has left, and the common state every game's sheet reads."""
     board = placement(d["board"])
     opens = d["opens"]
-    light = other(opens)
     turn = to_move(board, opens)
     st = D.state(d, to_move=turn, opens=opens)
     tall = heights(board)
     if st["last"]:
         col = int(st["last"]["move"][0])
-        mine = sum(1 for v in board.values() if v == ("L" if light == st["last"]["side"] else "D"))
+        mine = sum(1 for v in board.values() if v == LETTER[st["last"]["side"]])
         st["last"].update(column=col, row=tall[col], number=mine)
     threats = {side: [int(n) for n in (d.get("threats") or {}).get(side, [])] for side in SIDES}
     # a threat must be blocked, unless the side to move can win first
     if not st["result"] and not st["alert"] and threats[other(turn)] and not threats[turn]:
         st["alert"] = "must block"
-    left = {side: EACH - sum(1 for v in board.values() if v == ("L" if light == side else "D")) for side in SIDES}
-    st.update(KIND=KIND, board=board, light=light, threats=threats, left=left, heights=tall,
+    left = {side: EACH - sum(1 for v in board.values() if v == LETTER[side]) for side in SIDES}
+    st.update(KIND=KIND, board=board, threats=threats, left=left, heights=tall,
               line=[tuple(p) for p in d.get("line") or []])
     return st
 
@@ -149,7 +155,7 @@ def describe(d: dict) -> dict:
         return d
     st = state(d)
     d.setdefault("title", f"Connect Four: game {st['game']}, move {st['move']}")
-    who = f"{name(st['opens'])} drops the dark discs and {name(other(st['opens']))} the light"   # in move order
+    who = f"@{OWNER} drops the White discs and GitHub the Black"   # the house's side first, as every pair is said
     if st["last"]:
         words = st["last"]["words"]
         said = words[0].lower() + words[1:]
@@ -163,12 +169,13 @@ def describe(d: dict) -> dict:
         turn = f" {name(w)} won with four in a row." if w else " The game was drawn on a full frame."
         turn += f" Game {st['game'] + 1} opens {st['next']}." if st["next"] else ""
     else:
-        turn = (f" It is {name(st['to_move'])}'s turn as {material_of(st, st['to_move']).capitalize()}"
+        turn = (f" It is {name(st['to_move'])}'s turn as {COLOUR[st['to_move']]}"
                 + (", and it must block" if st["alert"] else "") + (f", due by {st['due']}." if st["due"] else "."))
     cols = []
     for col in range(1, COLS + 1):
         stack = [st["board"][(col, row)] for row in range(1, ROWS + 1) if (col, row) in st["board"]]
         if stack:
-            cols.append(f"column {col}, from the foot: " + ", ".join("light" if v == "L" else "dark" for v in stack))
-    d.setdefault("desc", head + turn + (" " + "; ".join(cols).capitalize() + "." if cols else " The frame is empty."))
+            cols.append(f"column {col}, from the foot: " + ", ".join("White" if v == "L" else "Black" for v in stack))
+    said = "; ".join(cols)
+    d.setdefault("desc", head + turn + (f" {said[0].upper()}{said[1:]}." if cols else " The frame is empty."))
     return d

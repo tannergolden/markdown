@@ -56,8 +56,7 @@ def turn_row(cv, sk, st, x0, x1, y, *, small=False) -> float:
     panel open out of it as the move lands."""
     if st["result"]:
         return CL.plate_row(cv, sk, x0, x1, y, *CL.finished(st), small=small, keep_note=True)
-    notes = ((f"due by {st['due']}", f"by {st['due']}") if st["due"]
-             else ("no clock until the first move", "no clock yet"))
+    notes = (f"due by {st['due']}", f"by {st['due']}") if st["due"] else ("", "")
     return CL.plate_row(cv, sk, x0, x1, y, f"{name(st['to_move'])}'s turn", st["alert"], "play",
                         st["to_move"] == GITHUB, notes, small=small, keep_note=True)
 

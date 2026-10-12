@@ -2,12 +2,11 @@
 # SPDX-License-Identifier: MIT
 """The two sides of every game on the profile: the house, @tannergolden, and GitHub, everyone else.
 
-Chess names its sides white and black, and the house plays white. A game beside it names them as they are, the
-house and GitHub, and each game says what each side plays with that game: X or O, the dark discs or the light, the
-dark men or the light. Which side moves first is the game's own: the house opens Checkers, and the Arbiter opens
-Tic-Tac-Toe and Connect Four for a side drawn at random, which then plays X or the dark discs. The house stands on
-the left of the panel, as chess's White does, whichever it plays. A game's colours never change, only who plays
-which side: X is always drawn light and O dark, as the dark discs and the dark men are always dark.
+Each side's colour is fixed in every game, and only who moves first changes. The house always plays White in Chess,
+Checkers and Connect Four, and X in Tic-Tac-Toe; GitHub always plays Black, or O. Which side moves first is the
+game's own: the house opens Chess, GitHub opens Checkers, since Black moves first there, and the Arbiter opens
+Tic-Tac-Toe and Connect Four for a side drawn at random. Every pair of sides is said the house's first, and the house
+stands on the left of the panel, as chess's White does.
 """
 from __future__ import annotations
 

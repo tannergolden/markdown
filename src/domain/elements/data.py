@@ -31,7 +31,7 @@ REQUIRED = {
     "schematic": ("boxes", "wires"), "instruments": ("histogram", "dial", "materials", "counters"),
     "milestones": ("events",), "roster": ("people",), "certificate": ("checks", "ring_top", "ring_bottom", "name"),
     "placard": ("owner", "name", "desc", "cells"),
-    "tictactoe": ("board", "x"), "connectfour": ("board", "opens", "light"), "checkers": ("fen",),
+    "tictactoe": ("board", "opens"), "connectfour": ("board", "opens"), "checkers": ("fen",),
     "chess": ("fen",), "chess-hall": (), "hall-of-fame": (),
 }
 # Kinds that draw themselves in the standard theme and every print, and that no holiday or collection draws yet:

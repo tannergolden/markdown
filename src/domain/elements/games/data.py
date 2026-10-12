@@ -40,6 +40,8 @@ def check(d: dict, kind: str, notation: re.Pattern, code: str, ends: dict[str, b
             errors.append(f"{key} {d[key]!r} is not a number from {low} to {MOST:,}")
     if d.get("due") and not is_day(d["due"]):
         errors.append(f"due {d['due']!r} is not a day, such as 18 Oct")
+    elif not d.get("due") and not d.get("result"):
+        errors.append("due: a game under way says the day its move is due by, such as 18 Oct, its first move's too")
     if d.get("alert") and d["alert"] not in alerts:
         errors.append(f"alert {d['alert']!r} is not what this game's turn can say: {', '.join(alerts)}")
     elif d.get("alert") and d.get("result"):
