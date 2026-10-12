@@ -7,7 +7,8 @@ trophy case, each drawn the way a run draws it, from the kit's own samples and
 the driftmark specimen, on GitHub's light and dark grounds. The four games the
 kit draws for @tannergolden's profile alone (Chess, Checkers, Connect Four and
 Tic-Tac-Toe, the README's order) are shown beside them, each from a sample
-game, in the standard theme and every print, as they are drawn on that profile.
+game, in the standard theme and every print, in every holiday's set and in
+every month's design of a collection, as they are drawn on that profile.
 
 Nothing is fetched and nothing depends on the day it runs, so drawing it twice
 writes the same bytes, and a change to a theme shows up as a change here.
@@ -112,8 +113,15 @@ NOTES = {
             "two more beside it, each with their wins by game and named as their GitHub profile names them.",
     "game phones": "The 360-pixel files a README shows on a small screen, in the standard theme and in the profile's "
                    "own print.",
+    "game sets": "While a holiday's set is up it draws the games in its own pixels, each as a whole, every file of "
+                 "it: its paper and frame, its lettering, the board's squares in two of its own colours; the pieces "
+                 "are the same ivory and ebony in every set. Motion: Still shows the file a reader who asks for "
+                 "reduced motion gets.",
+    "game collection": "Each month's design draws the games in its pixels, in the hand the twelve share: its words in "
+                       "the hand's two inks and its glint on the hand's period, its board and its frame its own.",
     "game badges": "A badge for each winner, in a row under the Hall of Fame in the README, each a link to that "
-                   "player's profile. The leader's glints.",
+                   "player's profile. The leader's glints. A holiday's set and a collection's design draw them as "
+                   "they draw every badge.",
     "trophies standard": "The case in its own five styles, struck in metal and enamel: the level and next-up cards "
                          "over it, each style, a trophy in every tier, and a row of achievements, from the kit's "
                          "sample repository.",
@@ -410,12 +418,52 @@ GAME_NOTES = {
     "tictactoe": f"Tic-Tac-Toe on @{chess.OWNER}'s profile README, @{chess.OWNER} as X against everyone else on GitHub "
                  "as O. The Arbiter opens every game for a side drawn at random, with a random move.",
 }
-DRAWN_IN = (" It is drawn in whatever theme the page is in: the standard theme's enamel, or a print's drawing on "
-            "drafting paper, one family with the other three boards.")
+DRAWN_IN = (" It is drawn in whatever theme the page is in: the standard theme's enamel, a print's drawing on "
+            "drafting paper, or the pixels of the holiday's set or the collection's design that is up, one family "
+            "with the other three boards.")
 
 
 def labelled(tone: str) -> str:
     return f"{tone}, the profile's" if tone == PROFILE_TONE else tone
+
+
+def pixel_sets() -> list[tuple[str, str, str]]:
+    """Every pixel set a game is drawn in, (key, holiday, label): each holiday's set, then each design of every
+    collection with all twelve drawn, as its month's design."""
+    sets = [(key, key, holidays.NAMES[key]) for key in holidays.KEYS if key in holidays.SETS]
+    for c in (collections.COLLECTIONS[k] for k in collections.themes()):
+        sets += [(k, months_design(k), f"{collections.MONTHS[i]}: {collections.name_of(k)}")
+                 for i, k in enumerate(c.keys)]
+    return sets
+
+
+@lru_cache(maxsize=None)
+def in_set(key: str, holiday: str) -> dict:
+    """A game's files, or the Hall's, as the set `holiday` draws them; refused if the set handed any of them back to
+    the page's own look, which the page would show under the set's name."""
+    files = elements_data.render({key: sample_game(key)[key]}, prints.STANDARD, holiday)
+    held = holiday.split(":")[0]
+    lost = sorted(name for name, svg in files.items() if f" {held} elements {key} " not in svg.split("-->")[0])
+    if lost:
+        raise SystemExit(f"{held} drew {key} in the page's own look: {', '.join(lost)}")
+    return files
+
+
+def set_sections(d: Drawings, key: str, what: str) -> list:
+    """A game's wide files, or the Hall's, in every holiday's set and every month of each collection: a section each."""
+    def sheet(name: str, holiday: str, label: str) -> dict:
+        files, fn = in_set(key, holiday), elements_data.file_name
+        return item(d, key, f"{key}-wide-{name}", f"{what}, {label}", files[fn(key, "wide", "day")],
+                    files[fn(key, "wide", "dark")], BUDGET[elements_draw.KINDS[key][2]],
+                    still=(files[fn(key, "still", "day")], files[fn(key, "still", "dark")]))
+
+    sets = pixel_sets()
+    out = [{"key": "holidays", "title": "In a holiday's set", "note": NOTES["game sets"],
+            "items": [sheet(k, h, label) for k, h, label in sets if k in holidays.SETS]}]
+    for c in (collections.COLLECTIONS[k] for k in collections.themes()):
+        out.append({"key": c.key, "title": f"In the {c.name} collection", "note": NOTES["game collection"],
+                    "items": [sheet(k, h, label) for k, h, label in sets if k in c.keys]})
+    return out
 
 
 def board_entry(d: Drawings, key: str) -> dict:
@@ -435,6 +483,7 @@ def board_entry(d: Drawings, key: str) -> dict:
 
     title = TITLES[key]
     phones = [sheet(tone, "narrow", f"Board, {labelled(tone)}") for tone in (prints.STANDARD, PROFILE_TONE)]
+    sets = set_sections(d, key, "Board")
     return {"key": key, "name": title.lower(), "group": "game", "tag": f"@{chess.OWNER} only",
             "kicker": f"Game, exclusive to @{chess.OWNER}'s profile",
             "note": GAME_NOTES[key] + DRAWN_IN,
@@ -451,6 +500,7 @@ def board_entry(d: Drawings, key: str) -> dict:
             "sections": [
                 {"key": "board", "title": "The board", "note": NOTES[f"{key} board"],
                  "items": [sheet(tone, "wide", f"Board, {labelled(tone)}") for tone in tones]},
+                *sets,
                 {"key": "phones", "title": "On a phone", "note": NOTES["game phones"], "items": phones}]}
 
 
@@ -478,6 +528,12 @@ def hall_entry(d: Drawings) -> dict:
                       drawn[tone][elements_data.file_name(key, f"badge-{i}", "dark")])
                  for i in range(1, len(winners) + 1)]
         rows.append({"label": f"In {labelled(tone)}", "chips": chips})
+    for k, holiday, label in pixel_sets():
+        files = in_set(key, holiday)
+        rows.append({"label": f"In {label}", "chips": [
+            chip(d, key, f"badge-{i}-{k}", "#1, the leader's, glinting" if i == 1 else f"#{i}",
+                 files[elements_data.file_name(key, f"badge-{i}", "day")],
+                 files[elements_data.file_name(key, f"badge-{i}", "dark")]) for i in range(1, len(winners) + 1)]})
     return {"key": key, "name": "hall of fame", "group": "game", "hall": True, "tag": f"@{chess.OWNER} only",
             "kicker": f"Hall of Fame, exclusive to @{chess.OWNER}'s profile",
             "note": f"The Hall of Fame of the four games on @{chess.OWNER}'s profile README: the series between "
@@ -498,6 +554,7 @@ def hall_entry(d: Drawings) -> dict:
             "sections": [
                 {"key": "hall", "title": "The Hall of Fame", "note": NOTES["hall"],
                  "items": [sheet(tone, "wide", f"Hall of Fame, {labelled(tone)}") for tone in tones]},
+                *set_sections(d, key, "Hall of Fame"),
                 {"key": "phones", "title": "On a phone", "note": NOTES["game phones"],
                  "items": [sheet(tone, "narrow", f"Hall of Fame, {labelled(tone)}") for tone in shown]},
                 {"key": "badges", "title": "Winners' badges", "note": NOTES["game badges"], "rows": rows}]}
