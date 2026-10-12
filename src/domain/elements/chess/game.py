@@ -338,8 +338,9 @@ def shown(row: list, logins: dict) -> tuple[str, bool]:
 
 
 def initials(name: str, login: str) -> str:
-    """Two letters for a winner's medallion: their name's, else their login's."""
-    words = [w for w in re.split(r"[^A-Za-z0-9]+", name) if w]
+    """Two letters for a winner's medallion: their name's, else their login's. A name's words are split on what is
+    neither a letter nor a digit in any script, so Élodie Durand's are ÉD."""
+    words = [w for w in re.split(r"[\W_]+", name) if w]
     if len(words) >= 2:
         return (words[0][0] + words[1][0]).upper()
     return (words[0] if words else login)[:2].upper()

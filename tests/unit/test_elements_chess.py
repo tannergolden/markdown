@@ -206,6 +206,11 @@ class Hall(unittest.TestCase):
         house = dict(d, logins={**logins, "24684994": "someone"})
         self.assertEqual(C.hall_state(house)["people"][0]["login"], "tannergolden", "the house is always the house")
 
+    def test_a_name_s_initials_are_its_first_letters_in_any_script(self):
+        self.assertEqual(C.game.initials("Élodie Durand", "edurand"), "ÉD")
+        self.assertEqual(C.game.initials("Ana-María Núñez", "anm"), "AM")
+        self.assertEqual(C.game.initials("", "octocat"), "OC")
+
     def test_each_winner_has_a_badge_and_the_leaders_has_a_still_twin(self):
         self.assertEqual(E.variants("chess-hall", HALL), ("wide", "narrow", "still", "narrow-still", "badge-1",
                                                           "badge-1-still", "badge-2", "badge-3", "badge-4", "badge-5"))
