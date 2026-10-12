@@ -27,9 +27,10 @@ instruments, the milestones, the roster, the certificate and the placards
 The games played on @tannergolden's profile are drawn there alone: Tic-Tac-Toe
 ([`tictactoe/`](tictactoe/README.md)), Connect Four
 ([`connectfour/`](connectfour/README.md)), Checkers
-([`checkers/`](checkers/README.md)), and Chess with its Hall of Fame
+([`checkers/`](checkers/README.md)), and Chess with chess's own Hall of Fame
 ([`chess/`](chess/README.md)), four boards drawn by one hand
-([`games/`](games/README.md)).
+([`games/`](games/README.md)), and the Hall of Fame of all four games
+([`hall/`](hall/README.md)).
 What each draws from is the `elements:` section of the page's settings
 ([`data.py`](data.py)).
 
@@ -42,18 +43,19 @@ coordinate.
 
 <!-- AUTO-INDEX:BEGIN dir=. style=log -->
 
-| Entry                                   | Purpose                                                                                                                         |
-| :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
-| [`checkers/`](checkers/README.md)       | The Checkers element: the third tier of the games on @tannergolden's profile, one layout in every theme.                        |
-| [`chess/`](chess/README.md)             | The chess elements: the game on @tannergolden's profile and its Hall of Fame, one layout in every theme.                        |
-| [`connectfour/`](connectfour/README.md) | The Connect Four element: the second tier of the games on @tannergolden's profile, one layout in every theme.                   |
-| [`games/`](games/README.md)             | What the four games on @tannergolden's profile share: one sheet, one panel and one pair of materials, so they read as one hand. |
-| [`tictactoe/`](tictactoe/README.md)     | The Tic-Tac-Toe element: the first tier of the games on @tannergolden's profile, one layout in every theme.                     |
-| [`__init__.py`](__init__.py)            | The elements: the body of a README, drawn on the same paper as its header and footer.                                           |
-| [`data.py`](data.py)                    | The `elements:` section of a page's settings: which elements it draws, and what each is drawn from.                             |
-| [`draw.py`](draw.py)                    | The blueprint elements: six drawings a README makes from its own repository.                                                    |
-| [`layout.py`](layout.py)                | Layout the kit computes, so a data file never carries a coordinate.                                                             |
-| [`README.md`](README.md)                | This file.                                                                                                                      |
+| Entry                                   | Purpose                                                                                                                               |
+| :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| [`checkers/`](checkers/README.md)       | The Checkers element: the third tier of the games on @tannergolden's profile, one layout in every theme.                              |
+| [`chess/`](chess/README.md)             | The chess elements: the game on @tannergolden's profile and its Hall of Fame, one layout in every theme.                              |
+| [`connectfour/`](connectfour/README.md) | The Connect Four element: the second tier of the games on @tannergolden's profile, one layout in every theme.                         |
+| [`games/`](games/README.md)             | What the four games on @tannergolden's profile share: one sheet, one panel and one pair of materials, so they read as one hand.       |
+| [`hall/`](hall/README.md)               | The Hall of Fame of all four games on @tannergolden's profile: the series, the podium and the leaderboard, one layout in every theme. |
+| [`tictactoe/`](tictactoe/README.md)     | The Tic-Tac-Toe element: the first tier of the games on @tannergolden's profile, one layout in every theme.                           |
+| [`__init__.py`](__init__.py)            | The elements: the body of a README, drawn on the same paper as its header and footer.                                                 |
+| [`data.py`](data.py)                    | The `elements:` section of a page's settings: which elements it draws, and what each is drawn from.                                   |
+| [`draw.py`](draw.py)                    | The blueprint elements: six drawings a README makes from its own repository.                                                          |
+| [`layout.py`](layout.py)                | Layout the kit computes, so a data file never carries a coordinate.                                                                   |
+| [`README.md`](README.md)                | This file.                                                                                                                            |
 
 <!-- AUTO-INDEX:END -->
 

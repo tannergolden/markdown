@@ -408,19 +408,20 @@ its markers, because only the README's author knows which section it belongs in:
 <!-- markdown:element:how-it-runs:end -->
 ```
 
-| Kind          | What it draws                                                                  | `measure:` fills it from                                                                        |
-| :------------ | :----------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
-| `schematic`   | Boxes and the wires between them, laid out by the kit.                         | Nothing: it is written by hand.                                                                 |
-| `instruments` | Commits per week, days since the last release, bytes by file type, counters.   | git: `weeks` (10), and `count:` a map of `LABEL: glob` counted in the tree.                     |
-| `milestones`  | Every version tag on a time line.                                              | git: `notable` (a map of `tag: [notes]`) and `planned` releases.                                |
-| `roster`      | The people who made it, by commit count.                                       | git: `most` (4), `bots` (true), and `rename` to correct a name.                                 |
-| `certificate` | The checks a repository passes, with the evidence for each.                    | git and GitHub: licence, security policy, pinned actions, Conventional Commits, and `ci: main`. |
-| `placard`     | A card that links to another repository.                                       | GitHub: `measure: owner/name`.                                                                  |
-| `tictactoe`   | Tic-Tac-Toe on @tannergolden's profile, with every legal move named under it.  | Nothing: the profile's own workflow writes it after every move.                                 |
-| `connectfour` | Connect Four on @tannergolden's profile, with every legal move named under it. | Nothing: the profile's own workflow writes it after every move.                                 |
-| `checkers`    | Checkers on @tannergolden's profile, with every legal move named under it.     | Nothing: the profile's own workflow writes it after every move.                                 |
-| `chess`       | Chess on @tannergolden's profile, with every legal move named under it.        | Nothing: the profile's own workflow writes it after every move.                                 |
-| `chess-hall`  | Chess's Hall of Fame, a badge for each winner and the leaderboard.             | GitHub: each winner's name, and each player's login now, read by their account's ID.            |
+| Kind           | What it draws                                                                  | `measure:` fills it from                                                                        |
+| :------------- | :----------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
+| `schematic`    | Boxes and the wires between them, laid out by the kit.                         | Nothing: it is written by hand.                                                                 |
+| `instruments`  | Commits per week, days since the last release, bytes by file type, counters.   | git: `weeks` (10), and `count:` a map of `LABEL: glob` counted in the tree.                     |
+| `milestones`   | Every version tag on a time line.                                              | git: `notable` (a map of `tag: [notes]`) and `planned` releases.                                |
+| `roster`       | The people who made it, by commit count.                                       | git: `most` (4), `bots` (true), and `rename` to correct a name.                                 |
+| `certificate`  | The checks a repository passes, with the evidence for each.                    | git and GitHub: licence, security policy, pinned actions, Conventional Commits, and `ci: main`. |
+| `placard`      | A card that links to another repository.                                       | GitHub: `measure: owner/name`.                                                                  |
+| `tictactoe`    | Tic-Tac-Toe on @tannergolden's profile, with every legal move named under it.  | Nothing: the profile's own workflow writes it after every move.                                 |
+| `connectfour`  | Connect Four on @tannergolden's profile, with every legal move named under it. | Nothing: the profile's own workflow writes it after every move.                                 |
+| `checkers`     | Checkers on @tannergolden's profile, with every legal move named under it.     | Nothing: the profile's own workflow writes it after every move.                                 |
+| `chess`        | Chess on @tannergolden's profile, with every legal move named under it.        | Nothing: the profile's own workflow writes it after every move.                                 |
+| `chess-hall`   | Chess's Hall of Fame, a badge for each winner and the leaderboard.             | GitHub: each winner's name, and each player's login now, read by their account's ID.            |
+| `hall-of-fame` | The four games' Hall of Fame, a badge for each winner and the leaderboard.     | GitHub: each winner's name, and each player's login now, read by their account's ID.            |
 
 What the settings write wins over what was measured, so any element can carry
 a `title`, a `caption` or a `desc` of its own, and a roster or a certificate
@@ -528,6 +529,53 @@ Checkers up to twelve, its men; the Hall's `games`, `house`, `world` and
 `draws`, and a winner's wins and games, up to 999,999; and an account's ID up to
 sixteen digits. A number is a number, and text is text: a field YAML reads as
 something else is turned away.
+
+**The `hall-of-fame` element is @tannergolden's own too**: the Hall of Fame of
+all four games played on that profile, Tic-Tac-Toe, Connect Four, Checkers and
+Chess, in that order wherever the four are listed. Each game's own workflow
+writes it after every move, from all four games' state, as chess's writes
+`chess-hall`:
+
+```yaml
+hall-of-fame:
+  kind: "hall-of-fame"
+  series: {"tictactoe": [9, 4, 2, 3], "connectfour": [3, 1, 2, 0], "checkers": [5, 2, 2, 1], "chess": [12, 5, 6, 1]}
+  people:
+    - ["tannergolden", [4, 1, 2, 5], "2 Oct", 29, 24684994]
+    - ["imvale", [0, 1, 0, 2], "19 Sep", 7, 1001]
+  leaders:
+    - ["tannergolden", 1240, 29, [4, 1, 2, 5], 24684994]
+    - ["imvale", 40, 7, [0, 1, 0, 2], 1001]
+  measure: {}
+```
+
+The `series` gives each of the four games, by its key,
+`[games, house, github, draws]`: the games finished, the house's wins, GitHub's
+and the draws, the three adding up to the first. The `people` are its leading
+winners across all four, the house among them, each
+`[login, [wins by game], last, games, id]`: their wins in each game in that
+order, one at least in all, the day of their last and the games they played,
+ranked by their wins in all four games; the sheet stands the first three on its
+podium, each with their wins in every game beside that game's own mark, and two
+more after it. A game's mark is its two pieces in the order their colours move,
+X then O, the dark disc then the light, the dark man then the light, the white
+king then the black: it names the game and never a side, since in Tic-Tac-Toe
+and Connect Four the house plays either colour from game to game. The `leaders`
+are @tannergolden's own row, then GitHub's leading players by their wins in all
+four games and then their moves, each
+`[login, moves, games, [wins by game], id]`, with no more wins in all than
+games, nor games than moves; a player without a move is not on it. The account
+ID is the fifth field of either and optional: `measure: {}` reads each winner's
+name and each player's login now by it, exactly as it reads chess-hall's, and a
+player whose account is gone leaves the sheet, the badges and the leaderboard,
+the players under them moving up; `people` may carry ten winners for the sheet's
+five places and `leaders` twenty of GitHub's players for the leaderboard's ten.
+Its README block adds a badge for each winner shown, linking to their profile,
+and the leaderboard folded shut: a column of wins for every game, headed by its
+two side signs in the order they move, then the moves and the games. Its counts,
+each game's series and a player's wins in a game and games, go up to 999,999,
+and its moves up to 999,999,999. It is drawn to the board's budget, in the
+standard theme and every print, whatever holiday or collection is up.
 
 ---
 
