@@ -38,6 +38,10 @@ other across the top, the series under them as a table, all four games first
 and then each on a row of its own, and the podium under that, three blocks in
 gold, silver and bronze, a winner standing on each. Each sheet comes wide and on
 a phone, moving as it opens and still for anyone who asks for reduced motion.
+While a holiday's set or a collection's design is up, it draws the same match
+card in its own pixels, as it draws the four boards
+([`holidays/designs/hall.py`](../../holidays/designs/hall.py)), the blocks struck
+in the trophies' metals and each winner as the set draws a person.
 
 Each game is named by its own mark ([`marks.py`](marks.py)): its two pieces, the
 house's first, on the left. The white king then the black, the white man then

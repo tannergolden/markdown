@@ -379,9 +379,12 @@ of, and the score sheet), and the same motion as each file opens:
   and Checkers plays on chess's own board, White at the foot as chess's White
   is. Or a print's drawing on drafting paper: poché for the dark squares, the
   bars and the frame, line shading for the light pieces, phantom lines where a
-  piece stood and a revision cloud round whatever must be answered. A holiday's
-  set or a collection's design leaves the games in the standard theme's look or
-  the page's print.
+  piece stood and a revision cloud round whatever must be answered. Or, while a
+  holiday's set or a collection's design is up, its pixels: its paper, frame and
+  lettering, the board's squares in two of the set's own colours, and the same
+  hand-drawn ivory and ebony pieces in every set, a collection's words in its
+  hand's two inks. A set draws a game whole, or leaves it in the page's own
+  look.
 - **The Hall of Fame** of all four games: the series between the house and
   GitHub, each game on its own row under the four together, in the README's
   order and each named by its two pieces, the house's first; then a podium of
@@ -450,13 +453,24 @@ it is, signed with what that side plays: ♔ or ♚, ⛀ or ⛂, ⚪ or ⚫, ❌
       <br /><sub>The Hall of Fame, in <code>standard</code></sub>
     </td>
   </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-wide-halloween-still-dark.svg"><img src="docs/themes/chess/chess-wide-halloween-still-day.svg" alt="The chess board in the Halloween set's pixels, from a sample game" width="100%"></picture></a>
+      <br /><sub>Chess, in the <code>halloween</code> set</sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#hall-of-fame"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/hall-of-fame/hall-of-fame-wide-medieval-hoard-still-dark.svg"><img src="docs/themes/hall-of-fame/hall-of-fame-wide-medieval-hoard-still-day.svg" alt="The Hall of Fame of all four games in the Hoard, December's design of the Medieval collection, from a sample of fictional winners" width="100%"></picture></a>
+      <br /><sub>The Hall of Fame, in <code>medieval-hoard</code>, December's design</sub>
+    </td>
+  </tr>
 </table>
 
 **[See the games in every tone, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess)**:
 the theme-sets page shows each game's board and its phone files, and the Hall
 of Fame of all four with its phone files and the winners' badges, in the
-standard theme and every print, each from a sample whose players are as
-fictional as driftmark's contributors. What the games' settings hold is in
+standard theme and every print, every holiday's set and every month of the
+Medieval collection, each from a sample whose players are as fictional as
+driftmark's contributors. What the games' settings hold is in
 [Settings](docs/Settings.md#-elements); the games themselves are
 [live on @tannergolden's profile](https://github.com/tannergolden).
 

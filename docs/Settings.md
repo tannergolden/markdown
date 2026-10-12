@@ -284,11 +284,11 @@ badges away, as every run takes away whatever the kit drew and draws no longer.
 | **Connect Four** | Its column, numbered 1 to 7 from the left: `4`, and `4#` once it has connected four    | Each side's discs left, a rack of twenty-one emptying                                       | The last disc is held over its column, falls behind the frame and lands with a bounce, and a won four are ringed and joined          |
 | **Tic-Tac-Toe**  | Its mark and its cell, named as chess names squares: `Xb2`, and `Xb2#` once it has won | Each side's marks left, a rack of five for the side that moved first and four for the other | The last mark draws itself stroke by stroke, and a won line is struck through                                                        |
 
-| Theme                | How the games are drawn                                                                                                                                                                                                                                                    |
-| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `standard`           | Enamel and lit pieces under one lamp, in chess's colours: the dark squares, Tic-Tac-Toe's bars and Connect Four's frame in the theme's blue, the last move amber, and whatever the rules make the side to move answer (a king in check, a man that must jump) glowing red. |
-| A print              | A drawing on drafting paper in the print's colour: poché for the dark squares, the bars and the frame, line shading for the light pieces, phantom lines where a piece stood and a revision cloud round whatever must be answered.                                          |
-| A holiday or a month | The games keep the standard theme's look or the page's print, whatever holiday's set or collection's design is up.                                                                                                                                                         |
+| Theme                | How the games are drawn                                                                                                                                                                                                                                                                                                               |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `standard`           | Enamel and lit pieces under one lamp, in chess's colours: the dark squares, Tic-Tac-Toe's bars and Connect Four's frame in the theme's blue, the last move amber, and whatever the rules make the side to move answer (a king in check, a man that must jump) glowing red.                                                            |
+| A print              | A drawing on drafting paper in the print's colour: poché for the dark squares, the bars and the frame, line shading for the light pieces, phantom lines where a piece stood and a revision cloud round whatever must be answered.                                                                                                     |
+| A holiday or a month | The set's pixels, as it draws every part of the page: its paper, frame and lettering, the board's squares in two of the set's own colours, the same hand-drawn ivory and ebony pieces in every set, and a collection's words in its hand's two inks. A set draws a game whole, every file of it, or leaves it in the page's own look. |
 
 Round the pictures the README carries each game's words, since an image cannot
 be clicked square by square: each game folded under its name, open for Chess and
@@ -299,7 +299,8 @@ Hall, the winners' badges and the leaderboard. No banner stands over a game: its
 sheet says whose turn it is and by when, and how a finished game ended, so the
 README says nothing twice. The
 [theme-sets page](https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess)
-shows every sheet in every tone, each drawn from a sample game.
+shows every sheet in every tone, every holiday's set and every month of the
+Medieval collection, each drawn from a sample game.
 
 ---
 
@@ -644,6 +645,7 @@ over `.github/trophies.lock.json`.
 - [ADR-0006](adrs/ADR-0006-A-Collection-Changes-With-The-Month.md): the collections.
 - [ADR-0007](adrs/ADR-0007-A-Collection-Is-Drawn-By-One-Hand.md): one hand for a collection's twelve designs.
 - [ADR-0008](adrs/ADR-0008-The-Trophy-Case-Wears-The-Pages-Theme.md): the trophy case drawn in the page's theme.
+- [ADR-0009](adrs/ADR-0009-The-Games-Wear-The-Pages-Theme.md): the games and their Hall of Fame drawn in the page's theme.
 
 ### 🔗 See also
 
