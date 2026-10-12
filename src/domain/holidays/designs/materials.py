@@ -39,7 +39,8 @@ as a symbol, so a board of sixty-four squares costs a few of them. The grains:
   laid      laid and couched work: long threads across, held down at intervals by a stitch catching the light
 
 A frame (`frame`) is drawn round a board in a stuff of its own: wood with mitred corners, gilt with a row of beads,
-stone in courses of ashlar, iron with rivets, a chart's neatline of alternate bars, stripes, or plain.
+stone in courses of ashlar, iron with rivets, a chart's neatline of alternate bars, stripes, stars, slanting bars as
+the Bayeux Tapestry parts its borders, tesserae, a strip of cloisonne cells, or plain.
 
 A `Podium` is what a Hall's podium is cut from, how it is worked and what it is trimmed in (`PODIUMS`): plainly;
 crenellated, its blocks a castle's; tied with a ribbon, as a present is; hung with bunting in the board's colours,
@@ -53,7 +54,7 @@ from typing import NamedTuple
 
 GRAINS = ("flat", "wood", "stone", "slate", "tile", "weave", "stitch", "ivory", "glass", "vellum", "wave", "sand",
           "snow", "needles", "flecks", "scales", "velvet", "lace", "veins", "satin", "metal", "cells", "laid")
-FRAMES = ("plain", "wood", "gilt", "stone", "iron", "ink", "stripes", "stars")
+FRAMES = ("plain", "wood", "gilt", "stone", "iron", "ink", "stripes", "stars", "bars", "tesserae", "cells")
 # How a Hall's podium may be worked beyond its stuff: plainly; crenellated, its blocks a castle's; tied in a ribbon, as
 # a present is; hung with bunting, with a ship's shields along its top, with banners, or with a garland of leaves;
 # edged in lace; or cobwebbed in its corners.
@@ -579,6 +580,28 @@ def frame(p, s: Stuff, style: str, x0: int, y0: int, w: int, h: int, t: int, nig
                     c = s.tone(-2)
             elif style == "stars":
                 if across == 0:
+                    c = s.tone(1) if lit else s.tone(-2)
+            elif style == "bars":
+                # slanting bars across the band in the second colour, as the Bayeux Tapestry parts its borders
+                c = (s.fleck or s.tone(3)) if (along - across) % 9 in (0, 1) else s.base
+                if across == 0:
+                    c = s.tone(1) if lit else s.tone(-2)
+            elif style == "tesserae":
+                # little tiles in two colours turn about in a bed of grout, as a mosaic's border is laid
+                if across == 0 or across == t - 1 or along % 3 == 2:
+                    c = s.tone(-2) if across or not lit else s.tone(1)
+                else:
+                    c = (s.fleck or s.tone(2)) if (along // 3) % 2 else s.base
+                    if along % 3 == 0 and across == 1:
+                        c = s.tone(1) if c == s.base else c
+            elif style == "cells":
+                # gold walls round a row of garnets down the band's middle, each catching the light at its top left,
+                # as a cloisonne strip is set
+                if 0 < across < t - 1 and along % 4 != 3:
+                    c = s.fleck or s.tone(-2)
+                    if across == 1 and along % 4 == 0:
+                        c = s.tone(3)
+                elif across == 0:
                     c = s.tone(1) if lit else s.tone(-2)
             else:
                 if across == 0:

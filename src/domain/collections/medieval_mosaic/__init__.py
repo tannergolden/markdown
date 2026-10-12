@@ -721,8 +721,8 @@ class Mosaic(CollectionSet):
         return (Stuff(RAMP["tile"], 2 if night else 6, "tile"), Stuff(RAMP["porphyry"], 4, "tile"))
 
     def game_frame(self, night):
-        """A frame of gold, beaded."""
-        return Stuff(RAMP["gold"], 3), "gilt"
+        """A border laid in tesserae, gold and lapis turn about, as an apse's is."""
+        return Stuff(RAMP["gold"], 3, fleck=RAMP["lapis"][4]), "tesserae"
 
     def game_podium(self, night):
         """A podium laid in porphyry tesserae."""

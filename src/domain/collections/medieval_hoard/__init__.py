@@ -605,8 +605,8 @@ class Hoard(CollectionSet):
         return (Stuff(RAMP["bone"], 4 if night else 5, "ivory"), Stuff(RAMP["gold"], 2, "scales"))
 
     def game_frame(self, night):
-        """A frame of gold, beaded."""
-        return Stuff(RAMP["gold"], 3), "gilt"
+        """A frame of gold set with a row of garnets in their cells, as the hoard's fittings are."""
+        return Stuff(RAMP["gold"], 3, fleck=RAMP["garnet"][3]), "cells"
 
     def game_podium(self, night):
         """A podium of garnets set in gold cells, as the hoard's sword fittings are."""

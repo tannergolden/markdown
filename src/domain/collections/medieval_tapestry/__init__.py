@@ -600,8 +600,8 @@ class Tapestry(CollectionSet):
         return (Stuff(RAMP["linen"], 3 if night else 4, "weave"), Stuff(RAMP["terracotta"], 3, "stitch"))
 
     def game_frame(self, night):
-        """A plain border of olive wool."""
-        return Stuff(RAMP["olive"], 2), "plain"
+        """A border of olive wool parted by slanting bars of mustard, as the Bayeux Tapestry parts its own."""
+        return Stuff(RAMP["olive"], 2, fleck=RAMP["mustard"][4]), "bars"
 
     def game_podium(self, night):
         """A podium worked in terracotta wool, laid and couched, as the tapestry fills its grounds."""
