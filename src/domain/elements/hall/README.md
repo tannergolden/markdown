@@ -51,7 +51,9 @@ Round the picture the README carries ([`readme.py`](readme.py)) a badge linking
 each winner's profile, then the leaderboard folded shut: @tannergolden's own row
 on top, then GitHub's ten leading players, each with a column of wins for every
 game, Chess first, headed by that game's two side signs, the house's first (♔♚,
-⛀⛂, ⚪⚫, ❌⭕), then their moves and their games.
+⛀⛂, ⚪⚫, ❌⭕), then their moves and their wins in all four. A line under it says
+how a win counts: only for the player who makes the winning move, never for a
+move the Arbiter plays, and never in a draw.
 
 A player is known by their account, not their login, as in chess-hall: a row
 may carry the player's account ID as its fifth field, a run reads that account

@@ -226,9 +226,9 @@ class Hall(unittest.TestCase):
                           "player-10", "player-11", "player-12", "player-13"])
         text = ED.block("hall-of-fame", d, "assets/elements")
         self.assertIn("@tannergolden and GitHub's top 10 · ranked by wins in all four games", text)
-        self.assertIn("| 🥉 | [@player-05](https://github.com/player-05) | 0 | 0 | 0 | 16 | 496 | 25 |\n", text)
-        self.assertTrue(text.split("\n\nA win is")[0].endswith("| 10 | [@player-13](https://github.com/player-13) |"
-                                                              " 0 | 0 | 0 | 0 | 488 | 25 |"))
+        self.assertIn("| 🥉 | [@player-05](https://github.com/player-05) | 0 | 0 | 0 | 16 | 496 | 16 |\n", text)
+        self.assertTrue(text.split("\n\nA win counts")[0].endswith("| 10 | [@player-13](https://github.com/player-13)"
+                                                                  " | 0 | 0 | 0 | 0 | 488 | 0 |"))
         for login in gone:
             self.assertNotIn(login, text + E.alt("hall-of-fame", d))
         self.assertEqual(text.count('<a href="https://github.com/'), 5, "five badges, each linked")
@@ -410,22 +410,24 @@ class Readme(unittest.TestCase):
                          "the hall's wide and phone still files, and the leader's badge, by day and night")
         self.assertNotIn("badge", ED.block("hall-of-fame", EMPTY, "assets/elements"))
 
-    def test_the_leaderboard_has_a_column_of_wins_for_every_game_chess_first_then_moves_and_games(self):
+    def test_the_leaderboard_has_a_column_of_wins_for_every_game_chess_first_then_moves_and_wins(self):
         text = ED.block("hall-of-fame", HALL, "assets/elements")
         self.assertIn("</picture></a>\n\n</div>\n\n<details>\n<summary>🏆 <b>Leaderboard</b> · @tannergolden and"
                       " GitHub's top 5 · ranked by wins in all four games, then moves</summary>\n\n"
-                      "|  | Player | ♔♚ | ⛀⛂ | ⚪⚫ | ❌⭕ | Moves | Games |\n"
+                      "|  | Player | ♔♚ | ⛀⛂ | ⚪⚫ | ❌⭕ | Moves | Wins |\n"
                       "| :-: | :--- | --: | --: | --: | --: | --: | --: |\n"
                       "| 🏠 | **[@tannergolden](https://github.com/tannergolden)** | **5** | **2** | **1** | **4** | "
-                      "**1,240** | **29** |\n"
-                      "| 🥇 | [@imvale](https://github.com/imvale) | 2 | 0 | 1 | 1 | 40 | 7 |\n"
-                      "| 🥈 | [@tokafor](https://github.com/tokafor) | 1 | 1 | 1 | 0 | 31 | 9 |\n"
-                      "| 🥉 | [@wrencastellan](https://github.com/wrencastellan) | 0 | 1 | 0 | 1 | 52 | 6 |\n"
-                      "| 4 | [@jhalloran](https://github.com/jhalloran) | 1 | 0 | 0 | 0 | 12 | 3 |\n", text)
-        self.assertTrue(text.endswith("| 5 | [@octocat](https://github.com/octocat) | 0 | 0 | 0 | 0 | 9 | 2 |\n\n"
-                                      "A win is a winning move of one's own, in any of the four games; a move the"
-                                      " Arbiter plays, for either side, counts for nobody.\n\n</details>\n"
-                                      "<!-- markdown:element:hall-of-fame:end -->"))
+                      "**1,240** | **12** |\n"
+                      "| 🥇 | [@imvale](https://github.com/imvale) | 2 | 0 | 1 | 1 | 40 | 4 |\n"
+                      "| 🥈 | [@tokafor](https://github.com/tokafor) | 1 | 1 | 1 | 0 | 31 | 3 |\n"
+                      "| 🥉 | [@wrencastellan](https://github.com/wrencastellan) | 0 | 1 | 0 | 1 | 52 | 2 |\n"
+                      "| 4 | [@jhalloran](https://github.com/jhalloran) | 1 | 0 | 0 | 0 | 12 | 1 |\n", text)
+        self.assertTrue(text.endswith("| 5 | [@octocat](https://github.com/octocat) | 0 | 0 | 0 | 0 | 9 | 0 |\n\n"
+                                      "A win counts only for the player who makes the winning move: the checkmate in"
+                                      " Chess, the move that leaves the other side no move in Checkers, the fourth"
+                                      " disc in a row in Connect Four and the third mark in a row in Tic-Tac-Toe. A"
+                                      " move the Arbiter plays, for either side, counts for nobody, and a draw is"
+                                      " nobody's win.\n\n</details>\n<!-- markdown:element:hall-of-fame:end -->"))
         self.assertEqual(RM.SIGNS, {"chess": "\u2654\u265a", "checkers": "\u26c0\u26c2", "connectfour": "\u26aa\u26ab",
                                     "tictactoe": "\u274c\u2b55"},
                          "each game's column headed by its two side signs, the house's first: the white king, the"
@@ -440,7 +442,8 @@ class Readme(unittest.TestCase):
         self.assertIn("· @tannergolden and GitHub's top player · ranked by wins in all four games, then moves", one)
         self.assertNotIn("Leaderboard", ED.block("hall-of-fame", {"kind": "hall-of-fame"}, "assets/elements"))
         big = H.leaderboard({**EMPTY, "leaders": [["tannergolden", 999_999_999, 999_999, [249_999] * 4]]})
-        self.assertIn("| **249,999** | **249,999** | **249,999** | **249,999** | **999,999,999** | **999,999** |", big)
+        self.assertIn("| **249,999** | **249,999** | **249,999** | **249,999** | **999,999,999** | **999,996** |", big)
+        self.assertNotIn("Games", text + big, "the games played are no column of it")
 
     def test_the_leaderboard_reads_each_players_wins_by_their_game_from_the_tier_order_of_the_data(self):
         # The data lists the wins Tic-Tac-Toe, Connect Four, Checkers, Chess; the leaderboard Chess first.
@@ -449,9 +452,9 @@ class Readme(unittest.TestCase):
         self.assertEqual(H.check(d), [])
         rows = H.leaderboard(d).split("\n")
         self.assertIn("| 🏠 | **[@tannergolden](https://github.com/tannergolden)** | **4,000** | **300** | **20** |"
-                      " **1** | **9,000** | **5,000** |", rows)
-        self.assertIn("| 🥇 | [@imvale](https://github.com/imvale) | 6 | 0 | 0 | 0 | 80 | 8 |", rows)
-        self.assertIn("| 🥈 | [@octocat](https://github.com/octocat) | 0 | 0 | 0 | 5 | 90 | 9 |", rows)
+                      " **1** | **9,000** | **4,321** |", rows)
+        self.assertIn("| 🥇 | [@imvale](https://github.com/imvale) | 6 | 0 | 0 | 0 | 80 | 6 |", rows)
+        self.assertIn("| 🥈 | [@octocat](https://github.com/octocat) | 0 | 0 | 0 | 5 | 90 | 5 |", rows)
 
     def test_the_hall_links_each_player_by_the_login_their_account_has_now_and_leaves_a_gone_one_out(self):
         # @imvale is @imogen-vale now; @tokafor deleted their account, so they leave the badges and the leaderboard,
@@ -466,8 +469,8 @@ class Readme(unittest.TestCase):
                       'wins" ', text)
         self.assertNotIn("badge-5", text)
         self.assertIn("@tannergolden and GitHub's top 4 · ranked by wins in all four games", text)
-        self.assertIn("| 🥇 | [@imogen-vale](https://github.com/imogen-vale) | 2 | 0 | 1 | 1 | 40 | 7 |\n"
-                      "| 🥈 | [@wrencastellan](https://github.com/wrencastellan) | 0 | 1 | 0 | 1 | 52 | 6 |\n", text)
+        self.assertIn("| 🥇 | [@imogen-vale](https://github.com/imogen-vale) | 2 | 0 | 1 | 1 | 40 | 4 |\n"
+                      "| 🥈 | [@wrencastellan](https://github.com/wrencastellan) | 0 | 1 | 0 | 1 | 52 | 2 |\n", text)
         self.assertNotIn("tokafor", text)
         self.assertNotIn("imvale", text)
         self.assertEqual(text.count("<a href="), 4, "every badge shown is a link")
@@ -480,7 +483,7 @@ class Readme(unittest.TestCase):
         rows = [line for line in text.splitlines() if line.startswith("| ")]
         self.assertEqual(len(rows), 2 + 6, "the head, its alignment, and the house over five of GitHub's players")
         self.assertTrue(all(line.count(" | ") == 7 and line.endswith(" |") for line in rows),
-                        "eight cells to every row: the place, the player, a game's wins four times, moves, games")
+                        "eight cells to every row: the place, the player, a game's wins four times, moves, wins")
 
 
 class Sets(unittest.TestCase):
