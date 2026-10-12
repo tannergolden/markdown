@@ -95,10 +95,9 @@ NOTES = {
              "when, the last move in words, what each side has taken and the score sheet's latest rows. It opens by "
              "playing the last move again; Motion: Still shows the file a reader who asks for reduced motion gets.",
     "tictactoe board": "The board as it stands, with the state of play beside it: the players and the mark each plays "
-                       "this game, whose turn it is and until when, the last mark in words, how the game ends from "
-                       "here with perfect play and where each side would win next, and the score sheet's latest "
-                       "rows. It opens by drawing the last mark again; Motion: Still shows the file a reader who asks "
-                       "for reduced motion gets.",
+                       "this game, whose turn it is and until when, the last mark in words, the marks each side has "
+                       "left and the score sheet's latest rows. It opens by drawing the last mark again; Motion: Still "
+                       "shows the file a reader who asks for reduced motion gets.",
     "connectfour board": "The frame as it stands, with the state of play beside it: the players and the discs each "
                          "drops this game, whose turn it is and until when, the last disc in words, the discs each "
                          "side has left and the score sheet's latest rows. It opens by dropping the last disc again; "

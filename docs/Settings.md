@@ -264,23 +264,31 @@ its README block is the banner, the board and the note, with no move under it.
 | The Hall of Fame | All four games': the series between the house and GitHub, each game on its own row under the four together, and a podium of the leading winners across them with their wins by game, each named as their GitHub profile names them.                                        | Wide and a phone's, each moving and still, by day and dark.        |
 | A winner's badge | One for each winner under the Hall in the README, each a link to that player's profile.                                                                                                                                                                                    | A day file and a dark one; the leader's glints, with a still twin. |
 
+**Nothing on a board helps a player choose.** A sheet and its README say what
+has happened and what the rules make the side to move do, a king in check or a
+jump to take, and never what a move would do: no cell or column a side could
+win on next, no word of what perfect play makes of a game, no call to block,
+and no `+` or `#` on a move still to play, which only the score sheet writes,
+once the move is made. Every move's name says what the move is, never whether
+it is any good.
+
 A board's files are named for its game, never for its position, so every move,
 finished game and fresh board redraws the same files in place, and nothing an
 old board drew is left behind. A Hall that shows fewer winners takes their
 badges away, as every run takes away whatever the kit drew and draws no longer.
 
-| Game             | A move is written                                                                                   | The panel counts                                                     | As the file opens                                                                                                                    |
-| :--------------- | :-------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
-| **Chess**        | In SAN: `Nf3`, `exd5`, `O-O`, `Qxf7#`                                                               | What each side has taken, and the lead                               | The last piece comes in from its square, a knight leaping and a castling king bringing its rook round, and a king in check is marked |
-| **Checkers**     | As checkers writes it, its 32 dark squares numbered: `11-15` a step, `22x15x8` a jump               | The men each side has taken, and the kings each has made             | The last man slides, or hops each man it takes, its path drawn in behind it, and is crowned if it lands on the far row               |
-| **Connect Four** | Its column, numbered 1 to 7 from the left: `4`, with `+` for a threat and `#` for four in a row     | Each side's discs left, a rack of twenty-one emptying                | The last disc is held over its column, falls behind the frame and lands with a bounce, and a won four are ringed and joined          |
-| **Tic-Tac-Toe**  | Its mark and its cell, named as chess names squares: `Xb2`, with `+` for a threat and `#` for a win | What perfect play says from here, and where each side would win next | The last mark draws itself stroke by stroke, a cell the side to move must block is marked, and a won line is struck through          |
+| Game             | A move is written                                                                      | The panel counts                                                                            | As the file opens                                                                                                                    |
+| :--------------- | :------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------- |
+| **Chess**        | In SAN: `Nf3`, `exd5`, `O-O`, and `Qxf7#` once played                                  | What each side has taken, and the lead                                                      | The last piece comes in from its square, a knight leaping and a castling king bringing its rook round, and a king in check is marked |
+| **Checkers**     | As checkers writes it, its 32 dark squares numbered: `11-15` a step, `22x15x8` a jump  | The men each side has taken, and the kings each has made                                    | The last man slides, or hops each man it takes, its path drawn in behind it, and is crowned if it lands on the far row               |
+| **Connect Four** | Its column, numbered 1 to 7 from the left: `4`, and `4#` once it has connected four    | Each side's discs left, a rack of twenty-one emptying                                       | The last disc is held over its column, falls behind the frame and lands with a bounce, and a won four are ringed and joined          |
+| **Tic-Tac-Toe**  | Its mark and its cell, named as chess names squares: `Xb2`, and `Xb2#` once it has won | Each side's marks left, a rack of five for the side that moved first and four for the other | The last mark draws itself stroke by stroke, and a won line is struck through                                                        |
 
-| Theme                | How the games are drawn                                                                                                                                                                                                                                                                     |
-| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `standard`           | Enamel and lit pieces under one lamp, in chess's colours: the dark squares, Tic-Tac-Toe's bars and Connect Four's frame in the theme's blue, the last move amber, and whatever the side to move must answer (a king in check, a mark or a disc to block, a man that must jump) glowing red. |
-| A print              | A drawing on drafting paper in the print's colour: poché for the dark squares, the bars and the frame, line shading for the light pieces, phantom lines where a piece stood and a revision cloud round whatever must be answered.                                                           |
-| A holiday or a month | The games keep the standard theme's look or the page's print, whatever holiday's set or collection's design is up.                                                                                                                                                                          |
+| Theme                | How the games are drawn                                                                                                                                                                                                                                                    |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `standard`           | Enamel and lit pieces under one lamp, in chess's colours: the dark squares, Tic-Tac-Toe's bars and Connect Four's frame in the theme's blue, the last move amber, and whatever the rules make the side to move answer (a king in check, a man that must jump) glowing red. |
+| A print              | A drawing on drafting paper in the print's colour: poché for the dark squares, the bars and the frame, line shading for the light pieces, phantom lines where a piece stood and a revision cloud round whatever must be answered.                                          |
+| A holiday or a month | The games keep the standard theme's look or the page's print, whatever holiday's set or collection's design is up.                                                                                                                                                         |
 
 Round the pictures the README carries each game's words, since an image cannot
 be clicked square by square: the turn's banner, every legal move with a link
@@ -475,12 +483,14 @@ The other three boards take what chess's does wherever a game shares it: the
 as its `move` in the game's notation, its `words`, who played it (`by`) and
 `when`, the score sheet's latest rows as `history`, each `[number, the opening
 side's move, the reply, who chose it]`, and the README's `prompt`, `note` and
-`moves`, each move `[emoji, title, notation, words, link]` in one list, its link
-opening that move's ready-made issue and nothing else (a turn of Checkers with
-more than ten is grouped into men and kings in the README, as chess's are by
-piece). In place of chess's `check`, the turn's plate can say what the side to
-move must answer as its `alert`: `must block` in Tic-Tac-Toe and Connect Four,
-`must jump` in Checkers. Each game's own board:
+`moves`, each move `[emoji, title, notation, words, link]` in one list, a title
+up to 100 letters and its words up to 80, its link opening that move's
+ready-made issue and nothing else (a turn of Checkers with more than ten is
+grouped into men and kings in the README, as chess's are by piece), and its
+notation never with a `+` or `#`. In place of chess's `check`, Checkers' turn
+plate can say what the rules make the side to move do as its `alert`, `must
+jump`; Tic-Tac-Toe and Connect Four take no `alert`, since a call to block would
+tell a player where to go. Each game's own board:
 
 - **`checkers`**: the position as a PDN `fen`, whose turn and then White's and
   Black's men's squares, a `K` before a king's (`B:W21,22,K30:B1,2,9`): GitHub
@@ -489,18 +499,14 @@ move must answer as its `alert`: `must block` in Tic-Tac-Toe and Connect Four,
   `last` move `crowned` its man. A fresh board is GitHub's turn and has a `due`.
 - **`connectfour`**: the `board` as six rows of seven `L`, a White disc (the
   house's), `D`, a Black disc (GitHub's), or a dot, the top row first; `opens`,
-  the side the Arbiter opened for, which dropped the first disc; the open
-  columns each side would connect four down next as its `threats`, such as
-  `{house: [5], github: []}`; and once a side has won, the `line`'s four cells,
-  each `[column, row]` counted from the lower left.
+  the side the Arbiter opened for, which dropped the first disc; and once a
+  side has won, the `line`'s four cells, each `[column, row]` counted from the
+  lower left.
 - **`tictactoe`**: the `board` as three rows of X, O or a dot, the top row first
   (`O../XX./O.X`): the house always plays X, drawn light, and GitHub O, drawn
   dark; `opens`, the side the Arbiter opened for, `house` or `github`, which
-  moved first (so O moves first in a game opened for GitHub); the open cells
-  each side would win on next as its `threats`, such as
-  `{house: [c2], github: []}`; the `outlook` with perfect play from here,
-  `draw`, `house` or `github`; and once a side has won, the winning `line`, its
-  three cells.
+  moved first (so O moves first in a game opened for GitHub); and once a side
+  has won, the winning `line`, its three cells.
 
 **A finished game**, in all four, takes its `result`, `{winner, how}`: the
 winner, `house` or `github`, or null for a draw, and how it ended, as the game
