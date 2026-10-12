@@ -114,11 +114,12 @@ NOTES = {
     "game phones": "The 360-pixel files a README shows on a small screen, in the standard theme and in the profile's "
                    "own print.",
     "game sets": "While a holiday's set is up it draws the games in its own pixels, each as a whole, every file of "
-                 "it: its paper and frame, its lettering, the board's squares in two of its own colours; the pieces "
-                 "are the same ivory and ebony in every set. Motion: Still shows the file a reader who asks for "
-                 "reduced motion gets.",
+                 "it: its paper and frame, its lettering, a board built of its own stuff in a frame of its own, and "
+                 "the Hall's podium cut from it; the pieces are the same ivory and ebony in every set. Motion: Still "
+                 "shows the file a reader who asks for reduced motion gets.",
     "game collection": "Each month's design draws the games in its pixels, in the hand the twelve share: its words in "
-                       "the hand's two inks and its glint on the hand's period, its board and its frame its own.",
+                       "the hand's two inks and its glint on the hand's period, its board, its frame and its podium "
+                       "of its own world.",
     "game badges": "A badge for each winner, in a row under the Hall of Fame in the README, each a link to that "
                    "player's profile. The leader's glints. A holiday's set and a collection's design draw them as "
                    "they draw every badge.",
