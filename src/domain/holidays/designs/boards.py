@@ -17,12 +17,15 @@ plays its last move again as the file opens, in the engine's discrete steps:
                 has taken and the kings each has made
   Connect Four  a frame of the set's dark colour on two legs, seven columns of holes, the discs behind it; the last
                 disc is held over its column and drops down it, glimpsed through each hole, bouncing as it lands;
-                a hole to block glows with the disc that would land there dotted in it; a won four are ringed and
-                joined. The panel counts each side's discs left on a rack of twenty-one
-  Tic-Tac-Toe   three cells a side, the bars between them the board's dark colour, the eight lines a game is won on
-                dotted faint while a side can still win on them; the last mark draws itself stroke by stroke; a cell
-                to block glows with the mark that would fall there dotted in it; a won line is struck through. The
-                panel says what perfect play says from here, and where each side would win next
+                a won four are ringed and joined. The panel counts each side's discs left on a rack of twenty-one
+  Tic-Tac-Toe   three cells a side, the bars between them the board's dark colour, all eight lines a game is won on
+                dotted faint while it goes on, whatever stands on them; the last mark draws itself stroke by stroke;
+                a won line is struck through. The panel counts each side's marks left, a rack of five for the side
+                that moved first and four for the other
+
+Nothing on a board helps a player choose a move, as on every look's: no hole or cell a side could win on next, no
+call to block, no word of what perfect play makes of a game. A king in check and a man that must jump glow in the
+set's red, since those are the rules, not hints.
 """
 from __future__ import annotations
 
@@ -611,17 +614,6 @@ class ConnectFour(Game):
         p.hline(g["x"], g["x"] + g["w"], g["y"] + g["h"] - 1, b["shade"], plate)
         p.vline(g["x"] + g["w"] - 1, g["y"], g["y"] + g["h"], b["shade"], plate)
         p.box(g["x"] - 1, g["y"] - 1, g["w"] + 2, g["h"] + 2, b["shade"], plate)
-        danger = [] if st["result"] else st["threats"][other(st["to_move"])]
-        for col in danger:
-            row = st["heights"][col] + 1
-            if row > C4.ROWS:
-                continue
-            cx, cy = holes[(col, row)]
-            L = p.once(f"block{col}", pulse(LAND + .3), z=.55) if moving and last else plate
-            side = round(r * 2) + 2
-            glow(h, p, round(cx - side / 2), round(cy - side / 2), side, side, night, L)
-            threat = PC.disc(C4.material_of(other(st["to_move"])), rd)
-            dotted(p, PC.placed(threat, round(cx - threat[1] / 2), round(cy - threat[2] / 2)), PC.IVORY[6], L)
         if last:
             cx, cy = holes[(last["column"], last["row"])]
             for (x, y) in ring_cells(cx, cy, r + 1.2):
@@ -761,23 +753,14 @@ class TicTacToe(Game):
                     p.px(xx, yy, f"{marks['glow']}:0.45")
             p.box(x + 1, y + 1, c - 2, c - 2, marks["last"])
         if not st["result"]:
+            # the eight lines a game is won on, dotted faint as a drawing draws its centre lines: all eight, whatever
+            # stands on them, so the board never singles out a line a side could still win on, or one no side can
             for line in TT.LINES:
-                on = {st["board"].get(q) for q in line} - {None}
-                if len(on) < 2:
-                    (ax, ay), (bx, by) = [(cell(q)[0] + c / 2, cell(q)[1] + c / 2) for q in (line[0], line[-1])]
-                    steps_ = int(max(abs(bx - ax), abs(by - ay)))
-                    for i in range(-int(c * .4), steps_ + int(c * .4), 4):
-                        p.px(ax + (bx - ax) * i / steps_, ay + (by - ay) * i / steps_, f"{b['edge']}:0.5")
-        danger = [] if st["result"] else st["threats"][other(st["to_move"])]
+                (ax, ay), (bx, by) = [(cell(q)[0] + c / 2, cell(q)[1] + c / 2) for q in (line[0], line[-1])]
+                steps_ = int(max(abs(bx - ax), abs(by - ay)))
+                for i in range(-int(c * .4), steps_ + int(c * .4), 4):
+                    p.px(ax + (bx - ax) * i / steps_, ay + (by - ay) * i / steps_, f"{b['edge']}:0.5")
         size = c - 12
-        for q in danger:
-            x, y = cell(q)
-            L = p.once(f"block{q}", pulse(1.3), z=.55) if moving and last else "base"
-            glow(h, p, x + 2, y + 2, c - 4, c - 4, night, L)
-            threat = TT.mark_of(other(st["to_move"]))
-            d = PC.pen(threat, "light" if threat == "X" else "dark", size)
-            dotted(p, {xy for xy, col in PC.placed(d, x + (c - d[1]) // 2, y + (c - d[2]) // 2).items()
-                       if col != PC.RAMPS["light" if threat == "X" else "dark"][0]}, PC.IVORY[6], L)
         men = p.layer("men", z=.7)
         for name_, mark in st["board"].items():
             x, y = cell(name_)
@@ -836,51 +819,33 @@ class TicTacToe(Game):
                     p.px(x + cx, y + cy, col, L)
 
     def count(self, h, p, st, x0, x1, y, night, small) -> int:
-        """What perfect play says from here, and the cells where each side would win next; once it is over, how
-        it ended, and the line."""
+        """Each side's marks left, where chess counts what each side took: a rack of five for the side that moved
+        first and four for the other, emptying as the board fills, a used place keeping an empty cell's dot, the
+        house's X on top. It counts and says nothing more: no cell a side could win on next, and no word of what
+        perfect play makes of the game."""
         k = h.ink(night)
-        h.heading(p, x0, y, "perfect play", night)
+        h.heading(p, x0, y, "marks left", night)
         y += 9
-        res = st["result"]
-        px_ = x0 + max(measure(w, "35") for w in ("RESULT", "FROM HERE", "THE LINE", "WINS NEXT")) + 6
-        h.say(p, x0, y + 4, "RESULT" if res else "FROM HERE", k["muted"])
-        if res:
-            w = res["winner"]
-            plate, say = (f"{TT.mark_of(w)} wins" if w else "drawn"), (f"{name(w)}, {res['how']}" if w else res["how"])
-        elif st["outlook"] in (HOUSE, GITHUB):
-            plate, say = f"{TT.mark_of(st['outlook'])} wins", f"{name(st['outlook'])} wins with best play"
-        else:
-            plate, say = "draw", "best play by both sides draws"
-        cw = h.chip(p, px_, y + 1, plate, night)
-        h.aside(p, px_ + cw + 5, x1, y + 1, say.upper(), k["muted"])
-        y += 15
-        h.say(p, x0, y + 4, "THE LINE" if res else "WINS NEXT", k["muted"])
-        if res:
-            items = [(TT.mark_of(res["winner"]) if res["winner"] else "", q) for q in st["line"]]
-        else:
-            items = [(TT.mark_of(side), q) for side in (st["to_move"], other(st["to_move"]))
-                     for q in st["threats"][side]]
-        if not items:
-            h.tray(p, px_ - 2, y - 1, 38, 13, night)
-            h.say(p, px_ + 17, y + 4, "NONE" if res else "NONE YET", k["muted"], anchor="middle")
-            return y + 12
-        widths = [(12 if mk else 0) + measure(q, "57") + 6 for mk, q in items]
-        shown = len(items)
-        while shown and sum(widths[:shown]) + (16 if shown < len(items) else 0) > x1 - px_ - 4:
-            shown -= 1
-        h.tray(p, px_ - 2, y - 1, sum(widths[:shown]) + 2, 13, night)
-        tx = px_
-        for (mk, q), w in zip(items[:shown], widths):
-            if mk:
-                d = PC.pen(mk, "light" if mk == "X" else "dark", 9)
-                put(p, d, ("ttt", "mini", mk), tx, y + 1)
-                h.say(p, tx + 12, y + 2, q, k["body"], "57")
-            else:
-                h.say(p, tx + 1, y + 2, q, k["body"], "57")
-            tx += w
-        if shown < len(items):
-            h.say(p, tx + 2, y + 4, f"+{len(items) - shown}", k["muted"])
-        return y + 12
+        b = h.game_board(night)
+        label_w = max(measure(f"{TT.mark_of(s)} · {'house' if s == HOUSE else 'github'}".upper(), "35")
+                      for s in (HOUSE, GITHUB)) + 6
+        most, pitch = max(st["each"].values()), 12
+        for side in (HOUSE, GITHUB):
+            mark = TT.mark_of(side)
+            h.say(p, x0, y + 4, f"{mark} · {'house' if side == HOUSE else 'github'}".upper(), k["muted"])
+            px_ = x0 + label_w
+            left = st["left"][side]
+            h.tray(p, px_ - 2, y - 1, st["each"][side] * pitch + 2, 13, night)
+            d = PC.pen(mark, "light" if mark == "X" else "dark", 9)
+            for i in range(st["each"][side]):
+                cx = px_ + i * pitch
+                if i < left:
+                    put(p, d, ("ttt", "mini", mark), cx, y + 1)
+                else:
+                    p.px(cx + d[1] // 2, y + 5, b["edge"])
+            h.chip(p, px_ + most * pitch + 6, y + 1, str(left), night)
+            y += 15
+        return y - 3
 
 
 GAMES = {"chess": Chess(), "checkers": Checkers(), "connectfour": ConnectFour(), "tictactoe": TicTacToe()}
