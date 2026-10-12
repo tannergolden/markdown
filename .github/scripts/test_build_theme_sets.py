@@ -106,6 +106,59 @@ class TestFiles(unittest.TestCase):
             self.assertTrue(keep.is_file())
 
 
+class TheGame(unittest.TestCase):
+    """The game the kit draws for @tannergolden's profile alone is one entry beside the themes: its sheets in the
+    standard theme and every print, from the sample game, and in place of what to write, where to see it live."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.out = pathlib.Path(cls.tmp.name) / 'themes'
+        with contextlib.redirect_stdout(io.StringIO()):
+            builder.main([str(cls.out), '--only', 'chess'])
+        cls.entry = manifest_of((cls.out / 'index.html').read_text(encoding='utf-8'))['themes'][0]
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.tmp.cleanup()
+
+    def test_it_is_a_game_that_says_where_to_see_it_live(self) -> None:
+        self.assertEqual((self.entry['key'], self.entry['group']), ('chess', 'game'))
+        self.assertEqual(self.entry['use'], '', 'nothing to write: no other page can draw it')
+        self.assertEqual(self.entry['where'], "On @tannergolden's profile README, and nowhere else")
+        self.assertEqual(self.entry['link'], 'https://github.com/tannergolden')
+        self.assertEqual(self.entry['link_text'], "See the games live on @tannergolden's profile →")
+
+    def test_its_board_and_its_hall_are_drawn_in_the_standard_theme_and_every_print(self) -> None:
+        tones = [builder.prints.STANDARD, *builder.prints.PRINTS]
+        sections = {s['key']: s for s in self.entry['sections']}
+        self.assertEqual(list(sections), ['board', 'hall', 'phones', 'badges'])
+        for key, sheet in (('board', 'Board'), ('hall', 'Hall of Fame')):
+            items = sections[key]['items']
+            self.assertEqual([it['label'].split(', ')[1] for it in items], tones)
+            self.assertTrue(all(it['label'].startswith(sheet) for it in items))
+            self.assertTrue(all('sday' in it and 'sdark' in it for it in items), 'each with its still pair')
+        self.assertEqual([r['label'] for r in sections['badges']['rows']],
+                         ['In standard', "In blackprint, the profile's"])
+        self.assertEqual([len(r['chips']) for r in sections['badges']['rows']], [5, 5], 'a badge for each winner')
+
+    def test_every_drawing_the_entry_names_is_beside_the_page(self) -> None:
+        for name in drawings_of(self.entry) + list(self.entry['thumb'].values()):
+            self.assertTrue((self.out / name).is_file(), name)
+
+    def test_a_sample_game_the_kit_would_turn_away_is_never_drawn(self) -> None:
+        bad = 'elements:\n  chess:\n    kind: chess\n    fen: not a position\n'
+        with tempfile.TemporaryDirectory() as tmp:
+            game = pathlib.Path(tmp) / 'chess.yaml'
+            game.write_text(bad, encoding='utf-8')
+            builder.sample_game.cache_clear()
+            try:
+                with mock.patch.object(builder, 'GAME', game), self.assertRaises(SystemExit):
+                    builder.sample_game()
+            finally:
+                builder.sample_game.cache_clear()
+
+
 class TestBundle(unittest.TestCase):
     """The copy for a host that caps its files: the page and one data file per theme."""
 

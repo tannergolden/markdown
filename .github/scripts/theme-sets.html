@@ -1,6 +1,6 @@
 <title>Markdown Theme Sets</title>
 <meta name="generator" content="markdown-kit theme-sets">
-<meta name="description" content="Every theme the markdown kit draws a README in, drawn by the kit itself on GitHub's light and dark grounds.">
+<meta name="description" content="Every theme the markdown kit draws a README in, and the game it draws for @tannergolden's profile alone, drawn by the kit itself on GitHub's light and dark grounds.">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: a drawing set. A title block heads the page; a sticky index of every theme, each shown by its own
@@ -111,7 +111,7 @@ h1 { margin: 0; font: 700 clamp(40px, 5.4vw, 68px)/0.95 var(--display); letter-s
 .card[aria-pressed="true"] { border-color: var(--line); box-shadow: 0 0 0 2px var(--line); }
 .thumb { display: flex; aspect-ratio: 830 / 279; background: var(--gh-day); border-bottom: 1px solid var(--gh-day-edge); }
 .thumb[data-ground="dark"] { background: var(--gh-dark); border-bottom-color: var(--gh-dark-edge); }
-.thumb img { display: block; width: 100%; height: auto; }
+.thumb img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; }
 .slice { flex: 1 1 0; background-repeat: no-repeat; }
 .card-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 7px 10px 8px; }
 .card-name { font: 600 17px/1.15 var(--display); letter-spacing: .02em; }
@@ -162,6 +162,7 @@ h1 { margin: 0; font: 700 clamp(40px, 5.4vw, 68px)/0.95 var(--display); letter-s
 .copy:hover { border-color: var(--rule-strong); }
 .use-link { display: inline-block; margin-top: 10px; font: 500 13px/1.3 var(--mono); color: var(--line); }
 .use-note { display: block; margin-top: 8px; font-size: 14px; line-height: 1.45; color: var(--ink-soft); }
+.use-where { display: block; font: 600 19px/1.2 var(--display); letter-spacing: .02em; color: var(--ink); }
 .swatches { display: flex; flex-wrap: wrap; gap: 10px 16px; margin: 0; padding: 0; list-style: none; }
 .swatches li { display: grid; grid-template-columns: 22px auto; column-gap: 8px; align-items: center; }
 .sw { grid-row: span 2; width: 22px; height: 22px; border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(127, 127, 127, 0.4); }
@@ -223,7 +224,8 @@ h1 { margin: 0; font: 700 clamp(40px, 5.4vw, 68px)/0.95 var(--display); letter-s
       <h1>Markdown Theme Sets</h1>
       <p class="lede">Every theme the kit can draw a README in, drawn by the kit itself from its own samples and the
         driftmark specimen. Pick one to see its headers, phone files, footers, elements and badges at the size a
-        README shows them, on GitHub's light and dark grounds.</p>
+        README shows them, on GitHub's light and dark grounds. Under Games is the chess the kit draws for
+        <a href="https://github.com/tannergolden">@tannergolden's profile</a> alone, where it is played live.</p>
     </div>
     <dl class="titleblock" id="titleblock"></dl>
   </div>
@@ -260,8 +262,8 @@ h1 { margin: 0; font: 700 clamp(40px, 5.4vw, 68px)/0.95 var(--display); letter-s
 </div>
 
 <footer class="wrap foot">
-  <p>Drawn by __KIT__ from its own samples and the driftmark specimen, the way a run draws a page: nothing here is
-    fetched, and every file is the one a README would get. In the kit's repository, <code>make themes</code> draws
+  <p>Drawn by __KIT__ from its own samples, the driftmark specimen and a sample game, the way a run draws a page:
+    nothing here is fetched, and every file is the one a README would get. In the kit's repository, <code>make themes</code> draws
     this page again.</p>
 </footer>
 
@@ -276,7 +278,8 @@ h1 { margin: 0; font: 700 clamp(40px, 5.4vw, 68px)/0.95 var(--display); letter-s
   const first = read("first");
   const themes = M.themes;
   const byKey = new Map(themes.map((t) => [t.key, t]));
-  const GROUPS = [["standard", "The default"], ["print", "Prints"], ["holiday", "Holiday sets"], ["collection", "Collections"]];
+  const GROUPS = [["standard", "The default"], ["print", "Prints"], ["holiday", "Holiday sets"], ["collection", "Collections"],
+    ["game", "Games"]];
 
   // Where a drawing comes from: beside the page, or, in a bundle, from the data the page has been given.
   const payload = new Map(Object.entries(read("thumbs")));
@@ -348,8 +351,9 @@ h1 { margin: 0; font: 700 clamp(40px, 5.4vw, 68px)/0.95 var(--display); letter-s
     const counts = Object.fromEntries(GROUPS.map(([g]) => [g, themes.filter((t) => t.group === g).length]));
     const cells = [
       ["Kit", M.kit, "mono"],
-      ["Themes", String(themes.length), "", `${counts.standard} default, ${counts.print} prints, ${counts.holiday} holiday sets`
-        + (counts.collection ? `, ${counts.collection} ${counts.collection === 1 ? "collection" : "collections"}` : "")],
+      ["Themes", String(themes.length - counts.game), "", `${counts.standard} default, ${counts.print} prints, ${counts.holiday} holiday sets`
+        + (counts.collection ? `, ${counts.collection} ${counts.collection === 1 ? "collection" : "collections"}` : "")
+        + (counts.game ? `; and ${counts.game} ${counts.game === 1 ? "game" : "games"}, for @tannergolden's profile alone` : "")],
       ["Drawings", M.drawings.toLocaleString("en-US"), "", "every one a file a README shows"],
       ["Specimen", "driftmark/driftmark", "mono"],
       ["Light ground", M.grounds.day, "mono", "", M.grounds.day],
@@ -516,16 +520,21 @@ h1 { margin: 0; font: 700 clamp(40px, 5.4vw, 68px)/0.95 var(--display); letter-s
 
     const use = el("div", "use");
     const useDd = el("dd");
-    const line = el("div", "use-line");
-    line.append(el("code", "", t.use), copyButton(t.use));
-    useDd.append(line);
+    if (t.use) {
+      const line = el("div", "use-line");
+      line.append(el("code", "", t.use), copyButton(t.use));
+      useDd.append(line);
+    }
+    // A game is drawn on one page alone: in place of what to write, it says where to see it.
+    if (t.where) useDd.append(el("strong", "use-where", t.where));
     if (t.use_note) useDd.append(el("span", "use-note", t.use_note));
     if (t.link) {
-      const go = el("a", "use-link", "Every design, drawn in full →");
+      const go = el("a", "use-link", t.link_text || "Every design, drawn in full →");
       go.href = t.link;
+      if (/^https?:/.test(t.link)) go.rel = "noopener";
       useDd.append(go);
     }
-    use.append(el("dt", "", "In .github/markdown.yaml"), useDd);
+    use.append(el("dt", "", t.use_title || "In .github/markdown.yaml"), useDd);
 
     const inks = el("div", "inks");
     const list = el("ul", "swatches");
@@ -538,7 +547,8 @@ h1 { margin: 0; font: 700 clamp(40px, 5.4vw, 68px)/0.95 var(--display); letter-s
     }
     const inksDd = el("dd");
     inksDd.append(list);
-    inks.append(el("dt", "", t.key === "rainbowprint" ? "Its spectrum, by line colour" : "Its colours"), inksDd);
+    inks.append(el("dt", "", t.swatches_title || (t.key === "rainbowprint" ? "Its spectrum, by line colour" : "Its colours")),
+      inksDd);
 
     const { count, heaviest } = drawingsOf(t);
     const facts = el("div", "facts");

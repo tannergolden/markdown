@@ -48,18 +48,18 @@ leaves this whole folder to you, this README included.
 
 <!-- AUTO-INDEX:BEGIN dir=. style=log -->
 
-| Entry                                   | Purpose                                                                                                                                  |
-| :-------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
-| [`e2e/`](e2e/README.md)                 | End-to-end tests: whole user journeys driven against a running system, gating promotion to Preview and Release.                          |
-| [`fakes/`](fakes/README.md)             | Stand-ins for the outside world: a GitHub that answers from a table, so no test touches the network.                                     |
-| [`fixtures/`](fixtures/README.md)       | What the tests compare against: the golden files of the badges and trophies, a sample page's settings, and the driftmark specimen.       |
-| [`integration/`](integration/README.md) | Integration tests: checks that cross a real boundary such as a database, the filesystem, or an HTTP service.                             |
-| [`unit/`](unit/README.md)               | Unit tests: fast, isolated checks of one piece of logic each, run on every push.                                                         |
-| [`__init__.py`](__init__.py)            | The kit's tests: `unit/` for the rules, `integration/` across a real boundary, `e2e/` through the command line.                          |
-| [`gql_check.py`](gql_check.py)          | Every GraphQL document the kit sends, checked before GitHub finds a typo one run at a time.                                              |
-| [`parallel.py`](parallel.py)            | Run a folder's test modules at once, one interpreter to a module, as `unittest discover` would run them in one.                          |
-| [`README.md`](README.md)                | This file.                                                                                                                               |
-| [`support.py`](support.py)              | What every test shares: `src/` on the import path, git without its background maintenance, and the kit's data handed to the domain once. |
+| Entry                                   | Purpose                                                                                                                                          |
+| :-------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`e2e/`](e2e/README.md)                 | End-to-end tests: whole user journeys driven against a running system, gating promotion to Preview and Release.                                  |
+| [`fakes/`](fakes/README.md)             | Stand-ins for the outside world: a GitHub that answers from a table, so no test touches the network.                                             |
+| [`fixtures/`](fixtures/README.md)       | What the tests compare against: the golden files of the badges and trophies, a sample page's settings, the driftmark specimen and a sample game. |
+| [`integration/`](integration/README.md) | Integration tests: checks that cross a real boundary such as a database, the filesystem, or an HTTP service.                                     |
+| [`unit/`](unit/README.md)               | Unit tests: fast, isolated checks of one piece of logic each, run on every push.                                                                 |
+| [`__init__.py`](__init__.py)            | The kit's tests: `unit/` for the rules, `integration/` across a real boundary, `e2e/` through the command line.                                  |
+| [`gql_check.py`](gql_check.py)          | Every GraphQL document the kit sends, checked before GitHub finds a typo one run at a time.                                                      |
+| [`parallel.py`](parallel.py)            | Run a folder's test modules at once, one interpreter to a module, as `unittest discover` would run them in one.                                  |
+| [`README.md`](README.md)                | This file.                                                                                                                                       |
+| [`support.py`](support.py)              | What every test shares: `src/` on the import path, git without its background maintenance, and the kit's data handed to the domain once.         |
 
 <!-- AUTO-INDEX:END -->
 

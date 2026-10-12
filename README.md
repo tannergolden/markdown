@@ -83,12 +83,13 @@ is the example of all of it on a profile repository. Its README is drawn by
 this kit every night at midnight EST, in profile mode, in the `blackprint`,
 with the holidays on, from one stub and one settings file:
 
-| Part         | On the profile                                                                                                                                                               |
-| :----------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Banners**  | A header read from GitHub, the name and the bio, with a motto, a note and six figures; a footer with its closing words, and four buttons under it.                           |
-| **Badges**   | Four static badges, and two live ones the run measures: whether the standards pass their own checks, and how long ago the last commit was.                                   |
-| **Elements** | A schematic of how its repositories fit together, written by hand, and placards for the two latest releases and two good first issues, which its own scripts rewrite weekly. |
-| **Trophies** | The case in profile mode: five core trophies in one row, the level and next-up cards over them, and the achievements under them.                                             |
+| Part         | On the profile                                                                                                                                                                                |
+| :----------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Banners**  | A header read from GitHub, the name and the bio, with a motto, a note and six figures; a footer with its closing words, and four buttons under it.                                            |
+| **Badges**   | Four static badges, and two live ones the run measures: whether the standards pass their own checks, and how long ago the last commit was.                                                    |
+| **Elements** | A schematic of how its repositories fit together, written by hand, and placards for the two latest releases and two good first issues, which its own scripts rewrite weekly.                  |
+| **Game**     | Chess, @tannergolden against GitHub, played live: the board after every move, every legal move a link that plays it, and the Hall of Fame with its leaderboard, drawn for this profile alone. |
+| **Trophies** | The case in profile mode: five core trophies in one row, the level and next-up cards over them, and the achievements under them.                                                              |
 
 Its stub is the one below with `mode: profile` and `theme: blackprint`, and
 [its settings](https://github.com/tannergolden/tannergolden/blob/Development/.github/markdown.yaml)
@@ -258,6 +259,74 @@ and badges on GitHub's light and dark grounds, at the size a README shows them.
 The page is [`docs/themes/index.html`](docs/themes/index.html) in this
 repository, and the link opens it through raw.githack.com, because GitHub
 shows an HTML file as its source.
+
+---
+
+## ♟️ The Game On @tannergolden's Profile
+
+> [!IMPORTANT]
+> **The game's designs are exclusive to
+> [@tannergolden's profile README](https://github.com/tannergolden).** The kit
+> draws them for that one page and nowhere else: any other page whose settings
+> name them is told so. **[See the games live on @tannergolden's
+> profile](https://github.com/tannergolden)**, where anyone on GitHub can play
+> the next move.
+
+The kit draws one game for one page: chess, @tannergolden as White against
+everyone else on GitHub as Black. A player picks a move under the board on the
+profile, its link opens a ready-made issue in
+[tannergolden/play](https://github.com/tannergolden/play), and the profile's
+own engine plays it and has the kit draw the page again. Like a theme, the game
+is a design of its own, drawn in every look the page can take:
+
+- **The board**, as it stands, with the state of play beside it: the two
+  sides, whose turn it is and until when, the last move in words, what each
+  side has taken and the score sheet's latest rows. It opens by playing the
+  last move again, and a king in check is marked on its square.
+- **The Hall of Fame**: the series between the house and GitHub, then a podium
+  of its three leading winners and two more beside it, each named as their
+  GitHub profile names them. Under it in the README, a badge for each winner,
+  the leader's glinting, and the leaderboard folded shut.
+- **Every tone**: the standard theme's enamel and lit pieces, or a print's
+  drawing on drafting paper, poché for the dark squares and line shading for
+  the light. A holiday's set or a collection's design leaves the game in the
+  standard theme's look or the page's print.
+
+Each sheet comes as a **day** file and a **dark** file, wide and on a phone,
+moving as it opens and still for reduced motion, like a header. Round the
+pictures the README carries the game's words, since an image cannot be clicked
+square by square: the turn's banner, and every legal move with a link that
+opens its ready-made issue.
+
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-wide-blackprint-still-dark.svg"><img src="docs/themes/chess/chess-wide-blackprint-still-day.svg" alt="The chess board in blackprint, the profile's print, from a sample game" width="100%"></picture></a>
+      <br /><sub>The board, in <code>blackprint</code>, the profile's print</sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-hall-wide-blackprint-still-dark.svg"><img src="docs/themes/chess/chess-hall-wide-blackprint-still-day.svg" alt="The Hall of Fame in blackprint, from a sample game's fictional winners" width="100%"></picture></a>
+      <br /><sub>The Hall of Fame, in <code>blackprint</code></sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-wide-standard-still-dark.svg"><img src="docs/themes/chess/chess-wide-standard-still-day.svg" alt="The chess board in standard, from a sample game" width="100%"></picture></a>
+      <br /><sub>The board, in <code>standard</code></sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-hall-wide-standard-still-dark.svg"><img src="docs/themes/chess/chess-hall-wide-standard-still-day.svg" alt="The Hall of Fame in standard, from a sample game's fictional winners" width="100%"></picture></a>
+      <br /><sub>The Hall of Fame, in <code>standard</code></sub>
+    </td>
+  </tr>
+</table>
+
+**[See the game in every tone, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess)**:
+the theme-sets page shows the board, the Hall of Fame, the phone files and the
+winners' badges in the standard theme and every print, from a sample game whose
+winners are as fictional as driftmark's contributors. What the game's settings
+hold is in [Settings](docs/Settings.md#-elements); the game itself is
+[live on @tannergolden's profile](https://github.com/tannergolden).
 
 ---
 

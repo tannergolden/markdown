@@ -4,7 +4,9 @@
 WHY THIS EXISTS. A theme is easier to choose by looking than by reading. The
 page shows every theme's headers, phone files, footers, elements and badges,
 each drawn the way a run draws it, from the kit's own samples and the
-driftmark specimen, on GitHub's light and dark grounds.
+driftmark specimen, on GitHub's light and dark grounds. The game the kit draws
+for @tannergolden's profile alone is shown beside them, from a sample game, in
+the standard theme and every print, as it is drawn on that profile.
 
 Nothing is fetched and nothing depends on the day it runs, so drawing it twice
 writes the same bytes, and a change to a theme shows up as a change here.
@@ -42,7 +44,7 @@ from domain.banners.designs import DESIGNS, render, slug  # noqa: E402
 from domain.banners.settings import check as banners_check  # noqa: E402
 from domain.canvas import BUDGET  # noqa: E402
 from domain.collections.hand import signs  # noqa: E402
-from domain.elements import data as elements_data, draw as elements_draw  # noqa: E402
+from domain.elements import chess, data as elements_data, draw as elements_draw  # noqa: E402
 from domain.palette import hexof  # noqa: E402
 from domain.standard import pieces  # noqa: E402
 from infra import resources  # noqa: E402
@@ -50,6 +52,9 @@ from infra.yaml_reader import loads  # noqa: E402
 
 TEMPLATE = Path(__file__).with_name("theme-sets.html")
 SPECIMEN = ROOT / "tests" / "fixtures" / "driftmark" / ".github" / "markdown.yaml"
+GAME = ROOT / "tests" / "fixtures" / "chess.yaml"  # the sample game the chess sheets are drawn from
+# The game is drawn on one page, @tannergolden's profile, in the standard theme or a print; there, in blackprint.
+PROFILE, PROFILE_TONE = f"https://github.com/{chess.OWNER}", "blackprint"
 # The page says it drew this folder, so a rebuild may empty it and a wrong path never loses anything.
 MARK = '<meta name="generator" content="markdown-kit theme-sets">'
 
@@ -74,6 +79,15 @@ NOTES = {
     "spectrum": "Red to pink, then round again: the H2 Section in each of the nine prints it moves through.",
     "year": "January to December: the H2 Section in each month's design, which is up from the first of its month "
             "to the last.",
+    "board": "The board as it stands, with the state of play beside it: the players, whose turn it is and until "
+             "when, the last move in words, what each side has taken and the score sheet's latest rows. It opens by "
+             "playing the last move again; Motion: Still shows the file a reader who asks for reduced motion gets.",
+    "hall": "The series between the house and GitHub, the podium of its three leading winners and two more beside "
+            "it, each named as their GitHub profile names them.",
+    "game phones": "The 360-pixel files a README shows on a small screen, in the standard theme and in the profile's "
+                   "own print.",
+    "game badges": "A badge for each winner, in a row under the Hall of Fame in the README, each a link to that "
+                   "player's profile. The leader's glints.",
 }
 
 
@@ -277,7 +291,73 @@ def collection_entry(d: Drawings, key: str) -> dict:
             "sections": [{"key": "year", "title": "The year", "note": NOTES["year"], "items": year}]}
 
 
+@lru_cache(maxsize=None)
+def sample_game() -> dict:
+    """The sample game's two elements, checked as a run checks them and turned away if they are wrong."""
+    spec = loads(GAME.read_text(encoding="utf-8"))
+    section = elements_data.check(spec["elements"])
+    problems = elements_data.validate(section, {}, subject=chess.OWNER)
+    if problems:
+        raise SystemExit(f"{GAME.name}: " + "; ".join(problems))
+    return elements_data.merged(section, {}, subject=chess.OWNER, today=TODAY)
+
+
+def game_entry(d: Drawings) -> dict:
+    """The game on @tannergolden's profile as one entry, the way a theme is one: its board and its Hall of Fame in
+    the standard theme and every print, the files a phone gets, and the winners' badges. Nobody else's page can
+    draw it, so where a theme says what to write in the settings, this says where to see the game live."""
+    key, game = "chess", sample_game()
+    tones = (prints.STANDARD, *prints.PRINTS)
+    drawn = {tone: elements_data.render(game, tone) for tone in tones}
+
+    def sheet(eid: str, tone: str, variant: str, label: str) -> dict:
+        files, name = drawn[tone], elements_data.file_name
+        still = "narrow-still" if variant == "narrow" else "still"
+        return item(d, key, f"{eid}-{variant}-{tone}", label, files[name(eid, variant, "day")],
+                    files[name(eid, variant, "dark")], BUDGET[elements_draw.KINDS[game[eid]["kind"]][2]],
+                    still=(files[name(eid, still, "day")], files[name(eid, still, "dark")]))
+
+    def labelled(tone: str) -> str:
+        return f"{tone}, the profile's" if tone == PROFILE_TONE else tone
+
+    shown = (prints.STANDARD, PROFILE_TONE)
+    phones = [sheet(eid, tone, "narrow", f"{what}, {labelled(tone)}") for tone in shown
+              for eid, what in (("chess", "Board"), ("chess-hall", "Hall of Fame"))]
+    winners = chess.hall_state(game["chess-hall"])["people"]
+    rows = []
+    for tone in shown:
+        chips = [chip(d, key, f"badge-{i}-{tone}", "#1, the leader's, glinting" if i == 1 else f"#{i}",
+                      drawn[tone][elements_data.file_name("chess-hall", f"badge-{i}", "day")],
+                      drawn[tone][elements_data.file_name("chess-hall", f"badge-{i}", "dark")])
+                 for i in range(1, len(winners) + 1)]
+        rows.append({"label": f"In {labelled(tone)}", "chips": chips})
+    return {"key": key, "name": "chess", "group": "game", "tag": f"@{chess.OWNER} only",
+            "kicker": f"Game, exclusive to @{chess.OWNER}'s profile",
+            "note": f"The game of chess on @{chess.OWNER}'s profile README, @{chess.OWNER} as White against everyone "
+                    "else on GitHub as Black, with its Hall of Fame and leaderboard. It is drawn in whatever theme "
+                    "the page is in: the standard theme's enamel, or a print's drawing on drafting paper.",
+            "use": "", "use_title": "Where it is drawn",
+            "where": f"On @{chess.OWNER}'s profile README, and nowhere else",
+            "use_note": "The kit draws the game for that one page: any other page that names it is told so. Every "
+                        "game is played there live, a move at a time, and anyone on GitHub can make the next one.",
+            "link": PROFILE, "link_text": f"See the games live on @{chess.OWNER}'s profile →",
+            "swatches_title": "Drawn in every tone",
+            "swatches": [{"role": prints.STANDARD, "hex": hexof(pieces.ACCENT)}]
+            + [{"role": tone, "hex": hexof(prints.PRINTS[tone]["line"])} for tone in prints.PRINTS],
+            "thumb": {"day": f"{key}/chess-wide-{PROFILE_TONE}-still-day.svg",
+                      "dark": f"{key}/chess-wide-{PROFILE_TONE}-still-dark.svg"},
+            "sections": [
+                {"key": "board", "title": "The board", "note": NOTES["board"],
+                 "items": [sheet("chess", tone, "wide", f"Board, {labelled(tone)}") for tone in tones]},
+                {"key": "hall", "title": "The Hall of Fame", "note": NOTES["hall"],
+                 "items": [sheet("chess-hall", tone, "wide", f"Hall of Fame, {labelled(tone)}") for tone in tones]},
+                {"key": "phones", "title": "On a phone", "note": NOTES["game phones"], "items": phones},
+                {"key": "badges", "title": "Winners' badges", "note": NOTES["game badges"], "rows": rows}]}
+
+
 def theme_entry(d: Drawings, key: str) -> dict:
+    if key == "chess":
+        return game_entry(d)
     if key in collections.COLLECTIONS:
         return collection_entry(d, key)
     if key in holidays.SETS:
@@ -353,7 +433,7 @@ def build(out: Path, bundle: bool = False, only: list[str] | None = None) -> dic
     """Draw the themes into `out`; returns the page's manifest."""
     resources.install()
     keys = ([prints.STANDARD, *prints.PRINTS, prints.RAINBOW] + [k for k in holidays.KEYS if k in holidays.SETS]
-            + collections.themes())
+            + collections.themes() + ["chess"])
     if only:
         unknown = sorted(set(only) - set(keys))
         if unknown:

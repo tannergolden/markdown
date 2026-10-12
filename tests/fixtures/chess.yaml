@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: 2026 Tanner Golden
+# SPDX-License-Identifier: MIT
+#
+# The sample game the theme-sets page draws the chess sheets from: game 13 of
+# @tannergolden against GitHub, on its 21st move, with GitHub's king in check,
+# and a Hall of Fame of twelve games. The game itself is drawn on
+# @tannergolden's profile alone, where every move is played live; its winners
+# here are driftmark's contributors, and as fictional as they are.
+
+elements:
+  chess:
+    kind: chess
+    fen: 2kr4/ppp4p/2nNp3/2b1q3/2p3P1/2PrR3/PP1B1P1P/R4QK1 b - - 3 21
+    game: 13
+    move: 21
+    players: 9
+    due: 18 Oct
+    check: c8
+    last:
+      san: Nd6+
+      from: e4
+      to: d6
+      piece: knight
+      captured: ""
+      words: Knight from e4 to d6, check
+      by: "@tannergolden"
+      when: 11 Oct
+    taken: {white: bpp, black: nbp}
+    history:
+      - [19, Bxd2, Qxg7, "@imvale"]
+      - [20, Re3, Qe5, "@tokafor"]
+      - [21, Nd6+, "", ""]
+
+  chess-hall:
+    kind: chess-hall
+    games: 12
+    house: 5
+    world: 6
+    draws: 1
+    people:
+      - [tannergolden, 5, 2 Oct, 12]
+      - [imvale, 2, 19 Sep, 7]
+      - [tokafor, 2, 27 Sep, 5]
+      - [wrencastellan, 1, 4 Sep, 6]
+      - [jhalloran, 1, 8 Oct, 3]
+    names: {imvale: Imogen Vale, tokafor: Tomas Okafor, wrencastellan: Wren Castellan}
+    leaders:
+      - [tannergolden, 1204, 5, 12]
+      - [imvale, 40, 2, 7]
+      - [tokafor, 31, 2, 5]
+      - [wrencastellan, 52, 1, 6]
+      - [jhalloran, 12, 1, 3]

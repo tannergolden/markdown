@@ -205,6 +205,42 @@ when it comes down.
 
 ---
 
+## ♟️ The Game
+
+> [!IMPORTANT]
+> **The game's designs are exclusive to
+> [@tannergolden's profile README](https://github.com/tannergolden).** The kit
+> draws them for that one page and nowhere else: a page anywhere else whose
+> settings name them is told so. **[See the games live on @tannergolden's
+> profile](https://github.com/tannergolden)**, where anyone on GitHub can play
+> the next move.
+
+The game is chess, @tannergolden as White against everyone else on GitHub as
+Black, drawn as two elements, `chess` and `chess-hall`, which the profile's own
+engine writes into its settings after every move (see
+[`elements:`](#-elements)). Like a theme, it is a design of its own, and it is
+drawn in the page's theme:
+
+| Sheet            | What it draws                                                                                                                                                      | Files                                                              |
+| :--------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------- |
+| The board        | The position, with the state of play beside it: the sides, the turn and when it is due, the last move, what each side has taken and the score sheet's latest rows. | Wide and a phone's, each moving and still, by day and dark.        |
+| The Hall of Fame | The series between the house and GitHub, and a podium of its leading winners, each named as their GitHub profile names them.                                       | Wide and a phone's, each moving and still, by day and dark.        |
+| A winner's badge | One for each winner under the Hall in the README, each a link to that player's profile.                                                                            | A day file and a dark one; the leader's glints, with a still twin. |
+
+| Theme                | How the game is drawn                                                                                              |
+| :------------------- | :----------------------------------------------------------------------------------------------------------------- |
+| `standard`           | Enamel and lit pieces: the dark squares in the theme's blue, and the checked king's square glowing red.            |
+| A print              | A drawing on drafting paper in the print's colour: poché for the dark squares, line shading for the light.         |
+| A holiday or a month | The game keeps the standard theme's look or the page's print, whatever holiday's set or collection's design is up. |
+
+Round the pictures the README carries the game's words, since an image cannot
+be clicked square by square: the turn's banner, every legal move with a link
+that opens its ready-made issue, the winners' badges and the leaderboard. The
+[theme-sets page](https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess)
+shows every sheet in every tone, drawn from a sample game.
+
+---
+
 ## 🪧 `banners:`
 
 A text field left empty is read from GitHub: the title is the repository's
