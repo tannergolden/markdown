@@ -17,6 +17,7 @@ from tests import support
 from tests.fakes.github import FakeGitHub
 
 from app.parts import elements as measure
+from infra.github import ApiError
 from domain.canvas import BUDGET, lint
 from domain.elements import chess as C
 from domain.elements import data as ED
@@ -183,26 +184,25 @@ class Hall(unittest.TestCase):
         self.assertEqual([p["handle"] for p in people[:4]],
                          ["the house  ·  white", "@imvale", "@tokafor", "github  ·  black"])
 
-    def test_a_player_is_shown_by_the_login_their_account_has_now(self):
-        # @imvale renamed to @imogen-vale; @tokafor's account is gone, and a stranger may hold that login now;
+    def test_a_player_is_shown_by_the_login_their_account_has_now_and_one_whose_account_is_gone_not_at_all(self):
+        # @imvale renamed to @imogen-vale; @tokafor deleted their account, and a stranger may hold that login now;
         # @wrencastellan's ID has not been read yet; @jhalloran's row carries no ID.
         logins = {"1001": "imogen-vale", "1002": "", "583231": "octocat"}
         names = {"imogen-vale": "Imogen Vale", "tokafor": "Mallory Mallet", "imvale": "Someone Else"}
         d = dict(KNOWN, people=[*KNOWN["people"][:4], HALL["people"][4]], logins=logins, names=names)
         self.assertEqual(C.check_hall(d), [])
         h = C.hall_state(d)
-        self.assertEqual([(p["login"], p["name"], p["handle"], p["badge"], p["id"], p["linked"]) for p in h["people"]],
-                         [("tannergolden", "@TANNERGOLDEN", "the house  ·  white", "@tannergolden", 24684994, True),
-                          ("imogen-vale", "IMOGEN VALE", "@imogen-vale", "@imogen-vale", 1001, True),
-                          ("tokafor", "@TOKAFOR", "github  ·  black", "@tokafor", 1002, False),
-                          ("wrencastellan", "@WRENCASTELLAN", "github  ·  black", "@wrencastellan", 1003, True),
-                          ("jhalloran", "@JHALLORAN", "github  ·  black", "@jhalloran", None, True)])
-        self.assertEqual([(r["login"], r["id"], r["linked"], r["house"]) for r in h["leaders"]],
-                         [("tannergolden", 24684994, True, True), ("imogen-vale", 1001, True, False),
-                          ("tokafor", 1002, False, False), ("wrencastellan", 1003, True, False),
-                          ("jhalloran", 1004, True, False), ("octocat", 583231, True, False)])
-        self.assertIn("Ranked by wins: @tannergolden with 5 wins, @imogen-vale with 2 wins, @tokafor with 2 wins",
-                      E.alt("chess-hall", d))
+        self.assertEqual([(p["login"], p["name"], p["handle"], p["badge"], p["id"]) for p in h["people"]],
+                         [("tannergolden", "@TANNERGOLDEN", "the house  ·  white", "@tannergolden", 24684994),
+                          ("imogen-vale", "IMOGEN VALE", "@imogen-vale", "@imogen-vale", 1001),
+                          ("wrencastellan", "@WRENCASTELLAN", "github  ·  black", "@wrencastellan", 1003),
+                          ("jhalloran", "@JHALLORAN", "github  ·  black", "@jhalloran", None)])
+        self.assertEqual([(r["login"], r["id"], r["house"]) for r in h["leaders"]],
+                         [("tannergolden", 24684994, True), ("imogen-vale", 1001, False),
+                          ("wrencastellan", 1003, False), ("jhalloran", 1004, False), ("octocat", 583231, False)])
+        self.assertIn("Ranked by wins: @tannergolden with 5 wins, @imogen-vale with 2 wins, @wrencastellan with 1 win,"
+                      " @jhalloran with 1 win.", E.alt("chess-hall", d))
+        self.assertNotIn("tokafor", E.alt("chess-hall", d))
         house = dict(d, logins={**logins, "24684994": "someone"})
         self.assertEqual(C.hall_state(house)["people"][0]["login"], "tannergolden", "the house is always the house")
 
@@ -215,6 +215,40 @@ class Hall(unittest.TestCase):
         self.assertEqual(E.variants("chess-hall", HALL), ("wide", "narrow", "still", "narrow-still", "badge-1",
                                                           "badge-1-still", "badge-2", "badge-3", "badge-4", "badge-5"))
         self.assertEqual(E.variants("chess-hall", EMPTY), ("wide", "narrow", "still", "narrow-still"))
+        gone = dict(KNOWN, logins={"1002": "", "1003": ""})
+        self.assertEqual(E.variants("chess-hall", gone), ("wide", "narrow", "still", "narrow-still", "badge-1",
+                                                          "badge-1-still", "badge-2", "badge-3"),
+                         "a badge for each winner shown, and none for a winner whose account is gone")
+
+    def test_a_place_an_account_that_is_gone_leaves_is_filled_from_the_rows_under_it(self):
+        # The engine hands over twice the places: ten winners and twenty of GitHub's players, for five and ten.
+        players = [f"player-{i:02}" for i in range(1, 21)]
+        uids = {login: 2000 + i for i, login in enumerate(players, 1)}
+        people = [["tannergolden", 30, "2 Oct", 40, 24684994]]
+        people += [[login, 20 - i, "1 Oct", 25, uids[login]] for i, login in enumerate(players[:9])]
+        leaders = [["tannergolden", 900, 30, 40, 24684994]]
+        leaders += [[login, 500 - i, 20 - i if i < 9 else 0, 25, uids[login]] for i, login in enumerate(players)]
+        gone = {"player-02", "player-03", "player-07"}
+        d = dict(KNOWN, games=60, house=30, world=29, draws=1, people=people, leaders=leaders, names={},
+                 logins={str(uids[login]): "" if login in gone else login for login in players})
+        self.assertEqual(C.check_hall(d), [])
+        h = C.hall_state(d)
+        self.assertEqual([p["login"] for p in h["people"]],
+                         ["tannergolden", "player-01", "player-04", "player-05", "player-06"])
+        self.assertEqual([r["login"] for r in h["leaders"]],
+                         ["tannergolden", "player-01", "player-04", "player-05", "player-06", "player-08", "player-09",
+                          "player-10", "player-11", "player-12", "player-13"])
+        text = ED.block("chess-hall", d, "assets/elements")
+        self.assertIn("@tannergolden and GitHub's top 10 · ranked by wins", text)
+        self.assertIn("| 🥉 | [@player-05](https://github.com/player-05) | 496 | 16 | 25 |\n", text)
+        self.assertTrue(text.split("\n\nA win is")[0].endswith("| 10 | [@player-13](https://github.com/player-13) |"
+                                                              " 488 | 0 | 25 |"))
+        for login in gone:
+            self.assertNotIn(login, text + E.alt("chess-hall", d))
+        self.assertEqual(text.count('<a href="https://github.com/'), 5, "five badges, each linked")
+        for tone in (STANDARD, "blackprint"):
+            for variant in E.variants("chess-hall", d):
+                E.draw("chess-hall", d, tone, "dark", variant)  # the kit's lint and budget, or it raises
 
 
 class Settings(unittest.TestCase):
@@ -388,9 +422,10 @@ class Settings(unittest.TestCase):
         for key, (bad, said) in cases.items():
             with self.subTest(key=key):
                 self.assertIn(said, " ".join(ED.validate({"h": {**HALL, key: bad}}, {}, subject="tannergolden")))
-        six = HALL["people"] + [["octocat", 1, "1 Oct", 1]]
-        self.assertIn("at most 5 winners", " ".join(ED.validate({"h": {**HALL, "people": six}}, {},
-                                                                subject="tannergolden")))
+        ten = HALL["people"] + [[f"spare-{i}", 1, "1 Oct", 1] for i in range(5)]
+        self.assertEqual(ED.validate({"h": {**HALL, "people": ten}}, {}, subject="tannergolden"), [])
+        self.assertIn("at most 10 winners", " ".join(ED.validate({"h": {**HALL, "people": ten + [ten[-1]]}}, {},
+                                                                 subject="tannergolden")))
 
     def test_a_winner_is_a_login_with_counts_the_sheet_can_letter_ranked_by_their_wins(self):
         def turned_away(d: dict, said: str):
@@ -462,7 +497,7 @@ class Settings(unittest.TestCase):
             "the house twice": [house, ["TannerGolden", 9, 0, 2]],
             "a player without a move": [house, ["octocat", 0, 0, 0]],
             "players out of order": [house, ["octocat", 9, 0, 2], ["hubot", 3, 1, 1]],
-            "eleven players": [house] + [[f"p{i}", 20 - i, 0, 1] for i in range(11)],
+            "twenty-one players": [house] + [[f"p{i}", 30 - i, 0, 1] for i in range(21)],
             "not a list": "tannergolden",
             "a count past its ceiling": [["tannergolden", 1_000_000_000, 5, 12]],
             "a count that is a bool": [house, ["octocat", 9, False, 2]],
@@ -476,7 +511,8 @@ class Settings(unittest.TestCase):
                 errors = ED.validate({"h": {**HALL, "leaders": leaders}}, {}, subject="tannergolden")
                 self.assertTrue(errors and all(e.startswith("h: leaders") for e in errors), errors)
         for fine in ([], [house], [["tannergolden", 0, 0, 0], ["octocat", 1, 0, 1]], HALL["leaders"], KNOWN["leaders"],
-                     [["tannergolden", 999_999_999, 999_999_999, 999_999_999, 24684994]]):
+                     [["tannergolden", 999_999_999, 999_999_999, 999_999_999, 24684994]],
+                     [house] + [[f"p{i}", 30 - i, 0, 1] for i in range(20)]):
             with self.subTest(leaders=fine):
                 self.assertEqual(ED.validate({"h": {**HALL, "leaders": fine}}, {}, subject="tannergolden"), [])
 
@@ -546,23 +582,26 @@ class Readme(unittest.TestCase):
                          "the hall's wide and phone still files, and the leader's badge, by day and night")
         self.assertNotIn("badge", ED.block("chess-hall", EMPTY, "assets/elements"))
 
-    def test_the_hall_links_each_player_by_the_login_their_account_has_now_and_never_a_gone_one(self):
-        # @imvale is @imogen-vale now; @tokafor's account is gone, and whoever holds that login now is not linked;
-        # @jhalloran's ID has not been read, so their row's own login stands.
+    def test_the_hall_links_each_player_by_the_login_their_account_has_now_and_leaves_a_gone_one_out(self):
+        # @imvale is @imogen-vale now; @tokafor deleted their account, so they leave the badges and the leaderboard,
+        # and the players under them move up; @jhalloran's ID has not been read, so their row's own login stands.
         d = dict(KNOWN, logins={"1001": "imogen-vale", "1002": "", "1003": "wrencastellan", "583231": "octocat"})
         text = ED.block("chess-hall", d, "assets/elements")
         self.assertIn('<a href="https://github.com/imogen-vale"><picture><source media="(prefers-color-scheme: dark)" '
                       'srcset="assets/elements/chess-hall-badge-2-dark.svg"><img alt="#2 @imogen-vale, 2 wins" ', text)
-        self.assertIn('\n<picture><source media="(prefers-color-scheme: dark)" srcset="assets/elements/chess-hall-'
-                      'badge-3-dark.svg"><img alt="#3 @tokafor, 2 wins" src="assets/elements/chess-hall-badge-3-'
-                      'day.svg"></picture>\n', text)
-        self.assertIn('<a href="https://github.com/jhalloran"><picture>', text)
+        self.assertIn('<a href="https://github.com/wrencastellan"><picture><source media="(prefers-color-scheme: '
+                      'dark)" srcset="assets/elements/chess-hall-badge-3-dark.svg"><img alt="#3 @wrencastellan, 1 '
+                      'win" ', text)
+        self.assertIn('<a href="https://github.com/jhalloran"><picture><source media="(prefers-color-scheme: dark)" '
+                      'srcset="assets/elements/chess-hall-badge-4-dark.svg">', text)
+        self.assertNotIn("badge-5", text)
+        self.assertIn("@tannergolden and GitHub's top 4 · ranked by wins", text)
         self.assertIn("| 🥇 | [@imogen-vale](https://github.com/imogen-vale) | 40 | 2 | 7 |\n"
-                      "| 🥈 | @tokafor | 31 | 2 | 5 |\n", text)
-        self.assertNotIn("github.com/tokafor", text)
-        self.assertNotIn("github.com/imvale", text)
-        self.assertEqual(text.count("<a href="), 4, "every badge but the gone account's is a link")
-        self.assertEqual(text.count("(https://github.com/"), 5, "every leader but the gone account is linked")
+                      "| 🥈 | [@wrencastellan](https://github.com/wrencastellan) | 52 | 1 | 6 |\n", text)
+        self.assertNotIn("tokafor", text)
+        self.assertNotIn("imvale", text)
+        self.assertEqual(text.count("<a href="), 4, "every badge shown is a link")
+        self.assertEqual(text.count("(https://github.com/"), 5, "and every leader shown")
 
     def test_the_leaderboard_is_folded_under_the_badges_with_the_house_on_top(self):
         text = ED.block("chess-hall", HALL, "assets/elements")
@@ -632,10 +671,9 @@ class Measured(unittest.TestCase):
                                                               "for the row without an ID")
         d = dict(KNOWN, people=people, **measured)
         self.assertEqual(C.check_hall(d), [])
-        drawn = [(p["name"], p["badge"], p["linked"]) for p in C.hall_state(d)["people"]]
-        self.assertEqual(drawn, [("@TANNERGOLDEN", "@tannergolden", True), ("IMOGEN VALE", "@imogen-vale", True),
-                                 ("@TOKAFOR", "@tokafor", False), ("@WRENCASTELLAN", "@wrencastellan", True),
-                                 ("JO HALLORAN", "@jhalloran", True)])
+        drawn = [(p["name"], p["badge"]) for p in C.hall_state(d)["people"]]
+        self.assertEqual(drawn, [("@TANNERGOLDEN", "@tannergolden"), ("IMOGEN VALE", "@imogen-vale"),
+                                 ("@WRENCASTELLAN", "@wrencastellan"), ("JO HALLORAN", "@jhalloran")])
         text = ED.block("chess-hall", d, "assets/elements")
         self.assertNotIn("MALLORY", " ".join(p["name"] for p in C.hall_state(d)["people"]))
         for gone in ("github.com/imvale", "github.com/tokafor"):
@@ -646,6 +684,34 @@ class Measured(unittest.TestCase):
         self.assertEqual(ED.validate(section, out, subject="tannergolden"), [])
         merged = ED.merged(section, out, subject="tannergolden")["chess-hall"]
         self.assertEqual(merged["logins"]["1001"], "imogen-vale")
+
+    def test_only_github_s_404_takes_a_player_off_and_a_bad_minute_keeps_the_last_reading(self):
+        # GitHub refuses /user/1001 (a 403) and fails on /user/1002 past every retry; /user/1003 is a 404, a deleted
+        # account; /user/1004 answers.
+        def fault(**params):
+            raise ApiError("GitHub answered 502 for /user/1002: ")
+
+        paths = {"/user/1001": None, "/user/1002": fault, "/user/1004": account(1004, "jhalloran", "Jo Halloran"),
+                 "/user/583231": account(583231, "octocat")}
+        gh = FakeGitHub({}, paths=paths)
+        before = {"names": {"imogen-vale": "Imogen Vale", "tokafor": "Tomas Okafor"},
+                  "logins": {"1001": "imogen-vale", "1002": "", "1003": "wrencastellan"}}
+        measured = measure.winners(gh, KNOWN["people"], KNOWN["leaders"], before)
+        self.assertEqual(measured, {"names": {"imogen-vale": "Imogen Vale", "jhalloran": "Jo Halloran"},
+                                    "logins": {"1001": "imogen-vale", "1002": "", "1003": "", "1004": "jhalloran",
+                                               "583231": "octocat"}},
+                         "a refusal and a fault keep the last reading, a gone account staying gone; a 404 is gone")
+        self.assertEqual([p["login"] for p in C.hall_state(dict(KNOWN, **measured))["people"]],
+                         ["tannergolden", "imogen-vale", "jhalloran"])
+        first = measure.winners(FakeGitHub({}, paths=paths), KNOWN["people"], KNOWN["leaders"])
+        self.assertEqual(first["logins"], {"1003": "", "1004": "jhalloran", "583231": "octocat"},
+                         "with no reading before, an account GitHub didn't answer for is shown as its row has it")
+        self.assertEqual([p["login"] for p in C.hall_state(dict(KNOWN, **first))["people"]],
+                         ["tannergolden", "imvale", "tokafor", "jhalloran"])
+        section = {"chess-hall": {**KNOWN, "measure": {}}}
+        out = measure.measure(section, {"chess-hall": before}, git=None, gh=FakeGitHub({}, paths=paths),
+                              subject="tannergolden", today=None, notes=[])
+        self.assertEqual(out, {"chess-hall": measured}, "the run hands the last reading on")
 
     def test_a_name_that_poses_as_a_handle_or_that_no_tone_can_letter_is_left_for_the_login(self):
         names = {"imvale": "@tannergolden", "tokafor": "Иван Петров", "wrencastellan": "山田太郎",

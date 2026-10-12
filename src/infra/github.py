@@ -120,8 +120,9 @@ class GitHub:
             self._warn("GraphQL partial: " + msg)
         return data["data"]
 
-    def rest(self, path: str, accept: str = "application/vnd.github+json", **params):
-        """GET a REST path. Returns the parsed body, or None on 404 or on 403 (no permission)."""
+    def rest(self, path: str, accept: str = "application/vnd.github+json", missing=None, **params):
+        """GET a REST path. Returns the parsed body, or None on 403 (no permission), and on 404 `missing`, None
+        unless a caller that must tell a thing that is not there from one it may not read asks for something else."""
         url = path if path.startswith("http") else REST + path
         if params:
             url += ("&" if "?" in url else "?") + urllib.parse.urlencode(params)
@@ -131,7 +132,7 @@ class GitHub:
             if "answered 403" in str(exc):
                 return None
             raise
-        return None if status == 404 else data
+        return missing if status == 404 else data
 
     def rest_pages(self, path: str, per_page: int = 100, limit: int = 10, **params) -> list:
         """Every item of a REST list, a page at a time, up to `limit` pages."""

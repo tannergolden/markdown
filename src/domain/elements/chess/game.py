@@ -11,8 +11,8 @@ note, is turned away like any other mistake, and every number has a ceiling the 
 
 A row of the Hall of Fame may carry its player's account ID after its counts. A login can be given up and taken by
 someone else, so a run reads each ID's account as it is now (`logins`, measured beside the winners' `names`), and
-the row is shown and linked by that account's login; an ID that finds no account any more keeps the row's own login,
-which the README never links, since it may be someone else's by now.
+the row is shown and linked by that account's login. A player whose account is gone is left off the page, and the
+rows under them move up: the engine hands over more rows than the page has places for, so the places stay full.
 """
 from __future__ import annotations
 
@@ -64,6 +64,7 @@ ID = re.compile(r"[1-9][0-9]{0,15}")  # an account's ID as `logins` keys it
 LETTERED = ("sans-bold", "num")
 PEOPLE = 5  # the hall's places: a podium of three, and two more beside it
 LEADERS = 10  # the leaderboard's places for GitHub's players, under the house's own row
+DEPTH = 2  # each list may run to twice its places, so the rows under a player whose account is gone fill theirs
 
 
 def placement(fen: str) -> dict[str, str]:
@@ -276,8 +277,8 @@ def check_hall(d: dict) -> list[str]:
     if sum(counts[1:]) != counts[0]:
         errors.append(f"house, world and draws add up to {sum(counts[1:])} games, not the {counts[0]} played")
     people = d.get("people") or []
-    if not isinstance(people, list) or len(people) > PEOPLE:
-        return errors + [f"people is a list of at most {PEOPLE} winners"]
+    if not isinstance(people, list) or len(people) > PEOPLE * DEPTH:
+        return errors + [f"people is a list of at most {PEOPLE * DEPTH} winners"]
     shaped = [isinstance(row, list) and len(row) in (4, 5) and _text(row[0], LOGIN) and _number(row[1], 1, TALLY)
               and (row[2] == "" or _day(row[2])) and _number(row[3], 0, TALLY)
               and (len(row) == 4 or _number(row[4], 1, ACCOUNT)) for row in people]
@@ -300,8 +301,8 @@ def check_hall(d: dict) -> list[str]:
 def check_leaders(leaders) -> list[str]:
     """What the leaderboard's rows get wrong: the house's own row first, then GitHub's players by their wins and
     then their moves, each a login with the moves, wins and games they played, and their account's ID if known."""
-    if not isinstance(leaders, list) or len(leaders) > LEADERS + 1:
-        return [f"leaders is @{OWNER}'s row, then at most {LEADERS} of GitHub's players"]
+    if not isinstance(leaders, list) or len(leaders) > LEADERS * DEPTH + 1:
+        return [f"leaders is @{OWNER}'s row, then at most {LEADERS * DEPTH} of GitHub's players"]
     errors = []
     for i, row in enumerate(leaders):
         if not (isinstance(row, list) and len(row) in (4, 5) and _text(row[0], LOGIN)
@@ -325,16 +326,14 @@ def account(row: list) -> int | None:
     return uid if _number(uid, 1, ACCOUNT) else None
 
 
-def shown(row: list, logins: dict) -> tuple[str, bool]:
-    """The login a row of the Hall is shown by, and whether the README links it. A row with its account's ID is
-    shown by the login that account has now, as a run read it into `logins`; an ID that no longer finds an account
-    keeps the row's own login, unlinked, since that login may be someone else's by now. The house's row, a row
-    without an ID and one whose ID no run has read yet are shown by their own login."""
+def shown(row: list, logins: dict) -> str:
+    """The login a row of the Hall is shown by: for a row with its account's ID, the login that account has now, as
+    a run read it into `logins`, or "" when GitHub finds no account by that ID any more, and the row is left out.
+    The house's row, a row without an ID and one whose ID no run has read yet are shown by their own login."""
     login, uid = row[0], account(row)
     if login.casefold() == OWNER or uid is None or str(uid) not in logins:
-        return login, True
-    now = logins[str(uid)]
-    return (now, True) if now else (login, False)
+        return login
+    return logins[str(uid)]
 
 
 def initials(name: str, login: str) -> str:
@@ -347,30 +346,30 @@ def initials(name: str, login: str) -> str:
 
 
 def hall_state(d: dict) -> dict:
-    """The Hall of Fame as the sheet draws it: the series between the house and GitHub, and its winners in order;
-    and its leaderboard as the README lists it. Each player is shown by the login their account has now (`shown`),
-    with whether the README may link it, and the account's ID when the row carries one."""
+    """The Hall of Fame as the sheet draws it: the series between the house and GitHub, and its leading winners in
+    order; and its leaderboard as the README lists it. Each player is shown by the login their account has now
+    (`shown`), with the account's ID when the row carries one. A player whose account is gone is left out of both,
+    and the players under them move up into the places the page has: `PEOPLE` winners, and the house's row over
+    `LEADERS` of GitHub's players."""
     names, logins = d.get("names") or {}, d.get("logins") or {}
     people = []
     for row in d.get("people") or []:
-        (login, linked), (wins, last, games) = shown(row, logins), row[1:4]
+        login, (wins, last, games) = shown(row, logins), row[1:4]
+        if not login:
+            continue
         house = row[0].casefold() == OWNER
-        # an account that is gone is named by the login it had, never by a name that login may have now
-        name = (names.get(login) or names.get(login.casefold()) or "") if linked else ""
+        name = names.get(login) or names.get(login.casefold()) or ""
         # a winner with no name on their profile is named by their login, and the line under it says their side
         people.append({"login": login, "name": f"@{OWNER.upper()}" if house else (name or f"@{login}").upper(),
                        "handle": "the house  ·  white" if house else f"@{login}" if name else "github  ·  black",
                        "badge": f"@{login}",
                        "wins": wins, "house": house, "initials": initials(name, login), "last": last.upper(),
-                       "games": games, "id": account(row), "linked": linked})
-    leaders = []
-    for row in d.get("leaders") or []:
-        login, linked = shown(row, logins)
-        leaders.append({"login": login, "moves": row[1], "wins": row[2], "games": row[3],
-                        "house": row[0].casefold() == OWNER, "id": account(row), "linked": linked})
+                       "games": games, "id": account(row)})
+    leaders = [{"login": login, "moves": row[1], "wins": row[2], "games": row[3], "house": row[0].casefold() == OWNER,
+                "id": account(row)} for row in d.get("leaders") or [] if (login := shown(row, logins))]
     return {"games": _int(d, "games", 0, high=TALLY), "house": _int(d, "house", 0, high=TALLY),
-            "world": _int(d, "world", 0, high=TALLY), "draws": _int(d, "draws", 0, high=TALLY), "people": people,
-            "leaders": leaders}
+            "world": _int(d, "world", 0, high=TALLY), "draws": _int(d, "draws", 0, high=TALLY),
+            "people": people[:PEOPLE], "leaders": leaders[:LEADERS + 1]}
 
 
 def describe_hall(d: dict) -> dict:

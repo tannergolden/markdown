@@ -29,11 +29,11 @@ SHEETS = ("wide", "narrow", "still", "narrow-still")  # each sheet's files: wide
 
 
 def variants(kind: str, d: dict) -> tuple[str, ...]:
-    """The files a chess element writes: its sheets, and for the Hall of Fame a badge per winner, the leader's
-    with a still twin."""
+    """The files a chess element writes: its sheets, and for the Hall of Fame a badge per winner it shows, the
+    leader's with a still twin."""
     if kind == "chess" or check_hall(d):
         return SHEETS
-    n = len(d.get("people") or [])
+    n = len(hall_state(d)["people"])
     return SHEETS + (("badge-1", "badge-1-still") if n else ()) + tuple(f"badge-{i}" for i in range(2, n + 1))
 
 

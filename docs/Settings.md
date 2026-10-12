@@ -362,13 +362,13 @@ it does in plain words and a link to its ready-made issue, folded shut, then a
 most: nothing that would open a block of its own in the README, such as a
 heading, a list, a rule or a fence, and no image. The Hall of Fame takes the
 `games` played and the wins of the `house`, of GitHub (`world`) and the
-`draws`, and its five leading winners as `people`, ranked by their wins, each
-`[login, wins, last, games]`; `measure: {}` reads each winner's name from their
-profile, where the sheet can letter it in every theme (a name it cannot, or one
-with an `@` in it, leaves the winner named by their login), and its README block
-adds a badge for each, linking to it. Under the badges it folds shut the
-`leaders`: @tannergolden's own moves, wins and games on top, then GitHub's ten
-leading players by their wins and then their moves, each
+`draws`, and its leading winners as `people`, ranked by their wins, each
+`[login, wins, last, games]`; the sheet shows five. `measure: {}` reads each
+winner's name from their profile, where the sheet can letter it in every theme
+(a name it cannot, or one with an `@` in it, leaves the winner named by their
+login), and its README block adds a badge for each, linking to it. Under the
+badges it folds shut the `leaders`: @tannergolden's own moves, wins and games on
+top, then GitHub's ten leading players by their wins and then their moves, each
 `[login, moves, wins, games]` and linking to their profile. Both are drawn in
 the standard theme or the page's print, as one layout, whatever holiday or
 collection is up.
@@ -378,10 +378,14 @@ field, `[login, wins, last, games, id]` and `[login, moves, wins, games, id]`,
 since a login can be given up and then taken by someone else. `measure: {}`
 reads each such account by its ID and keeps the login it has now in `logins`,
 beside the names, as `{"id": "login"}`: the sheet, the badges and the
-leaderboard show and link the player by that login. An ID that finds no account
-any more is kept as `""`: its row keeps the login it was written with, and the
-README links it nowhere, since that login may be someone else's by now. A row
-without an ID is read by its login.
+leaderboard show and link the player by that login. An ID GitHub finds no
+account for any more, a deleted account, is kept as `""`, and its player is left
+off the page: the sheet, the badges and the leaderboard drop them, and the
+players under them move up. So that the places stay full, `people` may carry up
+to ten winners and `leaders` up to twenty of GitHub's players, twice the places
+the page shows. Only GitHub's 404 says an account is gone: one it does not
+answer for, refused, rate-limited or failing, stands as the last run read it. A
+row without an ID is read by its login.
 
 Every number has a ceiling the sheets have room to letter: the `game`, the
 `move`, the `players` and a leader's moves, wins and games up to 999,999,999;

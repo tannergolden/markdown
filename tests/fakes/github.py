@@ -16,8 +16,9 @@ class FakeGitHub:
     """Answers each query from `answers`, keyed by the query text; a callable answer gets the variables.
 
     A REST path is answered from `paths`, where a callable answer gets the
-    parameters, and else as a user from `users`, by the path's last part.
-    Anything else is a 404: None.
+    parameters and None is a refusal (a 403), and else as a user from `users`,
+    by the path's last part. Anything else is a 404: `missing`, None unless the
+    caller asks for something else, as `GitHub.rest` answers.
     """
 
     def __init__(self, answers: dict, users: dict | None = None, paths: dict | None = None):
@@ -35,14 +36,14 @@ class FakeGitHub:
         answer = self.answers[query]
         return answer(**variables) if callable(answer) else answer
 
-    def rest(self, path: str, **params):
+    def rest(self, path: str, missing=None, **params):
         self.calls += 1
         self.asked.append((path, params))
         if path in self.paths:
             answer = self.paths[path]
             return answer(**params) if callable(answer) else answer
         login = path.rsplit("/", 1)[-1]
-        return self.users.get(login)
+        return self.users.get(login, missing)
 
     def paged(self, query: str, path: tuple, page_size: int = 100, limit: int = 10, **variables) -> list:
         nodes, after = [], None

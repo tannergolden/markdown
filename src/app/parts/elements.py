@@ -191,32 +191,55 @@ def placard(gh, full: str) -> dict | None:
                       ["Stars", f"{repo.get('stargazers_count', 0):,}"]]}
 
 
-def winners(gh, people, leaders=None) -> dict:
+GONE = object()  # what a read answers for an account GitHub has no more: a 404, never a refusal, a limit or a fault
+
+
+def winners(gh, people, leaders=None, before=None) -> dict:
     """The Hall of Fame's players as their accounts stand now: `names`, each winner's name as their profile gives
     it, by the login it is shown under, where every tone's sheet can letter it (the rest keep their logins); and
     `logins`, for every row that carries its account's ID, the login that account has now, since a login can be
-    given up and taken by someone else, or "" when the ID finds no account any more. A row without an ID is read by
-    its login, and the house is never read at all."""
+    given up and taken by someone else, or "" when GitHub finds no account by that ID any more, and the page leaves
+    the player out. Only GitHub's 404 says an account is gone: one it does not answer for, refused, limited or
+    failing, stands as the run `before` read it, so a bad minute never takes a player off the page, and one no run
+    has read stands as its row has it. A row without an ID is read by its login, and the house is never read."""
     def rows(table) -> list:
         return [row for row in (table if isinstance(table, list) else []) if isinstance(row, list) and row
                 and isinstance(row[0], str) and CG.LOGIN.fullmatch(row[0]) and row[0].casefold() != CG.OWNER]
 
-    accounts: dict[int, dict] = {}  # each ID's account as GitHub has it now, read once; {} for one it cannot find
-    for row in rows(people) + rows(leaders):
-        uid = CG.account(row)
-        if uid is not None and uid not in accounts:
-            answer = gh.rest(f"/user/{uid}")
-            login = answer.get("login") if isinstance(answer, dict) else None
-            accounts[uid] = answer if isinstance(login, str) and CG.LOGIN.fullmatch(login) else {}
+    def read(path: str):
+        """GitHub's answer for a path: the body, GONE on a 404, and None when it said nothing to go by."""
+        try:
+            return gh.rest(path, missing=GONE)
+        except RuntimeError:  # the client's ApiError: a fault that outlasted its retries
+            return None
+
+    was = before if isinstance(before, dict) else {}
+    then = {uid: login for uid, login in (was["logins"] if isinstance(was.get("logins"), dict) else {}).items()
+            if isinstance(login, str) and (login == "" or CG.LOGIN.fullmatch(login))}
+    named = was["names"] if isinstance(was.get("names"), dict) else {}
+    accounts: dict[int, dict] = {}  # each ID's account as GitHub answered for it, read once; {} for one that is gone
+    logins: dict[str, str] = {}
+    for uid in dict.fromkeys(filter(None, map(CG.account, rows(people) + rows(leaders)))):
+        answer = read(f"/user/{uid}")
+        login = answer.get("login") if isinstance(answer, dict) else None
+        if answer is GONE or isinstance(login, str) and CG.LOGIN.fullmatch(login):
+            accounts[uid] = {} if answer is GONE else answer
+            logins[str(uid)] = login or ""
+        elif str(uid) in then:
+            logins[str(uid)] = then[str(uid)]  # unanswered: as the last run read it
     names = {}
     for row in rows(people):
         uid = CG.account(row)
-        profile = accounts[uid] if uid is not None else gh.rest(f"/users/{row[0]}") or {}
-        login = profile.get("login", "") if uid is not None else row[0]
-        name = " ".join(str(profile.get("name") or "").split())
+        if uid is None:
+            login, profile = row[0], read(f"/users/{row[0]}")
+        elif uid in accounts:
+            login, profile = logins[str(uid)], accounts[uid]
+        else:  # unanswered: the name the last run read for the login it stands under
+            login = logins.get(str(uid), row[0])
+            profile = {"name": named.get(login)}
+        name = " ".join(str((profile if isinstance(profile, dict) else {}).get("name") or "").split())
         if login and name and CG.named(name) and CG.letterable(name):
             names[login] = name
-    logins = {str(uid): answer.get("login", "") for uid, answer in accounts.items()}
     return {"names": names, "logins": logins} if logins else {"names": names}
 
 
@@ -298,7 +321,7 @@ def measure(section: dict, before: dict, *, git, gh, subject: str, today: dt.dat
                 if not out:
                     notes.append(f"element {eid}: cannot read {full}; drawn from the settings alone")
         elif kind == "chess-hall" and gh is not None:
-            out = winners(gh, spec.get("people"), spec.get("leaders"))
+            out = winners(gh, spec.get("people"), spec.get("leaders"), before.get(eid))
         if out:
             measured[eid] = out
     return measured

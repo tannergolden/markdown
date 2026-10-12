@@ -96,6 +96,13 @@ class GitHubTest(unittest.TestCase):
         self.assertIsNone(gh.rest("/repos/a/b"))
         self.assertIsNone(gh.rest("/repos/a/b/private"))
 
+    def test_a_caller_can_tell_a_404_from_a_refusal(self):
+        gone = object()
+        gh, script = client(http_error(404), http_error(403, "Forbidden"))
+        self.assertIs(gh.rest("/user/1", missing=gone), gone)
+        self.assertIsNone(gh.rest("/user/2", missing=gone))
+        self.assertNotIn("missing", script.requests[0].full_url)
+
     def test_a_refused_token_is_not_retried(self):
         gh, script = client(http_error(401))
         with self.assertRaisesRegex(ApiError, "refused the token"):

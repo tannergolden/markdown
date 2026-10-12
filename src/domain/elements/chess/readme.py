@@ -10,7 +10,7 @@ grouped by piece, each group named for as many of the pieces as have a move in i
 its sheet with a row of badges, one per winner, each linking to that player's profile, since the names in a sheet
 cannot be clicked either; then the leaderboard, folded shut like the moves: the house's own moves, wins and games on
 top, and GitHub's leading players under it. Each player is linked by the login their account has now, and one whose
-account is gone is not linked at all, since the login it had may be someone else's.
+account is gone is left out of both, the players under them moving up.
 """
 from __future__ import annotations
 
@@ -82,8 +82,8 @@ def text(d: dict) -> tuple[str, str]:
 
 
 def badges(eid: str, d: dict, rel: str) -> str:
-    """A badge per winner, each in a link to that player's profile, by the login their account has now, and unlinked
-    when it is gone; the leader's glints, with a still twin for anyone who asks for reduced motion."""
+    """A badge per winner, each in a link to that player's profile by the login their account has now; the
+    leader's glints, with a still twin for anyone who asks for reduced motion."""
     people = hall_state(d)["people"]
     if not people:
         return ""
@@ -94,16 +94,14 @@ def badges(eid: str, d: dict, rel: str) -> str:
         still = (f'<source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" '
                  f'srcset="{base}-still-dark.svg"><source media="(prefers-reduced-motion: reduce)" '
                  f'srcset="{base}-still-day.svg">') if i == 0 else ""
-        pic = (f'<picture>{still}<source media="(prefers-color-scheme: dark)" srcset="{base}-dark.svg"><img '
-               f'alt="{escape(alt)}" src="{base}-day.svg"></picture>')
-        lines.append(f'<a href="https://github.com/{p["login"]}">{pic}</a>' if p["linked"] else pic)
+        lines.append(f'<a href="https://github.com/{p["login"]}"><picture>{still}<source media="(prefers-color-scheme: '
+                     f'dark)" srcset="{base}-dark.svg"><img alt="{escape(alt)}" src="{base}-day.svg"></picture></a>')
     return "\n".join(lines + ["", "</div>"])
 
 
 def leaderboard(d: dict) -> str:
     """The leaderboard, folded shut under one line: the house's own row on top, then GitHub's leading players by
-    their wins and then their moves, each linking to their profile by the login their account has now, or unlinked
-    when it is gone."""
+    their wins and then their moves, each linking to their profile by the login their account has now."""
     rows = hall_state(d)["leaders"]
     if not rows:
         return ""
@@ -116,8 +114,8 @@ def leaderboard(d: dict) -> str:
     lines = ["|  | Player | Moves | Wins | Games |", "| :-: | :--- | --: | --: | --: |"]
     for i, r in enumerate(rows):
         place = SIGN["white"]["king"] if r["house"] else MEDALS[i - 1] if i <= len(MEDALS) else str(i)
-        who = f"[@{r['login']}](https://github.com/{r['login']})" if r["linked"] else f"@{r['login']}"
-        cells = [who, f"{r['moves']:,}", f"{r['wins']:,}", f"{r['games']:,}"]
+        cells = [f"[@{r['login']}](https://github.com/{r['login']})", f"{r['moves']:,}", f"{r['wins']:,}",
+                 f"{r['games']:,}"]
         lines.append(f"| {place} | " + " | ".join(f"**{c}**" if r["house"] else c for c in cells) + " |")
     rule = ("A win is a mating move of one's own; a move or a mate the Arbiter plays, for either side, counts for"
             " nobody.")
