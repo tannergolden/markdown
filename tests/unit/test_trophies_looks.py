@@ -107,7 +107,7 @@ class TheLookFollowsThePage(unittest.TestCase):
         self.assertEqual(p["look"], "blueprint")
         self.assertTrue(p["notes"] and "the Halloween set cannot letter" in p["notes"][0], p["notes"])
 
-    def test_a_repositorys_own_print_draws_the_case_in_its_own_colours(self):
+    def test_a_repository_with_its_own_print_draws_the_case_in_those_colours(self):
         try:
             prints.use(CATALOGUE, {"goldprint": {"line": "#B8860B", "ink": "#5C4400", "sheet": "#7A5B00"}})
             p = planned("goldprint")
