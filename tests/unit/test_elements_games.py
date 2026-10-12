@@ -435,6 +435,19 @@ class TicTacToe(unittest.TestCase):
             with self.subTest(skin=type(sk).__name__, dark=sk.dark):
                 self.assertEqual(boards[0], boards[1])
 
+    def test_what_is_set_on_a_tray_reads_by_night(self):
+        # a tray is the board's light square: by night its letters are dark, as the square's own would be, where the
+        # card's light letters would vanish into it
+        P.PAIRS.clear()
+        for d in (TTT_HOUSE, TTT_DRAWN):
+            E.draw("tictactoe", d, STANDARD, "dark", "still")
+        on_tray = {(fill, ground) for fill, ground, what in P.PAIRS if what == "on a tray"}
+        self.assertEqual(on_tray, {("charcoal", "ash")})
+        self.assertGreaterEqual(P.contrast("charcoal", "ash"), 4.5)
+        P.PAIRS.clear()
+        E.draw("tictactoe", TTT_HOUSE, STANDARD, "day", "still")
+        self.assertFalse([p for p in P.PAIRS if p[2] == "on a tray"], "by day a tray's letters are the card's")
+
     def test_a_threat_asks_the_side_to_move_to_block_unless_it_can_win_first(self):
         st = TTT.state(TTT_GITHUB)
         self.assertEqual((st["to_move"], st["alert"], st["last"]["number"]), ("github", "must block", 3))

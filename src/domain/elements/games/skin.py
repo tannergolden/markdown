@@ -14,11 +14,14 @@ each, so the four games are one hand in either material:
   a side's medallion     the disc a side's mark is set in: enamel of the other colour, or a print's dial
   what must be looked at a square the side to move must answer, glowing red as chess's king in check does, or
                          clouded as a print clouds it, and the ring a landing move sends out
+  letters on a tray      set as anywhere on the sheet, but by night in the standard theme dark on the tray's light
+                         square, where the card's light letters would vanish
 """
 from __future__ import annotations
 
 from ...canvas import c
 from ...lettering import f1, fx
+from ...standard import elements as SE
 from ..chess import motion as M
 from ..chess.layout import fitting
 from ..chess.skins import Print as ChessPrint
@@ -57,6 +60,13 @@ class Hand:
     def paint(self, material: str) -> tuple[str, str, str]:
         """A side's material as palette tokens: its fill, its edge and the colour of what is cut into it."""
         return self.material[material]
+
+    def on_tray(self, cv, s, x, y, size, *, caps=False, anchor="start", ls=0.0) -> str:
+        """Letters set on a tray, the rank a game's count stands on, as they are set anywhere on the sheet: a cell
+        a side would win on, or that there is none."""
+        if caps:
+            return self.caps(cv, s, x, y, size, anchor=anchor, ls=ls)
+        return self.say(cv, s, x, y, size, anchor=anchor, ls=ls)
 
     # --- what every board marks
     def ripple_at(self, cx: float, cy: float, r0: float, r1: float, at: float, *, clip: str = "") -> str:
@@ -101,6 +111,14 @@ class Standard(Hand, ChessStandard):
     def __init__(self, theme: str):
         super().__init__(theme)
         self.material = {"light": self.SIDE["white"], "dark": self.SIDE["black"]}
+
+    def on_tray(self, cv, s, x, y, size, *, caps=False, anchor="start", ls=0.0) -> str:
+        """Letters set on a tray. A tray is the board's light square, so by night, when the card is dark and its
+        letters light, what is set on a tray is dark, as on the square itself: charcoal on ash."""
+        if not self.dark:
+            return super().on_tray(cv, s, x, y, size, caps=caps, anchor=anchor, ls=ls)
+        return SE.say(cv, str(s).upper() if caps else str(s), x=x, y=y, size=size, fill="charcoal", ground="ash",
+                      anchor=anchor, ls=ls, what="on a tray")
 
     def medal(self, cv, cx: float, cy: float, r: float, material: str) -> str:
         """A side's medallion: enamel of the colour that sets its pieces off, as chess sets its kings."""

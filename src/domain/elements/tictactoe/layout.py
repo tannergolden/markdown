@@ -201,7 +201,8 @@ def count(cv, sk, st, x0, x1, y, *, small=False) -> float:
                  for cell in st["threats"][side]]
     if not items:
         sk.tray(cv, px - 4, yy - 1, 58, mini + 2)
-        cv.add(sk.caps(cv, "none" if res else "none yet", px + 25, yy + mini / 2 + 3, 7, ls=.5, anchor="middle"))
+        cv.add(sk.on_tray(cv, "none" if res else "none yet", px + 25, yy + mini / 2 + 3, 7, caps=True, ls=.5,
+                          anchor="middle"))
         return yy + mini + 7
     widths = [(mini * .84 if mk else 0) + sk.width(cell, "bold", 9.5) + 9 for mk, cell in items]
     # as many as the row holds, and how many more there are after them
@@ -219,7 +220,7 @@ def count(cv, sk, st, x0, x1, y, *, small=False) -> float:
             b = mini * 1.06
             cv.add(sk.pen_mark(cv, mk, material(mk), px - b * .18, yy + (mini - b) / 2, b, shadow=False, edge=.9))
             tx = px + mini * .84
-        cv.add(sk.say(cv, cell, tx, yy + mini / 2 + sk.cap(9.5) / 2, 9.5))
+        cv.add(sk.on_tray(cv, cell, tx, yy + mini / 2 + sk.cap(9.5) / 2, 9.5))
         px += w
     return yy + mini + 7
 
