@@ -10,7 +10,7 @@ the room the set's frame leaves, meeting no other word and no piece, at the limi
 cannot letter, or draw within its budget, is drawn whole in the page's own look, and chess's own Hall keeps it
 always. Every board is built, and every podium cut, of stuffs the set names in its own palette, no two sets of a year
 stand their winners on the same podium, and every tag on a game's sheet is the set's own, never a certificate's
-ribbon."""
+ribbon. Nothing on a set's board helps a player choose, and Tic-Tac-Toe counts each side's marks left."""
 from __future__ import annotations
 
 import re
@@ -148,6 +148,27 @@ class EverySet(unittest.TestCase):
                 for (kind, variant, t), (_, inks) in drawn(key).items():
                     if t == theme and not variant.startswith("badge-"):
                         self.assertLessEqual(inks, own | labels, (key, kind, variant, theme))
+
+    def test_a_set_draws_nothing_that_helps_a_choice_and_tic_tac_toe_counts_its_marks_left(self):
+        # As in every look: no cell or hole to block and no word of perfect play, and where chess counts what each side
+        # took, Tic-Tac-Toe counts each side's marks left, as Connect Four counts its discs.
+        said: list = []
+        text = Pix.text
+
+        def recorded(self, x, y, s, c, *a, **k):
+            said.append(str(s))
+            return text(self, x, y, s, c, *a, **k)
+        for key in TWO:
+            held = pixelsets.drawn_by(key)
+            for kind in ("tictactoe", "connectfour"):
+                for variant in ("wide", "narrow"):
+                    said.clear()
+                    with mock.patch.object(Pix, "text", recorded):
+                        held.game(kind, GAMES[kind], E.THEMES["day"], variant)
+                    words = " ".join(said).upper()
+                    for hint in ("BLOCK", "PERFECT PLAY", "WINS NEXT", "FROM HERE", "BEST PLAY"):
+                        self.assertNotIn(hint, words, (key, kind, variant))
+                    self.assertIn("MARKS LEFT" if kind == "tictactoe" else "DISCS LEFT", words, (key, kind, variant))
 
     def test_a_collections_design_letters_its_games_in_its_hands_two_inks(self):
         for key in collections.COLLECTIONS["medieval"].keys:
