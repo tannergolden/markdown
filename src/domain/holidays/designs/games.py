@@ -21,7 +21,8 @@ lettering; its plates are the set's tags; and the board is built of the set's ow
                colour the set does not have; lit from the upper left
   the pieces   ivory and ebony in every set (`pieces`), as the trophies are struck in one set of metals: the house's
                always ivory, GitHub's ebony, whoever moves first
-  the marks    the last move's two squares in the set's accent; what the side to move must answer (a king in check,
+  the marks    the last move's two squares framed in the set's accent, the square it landed on washed in the
+               trophies' gold as a lamp would light it; what the side to move must answer (a king in check,
                a cell or a column to block, a man that must jump) glowing in the set's red; either, where it would
                be lost on a square of its colour, in the first of the set's inks that stands clear of both
   the motion   the last move is played again as the file opens, in the engine's discrete steps: a chessman steps
@@ -49,7 +50,7 @@ from . import pieces as PC
 from .badges import _lab
 from .materials import Podium, Stuff, surface
 from .banners import NARROW, WIDE
-from .trophies import METAL_TOKENS
+from .trophies import METAL_TOKENS, METALS
 
 TAG = 9                 # a tag's height, as every set draws one
 LEAD = 9                # from one line of a move's words to the next, in the 5x7 face with its descenders
@@ -256,9 +257,12 @@ class Games:
         return self.title_text(p, x, y, s, night, scale)
 
     def game_marks(self, night: bool) -> dict:
-        """The marks a board carries: the last move's (`last`, the set's accent), and what the side to move must
-        answer (`alert`, the set's red). A mark too near the colour of either square for its square to show it, as a
-        red accent on a red board, takes instead the first of the set's inks that stands clear of both."""
+        """The marks a board carries: the last move's (`last`, the set's accent), the light its square is washed in
+        (`glow`, the trophies' gold in every set, as the standard theme lights a move in amber, never the set's
+        accent: by day that is an ink for words, and washed over a square it would shade it, not light it), and what
+        the side to move must answer (`alert`, the set's red). A mark too near the colour of either square for its
+        square to show it, as a red accent on a red board, takes instead the first of the set's inks that stands
+        clear of both."""
         b = self.game_board(night)
         k = self.ink(night)
         squares = (b["light"], b["dark"])
@@ -267,7 +271,7 @@ class Games:
         red = self.badge_states()["red"][0]
         alert = _clear_of(red, squares + (last,), (_hued(tokens, 25, squares + (last,), 60 if night else 45),
                                                    k["title"], k["body"]))
-        return {"last": last, "alert": alert}
+        return {"last": last, "alert": alert, "glow": METALS[3][4]}
 
     @property
     def game_tokens(self) -> frozenset:

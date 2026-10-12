@@ -271,7 +271,7 @@ class Chess(Game):
             tx_, ty_ = at(last["to"])
             for y in range(ty_, ty_ + s):
                 for x in range(tx_, tx_ + s):
-                    p.px(x, y, f"{marks['last']}:0.4")
+                    p.px(x, y, f"{marks['glow']}:0.5")
             p.box(tx_ + 1, ty_ + 1, s - 2, s - 2, marks["last"])
         if st["check"]:
             kx, ky = at(st["check"])
@@ -385,7 +385,7 @@ class Checkers(Game):
             tx_, ty_ = at(last["path"][-1])
             for y in range(ty_, ty_ + s):
                 for x in range(tx_, tx_ + s):
-                    p.px(x, y, f"{marks['last']}:0.4")
+                    p.px(x, y, f"{marks['glow']}:0.5")
             p.box(tx_ + 1, ty_ + 1, s - 2, s - 2, marks["last"])
             if last["jumped"]:
                 # the jump's path, dotted from landing to landing, and where each man it took stood
@@ -758,7 +758,7 @@ class TicTacToe(Game):
             x, y = cell(last["cell"])
             for yy in range(y, y + c):
                 for xx in range(x, x + c):
-                    p.px(xx, yy, f"{marks['last']}:0.35")
+                    p.px(xx, yy, f"{marks['glow']}:0.45")
             p.box(x + 1, y + 1, c - 2, c - 2, marks["last"])
         if not st["result"]:
             for line in TT.LINES:
