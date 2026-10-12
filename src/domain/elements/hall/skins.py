@@ -22,7 +22,7 @@ from ...standard import elements as SE
 from ...standard import pieces as P
 from ...standard.pieces import Chip
 from ..chess import motion as M
-from ..chess.skins import MEDALS, Plate
+from ..chess.skins import MEDALS, Plate, material
 from ..chess.skins import Print as ChessPrint
 from ..chess.skins import Standard as ChessStandard
 from . import marks as K
@@ -274,11 +274,12 @@ class Print(Pieces, ChessPrint):
         return "".join(out)
 
     def badge_file(self, i, p) -> str:
-        """A winner's own badge: the kit's blueprint plate, on its own drafting paper; the leader's catches the
-        light every seven seconds, as the standard theme's does."""
+        """A winner's own badge: the kit's blueprint plate, on its own drafting paper, its wins in the material its
+        place stands in on the podium; the leader's catches the light every seven seconds, as the standard theme's
+        does."""
         col = self.col
         plate = Plate(self, f"#{i + 1}  {p['badge']}", f"{p['wins']} win" + ("s" if p["wins"] != 1 else ""),
-                      icon="trophy" if i == 0 else "medal", size=11)
+                      icon="trophy" if i == 0 else "medal", size=11, medal=material(i))
         cv = Canvas(plate.w, plate.h, title=f"Hall of Fame: {p['badge']}",
                     desc=f"Number {i + 1}, {p['badge']}, {p['wins']} wins",
                     stamp=f"{self.tone} elements hall-of-fame badge {self.theme}")

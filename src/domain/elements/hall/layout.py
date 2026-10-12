@@ -358,7 +358,7 @@ def mentions(cv, sk, h, x0, x1, y, start=3, *, small=False) -> float:
         col, row = i % per, i // per
         x, yy = x0 + col * colw, y + row * step
         cv.add(sk.number(cv, start + i + 1, x, yy, 18))
-        chip = sk.chip("wins", str(p["wins"]), size=7.5, lab="label", msg="count")
+        chip = sk.chip("wins", str(p["wins"]), size=7.5, lab="label", msg="place")
         cx = x + colw - chip.w - (0 if small or col else 14)
         if small:
             named(cv, sk, p, x + 28, yy + 9, cx - GAP - x - 28)
@@ -379,7 +379,7 @@ def one_row(p, room: float) -> bool:
     """Whether a place's wins in each game stand on one row beside its name, which keeps `NAME_ROOM` of `room`, the
     width its column leaves after its number: measured in the standard theme's letters and badge, whatever the tone."""
     std = Standard("day")
-    chip = std.chip("wins", str(p["wins"]), size=7.5, lab="label", msg="count")
+    chip = std.chip("wins", str(p["wins"]), size=7.5, lab="label", msg="place")
     return room - chip.w - by_game_width(std, p, 12) - GAP >= NAME_ROOM
 
 

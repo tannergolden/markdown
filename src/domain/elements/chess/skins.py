@@ -33,6 +33,14 @@ from .shapes import BASE_SPEC, DETAIL, DOTS, FOOT, PARTS, SPEC
 
 BAND, PAD = 40, 20
 MEDALS = ("amber", "ash", "clay")
+# What a print draws each place's medal in, as its podium draws the blocks: the first solid, the second lined, the
+# third open; a place after the podium has no medal, and is plain.
+MATERIALS = ("solid", "lined", "open")
+
+
+def material(i: int) -> str:
+    """What a print draws place `i` (0 the first) in: the podium's materials for the first three, then plain."""
+    return MATERIALS[i] if i < len(MATERIALS) else "plain"
 FACES = ("crimson", "tangerine", "ocean", "forest", "purple", "magenta")
 
 
@@ -353,7 +361,8 @@ class Standard:
     def chip(self, label, message="", *, icon=None, size=11.0, lab="label", msg="count") -> StdChip:
         labs = {"label": self.std["label"], "turn": self.std["label"], "accent": P.ACCENT, "safe": "amber",
                 "medal1": MEDALS[0], "medal2": MEDALS[1], "medal3": MEDALS[2]}
-        msgs = {"alert": "crimson", "count": "slate", "medal1": MEDALS[0], "medal2": MEDALS[1], "medal3": MEDALS[2]}
+        msgs = {"alert": "crimson", "count": "slate", "place": "slate", "medal1": MEDALS[0], "medal2": MEDALS[1],
+                "medal3": MEDALS[2]}
         return StdChip(label, message, icon=icon, size=size, lab=labs[lab], msg=msgs[msg])
 
     def glint(self, cv, solid=True) -> tuple[str, str]:
@@ -517,10 +526,13 @@ def _legible(ink: str, paper: str, base: float, aim: float = 4.6) -> float:
 class Plate:
     """A print's badge, as the kit's blueprint plates draw one, measured before it is drawn: the label lettered on
     the paper inside the plate's frame, the value on a solid block of the print. A plate with no value is a note,
-    in outline, or a statement, solid; either way its proportions are a badge's, 28 tall at 11 px."""
+    in outline, or a statement, solid; either way its proportions are a badge's, 28 tall at 11 px. A winner's badge
+    draws its value in its place's material (`medal`, one of `MATERIALS` or "plain"), as the podium draws the
+    blocks, so a row of badges reads first, second and third as the standard theme's gold, silver and bronze do."""
 
-    def __init__(self, sk, label: str, message: str = "", *, icon=None, size: float = 11.0, solo: str = "solid"):
-        self.sk, self.icon = sk, icon
+    def __init__(self, sk, label: str, message: str = "", *, icon=None, size: float = 11.0, solo: str = "solid",
+                 medal: str = "solid"):
+        self.sk, self.icon, self.medal = sk, icon, medal
         self.label, self.message = label.upper(), message.upper()
         k = size / 11
         self.h, self.pad, self.isz, self.gap = 28 * k, 12 * k, 15 * k, 6 * k
@@ -555,11 +567,30 @@ class Plate:
         return "".join(out)
 
     def draw_message(self, cv, x, y, what="badge") -> str:
+        """The value: on a solid block of the print; or in a winner's place's material, lined with the value on a
+        plate of paper so it reads across the lining, open and ruled twice as the third's medal is ringed, or plain,
+        open and ruled once. An open block shares the label's right-hand rule."""
         col = self.sk.col
-        return (f'<rect x="{f1(x)}" y="{f1(y)}" width="{f1(self.mw)}" height="{f1(self.h)}" fill="{c(col["line"])}"/>'
-                + cv.L.text(self.message, face="num", size=self.size, x=x + self.mw / 2,
-                            y=y + self.h / 2 + cap_height("num", self.size) / 2, anchor="middle", ls=self.ls,
-                            fill=c(self.sk.on_block)))
+        line, cap = c(col["line"]), cap_height("num", self.size)
+
+        def value(ink: str) -> str:
+            return cv.L.text(self.message, face="num", size=self.size, x=x + self.mw / 2, y=y + self.h / 2 + cap / 2,
+                             anchor="middle", ls=self.ls, fill=c(ink))
+        if self.medal == "solid":
+            return (f'<rect x="{f1(x)}" y="{f1(y)}" width="{f1(self.mw)}" height="{f1(self.h)}" fill="{line}"/>'
+                    + value(self.sk.on_block))
+        box = f'x="{f1(x - .5)}" y="{f1(y + .5)}" width="{f1(self.mw)}" height="{f1(self.h - 1)}"'
+        if self.medal == "lined":
+            pw, ph = width(self.message, "num", self.size, self.ls) + 10, cap + 9
+            return (f'<rect {box} fill="url(#{self.sk.hatch(cv, "bar")})" stroke="{line}" stroke-opacity=".9"/>'
+                    f'<rect x="{f1(x + (self.mw - pw) / 2)}" y="{f1(y + (self.h - ph) / 2)}" width="{f1(pw)}" '
+                    f'height="{f1(ph)}" fill="{c(col["paper"])}" stroke="{line}" stroke-width=".8"/>'
+                    + value(col["ink"]))
+        out = f'<rect {box} fill="none" stroke="{line}" stroke-opacity=".9"/>'
+        if self.medal == "open":
+            out += (f'<rect x="{f1(x + 2)}" y="{f1(y + 2.5)}" width="{f1(self.mw - 5)}" height="{f1(self.h - 5)}" '
+                    f'fill="none" stroke="{line}" stroke-width=".6" stroke-opacity=".9"/>')
+        return out + value(col["ink"])
 
     def draw(self, cv, x, y, what="badge") -> str:
         return self.draw_label(cv, x, y, what) + (self.draw_message(cv, x + self.lw, y, what) if self.message else "")
@@ -944,7 +975,9 @@ class Print:
                 f'stroke-width="2.2" transform="rotate(-90 {f1(cx)} {f1(cy)})"' + dash)
 
     def chip(self, label, message="", *, icon=None, size=11.0, lab="label", msg="count") -> Plate:
-        return Plate(self, label, message, icon=icon, size=size, solo="outline" if lab in ("safe", "label") else "solid")
+        """A plate; a place after the podium's wins (`msg` "place") plain, as its badge is, where a count is solid."""
+        return Plate(self, label, message, icon=icon, size=size,
+                     solo="outline" if lab in ("safe", "label") else "solid", medal="plain" if msg == "place" else "solid")
 
     def glint(self, cv, solid=True) -> tuple[str, str]:
         """A band across the turn plate: white across a dark block, the sheet's colour across a light one (a white
@@ -1036,11 +1069,12 @@ class Print:
                 + self.say(cv, str(n), x + r, y + r + self.cap(size * .62) / 2, size * .62, anchor="middle"))
 
     def badge_file(self, i, p) -> str:
-        """A winner's own badge: the kit's blueprint plate, on its own drafting paper; the leader's catches the
-        light every seven seconds, as the standard theme's does."""
+        """A winner's own badge: the kit's blueprint plate, on its own drafting paper, its wins in the material its
+        place stands in on the podium; the leader's catches the light every seven seconds, as the standard theme's
+        does."""
         col = self.col
         plate = Plate(self, f"#{i + 1}  {p['badge']}", f"{p['wins']} win" + ("s" if p["wins"] != 1 else ""),
-                      icon="trophy" if i == 0 else "medal", size=11)
+                      icon="trophy" if i == 0 else "medal", size=11, medal=material(i))
         cv = Canvas(plate.w, plate.h, title=f"Hall of Fame: {p['badge']}",
                     desc=f"Number {i + 1}, {p['badge']}, {p['wins']} wins", stamp=f"{self.tone} elements chess hall badge {self.theme}")
         grid = cv.uid("p")

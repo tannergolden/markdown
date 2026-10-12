@@ -610,7 +610,7 @@ def mentions(cv, sk, h, x0, x1, y, start=3) -> float:
         col, row = i % 2, i // 2
         x, yy = x0 + col * colw, y + row * 34
         cv.add(sk.number(cv, start + i + 1, x, yy, 18))
-        chip = sk.chip("wins", str(p["wins"]), size=7.5, lab="label", msg="count")
+        chip = sk.chip("wins", str(p["wins"]), size=7.5, lab="label", msg="place")
         cx = x + colw - chip.w - 14
         named(cv, sk, p, x + 28, yy + 9, cx - GAP - x - 28, 9, .6, 7, .5, 12)
         cv.add(chip.draw(cv, cx, yy - 2, "wins"))
@@ -683,7 +683,7 @@ def hall_sheet(sk, h: dict, title: str, desc: str, variant: str = "wide") -> str
         for i, p in enumerate(rest):
             yy = y + 6 + i * 34
             cv.add(sk.number(cv, 4 + i, PAD, yy, 18))
-            chip = sk.chip("wins", str(p["wins"]), size=7.5, lab="label", msg="count")
+            chip = sk.chip("wins", str(p["wins"]), size=7.5, lab="label", msg="place")
             named(cv, sk, p, PAD + 28, yy + 9, W - PAD - chip.w - GAP - PAD - 28, 9, .6, 7, .5, 12)
             cv.add(chip.draw(cv, W - PAD - chip.w, yy - 2, "wins"))
     M.risen(cv, 1.25, rest_rows)
