@@ -127,12 +127,13 @@ class Stronghold(CollectionSet):
     def tag(self, p, x, y, w, h, night):
         """The gules block a tag's gold letters sit on: lit along its top, shaded along its foot. The ribbon
         under a certificate's seal, the one tag set low on its sheet, is a banner with forked tails, as long
-        as its column has room for them."""
+        as its column has room for them.
+        No tag on a game's sheet, whose tags are all plain (`plain_tags`), is ever that ribbon."""
         R = RAMP["gules"]
         p.rect(x, y, w, h, R[2])
         p.hline(x, x + w, y, R[4])
         p.hline(x, x + w, y + h - 1, R[0])
-        if y >= 30 and h >= 9:
+        if y >= 30 and h >= 9 and not getattr(p, "plain_tags", False):
             tail = min(5, x - 6, (100 if p.w == WIDE else 88) - 2 - (x + w))
             if tail >= 3:
                 A.banner_tails(p, x, y, w, h, night, tail=tail)

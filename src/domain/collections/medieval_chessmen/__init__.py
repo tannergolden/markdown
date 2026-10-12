@@ -127,9 +127,10 @@ class Chessmen(CollectionSet):
     def tag(self, p, x, y, w, h, night):
         """A label of bone stained red, its upper edge catching the light. The ribbon under a certificate's seal, the
         one tag set low on its sheet, is a band of tablet weaving, its edges woven in ivory, its ends falling either
-        side cut in forks where its column has room for them."""
+        side cut in forks where its column has room for them.
+        No tag on a game's sheet, whose tags are all plain (`plain_tags`), is ever that ribbon."""
         p.rect(x, y, w, h, RD[2])
-        if y >= 30 and h >= 9:
+        if y >= 30 and h >= 9 and not getattr(p, "plain_tags", False):
             tail = min(4, x - 6, (100 if p.w == 415 else 88) - 2 - (x + w))
             A.ribbon_band(p, x, y, w, h, night, tail=tail if tail >= 3 else 0)
             return

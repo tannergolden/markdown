@@ -144,8 +144,9 @@ class Tournament(CollectionSet):
     def tag(self, p, x, y, w, h, night):
         """A block of dark green silk a tag's gold letters sit on, its upper edge catching the light. The ribbon
         under a certificate's seal, the one tag set low on its sheet, is the lady's favour of blue silk with its
-        ends cut in forks, as long as its column has room for them."""
-        if y >= 30 and h >= 9:
+        ends cut in forks, as long as its column has room for them.
+        No tag on a game's sheet, whose tags are all plain (`plain_tags`), is ever that ribbon."""
+        if y >= 30 and h >= 9 and not getattr(p, "plain_tags", False):
             p.rect(x, y, w, h, RAMP["azure"][1])
             p.hline(x, x + w, y, G[4])
             p.hline(x, x + w, y + h - 1, G[2])

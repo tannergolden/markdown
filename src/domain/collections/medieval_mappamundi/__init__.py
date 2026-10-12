@@ -137,8 +137,10 @@ class MappaMundi(CollectionSet):
     def tag(self, p, x, y, w, h, night):
         """A block of vermilion a tag's letters sit on, as a chart's legend rubricates its keys: lit along its top
         and dark along its foot. The ribbon under a certificate's seal, the one tag set low on its sheet, is a
-        banderole with its tails folded back."""
-        if y >= 30 and h >= 9 and x >= 9 and x + w + 5 <= (100 if p.w == WIDE else 88) - 2:
+        banderole with its tails folded back.
+        No tag on a game's sheet, whose tags are all plain (`plain_tags`), is ever that ribbon."""
+        if (y >= 30 and h >= 9 and x >= 9 and x + w + 5 <= (100 if p.w == WIDE else 88) - 2
+                and not getattr(p, "plain_tags", False)):
             A.ribbon(p, x, y, w, h, night)
             return
         p.rect(x, y, w, h, VERM[2])

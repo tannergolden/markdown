@@ -138,11 +138,13 @@ class Longship(CollectionSet):
 
     def tag(self, p, x, y, w, h, night):
         """The block of red paint a tag's cream letters sit on: lit along its top, shaded along its foot.
-        The ribbon under a certificate's seal, the one tag set low on its sheet, is a woven braid."""
+        The ribbon under a certificate's seal, the one tag set low on its sheet, is a woven braid.
+        No tag on a game's sheet, whose tags are all plain (`plain_tags`), is ever that ribbon."""
         p.rect(x, y, w, h, RED[2])
         p.hline(x, x + w, y, RED[4])
         p.hline(x, x + w, y + h - 1, RED[0])
-        if y >= 30 and h >= 9 and x >= 9 and x + w + 4 <= (100 if p.w == WIDE else 88) - 2:
+        if (y >= 30 and h >= 9 and x >= 9 and x + w + 4 <= (100 if p.w == WIDE else 88) - 2
+                and not getattr(p, "plain_tags", False)):
             A.braid(p, x, y, w, h, night)
 
     def title_text(self, p, x, y, s, night, scale):

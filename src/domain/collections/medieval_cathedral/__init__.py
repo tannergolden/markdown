@@ -114,12 +114,13 @@ class Cathedral(CollectionSet):
 
     def tag(self, p, x, y, w, h, night):
         """A band of violet silk a tag's gold letters sit on, lit along its top and shaded along its foot. The
-        ribbon under a certificate's seal, the one tag set low on its sheet, has its ends falling either side."""
+        ribbon under a certificate's seal, the one tag set low on its sheet, has its ends falling either side.
+        No tag on a game's sheet, whose tags are all plain (`plain_tags`), is ever that ribbon."""
         V = RAMP["violet"]
         p.rect(x, y, w, h, V[2])
         p.hline(x, x + w, y, V[4])
         p.hline(x, x + w, y + h - 1, V[0])
-        if y >= 30 and h >= 9:
+        if y >= 30 and h >= 9 and not getattr(p, "plain_tags", False):
             tail = min(4, x - 6, (100 if p.w == WIDE else 88) - 2 - (x + w))
             if tail >= 3:
                 A.silk_tails(p, x, y, w, h, night, tail=tail)

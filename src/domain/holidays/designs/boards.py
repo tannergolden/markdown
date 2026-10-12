@@ -852,7 +852,7 @@ class TicTacToe(Game):
         else:
             plate, say = "draw", "best play by both sides draws"
         cw = h.chip(p, px_, y + 1, plate, night)
-        h.say(p, px_ + cw + 5, y + 4, say.upper(), k["muted"], room=x1 - px_ - cw - 5)
+        h.aside(p, px_ + cw + 5, x1, y + 1, say.upper(), k["muted"])
         y += 15
         h.say(p, x0, y + 4, "THE LINE" if res else "WINS NEXT", k["muted"])
         if res:

@@ -15,9 +15,10 @@ lettering; its plates are the set's tags; and the board is built of the set's ow
                ramp of the set's own tones, the tone it stands at and its grain: planks, ashlar, slate, tesserae,
                weave, glass in its lead; no two squares alike and a wooden board's dark ones turned across the grain.
                Its frame of what the set frames it in and how (`game_frame`): oak mitred, gilt beaded, ashlar in
-               courses, iron riveted, a chart's neatline. A set that names no squares has them picked from its
-               closed palette, the dark in its tag's hue at a lightness every piece holds on and the light near its
-               paper (`game_board`), so a board is in no colour the set does not have; lit from the upper left
+               courses, iron riveted, a chart's neatline, tesserae, cloisonne, the Bayeux Tapestry's bars. A set
+               that names no squares has them picked from its closed palette, the dark in its tag's hue at a
+               lightness every piece holds on and the light near its paper (`game_board`), so a board is in no
+               colour the set does not have; lit from the upper left
   the pieces   ivory and ebony in every set (`pieces`), as the trophies are struck in one set of metals: the house's
                always ivory, GitHub's ebony, whoever moves first
   the marks    the last move's two squares in the set's accent; what the side to move must answer (a king in check,
@@ -314,6 +315,27 @@ class Games:
         p.text(x, y, s, ink, font, scale, track=track)
         return w
 
+    def aside(self, p: Pix, x: int, x1: int, y: int, s: str, ink: str) -> None:
+        """A note in small capitals beside a tag whose top is row `y`, from `x` to `x1` at the most: on one line, level
+        with the words on its row, where it fits; on two lines as even as its words allow, the pair centred on the
+        tag, where it does not; and set tighter only where even two will not hold it."""
+        s = fold(s, "35")
+        room = x1 - x
+        if measure(s, "35") <= room:
+            self.say(p, x, y + 3, s, ink)
+            return
+        words, best = s.split(" "), None
+        for i in range(1, len(words)):
+            a, b = " ".join(words[:i]), " ".join(words[i:])
+            wide = max(measure(a, "35"), measure(b, "35"))
+            if wide <= room and (best is None or wide < best[0]):
+                best = (wide, a, b)
+        if best:
+            self.say(p, x, y - 1, best[1], ink)
+            self.say(p, x, y + 6, best[2], ink)
+            return
+        self.say(p, x, y + 3, s, ink, room=room)
+
     def fits(self, s: str, room: int, font: str = "35") -> bool:
         """Whether `s` fits `room`, set tighter if it must be."""
         return measure(fold(str(s), font), font, 1, 0) <= room
@@ -401,6 +423,14 @@ class Games:
         for (dx, dy), c in surface(b["light_stuff"], w, h).items():
             p.px(x + dx, y + dy, c, L)
         p.box(x, y, w, h, b["edge"], L, notch=True)
+
+    def game_canvas(self, w: int, h: int) -> Pix:
+        """A game's sheet: the set's canvas, every tag on it the set's own plain tag. A set dresses the one tag set
+        low on its sheet as the ribbon under a certificate's seal; a game's sheet sets its tags low all down its
+        panel and hangs no seal, so it says so (`plain_tags`)."""
+        p = self.canvas(w, h)
+        p.plain_tags = True
+        return p
 
     def chip(self, p: Pix, x: int, y: int, s: str, night: bool, L: str = "base") -> int:
         """A count on one of the set's tags, its letters in the tag's ink. Returns its width."""
@@ -605,7 +635,7 @@ class Games:
             px0, px1, py = 219, WIDE - 10, 31
             end = self.panel(Pix(WIDE, 400), g, st, px0, px1, py, night, False, False)
             H = max(236, end + 10)
-            p = self.canvas(WIDE, H)
+            p = self.game_canvas(WIDE, H)
             self.head(p, night, g, f"game {st['game']}  ·  move {st['move']}", f"@{g.OWNER.upper()} VS. GITHUB")
             g.board(self, p, st, box, night, moving, small=False)
             p.vline(px0 - 8, py, py + box[2], self.ink(night)["rule"])
@@ -616,7 +646,7 @@ class Games:
             px0, px1 = 10, NARROW - 10
             end = self.panel(Pix(NARROW, 800), g, st, px0, px1, top, night, True, False)
             H = end + 10
-            p = self.canvas(NARROW, H)
+            p = self.game_canvas(NARROW, H)
             self.head(p, night, g, f"move {st['move']}", None)
             g.board(self, p, st, box, night, moving, small=True)
             self.panel(p, g, st, px0, px1, top, night, True, moving)

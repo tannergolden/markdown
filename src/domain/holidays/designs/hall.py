@@ -452,9 +452,12 @@ def winner(h, p, person: dict, i: int, cx: int, top: int, w: int, night: bool, s
     if i == 0 and moving:
         gold_glint(h, p, cx, cy, r + 1.5)
     y = cy + r + 5
-    h.say(p, cx, y, person["name"], k["body"], room=room, anchor="middle")
+    # A name may reach a unit nearer its column's edges than the rest of its stand, and the first's, standing higher
+    # than the names either side of it with only the foot of their rings beside it, a unit past them.
+    named = w + 2 if i == 0 else w - 2
+    h.say(p, cx, y, person["name"], k["body"], room=named, anchor="middle")
     y += 8
-    h.say(p, cx, y, person["handle"].upper(), k["muted"], room=room, anchor="middle")
+    h.say(p, cx, y, person["handle"].upper(), k["muted"], room=w - 2, anchor="middle")
     y += 9
     wins = str(person["wins"])
     word = "WINS" if person["wins"] != 1 else "WIN"
@@ -554,7 +557,7 @@ def sheet(h, hs: dict, night: bool, wide: bool, moving: bool) -> Pix:
     W = 415 if wide else 180
     probe = Pix(W, 900)
     end = draw(h, probe, hs, night, wide, False, measure_only=True)
-    p = h.canvas(W, end + 10)
+    p = h.game_canvas(W, end + 10)
     draw(h, p, hs, night, wide, moving)
     h._finish(p, night)
     return p
