@@ -994,6 +994,14 @@ def checkers(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
 # The games beside chess on @tannergolden's profile, in their tiers' order, each its own kind.
 GAMES = ("tictactoe", "connectfour", "checkers")
 
+
+def hall_of_fame(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
+    """The Hall of Fame of all four games on @tannergolden's profile, and a badge for each of its winners, drawn by
+    elements/hall."""
+    from . import hall
+    return hall.draw("hall-of-fame", d, tone, "dark" if th["dark"] else "day", variant)
+
+
 KINDS = {
     "schematic": (schematic, ("wide", "narrow"), "sheet"),
     "instruments": (instruments, ("wide", "narrow"), "sheet"),
@@ -1006,6 +1014,7 @@ KINDS = {
     "checkers": (checkers, ("wide", "narrow", "still", "narrow-still"), "board"),
     "chess": (chess, ("wide", "narrow", "still", "narrow-still"), "board"),
     "chess-hall": (chess_hall, ("wide", "narrow", "still", "narrow-still"), "sheet"),
+    "hall-of-fame": (hall_of_fame, ("wide", "narrow", "still", "narrow-still"), "board"),
 }
 
 
@@ -1018,6 +1027,9 @@ def variants(kind: str, d: dict) -> tuple[str, ...]:
     if kind == "chess-hall":
         from . import chess as game
         return game.variants(kind, d)
+    if kind == "hall-of-fame":
+        from . import hall
+        return hall.variants(kind, d)
     if d.get("size") == "half" and kind in HALF_HEIGHTS:
         return ("half",)
     return vs
@@ -1065,6 +1077,9 @@ def describe(kind: str, d: dict) -> dict:
     elif kind == "chess-hall":
         from . import chess as game
         d = game.describe_hall(d)
+    elif kind == "hall-of-fame":
+        from . import hall
+        d = hall.describe(d)
     return d
 
 

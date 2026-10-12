@@ -320,7 +320,7 @@ def measure(section: dict, before: dict, *, git, gh, subject: str, today: dt.dat
                 out = placard(gh, full) or {}
                 if not out:
                     notes.append(f"element {eid}: cannot read {full}; drawn from the settings alone")
-        elif kind == "chess-hall" and gh is not None:
+        elif kind in ("chess-hall", "hall-of-fame") and gh is not None:
             out = winners(gh, spec.get("people"), spec.get("leaders"), before.get(eid))
         if out:
             measured[eid] = out
