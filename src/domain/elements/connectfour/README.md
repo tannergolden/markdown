@@ -51,9 +51,8 @@ As the file opens ([`motion.py`](motion.py)) the last disc is held over its
 column, let go, glimpsed through each hole it passes behind, and lands with a
 bounce, its hole ringed; and a won game's four are ringed one after another and
 joined. A finished game's frame stays up for two days, and the README's words
-round the sheet ([`readme.py`](readme.py)) are the turn's banner and every open
-column as a move, each named for the disc, its column and the row it lands on,
-never for what it does.
+under the sheet ([`readme.py`](readme.py)) are every open column as a move, each
+named for the disc, its column and the row it lands on, never for what it does.
 
 ---
 
@@ -68,7 +67,7 @@ never for what it does.
 | [`layout.py`](layout.py)     | The Connect Four sheet's layout: its frame, and what its panel counts, inside the sheet every game shares.                                                                                 |
 | [`motion.py`](motion.py)     | Connect Four's motion: chess's choreography (`chess.motion`), and a disc that falls.                                                                                                       |
 | [`README.md`](README.md)     | This file.                                                                                                                                                                                 |
-| [`readme.py`](readme.py)     | What the README carries round the Connect Four sheet: the turn's banner, and every open column as a move, folded.                                                                          |
+| [`readme.py`](readme.py)     | What the README carries under the Connect Four sheet: every open column as a move, folded, then the note.                                                                                  |
 | [`shapes.py`](shapes.py)     | The frame's and the discs' shapes, shared by every theme, each in proportion to the frame's pitch.                                                                                         |
 | [`skins.py`](skins.py)       | What the Connect Four sheet is made of, per theme: the standard theme's enamel and a print's drawing, as chess's sheets are (`games.skin`), with the frame's and the discs' own materials. |
 

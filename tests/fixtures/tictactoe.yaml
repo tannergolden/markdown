@@ -28,7 +28,6 @@ elements:
       - [1, Ob2, Xa1, the Arbiter]
       - [2, Oc1, Xa3, "@imvale"]
       - [3, "", "", ""]
-    prompt: "🟢 **GitHub's turn!** @tannergolden played 2... Xa3. Pick a move below by 18 Oct."
     note: "The Arbiter opens every game for a side drawn at random, with a random first move. The first move to arrive is the one played."
     moves:
       - ["📏", "Take the Edge by One of Theirs, Away From Your Corner!", Ob3, "O takes the top edge", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20b3%20%C2%B7%20game%209%20%C2%B7%20move%205"]

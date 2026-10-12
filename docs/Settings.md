@@ -238,25 +238,25 @@ always plays White in Chess, Checkers and Connect Four, and X in Tic-Tac-Toe,
 and GitHub the other side. Only who moves first can change. The house opens
 Chess. Checkers follows American checkers, where Black moves first, so GitHub
 opens it. **The Arbiter opens every game of Connect Four and Tic-Tac-Toe, for a
-side drawn at random, with a random legal move**, since in both the first
-player has a far higher chance of winning, and so neither side is favoured.
-Connect Four is solved: whoever drops the first disc can force a win by opening
-in the centre column (James D. Allen and Victor Allis, independently, in 1988).
+side drawn at random, with a random legal move**, since in both the first player
+has a far higher chance of winning, and so neither side is favoured. Connect
+Four is solved: whoever drops the first disc can force a win by opening in the
+centre column (James D. Allen and Victor Allis, independently, in 1988).
 Tic-Tac-Toe is a draw with perfect play, but of its 255,168 possible games the
 first player wins 131,184 (about 51%), the second 77,904 (about 31%) and 46,080
 are drawn. Checkers was weakly solved as a draw in 2007, with a small edge for
 the first move, and in Chess White scores about 55% in master play. `opens`
-names the side the Arbiter opened for, which moved first, and every sheet,
-banner and move reads right whichever it is. The Arbiter's move is its own and
-counts for nobody: a fresh board comes with it already played, and the other
-side to reply. These reasons are given here and in the play repository's ADR
-alone: a board, its banner and its note say only who opens.
+names the side the Arbiter opened for, which moved first, and every sheet and
+move reads right whichever it is. The Arbiter's move is its own and counts for
+nobody: a fresh board comes with it already played, and the other side to reply.
+These reasons are given here and in the play repository's ADR alone: a board and
+its note say only who opens.
 
 **The winning board.** A finished game, in all four, keeps its final board up
 for two days before the fresh one comes by itself: the final position, who won
 and how on the turn's plate (or that it was drawn), the winning line where the
 game has one, and the day the fresh board comes. Nothing can be played on it, so
-its README block is the banner, the board and the note, with no move under it.
+its README block is the board and the note, with no move under it.
 
 | Sheet            | What it draws                                                                                                                                                                                                                                                              | Files                                                              |
 | :--------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------- |
@@ -291,14 +291,13 @@ badges away, as every run takes away whatever the kit drew and draws no longer.
 | A holiday or a month | The games keep the standard theme's look or the page's print, whatever holiday's set or collection's design is up.                                                                                                                                                         |
 
 Round the pictures the README carries each game's words, since an image cannot
-be clicked square by square: the turn's banner, then the game folded under its
-name, open for Chess and shut for the other three, its board in the fold and
-under it every legal move with a link that opens its ready-made issue, folded
-shut again and signed with what the side to move plays (♔ or ♚, ⛀ or ⛂, ⚪ or ⚫,
-❌ or ⭕); and under the Hall, the winners' badges and the leaderboard. The
-banner stands over the fold since GitHub draws an alert only at a README's top
-level, so a game's markers go at the top level too: where a README folds a game
-itself, its banner is written as a plain quote. The
+be clicked square by square: each game folded under its name, open for Chess and
+shut for the other three, its board in the fold and under it every legal move
+with a link that opens its ready-made issue, folded shut again and signed with
+what the side to move plays (♔ or ♚, ⛀ or ⛂, ⚪ or ⚫, ❌ or ⭕); and under the
+Hall, the winners' badges and the leaderboard. No banner stands over a game: its
+sheet says whose turn it is and by when, and how a finished game ended, so the
+README says nothing twice. The
 [theme-sets page](https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess)
 shows every sheet in every tone, each drawn from a sample game.
 
@@ -456,45 +455,45 @@ for one profile alone, in a sample game of each beside it:
 
 **The game elements, `chess`, `checkers`, `connectfour`, `tictactoe` and
 `chess-hall`, are @tannergolden's own.** They are drawn on that profile alone,
-and a page anywhere else that names them is told so. The games are played by
-the profile's own workflows, which write what each draws after every move. The
-chess board takes the position as `fen`, the `game` and `move` (without a
-`move`, the one the position is on), the `last` move with its words and who
-played it when, any `check` (the square of the king to move), the day the move
-is `due` by, how many `players` have moved for GitHub, what each side has
-`taken`, and the score sheet's latest rows as `history`. Its README block wraps
-the picture in the game's words, since an image cannot be clicked square by
-square: the turn's banner from `prompt`, then the game folded open under its
-name, the picture and under it every legal move in `moves`, each with an emoji,
-a title of its own, its notation, the move in plain words and a link to its
-ready-made issue, folded shut, then a `note`. The
-`prompt` and the `note` are one line of text each, with links at most: nothing
-that would open a block of its own in the README, such as a heading, a list, a
-rule or a fence, and no image. The Hall of Fame takes the `games` played and the
-wins of the `house`, of GitHub (`world`) and the `draws`, and its leading
-winners as `people`, ranked by their wins, each `[login, wins, last, games]`;
-the sheet shows five. `measure: {}` reads each winner's name from their profile,
-where the sheet can letter it in every theme (a name it cannot, or one with an
-`@` in it, leaves the winner named by their login), and its README block adds a
-badge for each, linking to it. Under the badges it folds shut the `leaders`:
-@tannergolden's own moves, wins and games on top, then GitHub's ten leading
-players by their wins and then their moves, each `[login, moves, wins, games]`
-and linking to their profile. All of them are drawn in the standard theme or the
-page's print, as one layout, whatever holiday or collection is up.
+and a page anywhere else that names them is told so. The games are played by the
+profile's own workflows, which write what each draws after every move. The chess
+board takes the position as `fen`, the `game` and `move` (without a `move`, the
+one the position is on), the `last` move with its words and who played it when,
+any `check` (the square of the king to move), the day the move is `due` by, how
+many `players` have moved for GitHub, what each side has `taken`, and the score
+sheet's latest rows as `history`. Its README block wraps the picture in the
+game's words, since an image cannot be clicked square by square: the game folded
+open under its name, the picture and under it every legal move in `moves`, each
+with an emoji, a title of its own, its notation, the move in plain words and a
+link to its ready-made issue, folded shut, then a `note`. No banner goes over
+the board, whose sheet says whose turn it is, so a `prompt` is turned away. The
+`note` is one line of text, with links at most: nothing that would open a block
+of its own in the README, such as a heading, a list, a rule or a fence, and no
+image. The Hall of Fame takes the `games` played and the wins of the `house`, of
+GitHub (`world`) and the `draws`, and its leading winners as `people`, ranked by
+their wins, each `[login, wins, last, games]`; the sheet shows five. `measure:
+{}` reads each winner's name from their profile, where the sheet can letter it
+in every theme (a name it cannot, or one with an `@` in it, leaves the winner
+named by their login), and its README block adds a badge for each, linking to
+it. Under the badges it folds shut the `leaders`: @tannergolden's own moves,
+wins and games on top, then GitHub's ten leading players by their wins and then
+their moves, each `[login, moves, wins, games]` and linking to their profile.
+All of them are drawn in the standard theme or the page's print, as one layout,
+whatever holiday or collection is up.
 
 The other three boards take what chess's does wherever a game shares it: the
 `game` and `move`, the `players`, the day the move is `due` by, the `last` move
 as its `move` in the game's notation, its `words`, who played it (`by`) and
 `when`, the score sheet's latest rows as `history`, each `[number, the opening
-side's move, the reply, who chose it]`, and the README's `prompt`, `note` and
-`moves`, each move `[emoji, title, notation, words, link]` in one list, a title
-up to 100 letters and its words up to 80, its link opening that move's
-ready-made issue and nothing else (a turn of Checkers with more than ten is
-grouped into men and kings in the README, as chess's are by piece), and its
-notation never with a `+` or `#`. In place of chess's `check`, Checkers' turn
-plate can say what the rules make the side to move do as its `alert`, `must
-jump`; Tic-Tac-Toe and Connect Four take no `alert`, since a call to block would
-tell a player where to go. Each game's own board:
+side's move, the reply, who chose it]`, and the README's `note` and `moves`,
+each move `[emoji, title, notation, words, link]` in one list, a title up to 100
+letters and its words up to 80, its link opening that move's ready-made issue
+and nothing else (a turn of Checkers with more than ten is grouped into men and
+kings in the README, as chess's are by piece), and its notation never with a `+`
+or `#`. In place of chess's `check`, Checkers' turn plate can say what the rules
+make the side to move do as its `alert`, `must jump`; Tic-Tac-Toe and Connect
+Four take no `alert`, since a call to block would tell a player where to go.
+Each game's own board:
 
 - **`checkers`**: the position as a PDN `fen`, whose turn and then White's and
   Black's men's squares, a `K` before a king's (`B:W21,22,K30:B1,2,9`): GitHub
@@ -516,14 +515,14 @@ tell a player where to go. Each game's own board:
 winner, `house` or `github`, or null for a draw, and how it ended, as the game
 can end. Tic-Tac-Toe is won by `three in a row` or drawn on `a full board`;
 Connect Four is won by `four in a row` or drawn on `a full frame`; Checkers is
-won when the side to move has `no move left` and drawn by `repetition` or
-`forty moves`; Chess is won by `checkmate` and drawn by `stalemate`,
-`insufficient material`, `fivefold repetition`, `seventy-five moves` or a
-`dead position`. The winner is the side that made the last move, a won game of
-Tic-Tac-Toe or Connect Four names its `line`, and `next` is the day the fresh
-board comes, which only a finished board has. A finished board lists no `moves`
-and says no `alert`, and its README block is its banner, its board and its
-`note`, which can say what the picture cannot, a link and all.
+won when the side to move has `no move left` and drawn by `repetition` or `forty
+moves`; Chess is won by `checkmate` and drawn by `stalemate`, `insufficient
+material`, `fivefold repetition`, `seventy-five moves` or a `dead position`. The
+winner is the side that made the last move, a won game of Tic-Tac-Toe or Connect
+Four names its `line`, and `next` is the day the fresh board comes, which only a
+finished board has. A finished board lists no `moves` and says no `alert`, and
+its README block is its board and its `note`, which can say what the picture
+cannot, a link and all.
 
 A row of `people` or of `leaders` may carry its player's account ID as a fifth
 field, `[login, wins, last, games, id]` and `[login, moves, wins, games, id]`,

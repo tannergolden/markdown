@@ -28,7 +28,6 @@ elements:
       - [7, "4", "6", "@devonaraki"]
       - [8, "4", "5", "@hollyfenwick"]
       - [9, "", "", ""]
-    prompt: "🟢 **GitHub's turn!** @tannergolden played 8... ⚪5. Pick a move below by 18 Oct."
     note: "The Arbiter opens every game for a side drawn at random, with a random first move. The first move to arrive is the one played."
     moves:
       - ["🧱", "Stack Black to Row 3 on the Left Edge!", "1", "A black disc down column 1, to row 3", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=connectfour%3A%201%20%C2%B7%20game%204%20%C2%B7%20move%2017"]

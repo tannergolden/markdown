@@ -37,11 +37,11 @@ and only what they are made of changes. The pieces are one set of silhouettes
 ([`shapes.py`](shapes.py)), and the motion one choreography
 ([`motion.py`](motion.py)), with a still file of each sheet for anyone who asks
 for reduced motion. Round the pictures the README carries the game's words
-([`readme.py`](readme.py)): the turn's banner, every legal move named, a badge
-linking each winner's profile, and the leaderboard, @tannergolden's own row on
-top of GitHub's ten leading players. Tic-Tac-Toe, Connect Four and Checkers
-are drawn by the same hand, on this sheet, in these two materials and to this
-motion ([`games/`](../games/README.md)).
+([`readme.py`](readme.py)): every legal move named, a badge linking each
+winner's profile, and the leaderboard, @tannergolden's own row on top of
+GitHub's ten leading players. Tic-Tac-Toe, Connect Four and Checkers are drawn
+by the same hand, on this sheet, in these two materials and to this motion
+([`games/`](../games/README.md)).
 
 A player is known by their account, not their login, since a login can be given
 up and then taken by someone else. A row of the Hall of Fame may carry the
@@ -71,7 +71,7 @@ of its own.
 | [`layout.py`](layout.py)     | The chess sheets' one layout, which every theme draws: the board and its panel, and the Hall of Fame.           |
 | [`motion.py`](motion.py)     | The motion every theme shares: one choreography, so a board moves the same way in every skin.                   |
 | [`README.md`](README.md)     | This file.                                                                                                      |
-| [`readme.py`](readme.py)     | What the README carries round the chess sheets: the banner, every legal move, the badges and the leaderboard.   |
+| [`readme.py`](readme.py)     | What the README carries under the chess sheets: every legal move, the badges and the leaderboard.               |
 | [`shapes.py`](shapes.py)     | The pieces' shapes, shared by every theme: one set of silhouettes, so a knight is the same knight in each skin. |
 | [`skins.py`](skins.py)       | What the chess sheets are made of, per theme: the standard theme's skin and the prints'.                        |
 

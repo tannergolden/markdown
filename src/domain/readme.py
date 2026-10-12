@@ -12,12 +12,6 @@ header, the trophies over the footer, and the footer at the foot. An element
 goes only where its markers already stand, because only the README's author
 knows which section it belongs in.
 
-GitHub draws an alert (`> [!TIP]` over a quote) only at a README's top level:
-inside a folded section, a `<details>`, it leaves the alert's marker standing
-as words at the head of a plain quote. A block that stands inside one is
-written with its alerts as plain quotes, their own words saying what an
-alert's colour would, and is checked as written there.
-
 The three kits this one replaced wrote their own markers:
 `<!-- banners:header:start -->`, `<!-- banners:footer:start -->`,
 `<!-- trophies:start -->` and `<!-- elements:NAME:start -->`, each with its end.
@@ -39,9 +33,6 @@ LEGACY = {
 _NAME = re.compile(r"[a-z][a-z0-9-]*(?::[a-z0-9][a-z0-9-]*)?")
 # A comment that opens the file: front matter, which stays first.
 _FRONT = re.compile(r"\A\s*<!--.*?-->[ \t]*\n", re.S)
-# An alert's marker line, over the quote it heads; and where a folded section opens or closes.
-_ALERT = re.compile(r"^> \[!(?:NOTE|TIP|IMPORTANT|WARNING|CAUTION)\][ \t]*\n(?=>)", re.M)
-_DETAILS = re.compile(r"<(/?)details\b", re.I)
 
 
 class ReadmeError(ValueError):
@@ -84,29 +75,6 @@ def find(text: str, name: str) -> tuple[int, int] | None:
             raise ReadmeError(f"{start} has no {end} after it")
         return a, b + len(end)
     return None
-
-
-def _depth(text: str, depth: int = 0) -> int:
-    """How many <details> stand open at the end of `text`, `depth` of them open before it."""
-    for m in _DETAILS.finditer(text):
-        depth = max(depth - 1, 0) if m.group(1) else depth + 1
-    return depth
-
-
-def folded(text: str, at: int) -> bool:
-    """Whether `at` in `text` stands inside a <details> opened before it and not yet closed."""
-    return _depth(text[:at]) > 0
-
-
-def as_placed(text: str, name: str, wanted: str | None) -> str | None:
-    """`wanted` as it is written where the block stands in `text`: each alert in it that stands inside a <details>,
-    the README's round the block or the block's own, set as a plain quote, where GitHub would show its marker as
-    words."""
-    at = find(text, name)
-    if wanted is None or not at:
-        return wanted
-    open_ = _depth(text[:at[0]])
-    return _ALERT.sub(lambda m: "" if _depth(wanted[:m.start()], open_) else m.group(0), wanted)
 
 
 def current(text: str, name: str) -> str | None:
@@ -162,7 +130,7 @@ def place(text: str, blocks: dict[str, str | None]) -> tuple[str, list[str]]:
         wanted = blocks[name]
         at = find(text, name)
         if at and wanted is not None:
-            text = text[:at[0]] + as_placed(text, name, wanted) + text[at[1]:]
+            text = text[:at[0]] + wanted + text[at[1]:]
         elif at:
             text = _remove(text, *at)
         elif wanted is not None:

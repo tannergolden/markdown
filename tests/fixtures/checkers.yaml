@@ -28,7 +28,6 @@ elements:
       - [9, 1-6, 22x15, "@sunnypatel"]
       - [10, 11x18, 20x11, "@hollyfenwick"]
       - [11, "", "", ""]
-    prompt: "🟢 **GitHub's turn!** @tannergolden played 10... 20x11. Must jump! Pick one below by 18 Oct."
     note: "GitHub opens every game with the Black men, as American checkers has it. A jump must be taken when there is one, and the first move to arrive is the one played."
     moves:
       - ["⚔️", "Jump the Man on 11!", 8x15, "Man from 8 jumps 11, landing on 15", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=checkers%3A%208x15%20%C2%B7%20game%206%20%C2%B7%20move%2021"]

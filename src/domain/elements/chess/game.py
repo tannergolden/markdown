@@ -20,7 +20,7 @@ someone else, so a run reads each ID's account as it is now (`logins`, measured 
 the row is shown and linked by that account's login. A player whose account is gone is left off the page, and the
 rows under them move up: the engine hands over more rows than the page has places for, so the places stay full.
 
-The checks of a field's shape (`is_number`, `is_text`, `is_day`), of the README's lines (`check_lines`) and of how
+The checks of a field's shape (`is_number`, `is_text`, `is_day`), of the README's line (`check_lines`) and of how
 a game ended (`check_end`) are every game's on the profile, so the four are checked alike.
 """
 from __future__ import annotations
@@ -52,10 +52,10 @@ OFFER = re.compile(SAN.pattern.removesuffix("[+#]?"))  # a move still to play: n
 # A move's link opens its ready-made issue in tannergolden/play, and nothing else: no space, bracket or quote.
 LINK = re.compile(r"https://github\.com/tannergolden/play/issues/new\?template=move\.yml&title=chess%3A%20"
                   r"[a-h][1-8][a-h][1-8][qrbn]?%20%C2%B7%20game%20[1-9][0-9]{0,8}%20%C2%B7%20move%20[1-9][0-9]{0,8}")
-# The README's own lines: one line each, nothing that opens HTML or breaks a table.
+# The README's own line, the note: one line, nothing that opens HTML or breaks a table.
 LINE = re.compile(r"[^<>|\n\r]{1,400}")
 # Nor anything that starts a block of its own where the line is set: space before it, a fence, a heading, a quote, a
-# list's item, a link's definition, or a rule, which under the banner's first line would make that line a heading.
+# list's item, a link's definition, or a rule, a block that could run on over the fold's end and the marker under it.
 BLOCK = re.compile(r"\s|```|~~~|#{1,6}(?:\s|$)|>|[-*+](?:\s|$)|[0-9]+[.)](?:\s|$)|\[[^\]]*\]:|[-=*_\s]+$")
 # A move's title, set in bold in the README, which a space at either end would leave as plain asterisks: up to 100
 # letters, room for Tic-Tac-Toe to name every move apart from every other in plain words.
@@ -160,18 +160,20 @@ def called(side: str) -> str:
 
 
 def check_lines(d: dict) -> list[str]:
-    """What the README's own lines get wrong: the turn's banner (`prompt`) and the `note` are each one line of
-    text, which opens no block of its own where it is set and shows no image."""
+    """What the README's own line gets wrong: the `note` is one line of text, which opens no block of its own where
+    it is set and shows no image. A `prompt` is turned away: no banner goes over a board, whose sheet says whose turn
+    it is."""
     errors = []
-    for key in ("prompt", "note"):
-        value = d.get(key)
-        if value and not is_text(value, LINE):
-            errors.append(f"{key} is one line of text, without <, > or |")
-        elif value and BLOCK.match(value):
-            errors.append(f"{key} {value!r} would open a block of its own in the README, such as a heading, a list, a"
-                          " rule or a fence: it starts with a word or an emoji")
-        elif value and "![" in value:
-            errors.append(f"{key} shows an image: a line of the README carries words and links alone")
+    if "prompt" in d:
+        errors.append("prompt is gone: no banner goes over a board, since its sheet says whose turn it is")
+    note = d.get("note")
+    if note and not is_text(note, LINE):
+        errors.append("note is one line of text, without <, > or |")
+    elif note and BLOCK.match(note):
+        errors.append(f"note {note!r} would open a block of its own in the README, such as a heading, a list, a rule"
+                      " or a fence: it starts with a word or an emoji")
+    elif note and "![" in note:
+        errors.append("note shows an image: a line of the README carries words and links alone")
     return errors
 
 

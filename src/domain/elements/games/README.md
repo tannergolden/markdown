@@ -47,9 +47,8 @@ ready-made issue and nothing else, and a finished board offers nothing to play.
 Nothing that would help a player choose is taken: no cell or column a side could
 win on next, no call to block, and no `+` or `#` on a move still to play, which
 only the score sheet writes, once the move is made. The sides are the house and
-GitHub ([`sides.py`](sides.py)), and the README's words round each sheet
-([`readme.py`](readme.py)) are the turn's banner and every legal move, folded,
-as chess's are.
+GitHub ([`sides.py`](sides.py)), and the README's words under each sheet
+([`readme.py`](readme.py)) are every legal move, folded, as chess's are.
 
 A game's own package draws its board and its pieces and says how its moves are
 written; everything else is here or is chess's, imported rather than copied.
@@ -66,7 +65,7 @@ written; everything else is here or is chess's, imported rather than copied.
 | [`data.py`](data.py)         | What every game's data is checked for, and the state every sheet reads from it.                                                                                                                                                     |
 | [`panel.py`](panel.py)       | The panel beside every game's board, a section at a time, as chess's is: the two sides, the turn, the last move and the score sheet, with the game's own count between them (`sheet` places them).                                  |
 | [`README.md`](README.md)     | This file.                                                                                                                                                                                                                          |
-| [`readme.py`](readme.py)     | What the README carries round a game's sheet, as it does round chess's: the turn's banner above the picture, and under it every legal move, folded shut under one line saying whose they are and how many, then the note.           |
+| [`readme.py`](readme.py)     | What the README carries under a game's sheet, as it does under chess's: every legal move, folded shut under one line saying whose they are and how many, then the note.                                                             |
 | [`sheet.py`](sheet.py)       | A game's board sheet, wide and a phone's, drawn as chess's is: the same card or drafting sheet and its band, the board in the same place at the same size, and beside it (under it, on a phone) the same panel a section at a time. |
 | [`sides.py`](sides.py)       | The two sides of every game on the profile: the house, @tannergolden, and GitHub, everyone else.                                                                                                                                    |
 | [`skin.py`](skin.py)         | The two materials every game's sheet is drawn in: chess's skins, and what a game beside chess adds to them.                                                                                                                         |

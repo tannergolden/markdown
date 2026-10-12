@@ -44,14 +44,14 @@ kings each has made, White's first. The men and kings ([`shapes.py`](shapes.py))
 come in the two materials ([`skins.py`](skins.py)): enamel lit as chess's pieces
 are, in the standard theme; ink and line shading on a print.
 
-As the file opens ([`motion.py`](motion.py)) the last move's man slides, or
-hops over each man it takes, those men fading as it passes and the jump's path
-drawn in behind it; a man reaching the far row is crowned as it lands, a
-second man dropped onto it; and a man that must jump is marked as chess marks a
-king in check. A finished game's board stays up for two days, and the README's
-words round the sheet ([`readme.py`](readme.py)) are the turn's banner and
-every legal move, each an order to a fleet at sea, grouped by men and kings
-when there are more than ten, as chess groups its moves by piece.
+As the file opens ([`motion.py`](motion.py)) the last move's man slides, or hops
+over each man it takes, those men fading as it passes and the jump's path drawn
+in behind it; a man reaching the far row is crowned as it lands, a second man
+dropped onto it; and a man that must jump is marked as chess marks a king in
+check. A finished game's board stays up for two days, and the README's words
+under the sheet ([`readme.py`](readme.py)) are every legal move, each an order
+to a fleet at sea, grouped by men and kings when there are more than ten, as
+chess groups its moves by piece.
 
 ---
 
@@ -66,7 +66,7 @@ when there are more than ten, as chess groups its moves by piece.
 | [`layout.py`](layout.py)     | The Checkers sheet's layout: its board, and what its panel counts, inside the sheet every game shares.                                                                |
 | [`motion.py`](motion.py)     | Checkers' motion: chess's choreography (`chess.motion`), and a man that slides, hops and is crowned.                                                                  |
 | [`README.md`](README.md)     | This file.                                                                                                                                                            |
-| [`readme.py`](readme.py)     | What the README carries round the Checkers sheet: the turn's banner, and every legal move, folded.                                                                    |
+| [`readme.py`](readme.py)     | What the README carries under the Checkers sheet: every legal move, folded, then the note.                                                                            |
 | [`shapes.py`](shapes.py)     | The men's shapes, shared by every theme: a man and a crowned king, each in chess's 45-unit box.                                                                       |
 | [`skins.py`](skins.py)       | What the Checkers sheet is made of, per theme: the standard theme's enamel and a print's drawing, as chess's sheets are (`games.skin`), with the men's own materials. |
 

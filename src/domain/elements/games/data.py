@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: MIT
 """What every game's data is checked for, and the state every sheet reads from it.
 
-The profile's own engine plays each game and writes what its sheet draws after every move, as it does for chess:
-the game and move numbers, how many have played for GitHub, the day the move is due by, the last move in the game's
-notation with its words and who played it when, the score sheet's latest rows, the turn's banner, a note, and every
-legal move with an emoji, a title, its notation, its words and its link. Once a game is over its board stays up for
-two days: then it carries how the game ended and the day the fresh board comes, and offers no move.
+The profile's own engine plays each game and writes what its sheet draws after every move, as it does for chess: the
+game and move numbers, how many have played for GitHub, the day the move is due by, the last move in the game's notation
+with its words and who played it when, the score sheet's latest rows, a note, and every legal move with an emoji, a
+title, its notation, its words and its link. Once a game is over its board stays up for two days: then it carries how
+the game ended and the day the fresh board comes, and offers no move.
 
 Nothing here knows a game's rules: a field is checked for its shape, as chess's are (a number is a number within
 its ceiling and never a bool or text YAML read in its place, a day is a real day, a line of the README opens no

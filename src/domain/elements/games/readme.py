@@ -1,15 +1,14 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
-"""What the README carries round a game's sheet, as it does round chess's: the turn's banner above the picture, and
-under it every legal move, folded shut under one line saying whose they are and how many, then the note.
+"""What the README carries under a game's sheet, as it does under chess's: every legal move, folded shut under one line
+saying whose they are and how many, then the note.
 
 An image cannot be clicked cell by cell, so each move is a row of its emoji, a title in the game's own voice, its
 notation, the move in plain words and a link that opens its ready-made issue, none of them saying what the move would do
-to the game. The banner is a tip on GitHub's turn, a caution on the house's, and once the game is over, the result as an
-important note, each an alert at the README's top level over the game folded under its name, which holds the picture
-and all under it (a plain quote where a README folds the game itself, since GitHub draws no alert in a folded section);
-a finished board's block is that banner, its board and its note, with no move to play. A turn with more than ten moves
-is grouped, as chess groups its moves by piece, when the game says how (`groups`).
+to the game. No banner goes over the picture: the sheet itself says whose turn it is and by when, and once the game is
+over, who won and when the fresh board comes, so a finished board's block is its picture and its note, with no move to
+play. The block folds the game under its name (`data.fold`). A turn with more than ten moves is grouped, as chess groups
+its moves by piece, when the game says how (`groups`).
 """
 from __future__ import annotations
 
@@ -18,14 +17,6 @@ from typing import Callable
 from ..chess.game import OWNER
 from ..chess.readme import FEW, table
 from .sides import GITHUB
-
-
-def banner(d: dict, st: dict) -> str:
-    """The turn's banner: GitHub's turn as a tip, the house's as a caution, a finished game as an important note."""
-    if not d.get("prompt"):
-        return ""
-    kind = "IMPORTANT" if st["result"] else "TIP" if st["to_move"] == GITHUB else "CAUTION"
-    return f"> [!{kind}]\n> {d['prompt']}"
 
 
 def move_list(d: dict, st: dict, sign: dict, unit: tuple[str, str],
@@ -53,8 +44,7 @@ def move_list(d: dict, st: dict, sign: dict, unit: tuple[str, str],
 
 
 def text(d: dict, st: dict, sign: dict, unit: tuple[str, str],
-         groups: Callable[[list], list[tuple[str, list]]] | None = None) -> tuple[str, str]:
-    """The sheet's README block round its picture: what goes above it, and what goes under it: every legal move and
-    the note, or once the game is over the note alone."""
-    below = [part for part in (move_list(d, st, sign, unit, groups), d.get("note") or "") if part]
-    return banner(d, st), "\n\n".join(below)
+         groups: Callable[[list], list[tuple[str, list]]] | None = None) -> str:
+    """What the README carries under the sheet's picture: every legal move and the note, or once the game is over
+    the note alone."""
+    return "\n\n".join(part for part in (move_list(d, st, sign, unit, groups), d.get("note") or "") if part)

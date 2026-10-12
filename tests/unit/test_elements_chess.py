@@ -45,7 +45,6 @@ GAME = {
              "words": "Knight from e4 to d6, check", "by": "@tannergolden", "when": "11 Oct"},
     "taken": {"white": "bpp", "black": "nbp"},
     "history": [[19, "Bxd2", "Qxg7", "@imvale"], [20, "Re3", "Qe5", "@jhalloran"], [21, "Nd6+", "", ""]],
-    "prompt": "🟢 **GitHub's turn!** You're in check. Pick a move below, by 18 Oct.",
     "note": "The first move to arrive is the one played.",
     "moves": [{"piece": "king", "list": [["🏰", "The Royal Retreat", "Kb8", "King from c8 to b8", LINK],
                                          ["👑", "Long Live the King", "Kd7", "King from c8 to d7", LINK]]},
@@ -56,8 +55,7 @@ HOUSE = dict(GAME, fen="2kr4/pp5p/2npp3/2b1q3/2p3P1/2PrR3/PP1B1P1P/R4QK1 w - - 0
              due="19 Oct", check="", taken={"white": "bpp", "black": "nbpn"},
              last={"san": "cxd6", "from": "c7", "to": "d6", "piece": "pawn", "captured": "knight",
                    "words": "Pawn from c7 takes the knight on d6", "by": "@wrencastellan", "when": "12 Oct"},
-             history=[[20, "Re3", "Qe5", "@jhalloran"], [21, "Nd6+", "cxd6", "@wrencastellan"], [22, "", "", ""]],
-             prompt="🛑 **@tannergolden's turn!** GitHub played 21... cxd6.")
+             history=[[20, "Re3", "Qe5", "@jhalloran"], [21, "Nd6+", "cxd6", "@wrencastellan"], [22, "", "", ""]])
 OPENING = {"kind": "chess", "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "game": 1, "move": 1}
 HALL = {"kind": "chess-hall", "games": 12, "house": 5, "world": 6, "draws": 1,
         "people": [["tannergolden", 5, "2 Oct", 12], ["imvale", 2, "19 Sep", 7], ["tokafor", 2, "27 Sep", 5],
@@ -272,7 +270,6 @@ class Settings(unittest.TestCase):
             "last": ({**GAME["last"], "from": "e9"}, "last: from"),
             "taken": ({"white": "kk"}, "taken gives white and black"),
             "history": ([[19, "Bxd2", "<b>", "@imvale"]], "history:"),
-            "prompt": ("<b>move</b>", "one line of text"),
             "note": ("a | b", "one line of text"),
             "moves": ([{"piece": "pawn", "list": [["🥾", "Forward | March", "e4", "Pawn from e2 to e4", LINK]]}],
                       "is not an emoji, a title"),
@@ -293,7 +290,7 @@ class Settings(unittest.TestCase):
         # YAML reads `note: 1984` as a number, `true` as a bool and an all-digit login as an int: each is turned
         # away here rather than reaching the README, which would fail on it.
         move = ["🏰", "The Royal Retreat", "Kb8", "King from c8 to b8", LINK]
-        texts = {"note": (1984, True, ["a note"]), "prompt": (1984, {"a": 1}), "check": (8, True), "due": (18,),
+        texts = {"note": (1984, True, ["a note"]), "check": (8, True), "due": (18,),
                  "fen": (1984, None), "last": ({**GAME["last"], "words": 1984}, {**GAME["last"], "by": None},
                                               {**GAME["last"], "when": 11}),
                  "taken": ({"white": 5}, {"white": ["p"]}),
@@ -346,21 +343,18 @@ class Settings(unittest.TestCase):
         self.assertEqual(C.check({**GAME, "history": []}), [])
 
     def test_a_line_of_the_readme_never_opens_a_block_or_shows_an_image(self):
-        # The note follows the moves after a blank line and the prompt is the banner's second line, so anything that
-        # opens a block there swallows the README's end marker or turns the alert into a heading.
+        # The note follows the moves after a blank line, so anything that opens a block there swallows the README's
+        # end marker.
         blocks = ("```", "```python", "~~~", "# Heading", "### Heading", "- an item", "* an item", "+ an item",
                   "1. an item", "21) an item", "    code", "\tcode", " a space first", "---", "===", "=", "-", "***",
                   "- - -", "_ _ _", "[a]: https://example.com", "[^1]: a footnote")
-        for key in ("note", "prompt"):
-            for bad in blocks:
-                with self.subTest(key=key, bad=bad):
-                    self.assertTurnedAway({**GAME, key: bad}, f"{key} {bad!r} would open a block of its own")
-            for bad in ("![a pawn](https://example.com/pawn.png)", "See ![it](https://example.com/x.png) here"):
-                with self.subTest(key=key, bad=bad):
-                    self.assertTurnedAway({**GAME, key: bad}, f"{key} shows an image")
-        fine = ("🟢 **GitHub's turn!** @tannergolden played 1. e4. Pick a move below by 18 Oct.",
-                "🛑 **@tannergolden's turn!** GitHub played 21... cxd6. Check! Reply due by 19 Oct.",
-                "🛑 **@tannergolden's turn!** @tannergolden opens game 1 as White, and GitHub plays Black.",
+        for bad in blocks:
+            with self.subTest(bad=bad):
+                self.assertTurnedAway({**GAME, "note": bad}, f"note {bad!r} would open a block of its own")
+        for bad in ("![a pawn](https://example.com/pawn.png)", "See ![it](https://example.com/x.png) here"):
+            with self.subTest(bad=bad):
+                self.assertTurnedAway({**GAME, "note": bad}, "note shows an image")
+        fine = ("🟢 **GitHub's turn!** @tannergolden played 1. e4.",
                 ("Anyone but @tannergolden can play on this turn, and the first pick in is played. Every finished game"
                  " is kept as a [PGN](https://github.com/tannergolden/tannergolden/tree/HEAD/.github/chess/games)."),
                 "Game 2 was drawn by stalemate. Only @tannergolden can play on this turn.",
@@ -368,7 +362,13 @@ class Settings(unittest.TestCase):
                 "-5 is a lot.")
         for text in fine:
             with self.subTest(text=text):
-                self.assertEqual(C.check({**GAME, "note": text, "prompt": text}), [])
+                self.assertEqual(C.check({**GAME, "note": text}), [])
+
+    def test_no_banner_goes_over_the_board_whose_sheet_says_whose_turn_it_is(self):
+        self.assertTurnedAway({**GAME, "prompt": "🟢 **GitHub's turn!** Pick a move below by 18 Oct."}, "prompt is gone")
+        for d in (GAME, HOUSE, OPENING):
+            with self.subTest(fen=d["fen"]):
+                self.assertNotIn("[!", ED.block("chess", d, "assets/elements"))
 
     def test_a_move_title_has_no_space_at_either_end(self):
         for title in ("The Royal Retreat ", " The Royal Retreat", "Retreat  "):
@@ -522,20 +522,19 @@ class Settings(unittest.TestCase):
 
 
 class Readme(unittest.TestCase):
-    def test_the_board_has_its_turns_banner_above_its_fold_open_and_every_move_folded_under(self):
-        # the banner stands at the README's top level, where GitHub draws it as an alert, over the game folded open
+    def test_the_board_is_folded_open_under_its_name_and_every_move_folded_under_it(self):
+        # no banner stands over the fold: the board's own sheet says whose turn it is
         text = ED.block("chess", GAME, "assets/elements")
-        self.assertTrue(text.startswith("<!-- markdown:element:chess:start -->\n> [!TIP]\n> 🟢 **GitHub's turn!**"))
-        self.assertIn("by 18 Oct.\n\n<details open>\n<summary><b>♟️ Chess</b></summary>\n\n<picture>", text)
+        self.assertTrue(text.startswith("<!-- markdown:element:chess:start -->\n<details open>\n<summary><b>♟️ Chess"
+                                        "</b></summary>\n\n<picture>"))
         self.assertIn("</picture>\n\n<details>\n<summary>♚ <b>GitHub's Turn</b> · 4 legal moves · open to choose one"
                       "</summary>\n\n|  | Move | In words | Play |\n| :-: | :--- | :--- | :-: |\n", text)
         self.assertIn(f"| 🏰 | **The Royal Retreat** `Kb8` | King from c8 to b8 | [Play ↗]({LINK}) |", text)
         self.assertTrue(text.endswith("</details>\n\nThe first move to arrive is the one played.\n\n</details>\n"
                                       "<!-- markdown:element:chess:end -->"))
 
-    def test_the_houses_turn_is_a_caution_and_its_moves_are_the_houses_alone(self):
+    def test_the_houses_moves_are_the_houses_alone(self):
         text = ED.block("chess", HOUSE, "assets/elements")
-        self.assertIn("> [!CAUTION]\n> 🛑 **@tannergolden's turn!**", text)
         self.assertIn("♔ <b>@tannergolden's Turn</b> · 4 legal moves · only @tannergolden can play these", text)
 
     def test_a_busy_turn_is_grouped_by_piece(self):
@@ -636,21 +635,18 @@ SCHOLAR = {"kind": "chess", "fen": "r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP
            "taken": {"white": "p", "black": ""},
            "history": [[2, "Bc4", "Nc6", "@imvale"], [3, "Qh5", "Nf6", "@tokafor"], [4, "Qxf7#", "", ""]],
            "result": {"winner": "house", "how": "checkmate"}, "next": "14 Oct",
-           "prompt": "🏆 **Checkmate!** @tannergolden wins game 13. Game 14 opens 14 Oct.",
            "note": "Every finished game's board stays up for two days, then a fresh one comes."}
 FOOL = {"kind": "chess", "fen": "rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3", "game": 12, "move": 3,
         "players": 2, "check": "e1",
         "last": {"san": "Qh4#", "from": "d8", "to": "h4", "piece": "queen", "captured": "",
                  "words": "Queen from d8 to h4, checkmate", "by": "@wrencastellan", "when": "11 Oct"},
         "history": [[1, "f3", "e5", "@imvale"], [2, "g4", "Qh4#", "@wrencastellan"]],
-        "result": {"winner": "github", "how": "checkmate"}, "next": "13 Oct",
-        "prompt": "🏆 **Checkmate!** GitHub wins game 12, and @wrencastellan takes a place in the Hall of Fame."}
+        "result": {"winner": "github", "how": "checkmate"}, "next": "13 Oct"}
 STALEMATE = {"kind": "chess", "fen": "k7/2Q5/1K6/8/8/8/8/8 b - - 0 60", "game": 11, "move": 60, "players": 14,
              "last": {"san": "Qc7", "from": "c5", "to": "c7", "piece": "queen", "captured": "",
                       "words": "Queen from c5 to c7, stalemate", "by": "@tannergolden", "when": "10 Oct"},
              "history": [[58, "Kb6", "Ka8", "@jhalloran"], [59, "Qc5", "Kb8", "@octocat"], [60, "Qc7", "", ""]],
-             "result": {"winner": None, "how": "stalemate"}, "next": "12 Oct",
-             "prompt": "🤝 **Stalemate!** Game 11 is drawn. Game 12 opens 12 Oct."}
+             "result": {"winner": None, "how": "stalemate"}, "next": "12 Oct"}
 FINISHED = (SCHOLAR, FOOL, STALEMATE)
 
 
@@ -710,13 +706,12 @@ class Finished(unittest.TestCase):
             text = ED.block("chess", d, "assets/elements")
             with self.subTest(game=d["game"], note=bool(d.get("note"))):
                 self.assertEqual(C.check(d), [])
-                self.assertTrue(text.startswith(f"<!-- markdown:element:chess:start -->\n> [!IMPORTANT]\n> "
-                                                f"{d['prompt']}\n\n<details open>\n<summary><b>♟️ Chess</b>"
-                                                "</summary>\n\n<picture>"))
+                self.assertTrue(text.startswith("<!-- markdown:element:chess:start -->\n<details open>\n<summary><b>"
+                                                "♟️ Chess</b></summary>\n\n<picture>"))
                 self.assertEqual(text.count("<details"), 1, "the game's own fold, and no move in it")
                 under = f"\n\n{d['note']}" if d.get("note") else ""
                 self.assertTrue(text.endswith(f"</picture>{under}\n\n</details>\n<!-- markdown:element:chess:end -->"),
-                                "its banner, its board and its note, with no move to play")
+                                "its board and its note, with no move to play")
 
     def test_how_it_ended_is_checked_as_strictly_as_the_rest_of_the_board(self):
         def turned_away(d: dict, said: str):

@@ -15,7 +15,7 @@ who won and how, as chess's does.
   panel   the panel's sections, each fitted to its room on a wide sheet and on a phone
   sheet   a board sheet, wide and a phone's, around a game's own board and its own count
   data    what every game's data is checked for, as strictly as chess's, and the state every sheet reads from it
-  readme  the README block's words round a sheet: the turn's banner and every legal move, folded
+  readme  the README block's words under a sheet: every legal move, folded, then the note
 
 A game's own package draws its board and its pieces and says how its moves are written; everything else is here or
 is chess's, imported rather than copied.

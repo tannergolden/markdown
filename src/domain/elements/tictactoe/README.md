@@ -50,10 +50,10 @@ always dark, and the matchup always has the house on the left as X.
 As the file opens ([`motion.py`](motion.py)) the last mark draws itself stroke
 by stroke as a pen would, its cell is marked as the pen lifts, and a won line is
 struck through. A finished game's board stays up for two days with its line
-struck and its plate saying who won, and the README's words round the sheet
-([`readme.py`](readme.py)) are the turn's banner and every open cell as a move,
-each named for where its mark goes among the others, with a title of its own
-across the whole game, and never for what it does.
+struck and its plate saying who won, and the README's words under the sheet
+([`readme.py`](readme.py)) are every open cell as a move, each named for where
+its mark goes among the others, with a title of its own across the whole game,
+and never for what it does.
 
 ---
 
@@ -68,7 +68,7 @@ across the whole game, and never for what it does.
 | [`layout.py`](layout.py)     | The Tic-Tac-Toe sheet's layout: its board, and what its panel counts, inside the sheet every game shares.                                                                 |
 | [`motion.py`](motion.py)     | Tic-Tac-Toe's motion: chess's choreography (`chess.motion`), and the beats of a mark drawn by hand.                                                                       |
 | [`README.md`](README.md)     | This file.                                                                                                                                                                |
-| [`readme.py`](readme.py)     | What the README carries round the Tic-Tac-Toe sheet: the turn's banner, and every open cell as a move, folded.                                                            |
+| [`readme.py`](readme.py)     | What the README carries under the Tic-Tac-Toe sheet: every open cell as a move, folded, then the note.                                                                    |
 | [`shapes.py`](shapes.py)     | The marks' shapes, shared by every theme: an X and an O as a pen draws them, each in a 100-unit box.                                                                      |
 | [`skins.py`](skins.py)       | What the Tic-Tac-Toe sheet is made of, per theme: the standard theme's enamel and a print's drawing, as chess's sheets are (`games.skin`), with the marks' own materials. |
 

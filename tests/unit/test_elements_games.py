@@ -61,7 +61,7 @@ TTT_GITHUB = {
     "last": {"move": "Xa2", "words": "X takes the left edge", "by": "@tannergolden", "when": "11 Oct"},
     "moves": [row("tictactoe", "📏", "Mark the Head of the Board!", "Ob3", "O takes the head of the board", 9, 6),
               row("tictactoe", "📏", "Mark the Right Edge!", "Oc2", "O takes the right edge", 9, 6)],
-    "prompt": "🟢 **GitHub's turn!** @tannergolden played 3. Xa2. Pick a move below by 18 Oct.", "note": NOTE}
+    "note": NOTE}
 # The Arbiter opened for GitHub, so O moved first: the house's turn as X, b3 a cell it would win on.
 TTT_HOUSE = {
     "kind": "tictactoe", "board": "X.X/.O./O.O", "opens": "github", "game": 10, "move": 3, "players": 3,
@@ -70,7 +70,7 @@ TTT_HOUSE = {
     "last": {"move": "Oc1", "words": "O takes the lower right corner", "by": "@wrencastellan", "when": "12 Oct"},
     "moves": [row("tictactoe", "📏", "Mark the Head of the Board!", "Xb3", "X takes the head of the board", 10, 6),
               row("tictactoe", "📏", "Mark the Foot of the Board!", "Xb1", "X takes the foot of the board", 10, 6)],
-    "prompt": "🛑 **@tannergolden's turn!** GitHub played 3. Oc1. Reply due by 19 Oct.", "note": NOTE}
+    "note": NOTE}
 # A fresh board: the Arbiter opened game 11 for GitHub with O in the centre, and it is the house's turn as X.
 TTT_FRESH = {
     "kind": "tictactoe", "board": ".../.O./...", "opens": "github", "game": 11, "move": 1, "players": 0,
@@ -78,28 +78,25 @@ TTT_FRESH = {
     "last": {"move": "Ob2", "words": "O takes the centre", "by": "the Arbiter", "when": "14 Oct"},
     "moves": [row("tictactoe", "📐", "Mark the Upper Left Corner!", "Xa3", "X takes the upper left corner", 11, 2),
               row("tictactoe", "📏", "Mark the Head of the Board!", "Xb3", "X takes the head of the board", 11, 2)],
-    "prompt": "🛑 **@tannergolden's turn!** The Arbiter opened game 11 for GitHub with 1. Ob2, at random.",
     "note": "The Arbiter opens every game for a side drawn at random, with a random first move."}
 # The same fresh board the other way round: opened for the house with X, and GitHub to reply as O.
 TTT_FRESH_HOUSE = dict(TTT_FRESH, board=".../.../X..", opens="house",
                        last={"move": "Xa1", "words": "X takes the lower left corner", "by": "the Arbiter",
                              "when": "14 Oct"}, history=[[1, "Xa1", "", ""]],
-                       moves=[row("tictactoe", "🔳", "Mark the Centre!", "Ob2", "O takes the centre", 11, 2)],
-                       prompt="🟢 **GitHub's turn!** The Arbiter opened game 11 for @tannergolden with 1. Xa1, at"
-                              " random.")
+                       moves=[row("tictactoe", "🔳", "Mark the Centre!", "Ob2", "O takes the centre", 11, 2)])
 TTT_WON = {
     "kind": "tictactoe", "board": "X.O/OX./XOX", "opens": "house", "game": 8, "move": 4, "players": 6,
     "history": [[2, "Xa1", "Oc3", "@tokafor"], [3, "Xc1", "Ob1", "@jhalloran"], [4, "Xa3#", "", ""]],
     "last": {"move": "Xa3#", "words": "X takes the upper left corner", "by": "@tannergolden", "when": "10 Oct"},
     "result": {"winner": "house", "how": "three in a row"}, "line": ["a3", "b2", "c1"], "next": "14 Oct",
-    "prompt": "🏆 **@tannergolden wins game 8!** X took a3, b2 and c1. Game 9 opens 14 Oct.", "note": NOTE}
+    "note": NOTE}
 # Opened for GitHub, so O moved first, and drawn on a full board after O's fifth mark.
 TTT_DRAWN = {
     "kind": "tictactoe", "board": "OXO/OXX/XOO", "opens": "github", "game": 6, "move": 5, "players": 7,
     "history": [[3, "Oc3", "Xc2", "@imvale"], [4, "Ob1", "Xa1", "@tokafor"], [5, "Oa2", "", "@jhalloran"]],
     "last": {"move": "Oa2", "words": "O takes the left edge", "by": "@jhalloran", "when": "5 Oct"},
     "result": {"winner": None, "how": "a full board"}, "next": "14 Oct",
-    "prompt": "🤝 **Game 6 is drawn!** Nine marks and no line. Game 7 opens 14 Oct.", "note": NOTE}
+    "note": NOTE}
 
 # --------------------------------------------------------------------------- Connect Four
 # The Arbiter opened for GitHub, so a Black disc dropped first: GitHub's turn, the house a disc from four down column 7.
@@ -110,7 +107,7 @@ C4_GITHUB = {
     "last": {"move": "5", "words": "A White disc down column 5, to row 2", "by": "@tannergolden", "when": "12 Oct"},
     "moves": [row("connectfour", "⬇️", "Drop Down Column 7!", "7", "A Black disc down column 7, to row 2", 4, 17),
               row("connectfour", "⬇️", "Drop Down Column 2!", "2", "A Black disc down column 2, to row 1", 4, 17)],
-    "prompt": "🟢 **GitHub's turn!** @tannergolden played 8... ⚪5. Pick a move below by 18 Oct.", "note": NOTE}
+    "note": NOTE}
 # The Arbiter opened for the house, so a White disc dropped first: the house to move, able to win down column 5.
 C4_HOUSE = {
     "kind": "connectfour", "board": "......./......./......./..DD.../.LLL.../DDLLDLD", "opens": "house",
@@ -118,7 +115,7 @@ C4_HOUSE = {
     "history": [[5, "3", "3", "@imvale"], [6, "5", "7", "@octocat"], [7, "", "", ""]],
     "last": {"move": "7", "words": "A Black disc down column 7, to row 1", "by": "@octocat", "when": "10 Oct"},
     "moves": [row("connectfour", "⬇️", "Drop Down Column 5!", "5", "A White disc down column 5, to row 2", 5, 13)],
-    "prompt": "🛑 **@tannergolden's turn!** GitHub played 6... ⚫7. Reply due by 19 Oct.", "note": NOTE}
+    "note": NOTE}
 # A fresh board: the Arbiter opened game 6 for GitHub down the centre column, and it is the house's turn as White.
 C4_FRESH = {
     "kind": "connectfour", "board": "......./......./......./......./......./...D...", "opens": "github",
@@ -127,7 +124,6 @@ C4_FRESH = {
     "last": {"move": "4", "words": "A Black disc down column 4, to row 1", "by": "the Arbiter", "when": "14 Oct"},
     "moves": [row("connectfour", "⬇️", "Drop Down Column 4!", "4", "A White disc down column 4, to row 2", 6, 2),
               row("connectfour", "⬇️", "Drop Down Column 1!", "1", "A White disc down column 1, to row 1", 6, 2)],
-    "prompt": "🛑 **@tannergolden's turn!** The Arbiter opened game 6 for GitHub with 1. ⚫4, at random.",
     "note": "The Arbiter opens every game for a side drawn at random, with a random first move."}
 # The same fresh board the other way round: opened for the house with a White disc, and GitHub to reply as Black.
 C4_FRESH_HOUSE = dict(C4_FRESH, board="......./......./......./......./......./..L....", opens="house",
@@ -137,17 +133,14 @@ C4_FRESH_HOUSE = dict(C4_FRESH, board="......./......./......./......./......./.
                       moves=[row("connectfour", "⬇️", "Drop Down Column 3!", "3", "A Black disc down column 3, to row"
                                  " 2", 6, 2),
                              row("connectfour", "⬇️", "Drop Down Column 1!", "1", "A Black disc down column 1, to row"
-                                 " 1", 6, 2)],
-                      prompt="🟢 **GitHub's turn!** The Arbiter opened game 6 for @tannergolden with 1. ⚪3, at"
-                             " random.")
+                                 " 1", 6, 2)])
 C4_WON = {
     "kind": "connectfour", "board": "....D../....D../.D..L../.LDLD../.LDDDL./DLLLDL.", "opens": "github",
     "game": 3, "move": 10, "players": 9,
     "history": [[8, "3", "6", "@tokafor"], [9, "3", "2", "@wrencastellan"], [10, "2#", "", "@jhalloran"]],
     "last": {"move": "2#", "words": "A Black disc down column 2, to row 4", "by": "@jhalloran", "when": "10 Oct"},
     "result": {"winner": "github", "how": "four in a row"}, "line": [[2, 4], [3, 3], [4, 2], [5, 1]],
-    "next": "14 Oct", "prompt": "🏆 **GitHub wins game 3!** Four Black discs on the diagonal. Game 4 opens 14 Oct.",
-    "note": NOTE}
+    "next": "14 Oct", "note": NOTE}
 
 # --------------------------------------------------------------------------- Checkers
 # A fresh board: GitHub plays Black, which moves first, so the game opens on GitHub's turn, its clock running.
@@ -157,7 +150,6 @@ CK_OPENING = {
     "kings": {"house": 0, "github": 0},
     "moves": [row("checkers", "👣", "Push the Man From 9 to 13!", "9-13", "Man from 9 to 13", 6, 1),
               row("checkers", "👣", "Push the Man From 9 to 14!", "9-14", "Man from 9 to 14", 6, 1)],
-    "prompt": "🟢 **GitHub's turn as Black!** Black opens game 6, by 21 Oct.",
     "note": "A jump must be taken when there is one. " + NOTE}
 # The house has just jumped back, and GitHub's Black must jump again.
 CK_GITHUB = {
@@ -168,7 +160,6 @@ CK_GITHUB = {
     "last": {"move": "20x11", "words": "Man from 20 jumps 16, landing on 11", "by": "@tannergolden", "when": "12 Oct"},
     "alert": "must jump",
     "moves": [row("checkers", "⚔️", "Jump the Man on 11!", "8x15", "Man from 8 jumps 11, landing on 15", 6, 21)],
-    "prompt": "🟢 **GitHub's turn!** @tannergolden played 10... 20x11. Must jump! Pick one below by 18 Oct.",
     "note": "A jump must be taken when there is one."}
 # The house's double jump has crowned a White king on Black's back row, and it is GitHub's turn.
 CK_CROWNED = {
@@ -180,7 +171,6 @@ CK_CROWNED = {
              "when": "9 Oct", "crowned": True},
     "moves": [row("checkers", "👣", "March the Man From 5 to 9!", "5-9", "Man from 5 to 9", 5, 37),
               row("checkers", "👣", "March the Man From 8 to 11!", "8-11", "Man from 8 to 11", 5, 37)],
-    "prompt": "🟢 **GitHub's turn as Black!** @tannergolden played 18... 19x10x1 and crowned a king, by 17 Oct.",
     "note": "A jump must be taken when there is one."}
 # The house's White man took GitHub's last: Black has no move left, and the house wins.
 CK_WON = {
@@ -189,13 +179,13 @@ CK_WON = {
     "kings": {"house": 1, "github": 2},
     "last": {"move": "19x10", "words": "Man from 19 jumps 15, landing on 10", "by": "@tannergolden", "when": "9 Oct"},
     "result": {"winner": "house", "how": "no move left"}, "next": "14 Oct",
-    "prompt": "🏆 **@tannergolden wins game 4!** Black has no move left. Game 5 opens 14 Oct.", "note": NOTE}
+    "note": NOTE}
 CK_DRAWN = {
     "kind": "checkers", "fen": "B:WK30:BK3", "game": 3, "move": 88, "players": 20,
     "history": [[87, "8-3", "26-30", "@octocat"], [88, "", "", ""]], "kings": {"house": 3, "github": 4},
     "last": {"move": "26-30", "words": "King from 26 to 30", "by": "@tannergolden", "when": "8 Oct"},
     "result": {"winner": None, "how": "forty moves"}, "next": "14 Oct",
-    "prompt": "🤝 **Game 3 is drawn!** Forty moves each without a capture. Game 4 opens 14 Oct.", "note": NOTE}
+    "note": NOTE}
 
 GAMES = {"tictactoe": (TTT, (TTT_GITHUB, TTT_HOUSE, TTT_FRESH, TTT_FRESH_HOUSE, TTT_WON, TTT_DRAWN)),
          "connectfour": (C4, (C4_GITHUB, C4_HOUSE, C4_FRESH, C4_FRESH_HOUSE, C4_WON)),
@@ -360,7 +350,7 @@ class Settings(unittest.TestCase):
         # YAML reads `note: 1984` as a number, `true` as a bool and an all-digit login as an int: each is turned away
         # here rather than reaching the README, which would fail on it.
         for pkg, d in ((TTT, TTT_GITHUB), (C4, C4_GITHUB), (CK, CK_GITHUB)):
-            texts = {"note": (1984, True, ["a note"]), "prompt": (1984, {"a": 1}), "due": (18, "32 Oct"),
+            texts = {"note": (1984, True, ["a note"]), "due": (18, "32 Oct"),
                      "last": ({**d["last"], "words": 1984}, {**d["last"], "by": None}, {**d["last"], "when": 11},
                               {**d["last"], "when": "30 Feb"}),
                      "history": ([[3, 1984, "", ""]], [[3, d["last"]["move"], "", 7]], 5, "x"),
@@ -382,13 +372,19 @@ class Settings(unittest.TestCase):
 
     def test_a_line_of_the_readme_never_opens_a_block_or_shows_an_image(self):
         for pkg, d in ((TTT, TTT_GITHUB), (C4, C4_GITHUB), (CK, CK_GITHUB)):
-            for key in ("note", "prompt"):
-                for bad in ("```", "# Heading", "- an item", "1. an item", "    code", "---", "[a]: https://x.io"):
-                    with self.subTest(kind=d["kind"], key=key, bad=bad):
-                        self.assertIn(f"{key} {bad!r} would open a block of its own", " ".join(pkg.check({**d,
-                                                                                                    key: bad})))
-                self.assertIn(f"{key} shows an image", " ".join(pkg.check({**d, key: "![x](https://x.io/x.png)"})))
-                self.assertIn(f"{key} is one line of text", " ".join(pkg.check({**d, key: "a | b"})))
+            for bad in ("```", "# Heading", "- an item", "1. an item", "    code", "---", "[a]: https://x.io"):
+                with self.subTest(kind=d["kind"], bad=bad):
+                    errors = " ".join(pkg.check({**d, "note": bad}))
+                    self.assertIn(f"note {bad!r} would open a block of its own", errors)
+            self.assertIn("note shows an image", " ".join(pkg.check({**d, "note": "![x](https://x.io/x.png)"})))
+            self.assertIn("note is one line of text", " ".join(pkg.check({**d, "note": "a | b"})))
+
+    def test_no_banner_goes_over_a_board_whose_sheet_says_whose_turn_it_is(self):
+        for kind, (pkg, boards) in GAMES.items():
+            for d in boards:
+                with self.subTest(board=name(d)):
+                    self.assertIn("prompt is gone", " ".join(pkg.check({**d, "prompt": "🟢 **GitHub's turn!**"})))
+                    self.assertNotIn("[!", ED.block(kind, d, "assets/elements"))
 
     def test_a_move_links_its_own_ready_made_issue_and_nothing_else(self):
         for pkg, d in ((TTT, TTT_GITHUB), (C4, C4_GITHUB), (CK, CK_GITHUB)):
@@ -728,17 +724,16 @@ class Finished(unittest.TestCase):
 
 
 class Readme(unittest.TestCase):
-    def test_each_board_has_its_turns_banner_above_its_fold_and_every_move_folded_under(self):
+    def test_each_board_is_folded_under_its_name_and_every_move_folded_under_it(self):
+        # no banner stands over the fold: the board's own sheet says whose turn it is
         text = ED.block("tictactoe", TTT_GITHUB, "assets/elements")
-        self.assertTrue(text.startswith("<!-- markdown:element:tictactoe:start -->\n> [!TIP]\n> 🟢 **GitHub's turn!**"
-                                        " @tannergolden played 3. Xa2."))
-        self.assertIn("\n\n<details>\n<summary><b>❌ Tic-Tac-Toe</b></summary>\n\n<picture>", text)
+        self.assertTrue(text.startswith("<!-- markdown:element:tictactoe:start -->\n<details>\n<summary><b>❌ "
+                                        "Tic-Tac-Toe</b></summary>\n\n<picture>"))
         self.assertIn("</picture>\n\n<details>\n<summary>⭕ <b>GitHub's Turn</b> · 2 open cells · open to choose one"
                       "</summary>\n\n|  | Move | In words | Play |\n| :-: | :--- | :--- | :-: |\n", text)
         self.assertIn("| 📏 | **Mark the Head of the Board!** `Ob3` | O takes the head of the board |", text)
         self.assertTrue(text.endswith(f"</details>\n\n{NOTE}\n\n</details>\n<!-- markdown:element:tictactoe:end -->"))
         text = ED.block("checkers", CK_OPENING, "assets/elements")
-        self.assertIn("> [!TIP]\n> 🟢 **GitHub's turn as Black!**", text)
         self.assertIn("<summary>⛂ <b>GitHub's Turn</b> · 2 legal moves · open to choose one</summary>", text)
 
     def test_the_side_to_move_is_signed_with_what_it_plays_both_ways_round(self):
@@ -759,8 +754,7 @@ class Readme(unittest.TestCase):
             [18, "10x17", "19x10x1", "@tokafor"], [19, "5-9", "", "@imvale"]],
             last={"move": "5-9", "words": "Man from 5 to 9", "by": "@imvale", "when": "10 Oct"},
             moves=[row("checkers", "⚔️", "Jump the Man on 17!", "21x14", "Man from 21 jumps 17, landing on 14", 5, 38)],
-            alert="must jump", prompt="🛑 **@tannergolden's turn!** GitHub played 19. 5-9. Must jump! Reply due by"
-                                      " 17 Oct.")
+            alert="must jump")
         self.assertEqual(CK.check(white_turn), [])
         self.assertIn("<summary>⛀ <b>@tannergolden's Turn</b> · 1 legal move · only @tannergolden can play these"
                       "</summary>", ED.block("checkers", white_turn, "assets/elements"))
@@ -790,7 +784,7 @@ class Readme(unittest.TestCase):
             with self.subTest(board=name(d)):
                 self.assertIn(said, E.alt(d["kind"], d))
 
-    def test_a_finished_game_is_its_banner_its_board_and_its_note_with_nothing_to_play(self):
+    def test_a_finished_game_is_its_board_and_its_note_with_nothing_to_play(self):
         # what the picture cannot say, as the engine writes it on a finished board: a link in it is a link
         over = ("Game 1 is over, and its final board stays up for two days: game 2 opens 15 Oct, 16:00 EST, and "
                 "nothing can be played until then. Every finished game is kept as a "
@@ -799,8 +793,8 @@ class Readme(unittest.TestCase):
             text = ED.block(d["kind"], d, "assets/elements")
             with self.subTest(board=name(d), note=d["note"][:20]):
                 self.assertEqual(E.game_of(d["kind"]).check(d), [])
-                self.assertIn(f"> [!IMPORTANT]\n> {d['prompt']}\n\n<details>\n<summary><b>"
-                              f"{ED.FOLDS[d['kind']][0]}</b></summary>\n\n<picture>", text)
+                self.assertTrue(text.startswith(f"<!-- markdown:element:{d['kind']}:start -->\n<details>\n<summary><b>"
+                                                f"{ED.FOLDS[d['kind']][0]}</b></summary>\n\n<picture>"))
                 self.assertEqual(text.count("<details"), 1, "the game's own fold, and no move in it")
                 self.assertTrue(text.endswith(f"</picture>\n\n{d['note']}\n\n</details>\n"
                                               f"<!-- markdown:element:{d['kind']}:end -->"))

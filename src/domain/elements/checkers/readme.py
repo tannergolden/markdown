@@ -1,10 +1,10 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
-"""What the README carries round the Checkers sheet: the turn's banner, and every legal move, folded.
+"""What the README carries under the Checkers sheet: every legal move, folded, then the note.
 
 Each move is named in checkers' own words for what it is, never for what it does, as chess's are: a man's step ("Push
 the Man From 9 to 13!"), a jump and the men it takes ("Jump the Man on 11!"), a man crowned ("Crown the Man From 6 on
-1!"), with no opening's name and nothing of what follows. The engine writes the names; this draws the block round the
+1!"), with no opening's name and nothing of what follows. The engine writes the names; this draws what goes under the
 sheet, as chess's does (`games.readme`). The side to move is signed with its men, ⛀ for the house's White and ⛂ for
 GitHub's Black. A turn with more than ten moves is grouped as chess groups its moves by piece: the men's, then the
 kings', each named for as many as have a move in it.
@@ -32,7 +32,7 @@ def grouped(pieces: dict):
     return groups
 
 
-def text(d: dict) -> tuple[str, str]:
-    """The board's README block round its picture: what goes above it, and what goes under it."""
+def text(d: dict) -> str:
+    """What the README carries under the board's picture: every legal move, folded, then the note."""
     st = state(d)
     return R.text(d, st, SIGN, UNIT, grouped(st["pieces"]))
