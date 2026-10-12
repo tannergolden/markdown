@@ -223,8 +223,8 @@ when it comes down.
 The games are four, @tannergolden, the house, against everyone else on GitHub,
 each drawn as an element of its own, which the profile's own engine writes into
 its settings after every move (see [`elements:`](#-elements)): `tictactoe`,
-`connectfour`, `checkers` and `chess`, with chess's Hall of Fame as
-`chess-hall`. They come in four tiers, from a game anyone can see to the bottom
+`connectfour`, `checkers` and `chess`, with the Hall of Fame of all four as
+`hall-of-fame`. They come in four tiers, from a game anyone can see to the bottom
 of to one nobody ever will:
 
 | Tier | Element       | Positions                            | The house plays                                | Who opens                               |
@@ -259,7 +259,7 @@ its README block is the banner, the board and the note, with no move under it.
 | Sheet            | What it draws                                                                                                                                                                                                                                                              | Files                                                              |
 | :--------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------- |
 | A game's board   | The position, with the state of play beside it: the sides, the turn and when it is due, the last move in notation and in words, what the game keeps count of and the score sheet's latest rows; once the game is over, who won and how, and the day the fresh board comes. | Wide and a phone's, each moving and still, by day and dark.        |
-| The Hall of Fame | Chess's: the series between the house and GitHub, and a podium of its leading winners, each named as their GitHub profile names them.                                                                                                                                      | Wide and a phone's, each moving and still, by day and dark.        |
+| The Hall of Fame | All four games': the series between the house and GitHub, each game on its own row under the four together, and a podium of the leading winners across them with their wins by game, each named as their GitHub profile names them.                                        | Wide and a phone's, each moving and still, by day and dark.        |
 | A winner's badge | One for each winner under the Hall in the README, each a link to that player's profile.                                                                                                                                                                                    | A day file and a dark one; the leader's glints, with a still twin. |
 
 | Game             | A move is written                                                                                   | The panel counts                                                     | As the file opens                                                                                                                    |

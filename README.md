@@ -370,10 +370,13 @@ of, and the score sheet), and the same motion as each file opens:
   stood and a revision cloud round whatever must be answered. A holiday's set or
   a collection's design leaves the games in the standard theme's look or the
   page's print.
-- **The Hall of Fame**, chess's: the series between the house and GitHub, then a
-  podium of its three leading winners and two more beside it, each named as
-  their GitHub profile names them. Under it in the README, a badge for each
-  winner, the leader's glinting, and the leaderboard folded shut.
+- **The Hall of Fame** of all four games: the series between the house and
+  GitHub, each game on its own row under the four together, each named by its
+  two pieces in the order they move; then a podium of the three leading winners
+  across all four and two more beside it, each with their wins by game and
+  named as their GitHub profile names them. Under it in the README, a badge for
+  each winner, the leader's glinting, and the leaderboard folded shut, with a
+  column of wins for each game.
 
 Each sheet comes as a **day** file and a **dark** file, wide and on a phone,
 moving as it opens and still for reduced motion, like a header. Round the
@@ -425,21 +428,21 @@ it is, signed with what that side plays: ❌ or ⭕, ⚫ or ⚪, ⛂ or ⛀, ♔
   </tr>
   <tr>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-hall-wide-blackprint-still-dark.svg"><img src="docs/themes/chess/chess-hall-wide-blackprint-still-day.svg" alt="Chess's Hall of Fame in blackprint, from a sample game's fictional winners" width="100%"></picture></a>
-      <br /><sub>Chess's Hall of Fame, in <code>blackprint</code></sub>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#hall-of-fame"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/hall-of-fame/hall-of-fame-wide-blackprint-still-dark.svg"><img src="docs/themes/hall-of-fame/hall-of-fame-wide-blackprint-still-day.svg" alt="The Hall of Fame of all four games in blackprint, from a sample of fictional winners" width="100%"></picture></a>
+      <br /><sub>The Hall of Fame, in <code>blackprint</code></sub>
     </td>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-hall-wide-standard-still-dark.svg"><img src="docs/themes/chess/chess-hall-wide-standard-still-day.svg" alt="Chess's Hall of Fame in standard, from a sample game's fictional winners" width="100%"></picture></a>
-      <br /><sub>Chess's Hall of Fame, in <code>standard</code></sub>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#hall-of-fame"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/hall-of-fame/hall-of-fame-wide-standard-still-dark.svg"><img src="docs/themes/hall-of-fame/hall-of-fame-wide-standard-still-day.svg" alt="The Hall of Fame of all four games in standard, from a sample of fictional winners" width="100%"></picture></a>
+      <br /><sub>The Hall of Fame, in <code>standard</code></sub>
     </td>
   </tr>
 </table>
 
 **[See the games in every tone, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#tictactoe)**:
-the theme-sets page shows each game's board, its phone files and, for chess,
-the Hall of Fame and the winners' badges, in the standard theme and every
-print, each from a sample game whose players are as fictional as driftmark's
-contributors. What the games' settings hold is in
+the theme-sets page shows each game's board and its phone files, and the Hall
+of Fame of all four with its phone files and the winners' badges, in the
+standard theme and every print, each from a sample whose players are as
+fictional as driftmark's contributors. What the games' settings hold is in
 [Settings](docs/Settings.md#-elements); the games themselves are
 [live on @tannergolden's profile](https://github.com/tannergolden).
 
