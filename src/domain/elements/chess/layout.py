@@ -7,21 +7,31 @@ skin (see `skins`) is handed each part to draw at the place this module gives it
 made of. So the board stands in the same place, the same size, beside the same panel, in the standard theme and in
 every print, and a page that changes theme keeps its layout.
 
+What the data says is fitted to the room each part is given, measured in the skin's own letters: a sentence, a
+name or a login too long for its room is set a little smaller, down to a floor, and past the floor cut short with
+an ellipsis, so nothing runs into the next part or off the sheet. The last move's words take a line or two, as many
+as the standard theme's letters need, so a sheet is as tall in every theme.
+
 The motion plays once as the file opens, every animated attribute carrying its resting value so a file is complete
-without it: the last move's piece comes in from its square, a knight leaping and anything else gliding, its square
-is marked as it lands and a check blooms on the king; the panel rises into place a section at a time. On the Hall of
-Fame the podium rises third, second, first, the bars fill, and a glint runs round the gold medal every seven
-seconds. Drawn inside `motion.at_rest()`, the same sheets are the still files.
+without it: the last move's piece comes in from its square, a knight leaping and anything else gliding, a castling
+king's rook hopping round it, its square is marked as it lands and a check blooms on the king; the panel rises into
+place a section at a time. On the Hall of Fame the podium rises third, second, first, the bars fill, and a glint
+runs round the gold medal every seven seconds. Drawn inside `motion.at_rest()`, the same sheets are the still files.
 """
 from __future__ import annotations
 
-from ...lettering import f1, fx
+import itertools
+
+from ...lettering import f1, fx, width
 from . import motion as M
 from .game import FILES, NAMES, OWNER, VALUE, turn_name
 from .shapes import FOOT
 
 WIDE, NARROW = 830, 360
 BAND, PAD = 40, 20  # the head's depth and the sheet's margin, the standard theme's
+GAP = 8             # what keeps a run of lettering off the next thing along: a rule, a number, a badge
+LEAD = 14           # from one line of the last move's words to the next
+TRIM = " ,.;:-·"    # what an ellipsis takes off the end it follows, so it never comes after a space or a comma
 
 
 def sq_xy(name: str, x0: float, y0: float, s: float) -> tuple[float, float]:
@@ -29,11 +39,126 @@ def sq_xy(name: str, x0: float, y0: float, s: float) -> tuple[float, float]:
     return x0 + f * s, y0 + (8 - r) * s
 
 
+# --------------------------------------------------------------------------- lettering that fits
+# `face` is a skin's: "bold" for names and figures, "regular" for a sentence, "caps" for the small capitals.
+def fit(sk, s, face, size, floor, room, ls=0.0) -> float:
+    """The largest size, from `size` down to `floor` a quarter point at a time, at which `s` fits `room`."""
+    s = str(s).upper() if face == "caps" else str(s)
+    while size > floor and sk.width(s, face, size, ls) > room:
+        size -= .25
+    return size
+
+
+def cut(sk, s, face, size, room, ls=0.0, tail="") -> str:
+    """`s` and its `tail` as they fit `room` at `size`: whole, or `s` cut short with an ellipsis before the tail."""
+    s = str(s)
+
+    def wide(t):
+        t += tail
+        return sk.width(t.upper() if face == "caps" else t, face, size, ls)
+    if wide(s) <= room:
+        return s + tail
+    while s and wide(s.rstrip(TRIM) + "…") > room:
+        s = s[:-1]
+    return s.rstrip(TRIM) + "…" + tail
+
+
+def fitting(sk, s, face, size, floor, room, ls=0.0) -> tuple[str, float]:
+    """`s` as it fits `room`, and its size: smaller down to `floor` if it must be, and cut short there if even that
+    is not enough."""
+    size = fit(sk, s, face, size, floor, room, ls)
+    return cut(sk, s, face, size, room, ls), size
+
+
+def flow(measure, s: str, size: float, floor: float, room: float, rows: int = 2, least: int = 1):
+    """A sentence wrapped into `least` to `rows` lines no wider than `room`, as `measure(line, size)` measures a
+    line: the fewest lines, split evenest, at the largest size from `size` down to `floor` half a point at a time.
+    A split at the sentence's commas is taken where it is nearly as even, so a line ends where a reader pauses.
+    Past the floor the lines are filled in turn and the last is cut short with an ellipsis. (size, lines)"""
+    words = s.split()
+    while True:
+        for count in range(least, min(rows, len(words)) + 1):
+            best = None
+            for cuts in itertools.combinations(range(1, len(words)), count - 1):
+                bounds = (0, *cuts, len(words))
+                lines = [" ".join(words[a:b]) for a, b in zip(bounds, bounds[1:])]
+                widest = max(measure(line, size) for line in lines)
+                pause = all(line.endswith((",", ".", ";")) for line in lines[:-1])
+                score = widest + (0 if pause else room * .15)
+                if widest <= room and (best is None or score < best[0]):
+                    best = (score, lines)
+            if best:
+                return size, best[1]
+        if size <= floor:
+            break
+        size = max(floor, size - .5)
+    lines = []
+    while len(words) > 1 and len(lines) < rows - 1 and measure(words[0], size) <= room:
+        n = 1
+        while n < len(words) and measure(" ".join(words[:n + 1]), size) <= room:
+            n += 1
+        lines.append(" ".join(words[:n]))
+        words = words[n:]
+    rest = " ".join(words)
+    if measure(rest, size) > room:
+        while rest and measure(rest.rstrip(TRIM) + "…", size) > room:
+            rest = rest[:-1]
+        rest = rest.rstrip(TRIM) + "…"
+    return size, lines + [rest]
+
+
 # --------------------------------------------------------------------------- the board
+def passed(last: dict, placed: dict) -> str:
+    """The square the piece the last move took stood on: the one the taker landed on, except for a pawn taken en
+    passant, which stood beside the pawn that took it, a rank short of where that one landed."""
+    beside = last["to"][0] + last["from"][1]
+    if (last["piece"] == "pawn" and last.get("captured") == "pawn" and last["from"][0] != last["to"][0]
+            and "en passant" in last["words"].lower() and beside not in placed):
+        return beside
+    return last["to"]
+
+
+def castled(last: dict, placed: dict) -> tuple[str, str] | None:
+    """For a king that castled, its rook's squares: the corner it came from and the one it stands on; else None."""
+    if (last["piece"] != "king" or last["from"][1] != last["to"][1]
+            or abs(FILES.index(last["to"][0]) - FILES.index(last["from"][0])) != 2):
+        return None
+    rank = last["to"][1]
+    corner, beside = ("h" + rank, "f" + rank) if last["to"] > last["from"] else ("a" + rank, "d" + rank)
+    return (corner, beside) if placed.get(beside, "").lower() == "r" else None
+
+
+def arrive(cv, sk, kind, side, x, y, fx0, fy0, s, beats, lift, swell) -> str:
+    """A piece coming in to its square at (x, y) from the one at (fx0, fy0) on `beats`, the keyTimes of the last
+    move's `LEAP` at which it sets off, passes the midpoint and lands: it rises `lift` of a square by the midpoint,
+    swelling by `swell`, and its shadow slides along under it, thinning as it lifts."""
+    k = s / 45
+    go, mid, land = beats
+    dx, dy = fx0 - x, fy0 - y
+    mx, my = dx / 2, dy / 2 - s * lift
+    t = f"0;{go};{mid};{land};1"
+    sx, sy, rx, ry = x + FOOT[0] * k, y + FOOT[1] * k, FOOT[2] * k, FOOT[3] * k
+    shadow = (f'<g>{M.ani("transform", f"{f1(dx)} {f1(dy)};{f1(dx)} {f1(dy)};0 0;0 0", f"0;{go};{land};1", M.LEAP, spline="0 0 1 1;.35 0 .35 1;0 0 1 1", kind="animateTransform", typ="translate")}'
+              + sk.foot(cv, sx, sy, rx, ry,
+                        M.ani("rx", f"{f1(rx)};{f1(rx)};{f1(rx * .5)};{f1(rx)};{f1(rx)}", t, M.LEAP)
+                        + M.ani("opacity", "1;1;.35;1;1", t, M.LEAP))
+              + "</g>")
+    pid = sk.piece_def(cv, kind, side, shadow=False)
+    cx, cy = x + s / 2, y + s / 2
+    return (shadow
+            + f'<g>{M.ani("transform", f"{f1(dx)} {f1(dy)};{f1(dx)} {f1(dy)};{f1(mx)} {f1(my)};0 0;0 0", t, M.LEAP, spline="0 0 1 1;.3 0 .6 1;.4 0 .25 1;0 0 1 1", kind="animateTransform", typ="translate")}'
+            f'<g transform="translate({f1(cx)} {f1(cy)})"><g>'
+            + M.ani("transform", f"1;1;{swell};1;1", t, M.LEAP, spline="0 0 1 1;.3 0 .6 1;.4 0 .25 1;0 0 1 1",
+                    kind="animateTransform", typ="scale")
+            + f'<use href="#{pid}" transform="translate({f1(-s / 2)} {f1(-s / 2)}) scale({fx(k, 4)})"/>'
+            + "</g></g></g>")
+
+
 def board(cv, sk, g: dict, x0: float, y0: float, s: float) -> None:
     """The eight ranks with their pieces, the last move marked from and to, the checked king marked, and the
     coordinates round it. The piece that moved last comes in from its square as the file opens: a knight leaps,
-    anything else glides; what it took fades as it lands."""
+    anything else glides, and a castling king's rook hops round it a beat behind; what it took fades as it lands,
+    on the square it stood on."""
     placed = g["placement"]
     last = g["last"]
     n = 8 * s
@@ -50,40 +175,32 @@ def board(cv, sk, g: dict, x0: float, y0: float, s: float) -> None:
     pulse = M.ani("opacity", "0;0;1;.5;1;.5;1", ".0;.27;.38;.52;.66;.8;1", M.LEAP / M.LAND * 1.18 + 2.4)
     sk.board_over(cv, clip, x0, y0, s, check, pulse)
     sk.bevel(cv, x0, y0, n)
-    pieces, mover = [], ""
+    pieces, moving = [], []
+    rook = castled(last, placed) if last and M.MOTION else None
     for name in sorted(placed, key=lambda q: (-int(q[1]), FILES.index(q[0]))):
         pc = placed[name]
         x, y = sq_xy(name, x0, y0, s)
         kind, side = NAMES[pc.lower()], "white" if pc.isupper() else "black"
         if last and name == last["to"] and M.MOTION:
-            dx, dy = fx0 - x, fy0 - y
-            mx, my = dx / 2, dy / 2 - s * (.62 if kind == "knight" else .12)
-            t = f"0;.25;.48;{M.LAND};1"
-            sx, sy, rx, ry = x + FOOT[0] * k, y + FOOT[1] * k, FOOT[2] * k, FOOT[3] * k
-            shadow = (f'<g>{M.ani("transform", f"{f1(dx)} {f1(dy)};{f1(dx)} {f1(dy)};0 0;0 0", f"0;.25;{M.LAND};1", M.LEAP, spline="0 0 1 1;.35 0 .35 1;0 0 1 1", kind="animateTransform", typ="translate")}'
-                      + sk.foot(cv, sx, sy, rx, ry,
-                                M.ani("rx", f"{f1(rx)};{f1(rx)};{f1(rx * .5)};{f1(rx)};{f1(rx)}", t, M.LEAP)
-                                + M.ani("opacity", "1;1;.35;1;1", t, M.LEAP))
-                      + "</g>")
-            pid = sk.piece_def(cv, kind, side, shadow=False)
-            cx, cy = x + s / 2, y + s / 2
+            leap = kind == "knight"
+            mover = arrive(cv, sk, kind, side, x, y, fx0, fy0, s, (".25", ".48", f"{M.LAND}"), .62 if leap else .12,
+                           "1.16" if leap else "1.07")
             if last.get("captured"):
                 other = "black" if side == "white" else "white"
                 gone = sk.piece_def(cv, last["captured"], other)
-                shadow = (f'<use href="#{gone}" transform="translate({f1(x)} {f1(y)}) scale({fx(k, 4)})" opacity="0">'
-                          + M.ani("opacity", "1;1;0;0", f"0;{M.LAND - .05};{M.LAND + .05};1", M.LEAP) + "</use>"
-                          + shadow)
-            mover = (shadow
-                     + f'<g>{M.ani("transform", f"{f1(dx)} {f1(dy)};{f1(dx)} {f1(dy)};{f1(mx)} {f1(my)};0 0;0 0", t, M.LEAP, spline="0 0 1 1;.3 0 .6 1;.4 0 .25 1;0 0 1 1", kind="animateTransform", typ="translate")}'
-                     f'<g transform="translate({f1(cx)} {f1(cy)})"><g>'
-                     + M.ani("transform", "1;1;1.16;1;1" if kind == "knight" else "1;1;1.07;1;1", t, M.LEAP,
-                             spline="0 0 1 1;.3 0 .6 1;.4 0 .25 1;0 0 1 1",
-                             kind="animateTransform", typ="scale")
-                     + f'<use href="#{pid}" transform="translate({f1(-s / 2)} {f1(-s / 2)}) scale({fx(k, 4)})"/>'
-                     + "</g></g></g>")
+                gx, gy = sq_xy(passed(last, placed), x0, y0, s)
+                mover = (f'<use href="#{gone}" transform="translate({f1(gx)} {f1(gy)}) scale({fx(k, 4)})" opacity="0">'
+                         + M.ani("opacity", "1;1;0;0", f"0;{M.LAND - .05};{M.LAND + .05};1", M.LEAP) + "</use>"
+                         + mover)
+            moving.insert(0, mover)
+            continue
+        if rook and name == rook[1]:
+            # the castle's rook: it sets off a beat after its king and hops round it, landing a beat after it
+            rx0, ry0 = sq_xy(rook[0], x0, y0, s)
+            moving.append(arrive(cv, sk, kind, side, x, y, rx0, ry0, s, (".36", ".6", ".84"), .4, "1.07"))
             continue
         pieces.append(sk.put(cv, kind, side, x, y, s))
-    cv.add("".join(pieces) + mover)
+    cv.add("".join(pieces) + "".join(moving))
     if last and M.MOTION:
         # the landing: a flash on the square and a ring running out from it
         cx, cy = tx0 + s / 2, ty0 + s / 2
@@ -153,35 +270,60 @@ def turn_row(cv, sk, st, x0, x1, y, *, small=False) -> float:
     if st["check"]:
         panel = full.draw_message(cv, bx + full.lw, y, "in check")
         cv.add(M.wiped(cv, panel, bx + full.lw, y, full.mw, full.h, 1.18, .42))
-    note = f"due by {st['due']}" if st["due"] else "no clock until the first move"
-    cv.add(sk.caps(cv, note, x0 if right else x1, y + full.h / 2 + 3, 7, ls=.6,
+    # the note keeps clear of the badge across the row: said in full where there is room, else said short
+    room = x1 - x0 - full.w - GAP
+    notes = ((f"due by {st['due']}", f"by {st['due']}") if st["due"]
+             else ("no clock until the first move", "no clock yet"))
+    note = next((n for n in notes if sk.width(n.upper(), "caps", 7, .6) <= room), notes[-1])
+    note, size = fitting(sk, note, "caps", 7, 6, room, .6)
+    cv.add(sk.caps(cv, note, x0 if right else x1, y + full.h / 2 + 3, size, ls=.6,
                    anchor="start" if right else "end", what="due"))
     return y + full.h
 
 
-def last_move(cv, sk, st, x0, y, *, small=False) -> float:
-    """The last move in notation, in words, and who played it when; before a game's first move, who opens it."""
+def in_words(sk, st, room, *, small=False) -> tuple[int, float, list[str]]:
+    """The last move in words, flowed to the panel's width: on as many lines as the standard theme's letters take,
+    two at most, so the panel stands the same in every theme; smaller only if it must be, and cut short only past
+    that. (lines the layout gives it, size, lines)"""
+    words = st["last"]["words"] if st["last"] else f"@{OWNER} opens game {st['game']}"
+    size, floor = (11, 9) if not small else (10.5, 8.5)
+    rows = len(flow(lambda s, z: width(s, "sans", z), words, size, floor, room)[1])
+    return (rows, *flow(lambda s, z: sk.width(s, "regular", z), words, size, floor, room, rows=rows, least=rows))
+
+
+def last_move(cv, sk, st, x0, x1, y, *, small=False) -> float:
+    """The last move in notation, in words on a line or two of their own, and who played it when; before a game's
+    first move, who opens it."""
     last = st["last"]
     big = 22 if not small else 18
+    room = x1 - x0
     if last:
         shown = f"{last['number']}." if last["side"] == "white" else f"{last['number']}..."
         shown += f" {last['san']}"
-        words, by = last["words"], f"by {last['by']}  ·  {last['when']}"
     else:
-        shown, words, by = "1. ?", f"@{OWNER} opens game {st['game']}", "white moves first"
+        shown = "1. ?"
     cv.add(sk.key(cv, x0, y - 7, 7, "last"), sk.heading(cv, "last move" if last else "first move", x0 + 12, y))
-    sw = sk.width(shown, "bold", big)
-    cv.add(sk.say(cv, shown, x0, y + 12 + big * .74, big, role="strong", what="move"))
-    if small:
-        cv.add(sk.say(cv, words, x0 + sw + 10, y + 12 + big * .74, 10.5, face="regular", what="move in words"))
-        cv.add(sk.caps(cv, by, x0, y + 12 + big + 12, 7.5, ls=.6))
-        return y + 12 + big + 22
-    cv.add(sk.say(cv, words, x0, y + 12 + big + 14, 11, face="regular", what="move in words"))
-    cv.add(sk.caps(cv, by, x0, y + 12 + big + 31, 7.5, ls=.6))
-    return y + 12 + big + 40
+    cv.add(sk.say(cv, cut(sk, shown, "bold", big, room), x0, y + 12 + big * .74, big, role="strong", what="move"))
+    rows, size, lines = in_words(sk, st, room, small=small)
+    top = y + 12 + big + (14 if not small else 13)
+    for i, line in enumerate(lines):
+        cv.add(sk.say(cv, line, x0, top + i * LEAD, size, face="regular", what="move in words"))
+    # who played it, and when: the login cut short before the day is, if it comes to that
+    yy = top + (rows - 1) * LEAD + (17 if not small else 15)
+    if last:
+        when = f"  ·  {last['when']}"
+        by = f"by {last['by']}{when}"
+        bs = fit(sk, by, "caps", 7.5, 6.5, room, .6)
+        by = cut(sk, f"by {last['by']}", "caps", bs, room, .6, tail=when)
+    else:
+        by, bs = "white moves first", 7.5
+    cv.add(sk.caps(cv, by, x0, yy, bs, ls=.6))
+    return yy + (9 if not small else 10)
 
 
 def taken(cv, sk, st, x0, x1, y, *, mini=20) -> float:
+    """What each side has taken, on a tray of the board's light square, and the side ahead by the pieces' worth;
+    a full tray's pieces stand a little closer, so the badge of the lead stays inside the panel."""
     cv.add(sk.heading(cv, "taken", x0, y))
     t = st["taken"]
     worth = {s: sum(VALUE[k] for k in t[s]) for s in t}
@@ -190,13 +332,16 @@ def taken(cv, sk, st, x0, x1, y, *, mini=20) -> float:
     for side, label, pieces_of in (("white", "WHITE TOOK", "black"), ("black", "BLACK TOOK", "white")):
         cv.add(sk.caps(cv, label, x0, yy + mini / 2 + 3, 7.5, ls=.6, role="muted"))
         px = x0 + 72
-        sk.tray(cv, px - 4, yy - 1, len(t[side]) * mini * .8 + 9, mini + 2)
+        ahead = lead if side == "white" else -lead
+        chip = sk.chip(f"+{ahead}", "", size=7.5, lab="accent") if ahead > 0 else None
+        step = mini * .8
+        if t[side]:
+            step = min(step, (x1 - px - (chip.w + 10 if chip else 5)) / len(t[side]))
+        sk.tray(cv, px - 4, yy - 1, len(t[side]) * step + 9, mini + 2)
         for kind in t[side]:
             cv.add(sk.put(cv, kind, pieces_of, px, yy, mini, sw=2.2, shadow=False))
-            px += mini * .8
-        ahead = lead if side == "white" else -lead
-        if ahead > 0:
-            chip = sk.chip(f"+{ahead}", "", size=7.5, lab="accent")
+            px += step
+        if chip:
             cv.add(chip.draw(cv, px + 10, yy + (mini - chip.h) / 2, "material"))
         yy += mini + 7
     return yy
@@ -211,31 +356,37 @@ def rows_of(st) -> list:
 
 
 def history(cv, sk, st, x0, x1, y, rows=3) -> float:
-    """The last moves, who chose each of GitHub's, the latest move's row marked, and whose turn the next one is."""
+    """The last moves, who chose each of GitHub's, the latest move's row marked, and whose turn the next one is.
+    Each column stands where it always has, further right only for a number or a move too wide to leave it there."""
     cv.add(sk.heading(cv, "moves", x0, y))
     yy = y + 21
     turn = f"{turn_name(st)}'s turn"
     latest = st["last"]["number"] if st["last"] else None
-    for n, w, b, who, safe in rows_of(st)[-rows:]:
+    shown = rows_of(st)[-rows:]
+    wx = x0 + max(26, max(sk.width(f"{n}.", "caps", 8, .3) for n, *_ in shown) + 5)
+    bx = wx + max(56, max(sk.width(w, "bold", 10) for _, w, *_ in shown) + 6)
+    ox = bx + max(54, max(sk.width(b, "bold", 10) for _, _, b, *_ in shown) + 6)
+    for n, w, b, who, safe in shown:
         if n == latest:
             cv.add(sk.row_mark(x0 - 6, yy - 12.5, x1 - x0 + 6, 18))
         cv.add(sk.caps(cv, f"{n}.", x0, yy, 8, ls=.3, what="move number"))
         if not w:
-            cv.add(sk.caps(cv, turn, x0 + 26, yy, 7, ls=.5, role="alert", what="to move"))
+            cv.add(sk.caps(cv, turn, wx, yy, 7, ls=.5, role="alert", what="to move"))
         else:
-            cv.add(sk.say(cv, w, x0 + 26, yy, 10, what="white's move"))
+            cv.add(sk.say(cv, w, wx, yy, 10, what="white's move"))
             if b:
-                cv.add(sk.say(cv, b, x0 + 82, yy, 10, what="black's move"))
-                tx = x0 + 136
+                cv.add(sk.say(cv, b, bx, yy, 10, what="black's move"))
+                tx = ox
                 if safe:
                     chip = sk.chip("safe play", "", icon="shield", size=6.5, lab="safe")
                     cv.add(chip.draw(cv, tx, yy - 3.7 - chip.h / 2, "safe play"))
                     tx += chip.w + 7
                     who = f"for {who}"
                 if who:
-                    cv.add(sk.caps(cv, who, tx, yy, 7, ls=.5, what="mover"))
+                    who, size = fitting(sk, who, "caps", 7, 6, x1 - tx, .5)
+                    cv.add(sk.caps(cv, who, tx, yy, size, ls=.5, what="mover"))
             else:
-                cv.add(sk.caps(cv, turn, x0 + 82, yy, 7, ls=.5, role="alert", what="to move"))
+                cv.add(sk.caps(cv, turn, bx, yy, 7, ls=.5, role="alert", what="to move"))
         yy += 19
     return yy
 
@@ -255,7 +406,7 @@ def board_sheet(sk, st: dict, title: str, desc: str, variant: str = "wide") -> s
         y = M.risen(cv, .15, matchup, cv, sk, st, px0, px1, y0 + 1)
         y = turn_row(cv, sk, st, px0, px1, y + 14)
         cv.add(sk.rule(px0, px1, y + 16))
-        y = M.risen(cv, .3, last_move, cv, sk, st, px0, y + 36)
+        y = M.risen(cv, .3, last_move, cv, sk, st, px0, px1, y + 36)
         cv.add(sk.rule(px0, px1, y - 4))
         y = M.risen(cv, .45, taken, cv, sk, st, px0, px1, y + 16)
         cv.add(sk.rule(px0, px1, y + 1))
@@ -264,7 +415,7 @@ def board_sheet(sk, st: dict, title: str, desc: str, variant: str = "wide") -> s
     W, s = NARROW, 37
     x0, y0 = PAD + 14, BAND + 18
     top = y0 + 8 * s + 30
-    H = top + 324
+    H = top + 340 + LEAD * (in_words(sk, st, W - 2 * PAD, small=True)[0] - 1)   # a line more for words that take two
     cv = sk.new(W, H, title, desc, "elements chessboard narrow", still)
     sk.frame(cv, W, H, "chess", "pawn", f"move {st['move']}", plain=[sk.board_room(x0, y0, s)])
     board(cv, sk, st, x0, y0, s)
@@ -272,7 +423,7 @@ def board_sheet(sk, st: dict, title: str, desc: str, variant: str = "wide") -> s
     y = M.risen(cv, .15, matchup, cv, sk, st, px0, px1, top, small=True)
     y = turn_row(cv, sk, st, px0, px1, y + 12, small=True)
     cv.add(sk.rule(px0, px1, y + 14))
-    y = M.risen(cv, .3, last_move, cv, sk, st, px0, y + 34, small=True)
+    y = M.risen(cv, .3, last_move, cv, sk, st, px0, px1, y + 34, small=True)
     cv.add(sk.rule(px0, px1, y - 2))
     y = M.risen(cv, .45, taken, cv, sk, st, px0, px1, y + 18, mini=18)
     cv.add(sk.rule(px0, px1, y + 1))
@@ -331,6 +482,16 @@ def scoreboard(cv, sk, h, x0, x1, y, *, small=False) -> float:
     return by + 6
 
 
+def named(cv, sk, p, x, y, room, size, ls, hsize, hls, dy) -> None:
+    """A winner's name, and their handle `dy` under it in small capitals, each fitted to `room`: a long one a little
+    smaller, the name keeping its letter-spacing in proportion, and the longest cut short."""
+    em = ls / size
+    ns = sk.fitted(p["name"], size, 7.5, room, em)
+    handle, hs = fitting(sk, p["handle"], "caps", hsize, hsize - 1, room, hls)
+    cv.add(sk.say(cv, cut(sk, p["name"], "bold", ns, room, ns * em), x, y, ns, ls=ns * em),
+           sk.caps(cv, handle, x, y + dy, hs, ls=hls))
+
+
 def vacant(cv, sk, x, y, colw, i) -> None:
     """A podium's place nobody has taken yet: an empty medal, waiting."""
     cv.add(sk.vacant(cv, x + 28, y + 28, 22, i),
@@ -340,8 +501,10 @@ def vacant(cv, sk, x, y, colw, i) -> None:
 
 
 def podium(cv, sk, h, x0, x1, y) -> float:
+    """The first three, each in a column: medal, name and handle, wins and a bar of them against the most anyone
+    has. Every line of a column ends where its bar does, short of the rule to the next."""
     people = h["people"]
-    most = people[0]["wins"] if people else 1
+    most = max((p["wins"] for p in people), default=1)
     colw = (x1 - x0) / 3
     order = {2: .45, 1: .7, 0: 1.0}           # third, then second, then first
     for i in range(3):
@@ -361,33 +524,41 @@ def podium(cv, sk, h, x0, x1, y) -> float:
         cv.add(rank.draw(cv, x + 28 - rank.w / 2, y + 58, "rank"))
         tx = x + 66
         room = colw - 74
-        ns = sk.fitted(p["name"], 10.5, 7.5, room, .07)
-        cv.add(sk.say(cv, p["name"], tx, y + 16, ns, ls=ns * .07), sk.caps(cv, p["handle"], tx, y + 30, 7.5, ls=.6))
+        named(cv, sk, p, tx, y + 16, room, 10.5, .735, 7.5, .6, 14)
         num = str(p["wins"])
         cw = sk.width(num, "bold", 20)
         cv.add(sk.say(cv, num, tx, y + 58, 20, role="strong"),
                sk.caps(cv, "wins" if p["wins"] != 1 else "win", tx + cw + 5, y + 58, 7.5))
         games = f"{p['games']} game{'s' if p['games'] != 1 else ''}"
-        cv.add(sk.caps(cv, f"last win {p['last']}  ·  {games}" if p["last"] else games, tx, y + 92, 7, ls=.5))
+        games, gs = fitting(sk, f"last win {p['last']}  ·  {games}" if p["last"] else games, "caps", 7, 6, room,
+                            .5)
+        cv.add(sk.caps(cv, games, tx, y + 92, gs, ls=.5))
         added = "".join(cv.body[n0:])
         del cv.body[n0:]
         cv.add(M.rise(added, order[i]))
         cv.add(sk.track(cv, tx, y + 66, room, 6)
-               + M.wiped(cv, sk.fill_bar(cv, tx, y + 66, max(3, room * p["wins"] / most), 6), tx, y + 65, room, 8,
+               + M.wiped(cv, sk.fill_bar(cv, tx, y + 66, bar(room, p["wins"], most), 6), tx, y + 65, room, 8,
                          order[i] + .25, .9))
     return y + 112
 
 
+def bar(room, wins, most) -> float:
+    """A winner's bar: their wins against the most anyone has, never past its track nor too short to see."""
+    return min(room, max(3, room * wins / max(most, 1)))
+
+
 def mentions(cv, sk, h, x0, x1, y, start=3) -> float:
+    """The places after the podium, two to a row: the number, the name and handle, and the wins on a badge."""
     rest = h["people"][start:]
     colw = (x1 - x0) / 2
     for i, p in enumerate(rest):
         col, row = i % 2, i // 2
         x, yy = x0 + col * colw, y + row * 34
         cv.add(sk.number(cv, start + i + 1, x, yy, 18))
-        cv.add(sk.say(cv, p["name"], x + 28, yy + 9, 9, ls=.6), sk.caps(cv, p["handle"], x + 28, yy + 21, 7, ls=.5))
         chip = sk.chip("wins", str(p["wins"]), size=7.5, lab="label", msg="count")
-        cv.add(chip.draw(cv, x + colw - chip.w - 14, yy - 2, "wins"))
+        cx = x + colw - chip.w - 14
+        named(cv, sk, p, x + 28, yy + 9, cx - GAP - x - 28, 9, .6, 7, .5, 12)
+        cv.add(chip.draw(cv, cx, yy - 2, "wins"))
     return y + ((len(rest) + 1) // 2) * 34
 
 
@@ -417,7 +588,7 @@ def hall_sheet(sk, h: dict, title: str, desc: str, variant: str = "wide") -> str
     cv.add(sk.rule(PAD, W - PAD, y + 12))
     y += 28
     people = h["people"]
-    most = people[0]["wins"] if people else 1
+    most = max((p["wins"] for p in people), default=1)
     order = {2: .45, 1: .7, 0: 1.0}
     rows = {i: y + i * 62 for i in range(3)}
     for i in (2, 1, 0):
@@ -437,8 +608,8 @@ def hall_sheet(sk, h: dict, title: str, desc: str, variant: str = "wide") -> str
         p = people[i]
         cv.add(sk.face(cv, PAD + 20, yy + 20, 15, p, i, medal=i, glint=i == 0))
         tx = PAD + 52
-        cv.add(sk.say(cv, p["name"], tx, yy + 12, 9.5, ls=.6), sk.caps(cv, p["handle"], tx, yy + 25, 7, ls=.5))
         num = str(p["wins"])
+        named(cv, sk, p, tx, yy + 12, W - PAD - 34 - sk.width(num, "bold", 17) - GAP - tx, 9.5, .6, 7, .5, 13)
         cv.add(sk.say(cv, num, W - PAD - 34, yy + 20, 17, role="strong", anchor="end"),
                sk.caps(cv, "wins" if p["wins"] != 1 else "win", W - PAD - 30, yy + 20, 7))
         added = "".join(cv.body[n0:])
@@ -446,7 +617,7 @@ def hall_sheet(sk, h: dict, title: str, desc: str, variant: str = "wide") -> str
         cv.add(M.rise(added, order[i]))
         room = W - PAD - tx
         cv.add(sk.track(cv, tx, yy + 33, room, 4)
-               + M.wiped(cv, sk.fill_bar(cv, tx, yy + 33, max(3, room * p["wins"] / most), 4), tx, yy + 32, room, 6,
+               + M.wiped(cv, sk.fill_bar(cv, tx, yy + 33, bar(room, p["wins"], most), 4), tx, yy + 32, room, 6,
                          order[i] + .25, .9))
     y += 3 * 62
     if not rest:
@@ -457,9 +628,8 @@ def hall_sheet(sk, h: dict, title: str, desc: str, variant: str = "wide") -> str
         for i, p in enumerate(rest):
             yy = y + 6 + i * 34
             cv.add(sk.number(cv, 4 + i, PAD, yy, 18))
-            cv.add(sk.say(cv, p["name"], PAD + 28, yy + 9, 9, ls=.6), sk.caps(cv, p["handle"], PAD + 28, yy + 21, 7,
-                                                                              ls=.5))
             chip = sk.chip("wins", str(p["wins"]), size=7.5, lab="label", msg="count")
+            named(cv, sk, p, PAD + 28, yy + 9, W - PAD - chip.w - GAP - PAD - 28, 9, .6, 7, .5, 12)
             cv.add(chip.draw(cv, W - PAD - chip.w, yy - 2, "wins"))
     M.risen(cv, 1.25, rest_rows)
     return cv.svg()
