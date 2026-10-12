@@ -3,10 +3,11 @@
 
 WHY THIS EXISTS. A theme is easier to choose by looking than by reading. The
 page shows every theme's headers, phone files, footers, elements, badges and
-trophy case, each drawn the way a run draws it, from the kit's own samples
-and the driftmark specimen, on GitHub's light and dark grounds. The game the kit draws
-for @tannergolden's profile alone is shown beside them, from a sample game, in
-the standard theme and every print, as it is drawn on that profile.
+trophy case, each drawn the way a run draws it, from the kit's own samples and
+the driftmark specimen, on GitHub's light and dark grounds. The four games the
+kit draws for @tannergolden's profile alone (Tic-Tac-Toe, Connect Four,
+Checkers and Chess) are shown beside them, each from a sample game, in the
+standard theme and every print, as they are drawn on that profile.
 
 Nothing is fetched and nothing depends on the day it runs, so drawing it twice
 writes the same bytes, and a change to a theme shows up as a change here.
@@ -58,6 +59,10 @@ from infra.yaml_reader import loads  # noqa: E402
 TEMPLATE = Path(__file__).with_name("theme-sets.html")
 SPECIMEN = ROOT / "tests" / "fixtures" / "driftmark" / ".github" / "markdown.yaml"
 GAME = ROOT / "tests" / "fixtures" / "chess.yaml"  # the sample game the chess sheets are drawn from
+# The games on that profile, in their tiers' order, each drawn from a sample game beside chess's:
+# tests/fixtures/<key>.yaml.
+GAMES = (*elements_draw.GAMES, "chess")
+TITLES = {"tictactoe": "Tic-Tac-Toe", "connectfour": "Connect Four", "checkers": "Checkers", "chess": "Chess"}
 # The game is drawn on one page, @tannergolden's profile, in the standard theme or a print; there, in blackprint.
 PROFILE, PROFILE_TONE = f"https://github.com/{chess.OWNER}", "blackprint"
 # The page says it drew this folder, so a rebuild may empty it and a wrong path never loses anything.
@@ -87,6 +92,20 @@ NOTES = {
     "board": "The board as it stands, with the state of play beside it: the players, whose turn it is and until "
              "when, the last move in words, what each side has taken and the score sheet's latest rows. It opens by "
              "playing the last move again; Motion: Still shows the file a reader who asks for reduced motion gets.",
+    "tictactoe board": "The board as it stands, with the state of play beside it: the players and the mark each plays "
+                       "this game, whose turn it is and until when, the last mark in words, how the game ends from "
+                       "here with perfect play and where each side would win next, and the score sheet's latest "
+                       "rows. It opens by drawing the last mark again; Motion: Still shows the file a reader who asks "
+                       "for reduced motion gets.",
+    "connectfour board": "The frame as it stands, with the state of play beside it: the players and the discs each "
+                         "drops this game, whose turn it is and until when, the last disc in words, the discs each "
+                         "side has left and the score sheet's latest rows. It opens by dropping the last disc again; "
+                         "Motion: Still shows the file a reader who asks for reduced motion gets.",
+    "checkers board": "The board as it stands, its squares numbered as checkers writes its moves, with the state of "
+                      "play beside it: the players, whose turn it is and until when, the last move in words, the men "
+                      "each side has taken and the kings it has made, and the score sheet's latest rows. It opens by "
+                      "playing the last move again; Motion: Still shows the file a reader who asks for reduced "
+                      "motion gets.",
     "hall": "The series between the house and GitHub, the podium of its three leading winners and two more beside "
             "it, each named as their GitHub profile names them.",
     "game phones": "The 360-pixel files a README shows on a small screen, in the standard theme and in the profile's "
@@ -359,15 +378,76 @@ def collection_entry(d: Drawings, key: str) -> dict:
             "sections": [{"key": "year", "title": "The year", "note": NOTES["year"], "items": year}]}
 
 
+def fixture(key: str) -> Path:
+    """Where a game's sample is: chess's beside the others, each named for its game."""
+    return GAME if key == "chess" else GAME.with_name(f"{key}.yaml")
+
+
 @lru_cache(maxsize=None)
-def sample_game() -> dict:
-    """The sample game's two elements, checked as a run checks them and turned away if they are wrong."""
-    spec = loads(GAME.read_text(encoding="utf-8"))
+def sample_game(key: str = "chess") -> dict:
+    """A game's sample elements (chess's board and its Hall of Fame; another game's board), checked as a run checks
+    them and turned away if they are wrong."""
+    path = fixture(key)
+    spec = loads(path.read_text(encoding="utf-8"))
     section = elements_data.check(spec["elements"])
     problems = elements_data.validate(section, {}, subject=chess.OWNER)
     if problems:
-        raise SystemExit(f"{GAME.name}: " + "; ".join(problems))
+        raise SystemExit(f"{path.name}: " + "; ".join(problems))
     return elements_data.merged(section, {}, subject=chess.OWNER, today=TODAY)
+
+
+GAME_NOTES = {
+    "tictactoe": f"Tic-Tac-Toe on @{chess.OWNER}'s profile README, @{chess.OWNER} against everyone else on GitHub. The "
+                 "Arbiter opens every game for a side drawn at random, with a random move, since X wins far more "
+                 "often whenever anyone slips: that side plays X, and the other O.",
+    "connectfour": f"Connect Four on @{chess.OWNER}'s profile README, @{chess.OWNER} against everyone else on GitHub. "
+                   "Whoever drops the first disc can force a win, so the Arbiter opens every game for a side drawn at "
+                   "random, with a random move: that side drops the dark discs, and the other the light.",
+    "checkers": f"Checkers on @{chess.OWNER}'s profile README, @{chess.OWNER} as Dark, which opens every game, against "
+                "everyone else on GitHub as Light, on the 32 dark squares numbered as checkers writes its moves.",
+}
+DRAWN_IN = (" It is drawn in whatever theme the page is in: the standard theme's enamel, or a print's drawing on "
+            "drafting paper, the same family as the chess board beside it.")
+
+
+def labelled(tone: str) -> str:
+    return f"{tone}, the profile's" if tone == PROFILE_TONE else tone
+
+
+def board_entry(d: Drawings, key: str) -> dict:
+    """One of the games beside chess as one entry, the way chess is one: its board in the standard theme and every
+    print, and the files a phone gets. Nobody else's page can draw it, so in place of what to write in the settings,
+    it says where to see the game live."""
+    game = sample_game(key)
+    tones = (prints.STANDARD, *prints.PRINTS)
+    drawn = {tone: elements_data.render(game, tone) for tone in tones}
+
+    def sheet(tone: str, variant: str, label: str) -> dict:
+        files, name = drawn[tone], elements_data.file_name
+        still = "narrow-still" if variant == "narrow" else "still"
+        return item(d, key, f"{key}-{variant}-{tone}", label, files[name(key, variant, "day")],
+                    files[name(key, variant, "dark")], BUDGET[elements_draw.KINDS[key][2]],
+                    still=(files[name(key, still, "day")], files[name(key, still, "dark")]))
+
+    title = TITLES[key]
+    phones = [sheet(tone, "narrow", f"Board, {labelled(tone)}") for tone in (prints.STANDARD, PROFILE_TONE)]
+    return {"key": key, "name": title.lower(), "group": "game", "tag": f"@{chess.OWNER} only",
+            "kicker": f"Game, exclusive to @{chess.OWNER}'s profile",
+            "note": GAME_NOTES[key] + DRAWN_IN,
+            "use": "", "use_title": "Where it is drawn",
+            "where": f"On @{chess.OWNER}'s profile README, and nowhere else",
+            "use_note": "The kit draws the game for that one page: any other page that names it is told so. Every "
+                        "game is played there live, a move at a time, and anyone on GitHub can make the next one.",
+            "link": PROFILE, "link_text": f"See the games live on @{chess.OWNER}'s profile →",
+            "swatches_title": "Drawn in every tone",
+            "swatches": [{"role": prints.STANDARD, "hex": hexof(pieces.ACCENT)}]
+            + [{"role": tone, "hex": hexof(prints.PRINTS[tone]["line"])} for tone in prints.PRINTS],
+            "thumb": {"day": f"{key}/{key}-wide-{PROFILE_TONE}-still-day.svg",
+                      "dark": f"{key}/{key}-wide-{PROFILE_TONE}-still-dark.svg"},
+            "sections": [
+                {"key": "board", "title": "The board", "note": NOTES[f"{key} board"],
+                 "items": [sheet(tone, "wide", f"Board, {labelled(tone)}") for tone in tones]},
+                {"key": "phones", "title": "On a phone", "note": NOTES["game phones"], "items": phones}]}
 
 
 def game_entry(d: Drawings) -> dict:
@@ -384,9 +464,6 @@ def game_entry(d: Drawings) -> dict:
         return item(d, key, f"{eid}-{variant}-{tone}", label, files[name(eid, variant, "day")],
                     files[name(eid, variant, "dark")], BUDGET[elements_draw.KINDS[game[eid]["kind"]][2]],
                     still=(files[name(eid, still, "day")], files[name(eid, still, "dark")]))
-
-    def labelled(tone: str) -> str:
-        return f"{tone}, the profile's" if tone == PROFILE_TONE else tone
 
     shown = (prints.STANDARD, PROFILE_TONE)
     phones = [sheet(eid, tone, "narrow", f"{what}, {labelled(tone)}") for tone in shown
@@ -426,6 +503,8 @@ def game_entry(d: Drawings) -> dict:
 def theme_entry(d: Drawings, key: str) -> dict:
     if key == "chess":
         return game_entry(d)
+    if key in elements_draw.GAMES:
+        return board_entry(d, key)
     if key in collections.COLLECTIONS:
         return collection_entry(d, key)
     if key in holidays.SETS:
@@ -503,7 +582,7 @@ def build(out: Path, bundle: bool = False, only: list[str] | None = None) -> dic
     """Draw the themes into `out`; returns the page's manifest."""
     resources.install()
     keys = ([prints.STANDARD, *prints.PRINTS, prints.RAINBOW] + [k for k in holidays.KEYS if k in holidays.SETS]
-            + collections.themes() + ["chess"])
+            + collections.themes() + list(GAMES))
     if only:
         unknown = sorted(set(only) - set(keys))
         if unknown:

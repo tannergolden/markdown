@@ -168,6 +168,71 @@ class TheGame(unittest.TestCase):
                 builder.sample_game.cache_clear()
 
 
+class TheGamesBesideChess(unittest.TestCase):
+    """Tic-Tac-Toe, Connect Four and Checkers are each one entry in the Games group, beside chess's and in their
+    tiers' order: the board in the standard theme and every print, and the files a phone gets, each from its own
+    sample game, checked as a run checks it."""
+
+    KEYS = ('tictactoe', 'connectfour', 'checkers')
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.out = pathlib.Path(cls.tmp.name) / 'themes'
+        with contextlib.redirect_stdout(io.StringIO()):
+            builder.main([str(cls.out), '--only', ','.join(cls.KEYS)])
+        cls.entries = {e['key']: e for e in manifest_of((cls.out / 'index.html').read_text(encoding='utf-8'))['themes']}
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.tmp.cleanup()
+
+    def test_each_is_a_game_in_its_tiers_order_that_says_where_to_see_it_live(self) -> None:
+        self.assertEqual(list(self.entries), list(self.KEYS))
+        self.assertEqual(builder.GAMES, ('tictactoe', 'connectfour', 'checkers', 'chess'), 'chess last, its tier')
+        for key, entry in self.entries.items():
+            with self.subTest(key=key):
+                self.assertEqual(entry['group'], 'game')
+                self.assertEqual(entry['use'], '', 'nothing to write: no other page can draw it')
+                self.assertEqual(entry['where'], "On @tannergolden's profile README, and nowhere else")
+                self.assertEqual(entry['link'], 'https://github.com/tannergolden')
+
+    def test_its_board_is_drawn_in_the_standard_theme_and_every_print_and_on_a_phone(self) -> None:
+        tones = [builder.prints.STANDARD, *builder.prints.PRINTS]
+        for key, entry in self.entries.items():
+            sections = {s['key']: s for s in entry['sections']}
+            with self.subTest(key=key):
+                self.assertEqual(list(sections), ['board', 'phones'])
+                items = sections['board']['items']
+                self.assertEqual([it['label'].split(', ')[1] for it in items], tones)
+                self.assertTrue(all('sday' in it and 'sdark' in it for it in items), 'each with its still pair')
+                self.assertEqual([it['label'] for it in sections['phones']['items']],
+                                 ['Board, standard', "Board, blackprint, the profile's"])
+                self.assertTrue(all(it['w'] == 360 for it in sections['phones']['items']))
+                for name in drawings_of(entry) + list(entry['thumb'].values()):
+                    self.assertTrue((self.out / name).is_file(), name)
+
+    def test_the_arbiter_opened_the_samples_of_the_games_it_opens_for_github(self) -> None:
+        self.assertEqual(builder.sample_game('tictactoe')['tictactoe']['x'], 'github')
+        self.assertEqual(builder.sample_game('connectfour')['connectfour']['opens'], 'github')
+        self.assertEqual(builder.sample_game('checkers')['checkers']['dark'], 'house', 'the house opens Checkers')
+        self.assertIn('The Arbiter opens every game for a side drawn at random', self.entries['tictactoe']['note'])
+        self.assertIn('The Arbiter opens every game', builder.sample_game('connectfour')['connectfour']['note'])
+
+    def test_a_sample_game_the_kit_would_turn_away_is_never_drawn(self) -> None:
+        bad = 'elements:\n  tictactoe:\n    kind: tictactoe\n    board: XXX/XXX/XXX\n    x: github\n'
+        with tempfile.TemporaryDirectory() as tmp:
+            game = pathlib.Path(tmp) / 'chess.yaml'
+            (pathlib.Path(tmp) / 'tictactoe.yaml').write_text(bad, encoding='utf-8')
+            builder.sample_game.cache_clear()
+            try:
+                with mock.patch.object(builder, 'GAME', game), self.assertRaises(SystemExit) as raised:
+                    builder.sample_game('tictactoe')
+                self.assertIn('tictactoe.yaml: tictactoe: board has 9 X and 0 O', str(raised.exception))
+            finally:
+                builder.sample_game.cache_clear()
+
+
 class TestBundle(unittest.TestCase):
     """The copy for a host that caps its files: the page and one data file per theme."""
 

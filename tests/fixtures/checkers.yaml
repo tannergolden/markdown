@@ -1,0 +1,34 @@
+# SPDX-FileCopyrightText: 2026 Tanner Golden
+# SPDX-License-Identifier: MIT
+#
+# The sample game the theme-sets page draws the Checkers sheets from: game 6 of
+# @tannergolden against GitHub, which the house opened with the dark men, on its
+# tenth move: the house has just jumped a man, and GitHub must jump back. The
+# game itself is drawn on @tannergolden's profile alone, where every move is
+# played live; its players here are driftmark's contributors, and as fictional
+# as they are.
+
+elements:
+  checkers:
+    kind: checkers
+    fen: "W:W20,21,24,25,27,28,29,30,32:B2,4,5,6,8,9,14,16,18"
+    dark: house
+    game: 6
+    move: 10
+    players: 11
+    due: 18 Oct
+    alert: must jump
+    last:
+      move: 11x18
+      words: Man from 11 jumps 15, landing on 18
+      by: "@tannergolden"
+      when: 11 Oct
+    kings: {house: 0, github: 0}
+    history:
+      - [8, 3-8, 26-22, "@hollyfenwick"]
+      - [9, 1-6, 22x15, "@sunnypatel"]
+      - [10, 11x18, "", ""]
+    prompt: "🟢 **GitHub's turn as Light!** A jump is waiting, and it must be taken, by 18 Oct."
+    note: "The house opens every game with the dark men. A jump must be taken when there is one, and the first move to arrive is the one played."
+    moves:
+      - ["⚔️", "Ram Them Amidships!", 20x11, "Man from 20 jumps 16, landing on 11", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=checkers%3A%2020x11%20%C2%B7%20game%206%20%C2%B7%20move%2020"]

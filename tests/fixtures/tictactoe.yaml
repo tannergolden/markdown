@@ -1,0 +1,38 @@
+# SPDX-FileCopyrightText: 2026 Tanner Golden
+# SPDX-License-Identifier: MIT
+#
+# The sample game the theme-sets page draws the Tic-Tac-Toe sheets from: game 9 of
+# @tannergolden against GitHub, which the Arbiter opened for GitHub with the
+# centre, so GitHub plays X and the house O. On GitHub's third move the house
+# threatens a2, and GitHub must block it. The game itself is drawn on
+# @tannergolden's profile alone, where every move is played live; its players
+# here are driftmark's contributors, and as fictional as they are.
+
+elements:
+  tictactoe:
+    kind: tictactoe
+    board: O../.X./O.X
+    x: github
+    game: 9
+    move: 3
+    players: 4
+    due: 18 Oct
+    last:
+      move: Oa3+
+      words: O blocks on a3, threatening a2
+      by: "@tannergolden"
+      when: 12 Oct
+    threats: {house: [a2], github: []}
+    outlook: draw
+    history:
+      - [1, Xb2, Oa1, the Arbiter]
+      - [2, Xc1+, Oa3+, "@imvale"]
+      - [3, "", "", ""]
+    prompt: "🟢 **GitHub's turn as X!** @tannergolden threatens a2: block it, by 18 Oct."
+    note: "The Arbiter opens every game for a side drawn at random, with a random move: X wins far more often whenever anyone slips. The first move to arrive is the one played."
+    moves:
+      - ["🛡️", "Turn Their Point Aside!", Xa2+, "X blocks on a2, threatening c2", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20a2%20%C2%B7%20game%209%20%C2%B7%20move%205"]
+      - ["⚠️", "Look Away!", Xb3+, "X takes the head of the board, threatening b1", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20b3%20%C2%B7%20game%209%20%C2%B7%20move%205"]
+      - ["⚠️", "Step Into the Thrust!", Xc3+, "X takes the upper right corner, threatening c2", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20c3%20%C2%B7%20game%209%20%C2%B7%20move%205"]
+      - ["⚠️", "Turn Your Back on the Blade!", Xc2+, "X takes the right edge, threatening c3 and a2", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20c2%20%C2%B7%20game%209%20%C2%B7%20move%205"]
+      - ["⚠️", "Leave Your Flank Open!", Xb1+, "X takes the foot of the board, threatening b3", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20b1%20%C2%B7%20game%209%20%C2%B7%20move%205"]
