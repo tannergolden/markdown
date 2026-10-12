@@ -8,10 +8,10 @@ of, so the Hall stands the same in the standard theme and in every print.
 
 The sheet reads top to bottom as a match card. The two sides face each other across the top, as they do on every
 board's panel; under them the series, a table whose columns are the house's wins and GitHub's with a bar of the share
-between them, the draws in its middle: first all four games together, then each game on a row of its own, named by
-its mark, its two pieces in the order their colours move. Then the podium, three blocks in gold, silver and bronze
+between them, the draws in its middle: first all four games together, then each game on a row of its own, Chess
+first, named by its mark, its two pieces, the house's first. Then the podium, three blocks in gold, silver and bronze
 with the three leading winners standing on them, each with all their wins and their wins in every game beside that
-game's mark, the same whoever won, and the two places after it.
+game's mark, in the same order, and the two places after it.
 What the data says is fitted to the room each part is given: a name, a login or a number too long for its room is set
 a little smaller, down to a floor, and past the floor cut short with an ellipsis.
 
@@ -25,8 +25,8 @@ from __future__ import annotations
 from ...lettering import f1, fx
 from ..chess import motion as M
 from ..chess.layout import GAP, cut, fit, fitting, flow
-from .marks import MOVE_ORDER, STEP
-from .record import GAMES, OWNER, TITLES
+from .marks import GITHUB, HOUSE, STEP
+from .record import ORDER, OWNER, TITLES
 from .skins import Standard
 
 WIDE, NARROW = 830, 360
@@ -99,13 +99,12 @@ def slid(markup: str, dx: float, begin: float, dur: float = .55) -> str:
 
 
 def emblem(cv, sk, game: str, x: float, y: float, size: float, *, small: bool = False, begin: float | None = None):
-    """A game's own mark: its two pieces in the order their colours move, the first on the left in front of the
-    second, a piece `size` square, the first's top-left at (x, y). It names the game and never a side, since in
-    Tic-Tac-Toe and Connect Four the house plays either colour from game to game. Given `begin`, the two meet from
-    either side as their row arrives."""
-    first, second = MOVE_ORDER[game]
-    behind = sk.piece(cv, game, second, x + size * STEP, y, size, small=small)
-    front = sk.piece(cv, game, first, x, y, size, small=small)
+    """A game's own mark: its two pieces, the house's on the left in front of GitHub's, a piece `size` square, the
+    house's top-left at (x, y). The white king and then the black, the white man and then the black, the white disc
+    and then the black, X and then O: each side's own, whoever moved first. Given `begin`, the two meet from either
+    side as their row arrives."""
+    behind = sk.piece(cv, game, GITHUB, x + size * STEP, y, size, small=small)
+    front = sk.piece(cv, game, HOUSE, x, y, size, small=small)
     if begin is None:
         return behind + front
     return slid(behind, 14, begin) + slid(front, -14, begin)
@@ -188,7 +187,7 @@ def row(cv, sk, s, label, x1, y, cols, *, size, floor, name, sub=6.5) -> None:
 
 
 def series(cv, sk, h, x0, x1, y) -> float:
-    """The series, wide: all four games together, then each game on a row of its own, in tier order."""
+    """The series, wide: all four games together, then each game on a row of its own, Chess first."""
     cols = columns(x0, x1)
     t = h["totals"]
     n0 = len(cv.body)
@@ -197,7 +196,7 @@ def series(cv, sk, h, x0, x1, y) -> float:
     rose(cv, .3, n0)
     top, y = y, y + 40
     cv.add(sk.rule(cols["name"], x1, y - 10))
-    for i, game in enumerate(GAMES):
+    for i, game in enumerate(ORDER):
         s, at = h["series"][game], .55 + .12 * i
         n0 = len(cv.body)
         cv.add(emblem(cv, sk, game, x0, y - 9, 26, begin=at))
@@ -226,7 +225,7 @@ def series_small(cv, sk, h, x0, x1, y) -> float:
     rose(cv, .3, n0)
     top, y = y, y + 66
     cols = columns(x0, x1, small=True)
-    for i, game in enumerate(GAMES):
+    for i, game in enumerate(ORDER):
         s, at = h["series"][game], .55 + .12 * i
         n0 = len(cv.body)
         cv.add(emblem(cv, sk, game, x0, y - 5, 22, begin=at))
@@ -245,21 +244,21 @@ def series_small(cv, sk, h, x0, x1, y) -> float:
 
 # --------------------------------------------------------------------------- the podium
 def by_game(cv, sk, p, x, y, room, *, size=13, rows=1, anchor="start") -> float:
-    """A winner's wins in every game, each beside that game's own mark, the same mark whoever won it, a game they
-    have yet to win set faint: in slots of one width, on one row or on two rows of two, no wider in all than `room`;
-    from `x`, or centred on it when `anchor` is middle. Where the room is short the marks give way first, set
-    smaller down to the width of a single piece, so a count keeps its size; only past that is a count set smaller,
-    so none meets the next game's mark. Returns the width it took."""
-    per = len(GAMES) // rows
+    """A winner's wins in every game, Chess first, each beside that game's own mark, a game they have yet to win set
+    faint: in slots of one width, on one row or on two rows of two, no wider in all than `room`; from `x`, or centred
+    on it when `anchor` is middle. Where the room is short the marks give way first, set smaller down to the width of
+    a single piece, so a count keeps its size; only past that is a count set smaller, so none meets the next game's
+    mark. Returns the width it took."""
+    per = len(ORDER) // rows
     figure = 9 if size > 12 else 8.5
-    texts = [str(p["by_game"][game]) for game in GAMES]
+    texts = [str(p["by_game"][game]) for game in ORDER]
     widest = max(sk.width(t, "bold", figure) for t in texts)
     natural = size * (1 + STEP)
     slot = min(room / per, natural + 2 + widest + 10)
     mark = max(size, min(natural, slot - 2 - widest - 6))   # the mark's width: what the slot leaves beside its count
     piece = mark / (1 + STEP)
     left = x - slot * per / 2 if anchor == "middle" else x
-    for i, game in enumerate(GAMES):
+    for i, game in enumerate(ORDER):
         col, row = i % per, i // per
         n, text = p["by_game"][game], texts[i]
         ns = fit(sk, text, "bold", figure, 4.5, slot - mark - 2 - 6)
@@ -273,8 +272,8 @@ def by_game(cv, sk, p, x, y, room, *, size=13, rows=1, anchor="start") -> float:
 def by_game_width(sk, p, size=12, rows=1) -> float:
     """How wide a winner's wins in every game stand, at their size: what `by_game` takes when it has the room."""
     figure = 9 if size > 12 else 8.5
-    widest = max(sk.width(str(p["by_game"][game]), "bold", figure) for game in GAMES)
-    return (len(GAMES) // rows) * (size * (1 + STEP) + 2 + widest + 10)
+    widest = max(sk.width(str(p["by_game"][game]), "bold", figure) for game in ORDER)
+    return (len(ORDER) // rows) * (size * (1 + STEP) + 2 + widest + 10)
 
 
 def stand(cv, sk, p, i, cx, top, w, *, small=False) -> None:

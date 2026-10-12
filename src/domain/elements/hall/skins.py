@@ -119,7 +119,7 @@ class Standard(Pieces, ChessStandard):
                           fill=P.letters_on(tone), ground=tone, anchor="middle", what="place"))
 
     def build(self, cv, game: str, material: str, small: bool) -> str:
-        """A piece of Tic-Tac-Toe, Connect Four or Checkers in enamel, in its 45-unit box: its body filled and edged
+        """A piece of Checkers, Connect Four or Tic-Tac-Toe in enamel, in its 45-unit box: its body filled and edged
         outside its outline, the lamp's shade or sheen laid inside it, and its detail, a disc's groove, a man's
         milling and the face's groove, with the glint of a dark one."""
         L = self.lights(cv)
@@ -226,7 +226,7 @@ class Print(Pieces, ChessPrint):
         cv.add(f'<path d="{ticks}" fill="none" {hair(col, .5)} stroke-width=".8"/>')
 
     def build(self, cv, game: str, material: str, small: bool) -> str:
-        """A piece of Tic-Tac-Toe, Connect Four or Checkers drawn as its board draws it, in its 45-unit box: a light
+        """A piece of Checkers, Connect Four or Tic-Tac-Toe drawn as its board draws it, in its 45-unit box: a light
         one paper edged in ink and line-shaded toward its right, a dark one solid ink with a glint on its upper
         left; a disc's groove, a man's milling and the groove round its face."""
         light = material == "light"

@@ -1,15 +1,15 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
-"""The Hall of Fame of all four games on @tannergolden's profile: Tic-Tac-Toe, Connect Four, Checkers and Chess.
+"""The Hall of Fame of all four games on @tannergolden's profile: Chess, Checkers, Connect Four and Tic-Tac-Toe.
 
   hall-of-fame  the series of every game and of all four together, the podium of the five leading winners across
                 them with each one's wins by game, and a badge for each winner
 
 Chess-hall grown to four games, drawn in its materials (`skins`, chess's own with every game's pieces added) to one
-layout (`layout`), each game named by the pieces it is played with (`marks`). It has a wide file and a phone's, each
-moving as it opens and still for anyone who asks for reduced motion. What it is drawn from is the profile's own
-engines' (`record`), and the README's badges and leaderboard round it are `readme`'s. It is drawn on that profile
-alone.
+layout (`layout`), each game named by the pieces it is played with (`marks`), Chess first everywhere a reader meets
+the games. It has a wide file and a phone's, each moving as it opens and still for anyone who asks for reduced
+motion. What it is drawn from is the profile's own engines' (`record`), and the README's badges and leaderboard round
+it are `readme`'s. It is drawn on that profile alone.
 """
 from __future__ import annotations
 
@@ -17,11 +17,11 @@ from ...prints import STANDARD
 from ..chess import motion as M
 from .layout import hall_sheet
 from .readme import badges, leaderboard
-from .record import GAMES, OWNER, TITLES, check, describe, state
+from .record import GAMES, ORDER, OWNER, TITLES, check, describe, state
 from .skins import Print, Standard
 
-__all__ = ["GAMES", "KINDS", "OWNER", "TITLES", "badges", "check", "describe", "draw", "leaderboard", "state",
-           "variants"]
+__all__ = ["GAMES", "KINDS", "ORDER", "OWNER", "TITLES", "badges", "check", "describe", "draw", "leaderboard",
+           "state", "variants"]
 
 KINDS = ("hall-of-fame",)
 SHEETS = ("wide", "narrow", "still", "narrow-still")  # each sheet's files: wide and a phone's, moving and still

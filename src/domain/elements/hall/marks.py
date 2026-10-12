@@ -2,15 +2,14 @@
 # SPDX-License-Identifier: MIT
 """Each game's pieces, as the Hall draws them, shared by every theme: one set of outlines in chess's 45-unit box.
 
-The Hall names every game by what it is played with, its two pieces in the order their colours move, the first on the
-left: an X and then an O as a pen draws them, a dark disc and then a light one as Connect Four's frame holds them, a
-dark man and then a light one standing as a checkers man stands on its square, and chess's own kings, the white and
-then the black. A game's colours never change, but who plays them can: in Tic-Tac-Toe and Connect Four the Arbiter
-opens for a side drawn at random, so the house plays X or O, the dark discs or the light, from game to game. So a mark
-names the game alone, never a side, and is the same whoever won. Each piece is drawn as its game's board draws it, at
-the Hall's size: the X and the O as pen strokes with a body, a disc as a coin with a groove round its face, a man as
-a short milled cylinder seen from a little above, its foot where a chessman's is. A skin decides what they are made
-of: lit enamel in the standard theme, ink and line shading on a print.
+The Hall names every game by what it is played with, its two pieces, the house's first, on the left: chess's own
+kings, the white and then the black; a white man and then a black one, standing as a checkers man stands on its
+square; a white disc and then a black one, as Connect Four's frame holds them; and an X and then an O, as a pen draws
+them. Each player's side is fixed, whoever moves first: the house plays White in Chess, Checkers and Connect Four and
+X in Tic-Tac-Toe, GitHub Black and O, so the house's piece is always the light one. Each piece is drawn as its game's
+board draws it, at the Hall's size: the X and the O as pen strokes with a body, a disc as a coin with a groove round
+its face, a man as a short milled cylinder seen from a little above, its foot where a chessman's is. A skin decides
+what they are made of: lit enamel in the standard theme, ink and line shading on a print.
 """
 from __future__ import annotations
 
@@ -18,13 +17,11 @@ import math
 
 from ...lettering import f1
 
-# Each game's two pieces in the order its colours move, as the materials they are made of: light is a white chessman's,
-# paper edged in ink, and dark a black one's. X moves first, then O; the dark discs drop first, then the light; the
-# dark men move first, then the light; White moves first, then Black.
-MOVE_ORDER = {"tictactoe": ("light", "dark"), "connectfour": ("dark", "light"), "checkers": ("dark", "light"),
-              "chess": ("light", "dark")}
-# The pen's two marks: X drawn as a light piece is and O as a dark one, so the pair reads as two pieces of a set do.
-MARKS = {"light": "X", "dark": "O"}
+# Each side's pieces in every game, as the materials they are made of: the house's are light, as a white chessman is,
+# paper edged in ink, and GitHub's dark, as a black one is.
+HOUSE, GITHUB = "light", "dark"
+# The pen's two marks: the house's X, drawn light, and GitHub's O, drawn dark.
+MARKS = {HOUSE: "X", GITHUB: "O"}
 STEP = .58                 # how far a game's second piece stands to the right of its first, as a share of one
 CY = 23.5                  # the middle of a flat piece, an X, an O or a disc, in the box
 PEN, RING = 5.6, 11.2      # an X's and an O's stroke, and the O's radius

@@ -9,8 +9,9 @@ block; and nothing leaves the card or the border. Each winner on the podium stan
 line of a place after it ends short of its wins in each game and of its badge, and a name that fitted is drawn as it
 was. The still files are the moving ones at rest: every run stands where the motion leaves it.
 
-Every game is named by its own mark, its two pieces in the order their colours move, the same mark whoever won it:
-the house plays either colour of Tic-Tac-Toe and Connect Four from game to game, so a mark never names a side. Where
+The games stand Chess first, then Checkers, Connect Four and Tic-Tac-Toe, in the series and beside every winner's
+wins, each count its own game's though the data lists them in tier order. Every game is named by its own mark, its
+two pieces, the house's first: the white king, the white man and the white disc before the black, X before O. Where
 the room is short, a mark gives way before its count does.
 
 The data reaches the contract's limits: logins of 39 letters and names of 40, every count at 999,999, so each total
@@ -29,7 +30,7 @@ from domain.elements import draw as E
 from domain.elements import hall as H
 from domain.elements.hall import layout as L
 from domain.elements.hall import skins as S
-from domain.elements.hall.marks import MOVE_ORDER
+from domain.elements.hall import marks as K
 from domain.lettering import Lettering, cap_height, width
 from domain.prints import PRINTS, STANDARD
 
@@ -261,13 +262,15 @@ class Series(unittest.TestCase):
                             self.assertGreaterEqual(right[0].x0, bar.x1 + 8 - TOL)
                             self.assertLessEqual(right[0].x1, W - L.PAD + TOL)
 
-    def test_a_game_is_named_whole_whatever_its_counts(self):
+    def test_a_game_is_named_whole_whatever_its_counts_chess_first(self):
         for tone in TONES:
             for variant in SHEETS:
                 runs = drawn(HALLS["M logins"], tone, variant).runs
                 with self.subTest(tone=tone, variant=variant):
-                    for title in [H.TITLES[g] for g in H.GAMES] + (["all four games"] if variant == "wide" else []):
+                    for title in [H.TITLES[g] for g in H.ORDER] + (["all four games"] if variant == "wide" else []):
                         self.assertEqual(len([r for r in runs if r.s.upper() == title.upper()]), 1, title)
+                    tops = [one(runs, H.TITLES[g]).top for g in H.ORDER]
+                    self.assertEqual(tops, sorted(tops), "Chess, Checkers, Connect Four, Tic-Tac-Toe, top to bottom")
 
     def test_a_series_that_fits_is_set_as_it_was(self):
         runs = drawn(PEOPLE, STANDARD).runs
@@ -381,34 +384,54 @@ class Places(unittest.TestCase):
 
 
 class Marks(unittest.TestCase):
-    """Every game is named by its own mark, its two pieces in the order their colours move, the first on the left: the
-    same mark heads its row of the series and stands beside every winner's wins in it, the house's and GitHub's
-    players' alike, since in Tic-Tac-Toe and Connect Four the house plays either colour from game to game. Where the
-    room is short the mark gives way before its count does."""
+    """Every game is named by its own mark, its two pieces, the house's on the left in front of GitHub's: the white
+    king, the white man and the white disc before the black, X before O, each side's own whoever moved first. The
+    same mark heads its row of the series and stands beside every winner's wins in that game, Chess first, each count
+    its own game's. Where the room is short the mark gives way before its count does."""
 
-    def emblems(self, f: Drawn) -> list[tuple[str, str, str]]:
-        """The marks a file draws, in order, each (game, first piece's material, second's), every piece in a pair:
-        a mark draws its second piece, behind, and then its first, in front on the left."""
+    def emblems(self, f: Drawn) -> list[tuple[str, str, str, Box, Box]]:
+        """The marks a file draws, in order, each (game, the front piece's material, the one behind's, and the two
+        pieces' boxes): a mark draws GitHub's piece, behind, and then the house's, in front on the left."""
         self.assertEqual(len(f.pieces) % 2, 0, "every piece is one of a pair")
         out = []
-        for second, first in zip(f.pieces[::2], f.pieces[1::2]):
-            (game, behind), (game2, front) = second.what.split(), first.what.split()
+        for behind, front in zip(f.pieces[::2], f.pieces[1::2]):
+            (game, second), (game2, first) = behind.what.split(), front.what.split()
             self.assertEqual(game, game2)
-            self.assertLess(first.x0, second.x0, "the first to move on the left")
-            out.append((game, front, behind))
+            self.assertLess(front.x0, behind.x0, "the house's piece on the left")
+            out.append((game, first, second, front, behind))
         return out
 
-    def test_every_game_is_named_by_its_two_pieces_in_the_order_they_move_whoever_won(self):
-        named = [(g, *MOVE_ORDER[g]) for g in H.GAMES]
-        self.assertEqual(named, [("tictactoe", "light", "dark"), ("connectfour", "dark", "light"),
-                                 ("checkers", "dark", "light"), ("chess", "light", "dark")],
-                         "X then O, the dark disc then the light, the dark man then the light, White then Black")
-        for tone in (STANDARD, "blackprint"):
+    def test_every_game_is_named_by_its_two_pieces_the_houses_first(self):
+        self.assertEqual((K.HOUSE, K.GITHUB), ("light", "dark"))
+        self.assertEqual((S.KING[K.HOUSE], K.MARKS[K.HOUSE]), ("white", "X"), "the house plays White, and X")
+        named = [(g, K.HOUSE, K.GITHUB) for g in H.ORDER]
+        for tone in TONES:
             for variant in SHEETS:
-                marks = self.emblems(drawn(PEOPLE, tone, variant))
+                marks = [m[:3] for m in self.emblems(drawn(PEOPLE, tone, variant))]
                 with self.subTest(tone=tone, variant=variant):
-                    # the series' four rows, then four marks for each of the five winners, the house first
+                    # the series' four rows, Chess first, then four marks for each of the five winners
                     self.assertEqual(marks, named * (1 + len(PEOPLE["people"])))
+
+    def test_beside_each_mark_stands_its_own_games_count(self):
+        # The data lists each winner's wins in tier order; the sheet reads each count by its game, Chess first.
+        wanted = {tuple(dict(zip(H.GAMES, row[1]))[g] for g in H.ORDER) for row in PEOPLE["people"]}
+        self.assertEqual(len(wanted), len(PEOPLE["people"]), "every winner's counts their own")
+        for tone in TONES:
+            for variant in SHEETS:
+                f = drawn(PEOPLE, tone, variant)
+                marks = self.emblems(f)[len(H.ORDER):]   # each winner's, after the series' rows
+                digits = [r for r in f.runs if r.s.isdigit()]
+                read = set()
+                for i in range(0, len(marks), len(H.ORDER)):
+                    counts = []
+                    for _, _, _, front, behind in marks[i:i + len(H.ORDER)]:
+                        beside = [r for r in digits if behind.x1 - TOL <= r.x0 < behind.x1 + 12
+                                  and r.top < front.y1 and r.base > front.y0]
+                        self.assertTrue(beside, (tone, variant, front))
+                        counts.append(int(min(beside, key=lambda r: r.x0).s))
+                    read.add(tuple(counts))
+                with self.subTest(tone=tone, variant=variant):
+                    self.assertEqual(read, wanted)
 
     def test_a_game_a_winner_has_yet_to_win_is_marked_faint(self):
         zeros = sum(row[1].count(0) for row in PEOPLE["people"])
@@ -442,7 +465,7 @@ class Motion(unittest.TestCase):
     leaves it."""
 
     def test_the_still_files_are_the_moving_ones_at_rest(self):
-        for tone in (STANDARD, "blackprint"):
+        for tone in TONES:
             for moving, still in (("wide", "still"), ("narrow", "narrow-still")):
                 a, b = drawn(PEOPLE, tone, moving), drawn(PEOPLE, tone, still)
                 with self.subTest(tone=tone, variant=moving):

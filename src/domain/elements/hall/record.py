@@ -2,11 +2,14 @@
 # SPDX-License-Identifier: MIT
 """What the Hall of Fame of all four games is drawn from: the record the profile's engines hand over, checked and read.
 
-Every game on @tannergolden's profile, Tic-Tac-Toe, Connect Four, Checkers and Chess, writes the same element into
+Every game on @tannergolden's profile, Chess, Checkers, Connect Four and Tic-Tac-Toe, writes the same element into
 the page's settings after each move: `hall-of-fame`, recomputed from all four games' state. It carries the series of
 each game, the leading winners across all four, and the leaderboard, and every field is checked before it is drawn,
 since a login ends up in the README. A field YAML reads as something else, a number for a login or a list for a
 count, is turned away like any other mistake, and every number has a ceiling the sheets have room to letter.
+
+The data lists a player's wins one count to a game in tier order, Tic-Tac-Toe first (`GAMES`), as the engines have
+always written them; everything a reader sees lists the games Chess first (`ORDER`), each count read by its game.
 
 Its rows read as chess-hall's do, a list of wins in place of one count. A row may carry its player's account ID as
 its fifth field, and a run reads each ID's account as it is now (`logins`, beside the winners' `names`), so a player
@@ -20,8 +23,12 @@ import re
 from ..chess.game import (ACCOUNT, DATE, DAYS, DEPTH, ID, LEADERS, LOGIN, MOST, OWNER, PEOPLE, TALLY, account,
                           initials, named, shown)
 
-# The four games, in tier order, the order every list of them takes: from a game a child solves to one nobody has.
+# The four games in tier order, from a game a child solves to one nobody has: the order the data lists a player's
+# wins in, one count to a game.
 GAMES = ("tictactoe", "connectfour", "checkers", "chess")
+# The same four in the order a reader meets them, everywhere the Hall lists them: its series, the wins by each winner,
+# the leaderboard's columns and the words for anyone who cannot see it.
+ORDER = ("chess", "checkers", "connectfour", "tictactoe")
 TITLES = {"tictactoe": "Tic-Tac-Toe", "connectfour": "Connect Four", "checkers": "Checkers", "chess": "Chess"}
 SERIES = ("games", "house", "github", "draws")  # a game's series: the games finished, each side's wins, the draws
 
@@ -152,10 +159,15 @@ def plural(n: int, word: str) -> str:
     return f"{n} {word}{'s' if n != 1 else ''}"
 
 
+def listed(words: list[str], last: str = "and") -> str:
+    """Words as a sentence lists them: one alone, or the rest with commas between and `last` before the last."""
+    return words[0] if len(words) == 1 else ", ".join(words[:-1]) + f" {last} " + words[-1]
+
+
 def in_games(by: dict) -> str:
-    """A winner's wins in words, game by game, the games they have won in alone: 4 in Tic-Tac-Toe and 5 in Chess."""
-    said = [f"{n} in {TITLES[game]}" for game, n in by.items() if n]
-    return said[0] if len(said) == 1 else ", ".join(said[:-1]) + " and " + said[-1]
+    """A winner's wins in words, game by game in the order a reader meets them, the games they have won in alone:
+    5 in Chess and 4 in Tic-Tac-Toe."""
+    return listed([f"{by[game]} in {TITLES[game]}" for game in ORDER if by[game]])
 
 
 def describe(d: dict) -> dict:
@@ -166,15 +178,16 @@ def describe(d: dict) -> dict:
     h = state(d)
     d.setdefault("title", "Hall of Fame: four games")
     total = h["totals"]
+    titles = [TITLES[game] for game in ORDER]
     if not total["games"]:
-        desc = (f"No game of @{OWNER} against GitHub has finished yet, in Tic-Tac-Toe, Connect Four, Checkers or"
-                " Chess, so the podium waits for its first winner.")
+        desc = (f"No game of @{OWNER} against GitHub has finished yet, in {listed(titles, 'or')}, so the podium waits"
+                " for its first winner.")
     else:
         draws = total["draws"]
         drawn = "none were" if not draws else f"{draws} {'was' if draws == 1 else 'were'}"
-        desc = (f"{plural(total['games'], 'game')} of @{OWNER} against GitHub, across Tic-Tac-Toe, Connect Four,"
-                f" Checkers and Chess: @{OWNER} won {total['house']}, GitHub {total['github']}, and {drawn} drawn.")
-        for game in GAMES:
+        desc = (f"{plural(total['games'], 'game')} of @{OWNER} against GitHub, across {listed(titles)}: @{OWNER} won"
+                f" {total['house']}, GitHub {total['github']}, and {drawn} drawn.")
+        for game in ORDER:
             s = h["series"][game]
             desc += (f" {TITLES[game]}: {plural(s['games'], 'game')}, @{OWNER} {s['house']}, GitHub {s['github']},"
                      f" {s['draws']} drawn." if s["games"] else f" {TITLES[game]}: none finished yet.")

@@ -22,12 +22,13 @@ _Four games, one podium._
 ## 💡 What This Folder Is For
 
 The Hall of Fame of the four games played on @tannergolden's profile, and only
-there: Tic-Tac-Toe, Connect Four, Checkers and Chess, in tier order. One
-element, `hall-of-fame`, draws the series of every game and of all four
-together, the podium of the five leading winners across them with each one's
-wins in every game, and a badge for each winner. The profile's own engines
-write what it draws into the page's settings after every move
-([`record.py`](record.py) checks every field of it).
+there: Chess, Checkers, Connect Four and Tic-Tac-Toe, in that order wherever a
+reader meets them. One element, `hall-of-fame`, draws the series of every game
+and of all four together, the podium of the five leading winners across them
+with each one's wins in every game, and a badge for each winner. The profile's
+own engines write what it draws into the page's settings after every move
+([`record.py`](record.py) checks every field of it), each player's wins one
+count to a game in tier order, Tic-Tac-Toe first, as they always have.
 
 It is chess-hall grown to four games, drawn in chess-hall's own materials
 ([`skins.py`](skins.py), chess's two skins with every game's pieces added): the
@@ -38,19 +39,19 @@ and then each on a row of its own, and the podium under that, three blocks in
 gold, silver and bronze, a winner standing on each. Each sheet comes wide and on
 a phone, moving as it opens and still for anyone who asks for reduced motion.
 
-Each game is named by its own mark ([`marks.py`](marks.py)): its two pieces in
-the order their colours move, the first on the left. X then O, the dark disc
-then the light, the dark man then the light, the white king then the black. A
-game's colours never change, but in Tic-Tac-Toe and Connect Four the Arbiter
-opens for a side drawn at random, so the house plays either colour from game to
-game: a mark names the game, never a side. The same mark heads the game's row of
-the series and stands beside every winner's wins in that game, whoever won.
+Each game is named by its own mark ([`marks.py`](marks.py)): its two pieces, the
+house's first, on the left. The white king then the black, the white man then
+the black, the white disc then the black, X then O. Each player's side is fixed:
+the house plays White in Chess, Checkers and Connect Four and X in Tic-Tac-Toe,
+GitHub Black and O. Only who moves first can change, where the Arbiter opens
+Connect Four and Tic-Tac-Toe for a side drawn at random. The same mark heads the
+game's row of the series and stands beside every winner's wins in that game.
 
 Round the picture the README carries ([`readme.py`](readme.py)) a badge linking
 each winner's profile, then the leaderboard folded shut: @tannergolden's own row
 on top, then GitHub's ten leading players, each with a column of wins for every
-game, headed by that game's two side signs in the order they move, then their
-moves and their games.
+game, Chess first, headed by that game's two side signs, the house's first (♔♚,
+⛀⛂, ⚪⚫, ❌⭕), then their moves and their games.
 
 A player is known by their account, not their login, as in chess-hall: a row
 may carry the player's account ID as its fifth field, a run reads that account
@@ -66,7 +67,7 @@ under them moving up into the places the page has.
 
 | Entry                        | Purpose                                                                                                              |
 | :--------------------------- | :------------------------------------------------------------------------------------------------------------------- |
-| [`__init__.py`](__init__.py) | The Hall of Fame of all four games on @tannergolden's profile: Tic-Tac-Toe, Connect Four, Checkers and Chess.        |
+| [`__init__.py`](__init__.py) | The Hall of Fame of all four games on @tannergolden's profile: Chess, Checkers, Connect Four and Tic-Tac-Toe.        |
 | [`layout.py`](layout.py)     | The Hall of Fame's one layout, which every theme draws: the series of all four games, and the podium.                |
 | [`marks.py`](marks.py)       | Each game's pieces, as the Hall draws them, shared by every theme: one set of outlines in chess's 45-unit box.       |
 | [`README.md`](README.md)     | This file.                                                                                                           |
