@@ -264,6 +264,11 @@ its README block is the banner, the board and the note, with no move under it.
 | The Hall of Fame | All four games': the series between the house and GitHub, each game on its own row under the four together, and a podium of the leading winners across them with their wins by game, each named as their GitHub profile names them.                                        | Wide and a phone's, each moving and still, by day and dark.        |
 | A winner's badge | One for each winner under the Hall in the README, each a link to that player's profile.                                                                                                                                                                                    | A day file and a dark one; the leader's glints, with a still twin. |
 
+A board's files are named for its game, never for its position, so every move,
+finished game and fresh board redraws the same files in place, and nothing an
+old board drew is left behind. A Hall that shows fewer winners takes their
+badges away, as every run takes away whatever the kit drew and draws no longer.
+
 | Game             | A move is written                                                                                   | The panel counts                                                     | As the file opens                                                                                                                    |
 | :--------------- | :-------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
 | **Chess**        | In SAN: `Nf3`, `exd5`, `O-O`, `Qxf7#`                                                               | What each side has taken, and the lead                               | The last piece comes in from its square, a knight leaping and a castling king bringing its rook round, and a king in check is marked |
