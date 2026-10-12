@@ -8,8 +8,9 @@ two sides' ivory and ebony and the trophies' metals, and the same every time. A 
 still twin never moves. Every word is lettered in the set's own inks, a collection's in its hand's two, and keeps to
 the room the set's frame leaves, meeting no other word and no piece, at the limits the data may reach. A game the set
 cannot letter, or draw within its budget, is drawn whole in the page's own look, and chess's own Hall keeps it
-always. Every board is built, and every podium cut, of stuffs the set names in its own palette, and no two sets of a
-year stand their winners on the same podium."""
+always. Every board is built, and every podium cut, of stuffs the set names in its own palette, no two sets of a year
+stand their winners on the same podium, and every tag on a game's sheet is the set's own, never a certificate's
+ribbon."""
 from __future__ import annotations
 
 import re
@@ -183,6 +184,20 @@ class TheirStuff(unittest.TestCase):
                     self.assertLessEqual(s.tokens, held.game_tokens, (where, s.base))
                 for s in (b["light_stuff"], b["dark_stuff"], pod.stuff):
                     self.assertNotIn(s.base.upper(), hand, where)
+
+    def test_a_tag_low_on_a_games_sheet_is_the_sets_own_tag_never_a_certificates_ribbon(self):
+        # A set dresses the one tag set low on its sheet as the ribbon under a certificate's seal; a game's panel sets
+        # its tags low all down its sheet, and every one is the tag the set heads its sheets with.
+        for key in SETS:
+            held = pixelsets.drawn_by(key)
+            for night in (False, True):
+                for wide in (415, 180):
+                    head, low = held.game_canvas(wide, 300), held.game_canvas(wide, 300)
+                    held.tag(head, 20, 8, 30, 9, night)
+                    held.tag(low, 20, 108, 30, 9, night)
+                    for name in set(head.layers) | set(low.layers):
+                        shifted = {(x, y + 100): c for (x, y), c in head.layers.get(name, {}).items()}
+                        self.assertEqual(low.layers.get(name, {}), shifted, (key, night, wide, name))
 
     def test_no_two_sets_of_a_year_stand_their_winners_on_the_same_podium(self):
         for year in ([k for k in SETS if not k.startswith("medieval-")], [k for k in SETS if k.startswith("medieval-")]):
