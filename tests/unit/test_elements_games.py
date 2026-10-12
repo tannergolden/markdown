@@ -728,14 +728,15 @@ class Finished(unittest.TestCase):
 
 
 class Readme(unittest.TestCase):
-    def test_each_board_has_its_turns_banner_above_and_every_move_folded_under(self):
+    def test_each_board_has_its_turns_banner_above_its_fold_and_every_move_folded_under(self):
         text = ED.block("tictactoe", TTT_GITHUB, "assets/elements")
         self.assertTrue(text.startswith("<!-- markdown:element:tictactoe:start -->\n> [!TIP]\n> 🟢 **GitHub's turn!**"
                                         " @tannergolden played 3. Xa2."))
+        self.assertIn("\n\n<details>\n<summary><b>❌ Tic-Tac-Toe</b></summary>\n\n<picture>", text)
         self.assertIn("</picture>\n\n<details>\n<summary>⭕ <b>GitHub's Turn</b> · 2 open cells · open to choose one"
                       "</summary>\n\n|  | Move | In words | Play |\n| :-: | :--- | :--- | :-: |\n", text)
         self.assertIn("| 📏 | **Mark the Head of the Board!** `Ob3` | O takes the head of the board |", text)
-        self.assertTrue(text.endswith(f"</details>\n\n{NOTE}\n<!-- markdown:element:tictactoe:end -->"))
+        self.assertTrue(text.endswith(f"</details>\n\n{NOTE}\n\n</details>\n<!-- markdown:element:tictactoe:end -->"))
         text = ED.block("checkers", CK_OPENING, "assets/elements")
         self.assertIn("> [!TIP]\n> 🟢 **GitHub's turn as Black!**", text)
         self.assertIn("<summary>⛂ <b>GitHub's Turn</b> · 2 legal moves · open to choose one</summary>", text)
@@ -798,9 +799,11 @@ class Readme(unittest.TestCase):
             text = ED.block(d["kind"], d, "assets/elements")
             with self.subTest(board=name(d), note=d["note"][:20]):
                 self.assertEqual(E.game_of(d["kind"]).check(d), [])
-                self.assertIn(f"> [!IMPORTANT]\n> {d['prompt']}\n\n<picture>", text)
-                self.assertNotIn("<details>", text)
-                self.assertTrue(text.endswith(f"</picture>\n\n{d['note']}\n<!-- markdown:element:{d['kind']}:end -->"))
+                self.assertIn(f"> [!IMPORTANT]\n> {d['prompt']}\n\n<details>\n<summary><b>"
+                              f"{ED.FOLDS[d['kind']][0]}</b></summary>\n\n<picture>", text)
+                self.assertEqual(text.count("<details"), 1, "the game's own fold, and no move in it")
+                self.assertTrue(text.endswith(f"</picture>\n\n{d['note']}\n\n</details>\n"
+                                              f"<!-- markdown:element:{d['kind']}:end -->"))
 
     def test_a_long_turn_of_checkers_is_grouped_by_men_and_kings_as_chess_groups_by_piece(self):
         many = [row("checkers", "⛵", f"Make Way {i}!", f"{sq}-{sq + 4}", f"Man from {sq} to {sq + 4}", 6, 1)

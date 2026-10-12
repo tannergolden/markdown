@@ -522,14 +522,15 @@ class Settings(unittest.TestCase):
 
 
 class Readme(unittest.TestCase):
-    def test_the_board_has_its_turns_banner_above_and_every_move_folded_under(self):
+    def test_the_board_has_its_turns_banner_above_its_fold_open_and_every_move_folded_under(self):
+        # the banner stands at the README's top level, where GitHub draws it as an alert, over the game folded open
         text = ED.block("chess", GAME, "assets/elements")
         self.assertTrue(text.startswith("<!-- markdown:element:chess:start -->\n> [!TIP]\n> 🟢 **GitHub's turn!**"))
-        self.assertIn("by 18 Oct.\n\n<picture>", text)
+        self.assertIn("by 18 Oct.\n\n<details open>\n<summary><b>♟️ Chess</b></summary>\n\n<picture>", text)
         self.assertIn("</picture>\n\n<details>\n<summary>♚ <b>GitHub's Turn</b> · 4 legal moves · open to choose one"
                       "</summary>\n\n|  | Move | In words | Play |\n| :-: | :--- | :--- | :-: |\n", text)
         self.assertIn(f"| 🏰 | **The Royal Retreat** `Kb8` | King from c8 to b8 | [Play ↗]({LINK}) |", text)
-        self.assertTrue(text.endswith("</details>\n\nThe first move to arrive is the one played.\n"
+        self.assertTrue(text.endswith("</details>\n\nThe first move to arrive is the one played.\n\n</details>\n"
                                       "<!-- markdown:element:chess:end -->"))
 
     def test_the_houses_turn_is_a_caution_and_its_moves_are_the_houses_alone(self):
@@ -710,10 +711,11 @@ class Finished(unittest.TestCase):
             with self.subTest(game=d["game"], note=bool(d.get("note"))):
                 self.assertEqual(C.check(d), [])
                 self.assertTrue(text.startswith(f"<!-- markdown:element:chess:start -->\n> [!IMPORTANT]\n> "
-                                                f"{d['prompt']}\n\n<picture>"))
-                self.assertNotIn("<details>", text)
+                                                f"{d['prompt']}\n\n<details open>\n<summary><b>♟️ Chess</b>"
+                                                "</summary>\n\n<picture>"))
+                self.assertEqual(text.count("<details"), 1, "the game's own fold, and no move in it")
                 under = f"\n\n{d['note']}" if d.get("note") else ""
-                self.assertTrue(text.endswith(f"</picture>{under}\n<!-- markdown:element:chess:end -->"),
+                self.assertTrue(text.endswith(f"</picture>{under}\n\n</details>\n<!-- markdown:element:chess:end -->"),
                                 "its banner, its board and its note, with no move to play")
 
     def test_how_it_ended_is_checked_as_strictly_as_the_rest_of_the_board(self):

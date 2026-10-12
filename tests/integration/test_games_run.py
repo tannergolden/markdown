@@ -80,8 +80,24 @@ class Clock(unittest.TestCase):
                 self.assertNotEqual(after[name], before[name], f"{name} is redrawn in place")
             before = after
 
+    def test_each_game_is_folded_under_its_banner_chess_open_and_the_other_three_shut(self):
+        # the banner stands over the fold, at the README's top level, where GitHub draws it as an alert
+        self.draw()
+        text = self.readme.read_text(encoding="utf-8")
+        for eid, fold in (("chess", "<details open>\n<summary><b>♟️ Chess</b></summary>"),
+                          ("checkers", "<details>\n<summary><b>🏁 Checkers</b></summary>"),
+                          ("connectfour", "<details>\n<summary><b>⚫ Connect Four</b></summary>"),
+                          ("tictactoe", "<details>\n<summary><b>❌ Tic-Tac-Toe</b></summary>")):
+            with self.subTest(game=eid):
+                block = re.search(rf"element:{eid}:start -->\n(.*?)\n<!-- markdown:element:{eid}:end", text,
+                                  re.S).group(1)
+                self.assertRegex(block, r"^> \[!(TIP|CAUTION)\]\n> [^\n]+\n\n<details")
+                self.assertIn(f"\n\n{fold}\n\n<picture>", block)
+                self.assertTrue(block.endswith("\n\n</details>"), "the note is the fold's last word")
+
     def test_a_banner_in_a_folded_section_is_a_plain_quote_and_the_page_checks_clean(self):
-        # the profile folds each game in a <details>, where GitHub would show an alert's marker as words
+        # a README that folds a game itself puts the banner in its fold, where GitHub would show an alert's marker
+        # as words
         folds = {"chess": "<details open>\n<summary>Chess</summary>\n\n{}\n\n</details>",
                  "checkers": "<details>\n<summary>Checkers</summary>\n\n{}\n\n</details>"}
         self.readme.write_text("# tannergolden\n\n" + "\n\n".join(folds.get(eid, "{}").format(

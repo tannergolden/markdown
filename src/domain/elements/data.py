@@ -34,6 +34,11 @@ REQUIRED = {
     "tictactoe": ("board", "opens"), "connectfour": ("board", "opens"), "checkers": ("fen",),
     "chess": ("fen",), "chess-hall": (), "hall-of-fame": (),
 }
+# Each game's name on @tannergolden's profile, where its block folds the game under it, and whether the fold opens with
+# the page: Chess open, the one board in view, and the other three shut, a click away. The turn's banner stands over
+# the fold, at the README's top level, the only place GitHub draws an alert.
+FOLDS = {"chess": ("♟️ Chess", True), "checkers": ("🏁 Checkers", False), "connectfour": ("⚫ Connect Four", False),
+         "tictactoe": ("❌ Tic-Tac-Toe", False)}
 # Kinds that draw themselves in the standard theme and every print, and that no holiday or collection draws yet:
 # they keep the page's own theme whatever set is up.
 OWN_THEMES = frozenset({"tictactoe", "connectfour", "checkers", "chess", "chess-hall", "hall-of-fame"})
@@ -189,16 +194,24 @@ def picture(eid: str, d: dict, rel: str) -> str:
     return pic
 
 
+def fold(kind: str, inside: str) -> str:
+    """`inside`, a game's picture and what goes under it, folded under the game's name: open for chess, shut for
+    the other three."""
+    name, shown = FOLDS[kind]
+    return f"<details{' open' if shown else ''}>\n<summary><b>{name}</b></summary>\n\n{inside}\n\n</details>"
+
+
 def block(eid: str, d: dict, rel: str) -> str:
-    """The README block: the picture; for a game, its turn's banner above and every legal move under it, folded
-    shut, then its note (once the game is over, no move, the banner saying how it ended); for a Hall of Fame,
-    chess's or all four games', a badge per winner under it, each linking to that player's profile, and the
-    leaderboard."""
+    """The README block: the picture; for a game, its turn's banner, then the game folded under its name, its
+    picture and every legal move under it, folded shut, then its note (once the game is over, no move, the banner
+    saying how it ended); for a Hall of Fame, chess's or all four games', a badge per winner under it, each linking
+    to that player's profile, and the leaderboard."""
     snippet = picture(eid, d, rel)
     if d["kind"] == "chess" or d["kind"] in E.GAMES:
         from . import chess
         above, below = (chess if d["kind"] == "chess" else E.game_of(d["kind"])).text(d)
-        snippet = "\n\n".join(part for part in (above, snippet, below) if part)
+        inside = "\n\n".join(part for part in (snippet, below) if part)
+        snippet = "\n\n".join(part for part in (above, fold(d["kind"], inside)) if part)
     elif d["kind"] == "chess-hall":
         from . import chess
         snippet = "\n\n".join(part for part in (snippet, chess.badges(eid, d, rel), chess.leaderboard(d)) if part)
