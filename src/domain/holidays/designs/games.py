@@ -117,6 +117,21 @@ def _paths(cells: dict) -> str:
     return Pix(1, 1).markup(cells)
 
 
+def phrased(s: str, room: int, font: str = "57") -> list[str]:
+    """Words too long for one line, on two that each fit `room`: broken after a comma where one lets both fit, so a
+    phrase such as "to row 2" stays whole rather than leaving its number alone, else where the two come out most
+    even; as `wrap` breaks them when no break fits."""
+    words = s.split()
+    best = None
+    for i in range(1, len(words)):
+        a, b = " ".join(words[:i]), " ".join(words[i:])
+        wide = max(measure(a, font), measure(b, font))
+        rank = (not words[i - 1].endswith(","), wide)
+        if wide <= room and (best is None or rank < best[0]):
+            best = (rank, [a, b])
+    return best[1] if best else wrap(s, room, font)
+
+
 # --------------------------------------------------------------------------- colour
 def lab(colour: str) -> tuple[float, float, float]:
     """A colour's CIELAB lightness L*, its chroma C* and its hue angle in degrees."""
@@ -527,6 +542,8 @@ class Games:
         self.game_title(p, x, y, clip(fold(move, "57"), x1 - x, "57", scale), night, scale)
         y += 7 * scale + 5
         lines = wrap(words, room, "57")
+        if len(lines) == 2:
+            lines = phrased(words, room, "57")
         if len(lines) > 2:
             lines = [lines[0], clip(" ".join(lines[1:]), room, "57")]
         for line in lines:
