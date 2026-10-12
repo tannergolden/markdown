@@ -12,7 +12,9 @@
 #
 # Once a day, at midnight UTC. Every run measures everything again, so a run
 # GitHub delays or drops loses nothing: the next one catches up. A day on
-# which nothing the page shows has moved writes nothing.
+# which nothing the page shows has moved writes nothing. One run draws at a
+# time, and one started meanwhile waits for it, then draws the page as it is
+# by then. The kit is handed MARKDOWN_TOKEN alone, never another secret.
 
 name: '📝 Markdown'
 
@@ -20,6 +22,10 @@ on:
   schedule:
     - cron: '0 0 * * *'   # every night at midnight UTC
   workflow_dispatch:
+
+concurrency:              # one drawing at a time; the next waits its turn
+  group: markdown-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions: {}
 
@@ -29,4 +35,5 @@ jobs:
       contents: write        # the images, the README's blocks and the lock
       pull-requests: write   # only used with commit: pr
     uses: tannergolden/markdown/.github/workflows/markdown.yml@v1 # zizmor: ignore[unpinned-uses] - first-party workflow on its moving major, the way every stub calls it.
-    secrets: inherit # zizmor: ignore[secrets-inherit] - first-party callee at the ref pinned above.
+    secrets:
+      MARKDOWN_TOKEN: ${{ secrets.MARKDOWN_TOKEN }}   # the one secret the kit reads

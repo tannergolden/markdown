@@ -114,6 +114,10 @@ on:
     - cron: '0 0 * * *'   # every night at midnight UTC
   workflow_dispatch:
 
+concurrency:              # one drawing at a time; the next waits its turn
+  group: markdown-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions: {}
 
 jobs:
@@ -122,12 +126,17 @@ jobs:
       contents: write        # the images, the README's blocks and the lock
       pull-requests: write   # only used with commit: pr
     uses: tannergolden/markdown/.github/workflows/markdown.yml@v1
-    secrets: inherit
+    secrets:
+      MARKDOWN_TOKEN: ${{ secrets.MARKDOWN_TOKEN }}   # the one secret the kit reads
 ```
 
 That is the whole setup. With no settings at all, the page gets a header and a
 footer read from GitHub and a trophy case, in the `standard` theme, with the
-holidays on. The stub can set the choices made most often:
+holidays on. Two runs never draw at once: one that starts while another is
+drawing waits for it, then draws the page as it stands by then, so a redraw
+started straight after another is queued rather than failing to push. And the
+kit is handed `MARKDOWN_TOKEN` alone, never the repository's other secrets. The
+stub can set the choices made most often:
 
 | Input           | Default          | What it does                                                                |
 | :-------------- | :--------------- | :-------------------------------------------------------------------------- |
@@ -147,7 +156,8 @@ Everything else a page can set lives in `.github/markdown.yaml`, and
 > **`MARKDOWN_TOKEN` is optional.** `GITHUB_TOKEN` reads everything public, so
 > a public page needs nothing. A read-only personal token saved as
 > `MARKDOWN_TOKEN` is read instead when it is there, which also lets a profile
-> count private contributions (`trophies: private: true`).
+> count private contributions (`trophies: private: true`). The stub hands the
+> kit that one secret by name; where it is not set, the run uses `GITHUB_TOKEN`.
 
 ---
 
