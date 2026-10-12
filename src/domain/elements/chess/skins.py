@@ -112,14 +112,19 @@ class Standard:
                 + "".join(PARTS["pawn"]) + "</g>")
 
     def frame(self, cv, W, H, kind, glyph, subject, caption="", plain=()) -> None:
-        """A standard sheet's card and band, as `standard.elements.frame` draws them, with the band's icon given."""
+        """A standard sheet's card and band, as `standard.elements.frame` draws them, with the band's mark given:
+        the pawn, an icon's name, or a function of (x, y, size, letters, label) that draws a game's own mark in a
+        box `size` square at (x, y), in the band's `letters` on its `label`, both as the file paints them."""
         std = self.std
         text, size, mw, inside = SE._band(W, kind, subject, caption)
         cid = P.card(cv, std, W, H)
         lab = std["label"]
         on = P.letters_on(lab)
-        mark = (self.pawn_glyph(PAD - 2, BAND / 2 - 10, 20, on) if glyph == "pawn"
-                else P.icon(glyph, PAD, BAND / 2 - 8, 16, on, 2.1))
+        if callable(glyph):
+            mark = glyph(PAD - 2, BAND / 2 - 10, 20, c(on), c(lab))
+        else:
+            mark = (self.pawn_glyph(PAD - 2, BAND / 2 - 10, 20, on) if glyph == "pawn"
+                    else P.icon(glyph, PAD, BAND / 2 - 8, 16, on, 2.1))
         m = [P.rect(0, 0, W - mw, BAND, lab), mark,
              SE.say(cv, kind.upper(), x=PAD + 26, y=BAND / 2 + SE.cap(10.5) / 2, size=10.5, ls=1.1, fill=on,
                     ground=lab, what="element kind")]
@@ -182,6 +187,23 @@ class Standard:
         r = f' rx="{f1(rx)}"' if rx else ""
         cv.add(f'<rect x="{f1(x)}" y="{f1(y)}" width="{f1(size)}" height="{f1(size)}"{r} fill="{c(tone)}"{o}/>')
 
+    def sink(self, cv, x0, y0, n, h=None) -> None:
+        """A board `n` wide (and `h` tall) set into the card under the lamp: sunk in a shadow by day and a glow of
+        the accent by night, and framed."""
+        h = n if h is None else h
+        self.lights(cv)
+        if self.std["dark"]:
+            cv.add(f'<rect x="{f1(x0 - 10)}" y="{f1(y0 - 10)}" width="{f1(n + 20)}" height="{f1(h + 20)}" rx="10" '
+                   f'fill="{c(P.ACCENT)}" fill-opacity=".07"/>'
+                   f'<rect x="{f1(x0 - 5)}" y="{f1(y0 - 5)}" width="{f1(n + 10)}" height="{f1(h + 10)}" rx="6" '
+                   f'fill="{c(P.ACCENT)}" fill-opacity=".14"/>')
+        else:
+            cv.add(f'<rect x="{f1(x0 + 2)}" y="{f1(y0 + 7)}" width="{f1(n + 3)}" height="{f1(h + 2)}" rx="6" '
+                   f'fill="{c("black")}" fill-opacity=".06"/>'
+                   f'<rect x="{f1(x0 + .5)}" y="{f1(y0 + 3)}" width="{f1(n + 2.5)}" height="{f1(h + 1.5)}" rx="3" '
+                   f'fill="{c("black")}" fill-opacity=".12"/>')
+        cv.add(P.rect(x0 - 2, y0 - 2, n + 4, h + 4, self.squares()["edge"], 1.5))
+
     def board_base(self, cv, x0, y0, s) -> None:
         """The board lit from the upper left: sunk in a shadow by day and a glow of the accent by night, framed, its
         squares laid."""
@@ -189,17 +211,7 @@ class Standard:
         pal = self.squares()
         self.lights(cv)
         n = 8 * s
-        if std["dark"]:
-            cv.add(f'<rect x="{f1(x0 - 10)}" y="{f1(y0 - 10)}" width="{f1(n + 20)}" height="{f1(n + 20)}" rx="10" '
-                   f'fill="{c(P.ACCENT)}" fill-opacity=".07"/>'
-                   f'<rect x="{f1(x0 - 5)}" y="{f1(y0 - 5)}" width="{f1(n + 10)}" height="{f1(n + 10)}" rx="6" '
-                   f'fill="{c(P.ACCENT)}" fill-opacity=".14"/>')
-        else:
-            cv.add(f'<rect x="{f1(x0 + 2)}" y="{f1(y0 + 7)}" width="{f1(n + 3)}" height="{f1(n + 2)}" rx="6" '
-                   f'fill="{c("black")}" fill-opacity=".06"/>'
-                   f'<rect x="{f1(x0 + .5)}" y="{f1(y0 + 3)}" width="{f1(n + 2.5)}" height="{f1(n + 1.5)}" rx="3" '
-                   f'fill="{c("black")}" fill-opacity=".12"/>')
-        cv.add(P.rect(x0 - 2, y0 - 2, n + 4, n + 4, pal["edge"], 1.5))
+        self.sink(cv, x0, y0, n)
         if std["name"] == "day":
             cv.add(P.rect(x0, y0, n, n, "white"))
         cells = []
@@ -313,13 +325,17 @@ class Standard:
         cv.add(f'<rect x="{f1(x)}" y="{f1(y)}" width="{f1(w)}" height="{f1(h)}" rx="3" fill="{c(tone)}"{o}/>')
 
     # --- the panel
+    def enamel(self, cv, cx, cy, r, colour) -> str:
+        """A disc of enamel in `colour`, lit from the upper left: what a medallion is made of."""
+        L = self.lights(cv)
+        return (f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(r)}" fill="{c(colour)}"/>'
+                f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(r)}" fill="url(#{L["en"]})"/>')
+
     def medallion(self, cv, cx, cy, r, side) -> str:
         """A player's medallion: their king on an enamelled disc of the other colour."""
-        L = self.lights(cv)
         disc = self.std["label"] if side == "white" else "ash"
         k = 2 * r * .98
-        return (f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(r)}" fill="{c(disc)}"/>'
-                f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(r)}" fill="url(#{L["en"]})"/>'
+        return (self.enamel(cv, cx, cy, r, disc)
                 + self.put(cv, "king", side, cx - k / 2, cy - k / 2 + r * .02, k, shadow=False))
 
     def turn_ring(self, cv, cx, cy, r, begin) -> str:
@@ -373,18 +389,15 @@ class Standard:
             out.append(self.medallion(cv, cx, cy, r, "white"))
         else:
             colour = FACES[i % len(FACES)]
-            out.append(f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(r)}" fill="{c(colour)}"/>'
-                       f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(r)}" fill="url(#{L["en"]})"/>')
+            out.append(self.enamel(cv, cx, cy, r, colour))
             size = r * .72
             out.append(SE.say(cv, p["initials"], x=cx, y=cy + SE.cap(size) / 2, size=size, ls=.8,
                               fill=P.letters_on(colour), ground=colour, anchor="middle", what="initials"))
         return "".join(out)
 
     def draws_disc(self, cv, cx, cy, r) -> str:
-        L = self.lights(cv)
         colour = "gray"
-        return (f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(r)}" fill="{c(colour)}"/>'
-                f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(r)}" fill="url(#{L["en"]})"/>'
+        return (self.enamel(cv, cx, cy, r, colour)
                 + SE.say(cv, "=", x=cx, y=cy + SE.cap(r) / 2, size=r, fill=P.letters_on(colour), ground=colour,
                          anchor="middle"))
 
@@ -599,7 +612,9 @@ class Print:
 
     def frame(self, cv, W, H, kind, glyph, subject, caption="", plain=()) -> None:
         """The drafting sheet, and across its head, in the standard band's place, a title strip: the kind on a
-        solid cell at the left, the subject on one at the right, the caption before it, a rule where the band ends."""
+        solid cell at the left, the subject on one at the right, the caption before it, a rule where the band ends.
+        The cell's mark is the pawn, an icon's name, or a function of (x, y, size, letters, block) that draws a
+        game's own mark in a box `size` square at (x, y), in the cell's `letters` on its solid `block`."""
         col = self.col
         narrow = W < 400
         B = 10 if narrow else 12
@@ -614,7 +629,9 @@ class Print:
         name = E.plain(kind.upper(), "num")
         kx1 = PAD + 26 + width(name, "num", 10.5 * K, 1.6) + 14
         m = [f'<rect x="{f1(edge)}" y="{f1(edge)}" width="{f1(kx1 - edge)}" height="{f1(BAND - edge)}" fill="{line}"/>']
-        if glyph == "pawn":
+        if callable(glyph):
+            m.append(glyph(PAD - 2, mid - 10, 20, c(paper), line))
+        elif glyph == "pawn":
             m.append(f'<g transform="translate({f1(PAD - 2)} {f1(mid - 10.6)}) scale({fx(20 / 45, 4)})" '
                      f'fill="{c(paper)}">' + "".join(PARTS["pawn"]) + "</g>")
         else:
@@ -648,7 +665,7 @@ class Print:
         m.append(f'<path d="M{f1(edge)} {BAND}H{f1(right)}" fill="none" {hair(col, .9)} stroke-width="1.2"/>')
         cv.add("".join(m))
 
-    def _plotted(self, markup: str, length: float) -> str:
+    def plotted(self, markup: str, length: float) -> str:
         """Linework the plotter draws in as the file opens, as every print's sheet is drawn (`drafting.plot`)."""
         if not M.MOTION:
             return markup
@@ -659,17 +676,19 @@ class Print:
                               f'calcMode="spline" keySplines="0 0 1 1;.3 0 .2 1" fill="freeze"/></{tag}>', 1)
 
     def rule(self, x0, x1, y) -> str:
-        return self._plotted(f'<path d="M{f1(x0)} {f1(y)}H{f1(x1)}" fill="none" {hair(self.col, .55)} '
+        return self.plotted(f'<path d="M{f1(x0)} {f1(y)}H{f1(x1)}" fill="none" {hair(self.col, .55)} '
                              f'stroke-width=".8"/>', x1 - x0)
 
     def vrule(self, x, y0, y1) -> str:
-        return self._plotted(f'<path d="M{f1(x)} {f1(y0)}V{f1(y1)}" fill="none" {hair(self.col, .55)} '
+        return self.plotted(f'<path d="M{f1(x)} {f1(y0)}V{f1(y1)}" fill="none" {hair(self.col, .55)} '
                              f'stroke-width=".8"/>', y1 - y0)
 
     # --- lettering: Barlow Condensed, the prints' own, the bold cut for names and figures
     def _paint(self, role):
         if role == "paper":
             return self.col["paper"], None
+        if role == "block":          # letters on a solid block of the print's line, as a plate's value is set
+            return self.on_block, None
         if role == "muted":
             return self.col["ink"], self.muted
         return self.col["ink"], None
@@ -712,7 +731,7 @@ class Print:
              "ring": (45, 2, .8, 1, 1)}
     DARKNESS = ("square", "shadow")
 
-    def _hatch(self, cv, key: str) -> str:
+    def hatch(self, cv, key: str) -> str:
         """Section lining, the draughtsman's tone: lines at an angle, each pattern defined once per file."""
         cv.__dict__.setdefault("_hatches", {})
         if key not in cv._hatches:
@@ -726,7 +745,7 @@ class Print:
             cv._hatches[key] = pid
         return cv._hatches[key]
 
-    def _grad(self, cv, key: str) -> str:
+    def grad(self, cv, key: str) -> str:
         """A band of light for a glint: the paper's white by day and the night's line after dark ("sw"), or the
         print's line for a glint across paper ("sl")."""
         cv.__dict__.setdefault("_grads", {})
@@ -744,22 +763,27 @@ class Print:
         if not light:
             r = f' rx="{f1(rx)}"' if rx else ""
             cv.add(f'<rect x="{f1(x)}" y="{f1(y)}" width="{f1(size)}" height="{f1(size)}"{r} '
-                   f'fill="url(#{self._hatch(cv, "square")})"/>')
+                   f'fill="url(#{self.hatch(cv, "square")})"/>')
+
+    def sink(self, cv, x0, y0, n, h=None) -> None:
+        """A board `n` wide (and `h` tall) drawn in plan: its shadow cast down and to the right in section lining."""
+        h = n if h is None else h
+        cv.add(f'<path d="M{f1(x0 + n + 2)} {f1(y0 + 4)}H{f1(x0 + n + 7)}V{f1(y0 + h + 7)}H{f1(x0 + 4)}'
+               f'V{f1(y0 + h + 2)}H{f1(x0 + n + 2)}Z" fill="url(#{self.hatch(cv, "shadow")})"/>')
 
     def board_base(self, cv, x0, y0, s) -> None:
         """The board as a plan view: its shadow cast down and to the right in section lining, its dark squares
         lined, the fine lines between all sixty-four."""
         n = 8 * s
-        cv.add(f'<path d="M{f1(x0 + n + 2)} {f1(y0 + 4)}H{f1(x0 + n + 7)}V{f1(y0 + n + 7)}H{f1(x0 + 4)}'
-               f'V{f1(y0 + n + 2)}H{f1(x0 + n + 2)}Z" fill="url(#{self._hatch(cv, "shadow")})"/>')
+        self.sink(cv, x0, y0, n)
         d = "".join(f"M{f1(x0 + f * s)} {f1(y0 + (8 - rank) * s)}h{f1(s)}v{f1(s)}h{f1(-s)}Z"
                     for rank in range(8, 0, -1) for f in range(8) if (f + rank - 1) % 2 == 0)
-        cv.add(f'<path d="{d}" fill="url(#{self._hatch(cv, "square")})"/>')
+        cv.add(f'<path d="{d}" fill="url(#{self.hatch(cv, "square")})"/>')
         grid = "".join(f"M{f1(x0 + i * s)} {f1(y0)}V{f1(y0 + n)}M{f1(x0)} {f1(y0 + i * s)}H{f1(x0 + n)}"
                        for i in range(1, 8))
         cv.add(f'<path d="{grid}" fill="none" {hair(self.col, .3)} stroke-width=".6"/>')
 
-    def _phantom(self, cv, kind, x, y, s) -> str:
+    def phantom(self, cv, kind, x, y, s) -> str:
         """A piece in phantom lines, long and short dashes: the drawing's way to show where a moving part was."""
         return (f'<use href="#{self.shape(cv, kind)}" transform="translate({f1(x)} {f1(y)}) scale({fx(s / 45, 4)})" '
                 f'fill="none" stroke="{c(self.mark)}" stroke-width="1.1" stroke-opacity=".85" '
@@ -770,7 +794,7 @@ class Print:
         cv.add(f'<rect x="{f1(x)}" y="{f1(y)}" width="{f1(s)}" height="{f1(s)}" fill="{c(col["paper"])}"/>'
                f'<rect x="{f1(x + 3)}" y="{f1(y + 3)}" width="{f1(s - 6)}" height="{f1(s - 6)}" fill="none" '
                f'stroke="{c(self.mark)}" stroke-opacity=".8" stroke-dasharray="6 2 1.5 2"/>'
-               + self._phantom(cv, last["piece"], x, y, s))
+               + self.phantom(cv, last["piece"], x, y, s))
 
     def mark_to(self, cv, x, y, s, appear: str) -> None:
         col = self.col
@@ -778,7 +802,7 @@ class Print:
                f'<rect x="{f1(x + 2.2)}" y="{f1(y + 2.2)}" width="{f1(s - 4.4)}" height="{f1(s - 4.4)}" fill="none" '
                f'stroke="{c(self.mark)}" stroke-width="2.2"/></g>')
 
-    def _cloud(self, x, y, s) -> str:
+    def cloud(self, x, y, s) -> str:
         """A revision cloud round a square: scallops bulging out, four to a side, the mark a drawing puts round
         whatever needs looking at."""
         i = 1.4
@@ -794,16 +818,16 @@ class Print:
         on the edge is clouded inside the frame rather than across it."""
         if check:
             kx, ky = check
-            cv.add(f'<g clip-path="url(#{clip})"><g>{pulse}<path d="{self._cloud(kx, ky, s)}" fill="none" '
+            cv.add(f'<g clip-path="url(#{clip})"><g>{pulse}<path d="{self.cloud(kx, ky, s)}" fill="none" '
                    f'stroke="{c(self.mark)}" stroke-width="1.5" stroke-linejoin="round"/></g></g>')
 
     def bevel(self, cv, x0, y0, n) -> None:
         """The board's edge, drawn in, and heavier along the two sides the lamp does not reach: the shade lines a
         drawing gives a solid lit from the upper left."""
         line = c(self.col["line"])
-        cv.add(self._plotted(f'<rect x="{f1(x0 - .8)}" y="{f1(y0 - .8)}" width="{f1(n + 1.6)}" height="{f1(n + 1.6)}" '
+        cv.add(self.plotted(f'<rect x="{f1(x0 - .8)}" y="{f1(y0 - .8)}" width="{f1(n + 1.6)}" height="{f1(n + 1.6)}" '
                              f'fill="none" stroke="{line}" stroke-width="1.6"/>', 4 * (n + 1.6)),
-               self._plotted(f'<path d="M{f1(x0 + n + 1.4)} {f1(y0 - 1.6)}V{f1(y0 + n + 1.4)}H{f1(x0 - 1.6)}" '
+               self.plotted(f'<path d="M{f1(x0 + n + 1.4)} {f1(y0 - 1.6)}V{f1(y0 + n + 1.4)}H{f1(x0 - 1.6)}" '
                              f'fill="none" stroke="{line}" stroke-width="2.8"/>', 2 * n + 6))
 
     def foot(self, cv, sx, sy, rx, ry, inner) -> str:
@@ -881,7 +905,7 @@ class Print:
             return ""
         b = round(1.1 / every, 3)
         return (f'<g transform="translate({f1(x)} {f1(y)}) scale({fx(size / 45, 4)})"><g clip-path="url(#{self.clip_of(cv, kind)})">'
-                f'<rect x="-16" y="-6" width="12" height="58" fill="url(#{self._grad(cv, "sw")})" opacity="0" '
+                f'<rect x="-16" y="-6" width="12" height="58" fill="url(#{self.grad(cv, "sw")})" opacity="0" '
                 f'transform="skewX(-18)">'
                 + M.ani("x", "-16;64;64", f"0;{b};1", every, begin=begin, repeat=True)
                 + M.ani("opacity", "1;1;0;0", f"0;{round(b - .001, 3)};{b};1", every, begin=begin, repeat=True)
@@ -898,7 +922,7 @@ class Print:
                f'{hair(self.col, .55)} stroke-width=".8"/>')
 
     # --- the panel
-    def _dial(self, cx, cy, r) -> str:
+    def dial(self, cx, cy, r) -> str:
         """The prints' medallion: a ring and its dial of ticks on the paper, the ticks one dashed circle."""
         col = self.col
         rm, C = r - 2.05, 2 * math.pi * (r - 2.05)
@@ -908,7 +932,7 @@ class Print:
 
     def medallion(self, cv, cx, cy, r, side) -> str:
         k = 2 * r * .84
-        return self._dial(cx, cy, r) + self.put(cv, "king", side, cx - k / 2, cy - k / 2 + r * .02, k, shadow=False)
+        return self.dial(cx, cy, r) + self.put(cv, "king", side, cx - k / 2, cy - k / 2 + r * .02, k, shadow=False)
 
     def turn_ring(self, cv, cx, cy, r, begin) -> str:
         """A heavier ring round the side whose turn it is, drawn in as the turn arrives."""
@@ -926,8 +950,8 @@ class Print:
         """A band across the turn plate: white across a dark block, the sheet's colour across a light one (a white
         block after dark), the line's across a plate's paper."""
         if not solid:
-            return f'url(#{self._grad(cv, "sl")})', ".3"
-        return (f'url(#{self._grad(cv, "sp")})', ".35") if self.light_line else (f'url(#{self._grad(cv, "sw")})', ".5")
+            return f'url(#{self.grad(cv, "sl")})', ".3"
+        return (f'url(#{self.grad(cv, "sp")})', ".35") if self.light_line else (f'url(#{self.grad(cv, "sw")})', ".5")
 
     def key(self, cv, x, y, size, tone) -> str:
         """A key's swatch, in the material its part is drawn in: solid, lined or open; the last move's, its mark."""
@@ -938,7 +962,7 @@ class Print:
         if tone == "last":
             return (f'<rect x="{f1(x + .8)}" y="{f1(y + .8)}" width="{f1(size - 1.6)}" height="{f1(size - 1.6)}" '
                     f'fill="{c(col["paper"])}" stroke="{c(self.mark)}" stroke-width="1.6"/>')
-        fill = f'url(#{self._hatch(cv, "bar")})' if tone == "world" else c(col["paper"])
+        fill = f'url(#{self.hatch(cv, "bar")})' if tone == "world" else c(col["paper"])
         return (f'<rect x="{f1(x + .4)}" y="{f1(y + .4)}" width="{f1(size - .8)}" height="{f1(size - .8)}" '
                 f'fill="{fill}" stroke="{line}" stroke-width=".8"/>')
 
@@ -946,7 +970,7 @@ class Print:
         line = c(self.col["line"])
         if tone == "house":
             return f'<rect x="{f1(x)}" y="{f1(y)}" width="{f1(w)}" height="{f1(h)}" fill="{line}"/>'
-        fill = f'url(#{self._hatch(cv, "bar")})' if tone == "world" else c(self.col["paper"])
+        fill = f'url(#{self.hatch(cv, "bar")})' if tone == "world" else c(self.col["paper"])
         return (f'<rect x="{f1(x + .4)}" y="{f1(y + .4)}" width="{f1(max(w - .8, .4))}" height="{f1(h - .8)}" '
                 f'fill="{fill}" stroke="{line}" stroke-width=".8"/>')
 
@@ -970,7 +994,7 @@ class Print:
             else:
                 if medal == 1:
                     out.append(f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(rr)}" fill="none" '
-                               f'stroke="url(#{self._hatch(cv, "ring")})" stroke-width="3.6"/>')
+                               f'stroke="url(#{self.hatch(cv, "ring")})" stroke-width="3.6"/>')
                 out.append(f'<path d="M{f1(cx - rr + 1.8)} {f1(cy)}a{f1(rr - 1.8)} {f1(rr - 1.8)} 0 1 0 '
                            f'{f1(2 * rr - 3.6)} 0a{f1(rr - 1.8)} {f1(rr - 1.8)} 0 1 0 {f1(-2 * rr + 3.6)} 0Z'
                            f'M{f1(cx - rr - 1.8)} {f1(cy)}a{f1(rr + 1.8)} {f1(rr + 1.8)} 0 1 0 {f1(2 * rr + 3.6)} 0'
@@ -982,25 +1006,25 @@ class Print:
             out.append(self.medallion(cv, cx, cy, r, "white"))
         else:
             size = r * .72
-            out.append(self._dial(cx, cy, r) + self.say(cv, p["initials"], cx, cy + self.cap(size) / 2, size, ls=.8,
+            out.append(self.dial(cx, cy, r) + self.say(cv, p["initials"], cx, cy + self.cap(size) / 2, size, ls=.8,
                                                         anchor="middle"))
         return "".join(out)
 
     def draws_disc(self, cv, cx, cy, r) -> str:
-        return self._dial(cx, cy, r) + self.say(cv, "=", cx, cy + self.cap(r) / 2, r, anchor="middle")
+        return self.dial(cx, cy, r) + self.say(cv, "=", cx, cy + self.cap(r) / 2, r, anchor="middle")
 
     def vacant(self, cv, cx, cy, r, i) -> str:
         """A place on the podium nobody has won yet: a dial inside a dashed ring, and a question."""
         rr = r + 4.5
         return (f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(rr)}" fill="none" stroke="{c(self.col["line"])}" '
-                f'stroke-width="1.2" stroke-dasharray="4 3"/>' + self._dial(cx, cy, r)
+                f'stroke-width="1.2" stroke-dasharray="4 3"/>' + self.dial(cx, cy, r)
                 + self.say(cv, "?", cx, cy + self.cap(r * .8) / 2, r * .8, role="muted", anchor="middle"))
 
     def track(self, cv, x, y, w, h) -> str:
         return f'<rect x="{f1(x)}" y="{f1(y)}" width="{f1(w)}" height="{f1(h)}" fill="none" {hair(self.col, .5)}/>'
 
     def fill_bar(self, cv, x, y, w, h) -> str:
-        return (f'<rect x="{f1(x)}" y="{f1(y)}" width="{f1(w)}" height="{f1(h)}" fill="url(#{self._hatch(cv, "bar")})" '
+        return (f'<rect x="{f1(x)}" y="{f1(y)}" width="{f1(w)}" height="{f1(h)}" fill="url(#{self.hatch(cv, "bar")})" '
                 f'stroke="{c(self.col["line"])}"/>')
 
     def number(self, cv, n, x, y, size) -> str:
@@ -1032,7 +1056,7 @@ class Print:
             clip = cv.uid("b")
             cv.defs.append(f'<clipPath id="{clip}"><rect width="{f1(plate.w)}" height="{f1(plate.h)}"/></clipPath>')
             cv.add(f'<g clip-path="url(#{clip})"><rect x="-40" y="-4" width="34" height="{f1(plate.h + 8)}" '
-                   f'fill="url(#{self._grad(cv, "sl")})" opacity=".0" transform="skewX(-20)">'
+                   f'fill="url(#{self.grad(cv, "sl")})" opacity=".0" transform="skewX(-20)">'
                    + M.ani("x", f"-40;-40;{f1(plate.w + 30)};{f1(plate.w + 30)}", "0;.8;.92;1", M.GLINT, begin=1,
                            repeat=True)
                    + M.ani("opacity", "0;0;.3;.3;0", "0;.8;.81;.92;1", M.GLINT, begin=1, repeat=True)

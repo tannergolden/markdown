@@ -12,6 +12,7 @@ from __future__ import annotations
 import re
 import unittest
 import xml.dom.minidom as minidom
+from unittest import mock
 
 from tests import support
 from tests.fakes.github import FakeGitHub
@@ -23,6 +24,7 @@ from domain.elements import chess as C
 from domain.elements import data as ED
 from domain.elements import draw as E
 from domain.elements.chess import readme as RM
+from domain.lettering import Lettering
 from domain.prints import PRINTS, STANDARD
 
 support.install()
@@ -402,7 +404,7 @@ class Settings(unittest.TestCase):
                    ["x", "y", "z", "w", "v"])
         rows = ("history", "moves", "people", "leaders")
         for d, check in ((GAME, C.check), (HOUSE, C.check), (KNOWN, C.check_hall)):
-            for key in sorted(set(d) | {"logins", "names", "history", "last", "taken"}):
+            for key in sorted(set(d) | {"logins", "names", "history", "last", "taken", "result", "next"}):
                 for bad in hostile:
                     for value in (bad, [bad], [[bad] * 5]) if key in rows else (bad,):
                         with self.subTest(key=key, value=value):
@@ -620,6 +622,136 @@ class Readme(unittest.TestCase):
         one = C.leaderboard({**EMPTY, "leaders": [["tannergolden", 1, 0, 1], ["octocat", 1, 0, 1]]})
         self.assertIn("· @tannergolden and GitHub's top player · ranked by wins, then moves</summary>", one)
         self.assertNotIn("Leaderboard", ED.block("chess-hall", EMPTY, "assets/elements"))
+
+
+# Finished games, each board kept up for two days with its result: the house mates in four (the Scholar's Mate), GitHub
+# mates in two (the Fool's Mate), and a stalemate after a long ending.
+SCHOLAR = {"kind": "chess", "fen": "r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 4", "game": 13,
+           "move": 4, "players": 3, "check": "e8",
+           "last": {"san": "Qxf7#", "from": "h5", "to": "f7", "piece": "queen", "captured": "pawn",
+                    "words": "Queen from h5 takes the pawn on f7, checkmate", "by": "@tannergolden", "when": "12 Oct"},
+           "taken": {"white": "p", "black": ""},
+           "history": [[2, "Bc4", "Nc6", "@imvale"], [3, "Qh5", "Nf6", "@tokafor"], [4, "Qxf7#", "", ""]],
+           "result": {"winner": "house", "how": "checkmate"}, "next": "14 Oct",
+           "prompt": "🏆 **Checkmate!** @tannergolden wins game 13. Game 14 opens 14 Oct.",
+           "note": "Every finished game's board stays up for two days, then a fresh one comes."}
+FOOL = {"kind": "chess", "fen": "rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3", "game": 12, "move": 3,
+        "players": 2, "check": "e1",
+        "last": {"san": "Qh4#", "from": "d8", "to": "h4", "piece": "queen", "captured": "",
+                 "words": "Queen from d8 to h4, checkmate", "by": "@wrencastellan", "when": "11 Oct"},
+        "history": [[1, "f3", "e5", "@imvale"], [2, "g4", "Qh4#", "@wrencastellan"]],
+        "result": {"winner": "github", "how": "checkmate"}, "next": "13 Oct",
+        "prompt": "🏆 **Checkmate!** GitHub wins game 12, and @wrencastellan takes a place in the Hall of Fame."}
+STALEMATE = {"kind": "chess", "fen": "k7/2Q5/1K6/8/8/8/8/8 b - - 0 60", "game": 11, "move": 60, "players": 14,
+             "last": {"san": "Qc7", "from": "c5", "to": "c7", "piece": "queen", "captured": "",
+                      "words": "Queen from c5 to c7, stalemate", "by": "@tannergolden", "when": "10 Oct"},
+             "history": [[58, "Kb6", "Ka8", "@jhalloran"], [59, "Qc5", "Kb8", "@octocat"], [60, "Qc7", "", ""]],
+             "result": {"winner": None, "how": "stalemate"}, "next": "12 Oct",
+             "prompt": "🤝 **Stalemate!** Game 11 is drawn. Game 12 opens 12 Oct."}
+FINISHED = (SCHOLAR, FOOL, STALEMATE)
+
+
+def lettered(d: dict, tone: str, variant: str = "still") -> list[str]:
+    """Every run of lettering a file sets, in capitals: what a sheet says, since its letters are drawn as paths."""
+    runs, text = [], Lettering.text
+
+    def record(self, s, **k):
+        runs.append(str(s).upper())
+        return text(self, s, **k)
+    with mock.patch.object(Lettering, "text", record):
+        E.draw(d["kind"], d, tone, "day", variant)
+    return runs
+
+
+class Finished(unittest.TestCase):
+    """A finished game keeps its final board up for two days, as every game on the profile does: the final position,
+    the winner and how on the turn's plate, the day the fresh board comes across the row, and nothing to play. A board
+    under way is drawn exactly as it was before a board could finish."""
+
+    def test_every_file_of_a_finished_board_is_drawn_in_every_theme(self):
+        for d in FINISHED:
+            self.assertEqual(C.check(d), [], d["fen"])
+            for tone in TONES:
+                for variant in E.variants("chess", d):
+                    for theme in ("day", "dark"):
+                        svg = E.draw("chess", d, tone, theme, variant)    # the kit's lint and budget, or it raises
+                        with self.subTest(game=d["game"], tone=tone, variant=variant, theme=theme):
+                            self.assertEqual(svg, E.draw("chess", d, tone, theme, variant))
+                            self.assertNotIn("<text", svg)
+                            (self.assertNotIn if variant.endswith("still") else self.assertIn)("<animate", svg)
+
+    def test_its_plate_says_who_won_and_how_and_when_the_fresh_board_comes(self):
+        for d, label, how, day in ((SCHOLAR, "@TANNERGOLDEN WINS", "CHECKMATE", "14 OCT"),
+                                   (FOOL, "GITHUB WINS", "CHECKMATE", "13 OCT"),
+                                   (STALEMATE, "DRAWN", "STALEMATE", "12 OCT")):
+            for tone in (STANDARD, "blackprint", "yellowprint"):
+                for variant in ("still", "narrow-still"):
+                    runs = lettered(d, tone, variant)
+                    with self.subTest(game=d["game"], tone=tone, variant=variant):
+                        self.assertIn(label, runs)
+                        self.assertIn(how, runs)
+                        self.assertIn(f"NEXT GAME {day}", runs)
+                        self.assertFalse([r for r in runs if r.endswith("'S TURN")], "it is nobody's turn")
+        self.assertIn("@TANNERGOLDEN WINS", lettered(SCHOLAR, STANDARD)[-6:], "where the next move would stand")
+
+    def test_its_description_and_readme_say_how_it_ended_and_offer_nothing_to_play(self):
+        self.assertIn("after 4. Qxf7#: queen from h5 takes the pawn on f7, checkmate. @tannergolden won: checkmate."
+                      " Game 14 opens 14 Oct.", E.alt("chess", SCHOLAR))
+        self.assertIn("GitHub won: checkmate. Game 13 opens 13 Oct.", E.alt("chess", FOOL))
+        self.assertIn("The game was drawn: stalemate. Game 12 opens 12 Oct.", E.alt("chess", STALEMATE))
+        # the note says what the picture cannot, as the engine writes it on a finished board: a link in it is a link
+        over = ("Game 12 is over, and its final board stays up for two days: game 13 opens 14 Oct, 16:00 EST, and "
+                "nothing can be played until then. Every finished game is kept as a "
+                "[PGN](https://github.com/tannergolden/tannergolden/tree/HEAD/.github/chess/games).")
+        for d in (*FINISHED, {**FOOL, "note": over}):
+            text = ED.block("chess", d, "assets/elements")
+            with self.subTest(game=d["game"], note=bool(d.get("note"))):
+                self.assertEqual(C.check(d), [])
+                self.assertTrue(text.startswith(f"<!-- markdown:element:chess:start -->\n> [!IMPORTANT]\n> "
+                                                f"{d['prompt']}\n\n<picture>"))
+                self.assertNotIn("<details>", text)
+                under = f"\n\n{d['note']}" if d.get("note") else ""
+                self.assertTrue(text.endswith(f"</picture>{under}\n<!-- markdown:element:chess:end -->"),
+                                "its banner, its board and its note, with no move to play")
+
+    def test_how_it_ended_is_checked_as_strictly_as_the_rest_of_the_board(self):
+        def turned_away(d: dict, said: str):
+            errors = C.check(d)
+            self.assertTrue(any(said in e for e in errors), f"{said!r} not in {errors}")
+
+        for how in ("checkmate", "stalemate", "insufficient material", "fivefold repetition", "seventy-five moves",
+                    "dead position"):
+            winner = "house" if how == "checkmate" else None
+            with self.subTest(how=how):
+                self.assertEqual(C.check({**(SCHOLAR if winner else STALEMATE), "result": {"winner": winner,
+                                                                                          "how": how}}), [])
+        for bad in ({"winner": "house"}, {"winner": "white", "how": "checkmate"}, {"winner": None, "how": "resigned"},
+                    {"winner": None, "how": "threefold repetition"}, "checkmate", ["house", "checkmate"], True,
+                    {"winner": "house", "how": "checkmate", "by": "mate"}, {"winner": None, "how": 7}):
+            with self.subTest(result=bad):
+                turned_away({**SCHOLAR, "result": bad}, "result is how the game ended")
+        turned_away({**SCHOLAR, "result": {"winner": None, "how": "checkmate"}},
+                    "a game ended by checkmate has a winner")
+        turned_away({**STALEMATE, "result": {"winner": "house", "how": "stalemate"}}, "is drawn, its winner null")
+        turned_away({**SCHOLAR, "result": {"winner": "github", "how": "checkmate"}},
+                    "the winner is the side that made the last move, house")
+        turned_away({**FOOL, "result": {"winner": "house", "how": "checkmate"}},
+                    "the winner is the side that made the last move, github")
+        turned_away({**SCHOLAR, "moves": GAME["moves"]}, "a finished board offers no move")
+        self.assertEqual(C.check({**SCHOLAR, "moves": []}), [])
+        for day in ("32 Oct", "14 Octo", 14, True):
+            with self.subTest(next=day):
+                turned_away({**SCHOLAR, "next": day}, f"next {day!r} is not a day")
+        turned_away({**GAME, "next": "14 Oct"}, "a game under way has none")
+
+    def test_a_board_under_way_is_drawn_exactly_as_before_whatever_says_it_is_not_finished(self):
+        for d in (GAME, HOUSE, OPENING):
+            for tone in (STANDARD, "blackprint"):
+                for variant in ("wide", "narrow-still"):
+                    plain = E.draw("chess", d, tone, "dark", variant)
+                    with self.subTest(fen=d["fen"], tone=tone, variant=variant):
+                        self.assertEqual(E.draw("chess", {**d, "result": None, "next": ""}, tone, "dark", variant),
+                                         plain)
 
 
 class Sets(unittest.TestCase):

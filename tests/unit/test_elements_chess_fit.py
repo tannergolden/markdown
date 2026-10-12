@@ -182,6 +182,38 @@ class Clear(unittest.TestCase):
                             self.assertEqual(svg, E.draw(kind, d, tone, theme, variant))
 
 
+class Finished(unittest.TestCase):
+    """A finished board's plate says who won and how, and the day the fresh board comes, at the data's limits: the
+    longest way a game ends, each winner and a draw, beside a login of 39 letters and every number at its longest."""
+
+    ENDS = {"checkmate": ("house", "github"), "insufficient material": (None,), "seventy-five moves": (None,)}
+
+    def boards(self):
+        for how, winners in self.ENDS.items():
+            for winner in winners:
+                base = dict(LIMITS, check="", moves=[])
+                if winner == "house":      # the house mates, so it is Black's turn, as at the limits
+                    yield dict(base, result={"winner": "house", "how": how}, next="28 May")
+                elif winner == "github":   # GitHub mates: White to move
+                    yield dict(base, fen=HOUSE["fen"].rsplit(" ", 1)[0] + " 99999", check="",
+                               result={"winner": "github", "how": how}, next="28 May",
+                               last=dict(LIMITS["last"], san="Qxd6#"))
+                else:
+                    yield dict(base, result={"winner": None, "how": how}, next="28 May")
+
+    def test_every_finished_plate_at_the_limits_is_lettered_without_a_clash_in_every_theme(self):
+        for d in self.boards():
+            self.assertEqual(C.check(d), [], d["result"])
+            for tone in TONES:
+                for variant in (*SHEETS, "narrow-still"):
+                    svg, runs = drawn("chess", d, tone, variant)
+                    with self.subTest(result=d["result"], tone=tone, variant=variant):
+                        Clear.assertClear(self, svg, runs, tone, (d["result"], tone, variant))
+                        said = {r.s.upper() for r in runs}
+                        self.assertIn(d["result"]["how"].upper(), said)
+                        self.assertTrue({"NEXT GAME 28 MAY", "NEXT 28 MAY"} & said, "the day, never cut")
+
+
 class Words(unittest.TestCase):
     """The last move's words stand on a line or two of their own under the move, inside the panel: an engine's
     sentence keeps its size and every word, and only words two lines cannot hold at the floor end in an ellipsis."""

@@ -24,7 +24,7 @@ import itertools
 
 from ...lettering import f1, fx, width
 from . import motion as M
-from .game import FILES, NAMES, OWNER, VALUE, turn_name
+from .game import FILES, GITHUB, NAMES, OWNER, VALUE, called, turn_name
 from .shapes import FOOT
 
 WIDE, NARROW = 830, 360
@@ -230,7 +230,7 @@ def matchup(cv, sk, st, x0, x1, y, *, small=False) -> float:
         left = side == "white"
         cx = x0 + r + 3 if left else x1 - r - 3
         cv.add(sk.medallion(cv, cx, cy, r, side))
-        if st["to_move"] == side:
+        if st["to_move"] == side and not st.get("result"):     # once the game is over, it is nobody's turn
             cv.add(sk.turn_ring(cv, cx, cy, r + 3.4, 1.1))
         tx = cx + r + 11 if left else cx - r - 11
         anchor = "start" if left else "end"
@@ -242,19 +242,68 @@ def matchup(cv, sk, st, x0, x1, y, *, small=False) -> float:
 
 
 def turn_row(cv, sk, st, x0, x1, y, *, small=False) -> float:
-    """Whose turn it is, a badge under that side, and the day the move is due by on the other. In check, the
-    badge's second panel slides open out of it as the move lands; every eight seconds a glint crosses it, the
-    call to play."""
+    """Whose turn it is, a badge under that side, and the day the move is due by on the other; once the game is
+    over, who won and how (`finished`). In check, the badge's second panel slides open out of it as the move
+    lands; every eight seconds a glint crosses it, the call to play."""
+    if st.get("result"):
+        return plate_row(cv, sk, x0, x1, y, *finished(st), small=small, keep_note=True)
+    notes = ((f"due by {st['due']}", f"by {st['due']}") if st["due"]
+             else ("no clock until the first move", "no clock yet"))
+    return plate_row(cv, sk, x0, x1, y, f"{turn_name(st)}'s turn", "in check" if st["check"] else "", "play",
+                     st["to_move"] == "black", notes, small=small)
+
+
+def finished(st: dict) -> tuple[str, str, str, bool, tuple[str, ...]]:
+    """A finished game's plate, as every game sets it in the turn's place: who won, under the winner's side, with
+    how in its second panel, or that it was drawn; and across the row the day the fresh board comes.
+    (label, message, icon, on the right, notes)"""
+    winner, how = st["result"]["winner"], st["result"]["how"]
+    notes = ((f"next game {st['next']}", f"next {st['next']}") if st["next"]
+             else (f"game {st['game']} is over", "game over"))
+    return (f"{called(winner)} wins" if winner else "drawn", how, "trophy" if winner else "scale",
+            winner == GITHUB, notes)
+
+
+def outcome(st: dict) -> str:
+    """Where a finished game's score sheet would name whose turn it is: who won, or that it was drawn."""
+    winner = st["result"]["winner"]
+    return f"{called(winner)} wins" if winner else "drawn"
+
+
+def plate_row(cv, sk, x0, x1, y, label, message, icon, right, notes, *, small=False, keep_note=False) -> float:
+    """A plate across the panel's row, under the side it is about (on the `right`, GitHub's), with what it adds
+    sliding open out of it as the move lands, and across the row the first of `notes` that fits beside it. Every
+    eight seconds a glint crosses the plate. It is set at its size, or smaller if the row cannot hold it; a plate
+    that must `keep_note` gives way to the note as well, a little to say it in full and as far as it must to say it
+    short, so the note is never cut."""
+    def plate(size):
+        return (sk.chip(label, message, icon=icon, size=size, lab="turn", msg="alert") if message
+                else sk.chip(label, "", icon=icon, size=size, lab="turn"))
+
+    def beside(note, size):
+        return plate(size).w + GAP + sk.width(note.upper(), "caps", 6.5, .6)
+
     size = 10 if not small else 8.5
-    label = f"{turn_name(st)}'s turn"
-    full = (sk.chip(label, "in check", icon="play", size=size, lab="turn", msg="alert") if st["check"]
-            else sk.chip(label, "", icon="play", size=size, lab="turn"))
-    right = st["to_move"] == "black"
+    tall = plate(size).h                  # the row is as tall as the plate at its size, whatever it is set at
+    while True:
+        full = plate(size)
+        if full.w <= x1 - x0 or size <= 7:
+            break
+        size -= .25
+    if keep_note:
+        for note, floor in ((notes[0], size - 1.5), (notes[-1], 7.0)):
+            fits = size
+            while fits > floor and beside(note, fits) > x1 - x0:
+                fits -= .25
+            if beside(note, fits) <= x1 - x0 or note is notes[-1]:
+                size, full = fits, plate(fits)
+                break
+    top, y = y, y + (tall - full.h) / 2     # a plate set smaller stands in the middle of its row
     bx = x1 - full.w if right else x0
     n0 = len(cv.body)
     cv.add(full.draw_label(cv, bx, y, "turn"))
     if M.MOTION:
-        paint, peak = sk.glint(cv, solid=not st["check"])
+        paint, peak = sk.glint(cv, solid=not message)
         clip = cv.uid("b")
         cv.defs.append(f'<clipPath id="{clip}"><rect x="{f1(bx)}" y="{f1(y)}" width="{f1(full.lw)}" '
                        f'height="{f1(full.h)}"/></clipPath>')
@@ -267,25 +316,29 @@ def turn_row(cv, sk, st, x0, x1, y, *, small=False) -> float:
     added = "".join(cv.body[n0:])
     del cv.body[n0:]
     cv.add(M.rise(added, .25))
-    if st["check"]:
-        panel = full.draw_message(cv, bx + full.lw, y, "in check")
+    if message:
+        panel = full.draw_message(cv, bx + full.lw, y, message)
         cv.add(M.wiped(cv, panel, bx + full.lw, y, full.mw, full.h, 1.18, .42))
     # the note keeps clear of the badge across the row: said in full where there is room, else said short
     room = x1 - x0 - full.w - GAP
-    notes = ((f"due by {st['due']}", f"by {st['due']}") if st["due"]
-             else ("no clock until the first move", "no clock yet"))
-    note = next((n for n in notes if sk.width(n.upper(), "caps", 7, .6) <= room), notes[-1])
+    least = 6.5 if keep_note else 7       # a note the plate gave way to is said in full down to its floor
+    note = next((n for n in notes if sk.width(n.upper(), "caps", least, .6) <= room), notes[-1])
     note, size = fitting(sk, note, "caps", 7, 6, room, .6)
     cv.add(sk.caps(cv, note, x0 if right else x1, y + full.h / 2 + 3, size, ls=.6,
                    anchor="start" if right else "end", what="due"))
-    return y + full.h
+    return top + tall
 
 
 def in_words(sk, st, room, *, small=False) -> tuple[int, float, list[str]]:
-    """The last move in words, flowed to the panel's width: on as many lines as the standard theme's letters take,
-    two at most, so the panel stands the same in every theme; smaller only if it must be, and cut short only past
-    that. (lines the layout gives it, size, lines)"""
+    """The last move in words, flowed to the panel's width (`flowed`); before the first move, who opens the game."""
     words = st["last"]["words"] if st["last"] else f"@{OWNER} opens game {st['game']}"
+    return flowed(sk, words, room, small=small)
+
+
+def flowed(sk, words: str, room: float, *, small=False) -> tuple[int, float, list[str]]:
+    """A move's words flowed to the panel's width: on as many lines as the standard theme's letters take, two at
+    most, so the panel stands the same in every theme; smaller only if it must be, and cut short only past that.
+    Every game's panel says its last move so. (lines the layout gives it, size, lines)"""
     size, floor = (11, 9) if not small else (10.5, 8.5)
     rows = len(flow(lambda s, z: width(s, "sans", z), words, size, floor, room)[1])
     return (rows, *flow(lambda s, z: sk.width(s, "regular", z), words, size, floor, room, rows=rows, least=rows))
@@ -356,11 +409,13 @@ def rows_of(st) -> list:
 
 
 def history(cv, sk, st, x0, x1, y, rows=3) -> float:
-    """The last moves, who chose each of GitHub's, the latest move's row marked, and whose turn the next one is.
-    Each column stands where it always has, further right only for a number or a move too wide to leave it there."""
+    """The last moves, who chose each of GitHub's, the latest move's row marked, and whose turn the next one is;
+    once the game is over, who won it in that place. Each column stands where it always has, further right only for
+    a number or a move too wide to leave it there."""
     cv.add(sk.heading(cv, "moves", x0, y))
     yy = y + 21
-    turn = f"{turn_name(st)}'s turn"
+    turn = outcome(st) if st.get("result") else f"{turn_name(st)}'s turn"
+    said = "ink" if st.get("result") else "alert"      # a result is said in the ink; a turn calls out in red
     latest = st["last"]["number"] if st["last"] else None
     shown = rows_of(st)[-rows:]
     wx = x0 + max(26, max(sk.width(f"{n}.", "caps", 8, .3) for n, *_ in shown) + 5)
@@ -371,7 +426,7 @@ def history(cv, sk, st, x0, x1, y, rows=3) -> float:
             cv.add(sk.row_mark(x0 - 6, yy - 12.5, x1 - x0 + 6, 18))
         cv.add(sk.caps(cv, f"{n}.", x0, yy, 8, ls=.3, what="move number"))
         if not w:
-            cv.add(sk.caps(cv, turn, wx, yy, 7, ls=.5, role="alert", what="to move"))
+            cv.add(sk.caps(cv, turn, wx, yy, 7, ls=.5, role=said, what="to move"))
         else:
             cv.add(sk.say(cv, w, wx, yy, 10, what="white's move"))
             if b:
@@ -386,7 +441,7 @@ def history(cv, sk, st, x0, x1, y, rows=3) -> float:
                     who, size = fitting(sk, who, "caps", 7, 6, x1 - tx, .5)
                     cv.add(sk.caps(cv, who, tx, yy, size, ls=.5, what="mover"))
             else:
-                cv.add(sk.caps(cv, turn, bx, yy, 7, ls=.5, role="alert", what="to move"))
+                cv.add(sk.caps(cv, turn, bx, yy, 7, ls=.5, role=said, what="to move"))
         yy += 19
     return yy
 

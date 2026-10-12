@@ -9,10 +9,17 @@ plain words the engine gave it, and every field is checked before it is drawn, s
 player's login end up in the README. A field YAML reads as something else, a number for a name or a list for a
 note, is turned away like any other mistake, and every number has a ceiling the sheets have room to letter.
 
+A finished game keeps its final board up for two days before the fresh one comes. Its data then carries how it
+ended (`result`: the winner, the house or GitHub, or none for a draw, and how) and the day the fresh board comes
+(`next`), and offers no move: nothing can be played while the final board is up.
+
 A row of the Hall of Fame may carry its player's account ID after its counts. A login can be given up and taken by
 someone else, so a run reads each ID's account as it is now (`logins`, measured beside the winners' `names`), and
 the row is shown and linked by that account's login. A player whose account is gone is left off the page, and the
 rows under them move up: the engine hands over more rows than the page has places for, so the places stay full.
+
+The checks of a field's shape (`is_number`, `is_text`, `is_day`), of the README's lines (`check_lines`) and of how
+a game ended (`check_end`) are every game's on the profile, so the four are checked alike.
 """
 from __future__ import annotations
 
@@ -65,6 +72,14 @@ LETTERED = ("sans-bold", "num")
 PEOPLE = 5  # the hall's places: a podium of three, and two more beside it
 LEADERS = 10  # the leaderboard's places for GitHub's players, under the house's own row
 DEPTH = 2  # each list may run to twice its places, so the rows under a player whose account is gone fill theirs
+# The two sides of every game on the profile, as a finished game's result names its winner: the house, @tannergolden,
+# and GitHub, everyone else. In chess the house plays White.
+HOUSE, GITHUB = "house", "github"
+SIDES = (HOUSE, GITHUB)
+# How a game of chess ends on the profile, and whether that end has a winner: a mate does; every draw is one that
+# needs nobody to claim it, since nobody is there to.
+ENDS = {"checkmate": True, "stalemate": False, "insufficient material": False, "fivefold repetition": False,
+        "seventy-five moves": False, "dead position": False}
 
 
 def placement(fen: str) -> dict[str, str]:
@@ -96,17 +111,17 @@ def squares(fen: str) -> bool:
     return all(sum(int(ch) if ch in "12345678" else 1 for ch in rank) == 8 for rank in fen.split()[0].split("/"))
 
 
-def _number(value, low: int, high: int) -> bool:
+def is_number(value, low: int, high: int) -> bool:
     """Whether `value` is a whole number from `low` to `high`: an int, never a bool or text YAML read in its place."""
     return isinstance(value, int) and not isinstance(value, bool) and low <= value <= high
 
 
-def _text(value, shape: re.Pattern) -> bool:
+def is_text(value, shape: re.Pattern) -> bool:
     """Whether `value` is text of `shape`, never a number, a bool or a list YAML read in its place."""
     return isinstance(value, str) and shape.fullmatch(value) is not None
 
 
-def _day(value) -> bool:
+def is_day(value) -> bool:
     """Whether `value` is a day as the sheets letter it, such as 18 Oct: a real day of a real month."""
     m = DATE.fullmatch(value) if isinstance(value, str) else None
     return m is not None and int(m[1]) <= DAYS.get(m[2].casefold(), 0)
@@ -114,13 +129,13 @@ def _day(value) -> bool:
 
 def _int(d: dict, key: str, default: int, low: int = 0, high: int = MOST) -> int:
     value = d.get(key)
-    return value if _number(value, low, high) else default
+    return value if is_number(value, low, high) else default
 
 
 def named(name) -> bool:
     """Whether `name` is a winner's name the sheets can set: plain text, at most forty letters once in capitals (an ß
     is two), with something in it to see."""
-    return (_text(name, NAME) and len(name.upper()) <= 40
+    return (is_text(name, NAME) and len(name.upper()) <= 40
             and any(unicodedata.category(ch)[0] in "LNPS" for ch in name))
 
 
@@ -135,12 +150,60 @@ def turn_name(st: dict) -> str:
     return "GitHub" if st["to_move"] == "black" else f"@{OWNER}"
 
 
+def called(side: str) -> str:
+    """A side by name, as every game says it: GitHub, or the house's own login."""
+    return "GitHub" if side == GITHUB else f"@{OWNER}"
+
+
+def check_lines(d: dict) -> list[str]:
+    """What the README's own lines get wrong: the turn's banner (`prompt`) and the `note` are each one line of
+    text, which opens no block of its own where it is set and shows no image."""
+    errors = []
+    for key in ("prompt", "note"):
+        value = d.get(key)
+        if value and not is_text(value, LINE):
+            errors.append(f"{key} is one line of text, without <, > or |")
+        elif value and BLOCK.match(value):
+            errors.append(f"{key} {value!r} would open a block of its own in the README, such as a heading, a list, a"
+                          " rule or a fence: it starts with a word or an emoji")
+        elif value and "![" in value:
+            errors.append(f"{key} shows an image: a line of the README carries words and links alone")
+    return errors
+
+
+def check_end(d: dict, moved: str, ends: dict[str, bool], offered: int) -> list[str]:
+    """What a board's `result` and `next` get wrong. How a game ended is one of `ends`, each with a winner or
+    drawn, and only the side that made the last move (`moved`) can have won it; the day the fresh board comes is a
+    finished board's alone; and a finished board offers nothing to play, where its data lists `offered` moves."""
+    errors = []
+    result = d.get("result")
+    if result:
+        if not (isinstance(result, dict) and set(result) == {"winner", "how"} and result["winner"] in (*SIDES, None)
+                and isinstance(result["how"], str) and result["how"] in ends):
+            errors.append("result is how the game ended: its winner (house, github, or null for a draw) and how: "
+                          + ", ".join(ends))
+        elif ends[result["how"]] and result["winner"] is None:
+            errors.append(f"result: a game ended by {result['how']} has a winner")
+        elif not ends[result["how"]] and result["winner"] is not None:
+            errors.append(f"result: a game ended by {result['how']} is drawn, its winner null")
+        elif result["winner"] not in (None, moved):
+            errors.append(f"result: the winner is the side that made the last move, {moved}")
+        if offered:
+            errors.append("moves: a finished board offers no move, since nothing is played while it is up")
+    nxt = d.get("next")
+    if nxt and not is_day(nxt):
+        errors.append(f"next {nxt!r} is not a day, such as 14 Oct")
+    elif nxt and not result:
+        errors.append("next is the day a finished game's fresh board comes: a game under way has none")
+    return errors
+
+
 # --- the board ---------------------------------------------------------------------------------------------------
 def check(d: dict) -> list[str]:
     """What the board's data gets wrong, said precisely."""
     errors = []
     fen = d.get("fen", "")
-    if not _text(fen, FEN):
+    if not is_text(fen, FEN):
         return [f"fen {fen!r} is not a position in FEN, on a move from 1 to {MOVES:,}"]
     if not squares(fen):
         return [f"fen {fen!r} does not have eight squares on every rank"]
@@ -149,11 +212,11 @@ def check(d: dict) -> list[str]:
     if pieces.count("K") != 1 or pieces.count("k") != 1:
         errors.append("fen does not have one king a side")
     for key, low in (("game", 1), ("move", 1), ("players", 0)):
-        if key in d and not _number(d[key], low, MOST):
+        if key in d and not is_number(d[key], low, MOST):
             errors.append(f"{key} {d[key]!r} is not a number from {low} to {MOST:,}")
-    if d.get("check") and not (_text(d["check"], SQUARE) and board.get(d["check"]) == ("K" if white else "k")):
+    if d.get("check") and not (is_text(d["check"], SQUARE) and board.get(d["check"]) == ("K" if white else "k")):
         errors.append(f"check {d['check']!r} is not the square of the king to move, such as e8")
-    if d.get("due") and not _day(d["due"]):
+    if d.get("due") and not is_day(d["due"]):
         errors.append(f"due {d['due']!r} is not a day, such as 18 Oct")
     last = d.get("last")
     if last:
@@ -162,7 +225,7 @@ def check(d: dict) -> list[str]:
         else:
             shapes = {"san": SAN, "from": SQUARE, "to": SQUARE, "words": WORDS, "by": WHO}
             for key in (*shapes, "when"):
-                if not (_text(last.get(key), shapes[key]) if key in shapes else _day(last.get(key))):
+                if not (is_text(last.get(key), shapes[key]) if key in shapes else is_day(last.get(key))):
                     errors.append(f"last: {key} {last.get(key)!r} is not what a last move's {key} is")
             if last.get("piece") not in KINDS or (last.get("captured") or "") not in ("", *KINDS):
                 errors.append("last: piece and captured each name a piece, such as knight")
@@ -170,44 +233,41 @@ def check(d: dict) -> list[str]:
                 errors.append("last: a board before White's first move has no last move")
     taken = d.get("taken")
     if taken is not None and (not isinstance(taken, dict) or set(taken) - {"white", "black"}
-                              or not all(_text(v, TOOK) for v in taken.values())):
+                              or not all(is_text(v, TOOK) for v in taken.values())):
         errors.append("taken gives white and black each the letters of what it took, such as qnp")
     history = d.get("history")
     if history is not None and not isinstance(history, list):
         errors.append("history is a list of the score sheet's rows")
     for row in history if isinstance(history, list) else []:
-        if not (isinstance(row, list) and len(row) == 4 and _number(row[0], 1, MOVES)
-                and all(cell == "" or _text(cell, SAN) for cell in row[1:3]) and (row[3] == "" or _text(row[3], WHO))):
+        if not (isinstance(row, list) and len(row) == 4 and is_number(row[0], 1, MOVES)
+                and all(cell == "" or is_text(cell, SAN) for cell in row[1:3])
+                and (row[3] == "" or is_text(row[3], WHO))):
             errors.append(f"history: {row!r} is not a row of a move's number up to {MOVES:,}, White's move, Black's"
                           " and who chose it")
         elif row[2] and not row[1]:
             errors.append(f"history: {row!r} has Black's move without White's")
-    for key in ("prompt", "note"):
-        value = d.get(key)
-        if value and not _text(value, LINE):
-            errors.append(f"{key} is one line of text, without <, > or |")
-        elif value and BLOCK.match(value):
-            errors.append(f"{key} {value!r} would open a block of its own in the README, such as a heading, a list, a"
-                          " rule or a fence: it starts with a word or an emoji")
-        elif value and "![" in value:
-            errors.append(f"{key} shows an image: a line of the README carries words and links alone")
+    errors += check_lines(d)
     moves = d.get("moves") or []
     if not isinstance(moves, list):
-        return errors + ["moves is a list of each piece and its moves"]
+        return errors + ["moves is a list of each piece and its moves"] + check_end(d, GITHUB if white else HOUSE,
+                                                                                    ENDS, 0)
     for group in moves:
         if not isinstance(group, dict) or group.get("piece") not in KINDS or not isinstance(group.get("list"), list):
             errors.append(f"moves: {group!r} is not a piece ({', '.join(KINDS)}) with a list of its moves")
             continue
         for move in group["list"]:
-            if not (isinstance(move, list) and len(move) == 5 and _text(move[0], EMOJI) and _text(move[1], TITLE)
-                    and _text(move[2], SAN) and _text(move[3], WORDS) and _text(move[4], LINK)):
+            if not (isinstance(move, list) and len(move) == 5 and is_text(move[0], EMOJI) and is_text(move[1], TITLE)
+                    and is_text(move[2], SAN) and is_text(move[3], WORDS) and is_text(move[4], LINK)):
                 errors.append(f"moves: {move!r} is not an emoji, a title, a move in SAN, its words and its link")
-    return errors
+    offered = sum(len(g["list"]) for g in moves if isinstance(g, dict) and isinstance(g.get("list"), list))
+    # the side that made the last move: Black, when it is White's turn
+    return errors + check_end(d, GITHUB if white else HOUSE, ENDS, offered)
 
 
 def board_state(d: dict) -> dict:
     """The board as the sheet draws it: the position, the last move and what it took, whose turn and until when,
-    what each side has taken, the latest moves, and how many have played for GitHub."""
+    what each side has taken, the latest moves, and how many have played for GitHub; once the game is over, how it
+    ended and the day the fresh board comes."""
     fen = d["fen"]
     turn, fullmove = fen.split()[1], int(fen.split()[5])
     to_move = "white" if turn == "w" else "black"
@@ -226,10 +286,12 @@ def board_state(d: dict) -> dict:
     for side in took:
         took[side].sort(key=TAKEN.index)
     history = [(row[0], row[1], row[2], row[3], False) for row in d.get("history") or []]
+    result = {"winner": d["result"]["winner"], "how": d["result"]["how"]} if d.get("result") else None
     # without a move of its own, the board is on the move its position says
     return {"fen": fen, "placement": placement(fen), "to_move": to_move, "last": last, "taken": took,
             "check": d.get("check") or None, "game": _int(d, "game", 1, 1), "move": _int(d, "move", fullmove, 1),
-            "players": _int(d, "players", 0), "due": str(d.get("due") or ""), "history": history}
+            "players": _int(d, "players", 0), "due": str(d.get("due") or ""), "history": history,
+            "result": result, "next": str(d.get("next") or "") if result else ""}
 
 
 def pieces_in_words(board: dict[str, str]) -> str:
@@ -261,10 +323,20 @@ def describe(d: dict) -> dict:
         head = f"Game {st['game']} of @{OWNER} against GitHub, after {num} {last['san']}: {said}."
     else:
         head = f"Game {st['game']} of @{OWNER} against GitHub, before its first move."
-    turn = f" It is {turn_name(st)}'s turn" + (", in check" if st["check"] else "")
-    turn += f", due by {st['due']}." if st["due"] else "."
+    if st["result"]:
+        turn = ended(st)
+    else:
+        turn = f" It is {turn_name(st)}'s turn" + (", in check" if st["check"] else "")
+        turn += f", due by {st['due']}." if st["due"] else "."
     d.setdefault("desc", head + turn + " " + pieces_in_words(st["placement"]))
     return d
+
+
+def ended(st: dict) -> str:
+    """How a finished game ended, and when the fresh board comes, as every game's description says it."""
+    winner, how = st["result"]["winner"], st["result"]["how"]
+    said = f" {called(winner)} won: {how}." if winner else f" The game was drawn: {how}."
+    return said + (f" Game {st['game'] + 1} opens {st['next']}." if st["next"] else "")
 
 
 # --- the Hall of Fame ------------------------------------------------------------------------------------------------
@@ -272,27 +344,27 @@ def check_hall(d: dict) -> list[str]:
     """What the Hall of Fame's data gets wrong, said precisely."""
     errors = []
     counts = [d.get(key, 0) for key in ("games", "house", "world", "draws")]
-    if not all(_number(n, 0, TALLY) for n in counts):
+    if not all(is_number(n, 0, TALLY) for n in counts):
         return [f"games, house, world and draws are counts of games, up to {TALLY:,}"]
     if sum(counts[1:]) != counts[0]:
         errors.append(f"house, world and draws add up to {sum(counts[1:])} games, not the {counts[0]} played")
     people = d.get("people") or []
     if not isinstance(people, list) or len(people) > PEOPLE * DEPTH:
         return errors + [f"people is a list of at most {PEOPLE * DEPTH} winners"]
-    shaped = [isinstance(row, list) and len(row) in (4, 5) and _text(row[0], LOGIN) and _number(row[1], 1, TALLY)
-              and (row[2] == "" or _day(row[2])) and _number(row[3], 0, TALLY)
-              and (len(row) == 4 or _number(row[4], 1, ACCOUNT)) for row in people]
+    shaped = [isinstance(row, list) and len(row) in (4, 5) and is_text(row[0], LOGIN) and is_number(row[1], 1, TALLY)
+              and (row[2] == "" or is_day(row[2])) and is_number(row[3], 0, TALLY)
+              and (len(row) == 4 or is_number(row[4], 1, ACCOUNT)) for row in people]
     errors += [f"people: {row!r} is not a winner's login, wins, the day of the last and games played, and their"
                " account's ID if known" for row, fine in zip(people, shaped) if not fine]
     wins = [row[1] for row in people] if all(shaped) else []
     if wins != sorted(wins, reverse=True):
         errors.append("people: the winners are ranked by their wins, the most first")
     names = d.get("names") or {}
-    if not isinstance(names, dict) or not all(_text(k, LOGIN) and named(v) for k, v in names.items()):
+    if not isinstance(names, dict) or not all(is_text(k, LOGIN) and named(v) for k, v in names.items()):
         errors.append("names gives a login its name: plain text without an @, at most 40 letters in capitals,"
                       " with something in it to see")
     logins = d.get("logins") or {}
-    if not isinstance(logins, dict) or not all(_text(k, ID) and (v == "" or _text(v, LOGIN))
+    if not isinstance(logins, dict) or not all(is_text(k, ID) and (v == "" or is_text(v, LOGIN))
                                                for k, v in logins.items()):
         errors.append("logins gives an account's ID its login as it is now, or \"\" for an account that is gone")
     return errors + check_leaders(d.get("leaders") or [])
@@ -305,9 +377,9 @@ def check_leaders(leaders) -> list[str]:
         return [f"leaders is @{OWNER}'s row, then at most {LEADERS * DEPTH} of GitHub's players"]
     errors = []
     for i, row in enumerate(leaders):
-        if not (isinstance(row, list) and len(row) in (4, 5) and _text(row[0], LOGIN)
-                and all(_number(n, 0, MOST) for n in row[1:4]) and row[2] <= row[3] <= row[1]
-                and (len(row) == 4 or _number(row[4], 1, ACCOUNT))):
+        if not (isinstance(row, list) and len(row) in (4, 5) and is_text(row[0], LOGIN)
+                and all(is_number(n, 0, MOST) for n in row[1:4]) and row[2] <= row[3] <= row[1]
+                and (len(row) == 4 or is_number(row[4], 1, ACCOUNT))):
             errors.append(f"leaders: {row!r} is not a login, then the moves, wins and games they played, and their"
                           " account's ID if known")
         elif (row[0].casefold() == OWNER) != (i == 0):
@@ -323,7 +395,7 @@ def check_leaders(leaders) -> list[str]:
 def account(row: list) -> int | None:
     """The ID of the account a row of the Hall is for, which the row carries after its counts; None without one."""
     uid = row[4] if len(row) > 4 else None
-    return uid if _number(uid, 1, ACCOUNT) else None
+    return uid if is_number(uid, 1, ACCOUNT) else None
 
 
 def shown(row: list, logins: dict) -> str:
