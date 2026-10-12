@@ -199,6 +199,16 @@ class TheirStuff(unittest.TestCase):
                         shifted = {(x, y + 100): c for (x, y), c in head.layers.get(name, {}).items()}
                         self.assertEqual(low.layers.get(name, {}), shifted, (key, night, wide, name))
 
+    def test_the_square_a_move_landed_on_is_lit_in_the_trophies_gold_in_every_set(self):
+        # Washed in the set's accent, an ink for words, a square was shaded rather than lit; the trophies' light gold
+        # lights it on any square of any set, by day and by night, framed in the set's own accent.
+        for key in SETS:
+            held = pixelsets.drawn_by(key)
+            for theme, night in (("day", False), ("dark", True)):
+                marks = held.game_marks(night)
+                self.assertEqual(marks["glow"], METALS[3][4], (key, theme))
+                self.assertIn(f'"{marks["glow"].upper()}"', drawn(key)[("chess", "still", theme)][0].upper(), (key, theme))
+
     def test_no_two_sets_of_a_year_stand_their_winners_on_the_same_podium(self):
         for year in ([k for k in SETS if not k.startswith("medieval-")], [k for k in SETS if k.startswith("medieval-")]):
             seen: dict = {}
