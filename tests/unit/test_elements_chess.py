@@ -24,6 +24,7 @@ from domain.elements import chess as C
 from domain.elements import data as ED
 from domain.elements import draw as E
 from domain.elements.chess import readme as RM
+from domain.elements.chess.skins import Print
 from domain.lettering import Lettering
 from domain.prints import PRINTS, STANDARD
 
@@ -219,6 +220,25 @@ class Hall(unittest.TestCase):
         self.assertEqual(E.variants("chess-hall", gone), ("wide", "narrow", "still", "narrow-still", "badge-1",
                                                           "badge-1-still", "badge-2", "badge-3"),
                          "a badge for each winner shown, and none for a winner whose account is gone")
+
+    def test_a_prints_badges_draw_each_places_wins_in_the_material_its_podium_block_is_drawn_in(self):
+        # As the Hall of Fame's: the first's wins solid, the second's lined, the third's open and ruled twice, the rest
+        # plain.
+        for tone in sorted(PRINTS):
+            files = [E.draw("chess-hall", HALL, tone, "day", f"badge-{i}") for i in range(1, 6)]
+            self.assertEqual([bool(re.search(r'fill="url\(#\w*h\d+\)"', b)) for b in files],
+                             [False, True, False, False, False], tone)
+            self.assertEqual([b.count('stroke-width=".6"') for b in files], [0, 0, 1, 0, 0], tone)
+        chip = Print.chip
+        for variant in ("wide", "narrow"):
+            asked = []
+
+            def recorded(sk, label, message="", **kw):
+                asked.append((label, kw.get("msg")))
+                return chip(sk, label, message, **kw)
+            with mock.patch.object(Print, "chip", recorded):
+                E.draw("chess-hall", HALL, "blackprint", "day", variant)
+            self.assertEqual([m for label, m in asked if label == "wins"], ["place", "place"], variant)
 
     def test_a_place_an_account_that_is_gone_leaves_is_filled_from_the_rows_under_it(self):
         # The engine hands over twice the places: ten winners and twenty of GitHub's players, for five and ten.

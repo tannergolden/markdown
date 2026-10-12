@@ -10,8 +10,10 @@ kit's own YAML reader and checked as a run checks it. Its data lists each player
 first; everything a reader sees lists the games Chess first."""
 from __future__ import annotations
 
+import re
 import unittest
 import xml.dom.minidom as minidom
+from unittest import mock
 
 from tests import support
 from tests.fakes.github import FakeGitHub
@@ -24,6 +26,7 @@ from domain.elements import chess as C
 from domain.elements import data as ED
 from domain.elements import draw as E
 from domain.elements import hall as H
+from domain.elements.chess.skins import Print
 from domain.elements.hall import readme as RM
 from domain.prints import PRINTS, STANDARD
 
@@ -204,6 +207,36 @@ class Hall(unittest.TestCase):
             self.assertIn("<title id=\"t\">Hall of Fame: @imvale</title>", badge)
             self.assertIn("Number 2, @imvale, 4 wins", badge)
             self.assertIn("hall-of-fame badge", badge)
+
+    def test_a_prints_badges_draw_each_places_wins_in_the_material_its_podium_block_is_drawn_in(self):
+        # The standard theme marks the first three badges in gold, silver and bronze; a print marks them as its podium
+        # draws their blocks: the first's wins solid, the second's lined, the third's open and ruled twice, and the
+        # places after the podium plain, ruled once, as their wins are under the podium in the sheet.
+        for tone in sorted(PRINTS):
+            for theme in ("day", "dark"):
+                files = [E.draw("hall-of-fame", HALL, tone, theme, f"badge-{i}") for i in range(1, 6)]
+                where = (tone, theme)
+                self.assertEqual([bool(re.search(r'fill="url\(#\w*h\d+\)"', b)) for b in files],
+                                 [False, True, False, False, False], where)
+                self.assertEqual([b.count('stroke-width=".6"') for b in files], [0, 0, 1, 0, 0], where)
+                self.assertEqual([b.count('fill="none" stroke=') - files[0].count('fill="none" stroke=') for b in files],
+                                 [0, 0, 2, 1, 1], where)
+            sk = Print("day", tone)
+            self.assertEqual((sk.chip("wins", "2", msg="place").medal, sk.chip("wins", "2", msg="count").medal),
+                             ("plain", "solid"), tone)
+
+    def test_the_places_after_the_podium_ask_for_their_wins_as_places_wide_and_on_a_phone(self):
+        # Plain in a print, as their badges are; slate in the standard theme, as they always were.
+        chip = Print.chip
+        for variant in ("wide", "narrow"):
+            asked = []
+
+            def recorded(sk, label, message="", **kw):
+                asked.append((label, kw.get("msg")))
+                return chip(sk, label, message, **kw)
+            with mock.patch.object(Print, "chip", recorded):
+                E.draw("hall-of-fame", HALL, "blackprint", "day", variant)
+            self.assertEqual([m for label, m in asked if label == "wins"], ["place", "place"], variant)
 
     def test_a_place_an_account_that_is_gone_leaves_is_filled_from_the_rows_under_it(self):
         # The engines hand over twice the places: ten winners and twenty of GitHub's players, for five and ten.
