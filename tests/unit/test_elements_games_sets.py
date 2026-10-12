@@ -10,7 +10,8 @@ the room the set's frame leaves, meeting no other word and no piece, at the limi
 cannot letter, or draw within its budget, is drawn whole in the page's own look, and chess's own Hall keeps it
 always. Every board is built, and every podium cut, of stuffs the set names in its own palette, no two sets of a year
 stand their winners on the same podium, and every tag on a game's sheet is the set's own, never a certificate's
-ribbon. Nothing on a set's board helps a player choose, and Tic-Tac-Toe counts each side's marks left."""
+ribbon. Nothing on a set's board helps a player choose, Tic-Tac-Toe counts each side's marks left, and a move's
+words run to a second line after their comma."""
 from __future__ import annotations
 
 import re
@@ -25,6 +26,7 @@ from domain.canvas import BUDGET, lint
 from domain.elements import data as ED
 from domain.elements import draw as E
 from domain.holidays.designs import boards as B
+from domain.holidays.designs import games as G
 from domain.holidays.designs import hall as HL
 from domain.holidays.designs import materials as MT
 from domain.holidays.designs.trophies import METALS
@@ -169,6 +171,28 @@ class EverySet(unittest.TestCase):
                     for hint in ("BLOCK", "PERFECT PLAY", "WINS NEXT", "FROM HERE", "BEST PLAY"):
                         self.assertNotIn(hint, words, (key, kind, variant))
                     self.assertIn("MARKS LEFT" if kind == "tictactoe" else "DISCS LEFT", words, (key, kind, variant))
+
+    def test_a_moves_words_run_to_a_second_line_after_their_comma_leaving_no_number_alone(self):
+        # Connect Four's words take two lines on every sheet and checkers' on a phone: "to row 2" stays whole on the
+        # second where `wrap` would leave the 2 alone, and where no comma lets both lines fit they come out even.
+        said: list = []
+        text = Pix.text
+
+        def recorded(self, x, y, s, c, *a, **k):
+            said.append(str(s))
+            return text(self, x, y, s, c, *a, **k)
+        for key in TWO:
+            held = pixelsets.drawn_by(key)
+            for kind, variant in (("connectfour", "wide"), ("connectfour", "narrow"), ("checkers", "narrow")):
+                said.clear()
+                with mock.patch.object(Pix, "text", recorded):
+                    held.game(kind, GAMES[kind], E.THEMES["day"], variant)
+                head, tail = GAMES[kind]["last"]["words"].split(", ")
+                self.assertIn(head + ",", said, (key, kind, variant))
+                self.assertIn(tail, said, (key, kind, variant))
+        self.assertEqual(G.wrap("A white disc down column 5, to row 2", 186, "57")[1], "2")
+        self.assertEqual(G.phrased("A white disc down column 5, to row 2", 120),
+                         ["A white disc down", "column 5, to row 2"])
 
     def test_a_collections_design_letters_its_games_in_its_hands_two_inks(self):
         for key in collections.COLLECTIONS["medieval"].keys:
