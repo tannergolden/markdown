@@ -20,6 +20,13 @@
 # This is deliberately NOT the release.yml stub beside it: that one calls the
 # shared publisher, which computes an information-rich tag and never writes a
 # moving major, so it cannot produce the `v1` a stub resolves.
+#
+# The whole suite runs first, in a job of the kit's own. The shared publisher
+# gives its whole job ten minutes, and `make lint test` takes six on a quick
+# runner and more than ten on a slow one, which once cancelled a release
+# before it was tagged. Here it has half an hour, on the very commit the
+# publisher tags, since both check out the commit the run was started on,
+# and the publisher's own check is then the lint alone.
 
 name: '🏷️ Cut Release'
 
@@ -43,8 +50,34 @@ concurrency:
 permissions: {}
 
 jobs:
+  verify:
+    name: '🧪 Verify The Release Candidate'
+    if: ${{ !github.event.repository.is_template }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read # read the repository
+    steps:
+      - name: '🛡️ Harden Runner'
+        uses: tannergolden/standards/actions/harden@v1
+        with:
+          egress-policy: audit
+          notice: '🧪 Verify: runs the whole suite on the commit about to be released.'
+
+      - name: '📥 Checkout'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: '🧪 Lint and test'
+        shell: bash
+        run: |
+          set -euo pipefail
+          make lint test
+
   release:
     name: '🏷️ Publish Version & Move Major Tag'
+    needs: verify
     if: ${{ !github.event.repository.is_template }}
     permissions:
       contents: write # create tags, publish the release, prune superseded releases and their tags
@@ -53,4 +86,4 @@ jobs:
       version: ${{ inputs.version }}
       move-major: ${{ inputs.move-major }}
       required-files: '.github/workflows/markdown.yml actions/markdown/action.yml src/markdown-kit.py src/app/run.py src/domain/data/fonts/glyphs.json src/domain/data/prints.json'
-      check-command: 'make lint test'
+      check-command: 'make lint'
