@@ -17,9 +17,10 @@ thinning only texture, while ordinary pages keep their headroom at full weight w
 a carved plait with a prow beast at each top corner of a header; the H2's dragon ship hangs a lantern that burns by
 night; the histogram's bars are stacked shields, the busiest bossed in bronze; a placard is a runestone with a
 serpent painted round it; a header stands on the strake; a plank's lit edge and nails lie along every badge's top;
-a link is a small file; and a counter's numerals hold 4.5:1 on their planks. The set is a theme, not a holiday on
-the calendar, so the checks every registered set shares run here over the set directly, with the same contents
-and the same entry points."""
+a link is a small file; a counter's numerals hold 4.5:1 on their planks; and a game's sheet is laid of clear planks,
+no knot sitting on a word or showing through a hole. The set is a theme, not a holiday on the calendar, so the
+checks every registered set shares run here over the set directly, with the same contents and the same entry
+points."""
 from __future__ import annotations
 
 import datetime as dt
@@ -30,6 +31,7 @@ from collections import Counter
 from unittest import mock
 
 from tests import support
+from tests.unit.test_elements_games_sets import GAMES
 from tests.unit.test_holiday_sets import DASHES, ELEMENTS, HEIGHTS, STAMP, contents
 
 from domain import KIT, KIT_VERSION
@@ -564,6 +566,19 @@ class Badges(unittest.TestCase):
             face = q.layers["base"][(7, 8)]
             self.assertGreaterEqual(contrast(SET.counter_ink(night, False), face), 4.5, night)
             self.assertGreaterEqual(contrast(SET.counter_ink(night, True), face), 2.0, night)
+
+
+class Games(unittest.TestCase):
+    def test_a_games_sheet_is_laid_of_clear_planks_with_no_knot_on_a_word_or_in_a_hole(self):
+        # A knot sat on the due date in a game's panel and showed through an empty hole of Connect Four's board
+        # like a disc; a header's planks keep theirs.
+        for kind in ("connectfour", "hall-of-fame"):
+            for theme, knot in (("day", OAK[2]), ("dark", X["knot_night"])):
+                svg = HELD.game(kind, GAMES[kind], E.THEMES[theme], "still")
+                planks = re.search(r'<pattern id="gsa".*?</pattern>', svg).group(0)
+                self.assertIn(f'stroke="{OAK[1] if theme == "day" else TAR[0]}"', planks, (kind, theme, "seams"))
+                self.assertNotIn(f'stroke="{knot}"', planks, (kind, theme))
+        self.assertIn(f'stroke="{OAK[2]}"', A._planks("p", OAK[1], OAK[5], OAK[3], OAK[2]))
 
 
 class SharedBanners(unittest.TestCase):
