@@ -93,9 +93,10 @@ class Longship(CollectionSet):
 
     def paper(self, p, night, uid="p"):
         """The planks; the drawing keeps which sheet it is (`uid`, "p" for a header or a footer, "pl" for a
-        placard) for the hooks the layout calls without saying."""
+        placard) for the hooks the layout calls without saying. A game's sheet (`gs`) is laid of clear planks: a
+        knot there would sit on a word of its panel, or show through an empty hole of the board like a disc."""
         p.sheet = uid
-        A.paper(p, night, uid=uid)
+        A.paper(p, night, uid=uid, knotted=uid != "gs")
 
     def bg_at(self, p, night, y):
         if not night:

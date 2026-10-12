@@ -51,14 +51,16 @@ def _line(p: Pix, x0, y0, x1, y1, c, L="base"):
 PLANK, TILE_W, PLANKS = 12, 208, 6
 
 
-def _planks(uid: str, seam: str, lit: str, grain: str, knot: str, streaks: bool = True) -> str:
+def _planks(uid: str, seam: str, lit: str, grain: str, knot: str, streaks: bool = True,
+            knotted: bool = True) -> str:
     """A pattern tile of planks, six courses of twelve rows over 208 pixels: each plank's upper seam dark
     and the edge under it lit, two dark streaks of grain and a lighter one wandering the length of every
     plank and breaking now and then, and the odd knot the grain bends round. The grain is periodic, so the
-    tile joins without a seam. Without `streaks` the tile keeps the seams, the lit edges and the knots."""
+    tile joins without a seam. Without `streaks` the tile keeps the seams, the lit edges and the knots;
+    without `knotted` the planks are clear, the same grain running straight where a knot would bend it."""
     rnd = random.Random(7)
     cols: dict = {seam: {}, lit: {}, grain: {}, knot: {}}
-    knots = {(146, 2), (40, 5)}       # (x, plank) of the knots
+    knots = {(146, 2), (40, 5)} if knotted else set()       # (x, plank) of the knots
     for j in range(PLANKS):
         top = j * PLANK
         cols[seam].setdefault(top, []).extend(range(TILE_W))
@@ -91,10 +93,11 @@ def _planks(uid: str, seam: str, lit: str, grain: str, knot: str, streaks: bool 
             f'{paths}</pattern>')
 
 
-def paper(p: Pix, night: bool, x=0, y=0, w=None, h=None, uid="p"):
+def paper(p: Pix, night: bool, x=0, y=0, w=None, h=None, uid="p", knotted=True):
     """The ground a drawing sits on: oak planks weathered silver brown by day; by night the same planks
     tarred dark, greened toward the top by the aurora and warmed toward the foot by the brazier. A drawing
-    made lighter leaves out the grain, keeping each plank's seam, its lit edge and the knots."""
+    made lighter leaves out the grain, keeping each plank's seam, its lit edge and the knots; clear planks
+    (not `knotted`) have none."""
     w = p.w if w is None else w
     h = p.h - y if h is None else h
     streaks = not p.lite
@@ -104,13 +107,13 @@ def paper(p: Pix, night: bool, x=0, y=0, w=None, h=None, uid="p"):
         return f'<rect{at} width="{w}" height="{rows}" fill="{fill}"/>'
     if not night:
         p.under.append(rect(y, h, C["paper"]))
-        p.defs.append(_planks(uid, OAK[1], OAK[5], OAK[3], OAK[2], streaks))
+        p.defs.append(_planks(uid, OAK[1], OAK[5], OAK[3], OAK[2], streaks, knotted))
     else:
         n = len(NIGHT_SKY)
         edges = [y + round(i * h / n) for i in range(n + 1)]
         for i, col in enumerate(NIGHT_SKY):
             p.under.append(rect(edges[i], edges[i + 1] - edges[i], col))
-        p.defs.append(_planks(uid, TAR[0], TAR[3], X["grain_night"], X["knot_night"], streaks))
+        p.defs.append(_planks(uid, TAR[0], TAR[3], X["grain_night"], X["knot_night"], streaks, knotted))
     p.under.append(rect(y, h, f"url(#{uid}a)"))
 
 
