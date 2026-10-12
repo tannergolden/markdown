@@ -5,9 +5,9 @@ WHY THIS EXISTS. A theme is easier to choose by looking than by reading. The
 page shows every theme's headers, phone files, footers, elements, badges and
 trophy case, each drawn the way a run draws it, from the kit's own samples and
 the driftmark specimen, on GitHub's light and dark grounds. The four games the
-kit draws for @tannergolden's profile alone (Tic-Tac-Toe, Connect Four,
-Checkers and Chess) are shown beside them, each from a sample game, in the
-standard theme and every print, as they are drawn on that profile.
+kit draws for @tannergolden's profile alone (Chess, Checkers, Connect Four and
+Tic-Tac-Toe, the README's order) are shown beside them, each from a sample
+game, in the standard theme and every print, as they are drawn on that profile.
 
 Nothing is fetched and nothing depends on the day it runs, so drawing it twice
 writes the same bytes, and a change to a theme shows up as a change here.
@@ -59,9 +59,9 @@ from infra.yaml_reader import loads  # noqa: E402
 TEMPLATE = Path(__file__).with_name("theme-sets.html")
 SPECIMEN = ROOT / "tests" / "fixtures" / "driftmark" / ".github" / "markdown.yaml"
 GAME = ROOT / "tests" / "fixtures" / "chess.yaml"  # the sample game the chess sheets are drawn from
-# The games on that profile, in their tiers' order, each drawn from a sample game beside chess's:
+# The games on that profile, in the order its README shows them, each drawn from a sample game beside chess's:
 # tests/fixtures/<key>.yaml.
-GAMES = (*elements_draw.GAMES, "chess")
+GAMES = ("chess", "checkers", "connectfour", "tictactoe")
 TITLES = {"tictactoe": "Tic-Tac-Toe", "connectfour": "Connect Four", "checkers": "Checkers", "chess": "Chess"}
 # The Hall of Fame of all four, one entry after them, drawn from its own sample: tests/fixtures/hall-of-fame.yaml.
 HALL = "hall-of-fame"
@@ -399,17 +399,17 @@ def sample_game(key: str = "chess") -> dict:
     return elements_data.merged(section, {}, subject=chess.OWNER, today=TODAY)
 
 
+# Each game's note says who plays which side and who opens, never why: the kit's game documentation says why.
 GAME_NOTES = {
-    "tictactoe": f"Tic-Tac-Toe on @{chess.OWNER}'s profile README, @{chess.OWNER} against everyone else on GitHub. The "
-                 "Arbiter opens every game for a side drawn at random, with a random move, since X wins far more "
-                 "often whenever anyone slips: that side plays X, and the other O.",
-    "connectfour": f"Connect Four on @{chess.OWNER}'s profile README, @{chess.OWNER} against everyone else on GitHub. "
-                   "Whoever drops the first disc can force a win, so the Arbiter opens every game for a side drawn at "
-                   "random, with a random move: that side drops the dark discs, and the other the light.",
-    "checkers": f"Checkers on @{chess.OWNER}'s profile README, @{chess.OWNER} as Dark, which opens every game, against "
-                "everyone else on GitHub as Light, on the 32 dark squares numbered as checkers writes its moves.",
     "chess": f"Chess on @{chess.OWNER}'s profile README, @{chess.OWNER} as White, which opens every game, against "
              "everyone else on GitHub as Black.",
+    "checkers": f"Checkers on @{chess.OWNER}'s profile README, @{chess.OWNER} as White against everyone else on GitHub "
+                "as Black, which opens every game, as Black does in American checkers, on the 32 dark squares numbered "
+                "as checkers writes its moves.",
+    "connectfour": f"Connect Four on @{chess.OWNER}'s profile README, @{chess.OWNER} as White against everyone else on "
+                   "GitHub as Black. The Arbiter opens every game for a side drawn at random, with a random move.",
+    "tictactoe": f"Tic-Tac-Toe on @{chess.OWNER}'s profile README, @{chess.OWNER} as X against everyone else on GitHub "
+                 "as O. The Arbiter opens every game for a side drawn at random, with a random move.",
 }
 DRAWN_IN = (" It is drawn in whatever theme the page is in: the standard theme's enamel, or a print's drawing on "
             "drafting paper, one family with the other three boards.")

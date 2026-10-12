@@ -167,11 +167,11 @@ class TheGame(unittest.TestCase):
 
 
 class TheGamesBesideChess(unittest.TestCase):
-    """Tic-Tac-Toe, Connect Four and Checkers are each one entry in the Games group, beside chess's and in their
-    tiers' order: the board in the standard theme and every print, and the files a phone gets, each from its own
+    """Checkers, Connect Four and Tic-Tac-Toe are each one entry in the Games group, after chess's and in the
+    README's order: the board in the standard theme and every print, and the files a phone gets, each from its own
     sample game, checked as a run checks it."""
 
-    KEYS = ('tictactoe', 'connectfour', 'checkers')
+    KEYS = ('checkers', 'connectfour', 'tictactoe')
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -187,7 +187,7 @@ class TheGamesBesideChess(unittest.TestCase):
 
     def test_each_is_a_game_in_its_tiers_order_that_says_where_to_see_it_live(self) -> None:
         self.assertEqual(list(self.entries), list(self.KEYS))
-        self.assertEqual(builder.GAMES, ('tictactoe', 'connectfour', 'checkers', 'chess'), 'chess last, its tier')
+        self.assertEqual(builder.GAMES, ('chess', 'checkers', 'connectfour', 'tictactoe'), 'the README\'s order')
         for key, entry in self.entries.items():
             with self.subTest(key=key):
                 self.assertEqual(entry['group'], 'game')
