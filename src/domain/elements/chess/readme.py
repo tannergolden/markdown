@@ -3,17 +3,18 @@
 """What the README carries round the chess sheets: the banner, every legal move, the badges and the leaderboard.
 
 An image cannot be clicked square by square, so the board's README block puts the game's words round it: the turn's
-banner above, green on GitHub's turn and red on the house's; under it every legal move as a row of its emoji, its
-title and notation, the move in plain words, and a link that opens its ready-made issue, folded shut under one line
-saying whose moves they are and how many; then the note. A move is named for what it is, never for what it does
-("Bring Out the King's Knight to f3!", "Take the Pawn on f7 With the Queen!"), and written without the `+` or `#`
-that would say it checks or mates, so a mate reads as any other move of its piece. A finished game's block is its banner, an important
-note of who won and when the fresh board comes, its final board and its note, with no move under it to play. A turn
-with more than ten moves is grouped by piece, each group named for as many of the pieces as have a move in it. The
+banner above, green on GitHub's turn and red on the house's, an alert where the README carries the board at its top
+level and a plain quote in a folded section, where GitHub draws no alert; under it every legal move as a row of its
+emoji, its title and notation, the move in plain words, and a link that opens its ready-made issue, folded shut under
+one line saying whose moves they are and how many; then the note. A move is named for what it is, never for what it does
+("Bring Out the King's Knight to f3!", "Take the Pawn on f7 With the Queen!"), and written without the `+` or `#` that
+would say it checks or mates, so a mate reads as any other move of its piece. A finished game's block is its banner, an
+important note of who won and when the fresh board comes, its final board and its note, with no move under it to play. A
+turn with more than ten moves is grouped by piece, each group named for as many of the pieces as have a move in it. The
 Hall of Fame's block follows its sheet with a row of badges, one per winner, each linking to that player's profile,
-since the names in a sheet cannot be clicked either; then the leaderboard, folded shut like the moves: the house's
-own moves, wins and games on top, and GitHub's leading players under it. Each player is linked by the login their
-account has now, and one whose account is gone is left out of both, the players under them moving up.
+since the names in a sheet cannot be clicked either; then the leaderboard, folded shut like the moves: the house's own
+moves, wins and games on top, and GitHub's leading players under it. Each player is linked by the login their account
+has now, and one whose account is gone is left out of both, the players under them moving up.
 """
 from __future__ import annotations
 

@@ -4,11 +4,11 @@
 under it every legal move, folded shut under one line saying whose they are and how many, then the note.
 
 An image cannot be clicked cell by cell, so each move is a row of its emoji, a title in the game's own voice, its
-notation, the move in plain words and a link that opens its ready-made issue, none of them saying what the move would
-do to the game. The banner is a tip on GitHub's
-turn, a caution on the house's, and once the game is over, the result as an important note; a finished board's
-block is that banner, its board and its note, with no move to play. A turn with more than ten moves is grouped, as
-chess groups its moves by piece, when the game says how (`groups`).
+notation, the move in plain words and a link that opens its ready-made issue, none of them saying what the move would do
+to the game. The banner is a tip on GitHub's turn, a caution on the house's, and once the game is over, the result as an
+important note, each an alert where the README carries the board at its top level and a plain quote in a folded section,
+where GitHub draws no alert; a finished board's block is that banner, its board and its note, with no move to play. A
+turn with more than ten moves is grouped, as chess groups its moves by piece, when the game says how (`groups`).
 """
 from __future__ import annotations
 

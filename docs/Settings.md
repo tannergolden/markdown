@@ -291,10 +291,11 @@ badges away, as every run takes away whatever the kit drew and draws no longer.
 | A holiday or a month | The games keep the standard theme's look or the page's print, whatever holiday's set or collection's design is up.                                                                                                                                                         |
 
 Round the pictures the README carries each game's words, since an image cannot
-be clicked square by square: the turn's banner, every legal move with a link
-that opens its ready-made issue, folded shut and signed with what the side to
-move plays (♔ or ♚, ⛀ or ⛂, ⚪ or ⚫, ❌ or ⭕), the winners' badges and the
-leaderboard. The
+be clicked square by square: the turn's banner, an alert at the README's top
+level and a plain quote in a folded section, where GitHub draws no alert, every
+legal move with a link that opens its ready-made issue, folded shut and signed
+with what the side to move plays (♔ or ♚, ⛀ or ⛂, ⚪ or ⚫, ❌ or ⭕), the winners'
+badges and the leaderboard. The
 [theme-sets page](https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess)
 shows every sheet in every tone, each drawn from a sample game.
 
@@ -461,22 +462,21 @@ is `due` by, how many `players` have moved for GitHub, what each side has
 `taken`, and the score sheet's latest rows as `history`. Its README block wraps
 the picture in the game's words, since an image cannot be clicked square by
 square: the turn's banner from `prompt` above it, and under it every legal move
-in `moves`, each with an emoji, a title of its own, its notation, what it does
-in plain words and a link to its ready-made issue, folded shut, then a `note`.
-The `prompt` and the `note` are one line of text each, with links at most:
-nothing that would open a block of its own in the README, such as a heading, a
-list, a rule or a fence, and no image. The Hall of Fame takes the `games`
-played and the wins of the `house`, of GitHub (`world`) and the `draws`, and
-its leading winners as `people`, ranked by their wins, each `[login, wins,
-last, games]`; the sheet shows five. `measure: {}` reads each winner's name
-from their profile, where the sheet can letter it in every theme (a name it
-cannot, or one with an `@` in it, leaves the winner named by their login), and
-its README block adds a badge for each, linking to it. Under the badges it
-folds shut the `leaders`: @tannergolden's own moves, wins and games on top,
-then GitHub's ten leading players by their wins and then their moves, each
-`[login, moves, wins, games]` and linking to their profile. All of them are
-drawn in the standard theme or the page's print, as one layout, whatever
-holiday or collection is up.
+in `moves`, each with an emoji, a title of its own, its notation, the move in
+plain words and a link to its ready-made issue, folded shut, then a `note`. The
+`prompt` and the `note` are one line of text each, with links at most: nothing
+that would open a block of its own in the README, such as a heading, a list, a
+rule or a fence, and no image. The Hall of Fame takes the `games` played and the
+wins of the `house`, of GitHub (`world`) and the `draws`, and its leading
+winners as `people`, ranked by their wins, each `[login, wins, last, games]`;
+the sheet shows five. `measure: {}` reads each winner's name from their profile,
+where the sheet can letter it in every theme (a name it cannot, or one with an
+`@` in it, leaves the winner named by their login), and its README block adds a
+badge for each, linking to it. Under the badges it folds shut the `leaders`:
+@tannergolden's own moves, wins and games on top, then GitHub's ten leading
+players by their wins and then their moves, each `[login, moves, wins, games]`
+and linking to their profile. All of them are drawn in the standard theme or the
+page's print, as one layout, whatever holiday or collection is up.
 
 The other three boards take what chess's does wherever a game shares it: the
 `game` and `move`, the `players`, the day the move is `due` by, the `last` move

@@ -80,6 +80,27 @@ class Clock(unittest.TestCase):
                 self.assertNotEqual(after[name], before[name], f"{name} is redrawn in place")
             before = after
 
+    def test_a_banner_in_a_folded_section_is_a_plain_quote_and_the_page_checks_clean(self):
+        # the profile folds each game in a <details>, where GitHub would show an alert's marker as words
+        folds = {"chess": "<details open>\n<summary>Chess</summary>\n\n{}\n\n</details>",
+                 "checkers": "<details>\n<summary>Checkers</summary>\n\n{}\n\n</details>"}
+        self.readme.write_text("# tannergolden\n\n" + "\n\n".join(folds.get(eid, "{}").format(
+            f"<!-- markdown:element:{eid}:start -->\n<!-- markdown:element:{eid}:end -->") for eid in IDS) + "\n",
+            encoding="utf-8")
+        self.draw()
+        text = self.readme.read_text(encoding="utf-8")
+        blocks = {eid: re.search(rf"element:{eid}:start -->(.*?)<!-- markdown:element:{eid}:end", text, re.S).group(1)
+                  for eid in IDS}
+        for eid in ("chess", "checkers"):
+            with self.subTest(folded=eid):
+                self.assertNotIn("[!", blocks[eid])
+                self.assertIn("\n> " + self.games[eid]["prompt"] + "\n", blocks[eid], "the banner, a plain quote")
+        for eid in ("connectfour", "tictactoe"):
+            with self.subTest(top_level=eid):
+                self.assertRegex(blocks[eid], r"\n> \[!(TIP|CAUTION)\]\n> ")
+        self.draw()
+        self.assertEqual(self.readme.read_text(encoding="utf-8"), text, "and a second run changes nothing")
+
     def test_a_hall_that_shows_fewer_winners_takes_their_badges_away(self):
         def badges(drawn: dict[str, bytes]) -> list[str]:
             return sorted(name for name in drawn if name.startswith("hall-of-fame-badge-"))

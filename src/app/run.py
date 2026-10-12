@@ -253,7 +253,7 @@ def stale(page: Page, ports, planned: dict) -> list[str]:
         if wanted is not None and found is None:
             if not name.startswith("element:"):
                 out.append(f"{page.readme} ({name} markers missing)")
-        elif wanted is not None and found != wanted:
+        elif wanted is not None and found != readme.as_placed(text, name, wanted):
             out.append(f"{page.readme} ({name} block differs)")
         elif wanted is None and found is not None:
             out.append(f"{page.readme} ({name} block no longer drawn)")

@@ -60,6 +60,29 @@ class ReadmeTest(unittest.TestCase):
         self.assertEqual(unplaced, [])
         self.assertIn("element:how-it-fits\n<!--", text.replace("<!-- markdown:element:how-it-fits:start -->\n", ""))
 
+    def test_an_alert_in_a_folded_section_is_written_as_a_plain_quote(self):
+        # GitHub draws an alert only at the top level: in a <details> its marker would stand as words
+        alert = "> [!CAUTION]\n> 🛑 **@tannergolden's turn!** Reply due by 19 Oct.\n\nA board."
+        empty = R.block("element:chess", "")
+        for around, kept in ((f"{empty}\n", True),
+                             (f"<details open>\n<summary>Chess</summary>\n\n{empty}\n\n</details>\n", False),
+                             (f"<details>\n<summary>Moves</summary>\n\n</details>\n\n{empty}\n", True),
+                             (f"<DETAILS>\n<details>\n</details>\n\n{empty}\n\n</DETAILS>\n", False)):
+            readme = FRONT + "\n" + around
+            with self.subTest(around=around[:24]):
+                text, _ = R.place(readme, {"element:chess": R.block("element:chess", alert)})
+                self.assertEqual("[!CAUTION]" in text, kept)
+                self.assertIn("> 🛑 **@tannergolden's turn!** Reply due by 19 Oct.\n\nA board.", text)
+                wanted = R.block("element:chess", alert)
+                self.assertEqual(R.current(text, "element:chess"), R.as_placed(text, "element:chess", wanted),
+                                 "what is written is what the check expects there")
+                self.assertEqual(R.place(text, {"element:chess": wanted})[0], text, "and a second run changes nothing")
+        inner = ("> [!TIP]\n> A tip.\n\n<details>\n<summary>More</summary>\n\n> [!WARNING]\n> Folded.\n\n"
+                 "</details>\n\n> [!NOTE]\n> A note.")
+        text, _ = R.place(FRONT + "\n" + empty + "\n", {"element:chess": R.block("element:chess", inner)})
+        self.assertEqual([text.count(f"[!{kind}]") for kind in ("TIP", "WARNING", "NOTE")], [1, 0, 1],
+                         "an alert in the block's own folded section is a plain quote; those outside it stay alerts")
+
     def test_the_old_kits_markers_move_over(self):
         old = ("<!-- banners:header:start -->\nold header\n<!-- banners:header:end -->\n\nText\n\n"
                "<!-- elements:how-it-fits:start -->\nold\n<!-- elements:how-it-fits:end -->\n\n"
