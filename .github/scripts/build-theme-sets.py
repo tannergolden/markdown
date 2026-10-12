@@ -2,9 +2,9 @@
 """Draw every theme the kit draws a page in, and the page that shows them.
 
 WHY THIS EXISTS. A theme is easier to choose by looking than by reading. The
-page shows every theme's headers, phone files, footers, elements and badges,
-each drawn the way a run draws it, from the kit's own samples and the
-driftmark specimen, on GitHub's light and dark grounds. The game the kit draws
+page shows every theme's headers, phone files, footers, elements, badges and
+trophy case, each drawn the way a run draws it, from the kit's own samples
+and the driftmark specimen, on GitHub's light and dark grounds. The game the kit draws
 for @tannergolden's profile alone is shown beside them, from a sample game, in
 the standard theme and every print, as it is drawn on that profile.
 
@@ -47,6 +47,11 @@ from domain.collections.hand import signs  # noqa: E402
 from domain.elements import chess, data as elements_data, draw as elements_draw  # noqa: E402
 from domain.palette import hexof  # noqa: E402
 from domain.standard import pieces  # noqa: E402
+from domain.trophies import catalogue as trophies_catalogue  # noqa: E402
+from domain.trophies import looks as trophies_looks  # noqa: E402
+from domain.trophies import plan as trophies_plan  # noqa: E402
+from domain.trophies import sample as trophies_sample  # noqa: E402
+from domain.trophies import settings as trophies_settings  # noqa: E402
 from infra import resources  # noqa: E402
 from infra.yaml_reader import loads  # noqa: E402
 
@@ -88,7 +93,19 @@ NOTES = {
                    "own print.",
     "game badges": "A badge for each winner, in a row under the Hall of Fame in the README, each a link to that "
                    "player's profile. The leader's glints.",
+    "trophies standard": "The case in its own five styles, struck in metal and enamel: the level and next-up cards "
+                         "over it, each style, a trophy in every tier, and a row of achievements, from the kit's "
+                         "sample repository.",
+    "trophies print": "The case drawn on the print's drafting paper: each card a sheet from the set, its trophy in "
+                      "elevation over a title block, drawn further as its tier rises, from a phantom to a finished "
+                      "sheet.",
+    "trophies set": "The case in the set's pixels: its paper, frame, plates and inks, the trophies struck in the "
+                    "case's metals, the set's own touch along every tier's plate.",
 }
+TIERS = ("Unranked", "Bronze", "Silver", "Gold", "Platinum", "Diamond")
+# The case's sheet: the five styles, each at a tier of its own, and the achievements a reader meets first.
+STYLE_TIERS = (("trophy", 3), ("crest", 4), ("medallion", 5), ("crystal", 2), ("plaque", 3))
+PINS = ("first-release", "outside-merges", "good-first-issues", "talkative", "well-formed", "used-by", "ghost")
 
 
 class Drawings:
@@ -239,6 +256,57 @@ def badge_section(d: Drawings, key: str, theme: str, holiday: str = "") -> dict:
                                                                                                        theme)}]}
 
 
+@lru_cache(maxsize=None)
+def trophy_case() -> dict:
+    """The trophies' sample repository, measured as a run measures one: the case every sheet shows."""
+    case = json.loads(json.dumps(trophies_sample.REPOSITORY))
+    case["owners"] = {}
+    return case
+
+
+def tier_value(core, t: int) -> int:
+    """A value three fifths of the way through tier `t`, so its card shows how far it has to go; at diamond, a
+    star past it."""
+    if t == 5:
+        return core.steps[4] * 2 + 1
+    lo, hi = (0, *core.steps)[t], core.steps[t]
+    return lo + (hi - lo) * 3 // 5
+
+
+def trophy_section(d: Drawings, key: str, theme: str, holiday: str = "") -> dict:
+    """The trophy case as the theme draws it: the level and next-up cards, each style, a trophy in every tier,
+    and a row of achievements, each a day file and a night file."""
+    case, m = trophy_case(), trophies_catalogue.MODES["repository"]
+    section = trophies_settings.check({})
+    core = m["core"][0]
+
+    def look(style: str):
+        return trophies_looks.looks(section | {"style": style}, theme, holiday)[0]
+
+    def card(name: str, label: str, draw) -> dict:
+        return chip(d, key, f"trophy-{name}", label, draw("day"), draw("night"))
+
+    trophy, foot = look("trophy"), trophies_plan.foot_of(case, section)
+    banner = [card("level", "Level", lambda c: trophy.level(c, m["core"], case["values"], m["ach"], case["curs"],
+                                                            case["subject"], foot)),
+              card("next-up", "Next up", lambda c: trophy.next_up(c, m["core"], case["values"], m["ach"],
+                                                                 case["curs"]))]
+
+    def at(style: str, t: int) -> dict:
+        return card(f"{style}-{t}", f"{style}, {TIERS[t].lower()}",
+                    lambda c: look(style).card(c, core, tier_value(core, t),
+                                               {"rank": True, "delta": 14 if t == 3 else 0, "new": t == 4}))
+
+    pins = [card(f"pin-{a.slug}", a.name, lambda c, a=a: trophy.pin(c, a, case["curs"].get(a.slug)))
+            for a in m["ach"] if a.slug in PINS]
+    kind = "set" if holiday else "standard" if theme == prints.STANDARD else "print"
+    return {"key": "trophies", "title": "Trophies", "note": NOTES[f"trophies {kind}"],
+            "rows": [{"label": "Level and next up", "chips": banner},
+                     {"label": "The five styles", "chips": [at(style, t) for style, t in STYLE_TIERS]},
+                     {"label": "Every tier", "chips": [at("trophy", t) for t in range(6)]},
+                     {"label": "Achievements", "chips": pins}]}
+
+
 def swatches(key: str) -> list:
     """The colours a theme is known by, each with what it colours."""
     if key in holidays.SETS:
@@ -374,7 +442,8 @@ def theme_entry(d: Drawings, key: str) -> dict:
                             "theme, and holidays: false keeps every set away.",
                 "swatches": swatches(key), "thumb": thumb(key),
                 "sections": banner_sections(d, key, "standard", key)
-                + [element_section(d, key, "standard", key), badge_section(d, key, "standard", key)]}
+                + [element_section(d, key, "standard", key), badge_section(d, key, "standard", key),
+                   trophy_section(d, key, "standard", key)]}
     if key == prints.RAINBOW:
         spectrum = [header(d, tone, tone, "", "H2", "h2", tone, False) for tone in prints.SPECTRUM]
         return {"key": key, "name": key, "group": "print", "tag": "all nine",
@@ -396,7 +465,8 @@ def theme_entry(d: Drawings, key: str) -> dict:
         entry = {"group": "print", "tag": colour, "kicker": f"Print {order:02d} of {len(prints.PRINTS):02d}",
                  "note": f"A drafting sheet in {colour}: its lines on white by day and its sheet by night.",
                  "use_note": ""}
-    sections = banner_sections(d, key, key) + [element_section(d, key, key), badge_section(d, key, key)]
+    sections = banner_sections(d, key, key) + [element_section(d, key, key), badge_section(d, key, key),
+                                               trophy_section(d, key, key)]
     return {"key": key, "name": key, "use": f"theme: {key}", "swatches": swatches(key), "thumb": thumb(key),
             "sections": sections} | entry
 

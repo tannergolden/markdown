@@ -4,12 +4,12 @@
 WHY THIS EXISTS. A collection changes every month, so it is chosen by looking
 at its whole year. The page opens on a calendar of the twelve months, each
 with its design's header, and below it one design's full sheet: its headers,
-phone files, footers, link buttons, the six elements and every badge, each
-drawn the way a run draws it, from the kit's own samples and the driftmark
-specimen, on GitHub's light and dark grounds. Each design is drawn as its
-month's design, the way a page on the collection's calendar draws it, so its
-headers carry the month's mark. The theme-sets page shows the collection as
-one entry and sends a reader here for the rest.
+phone files, footers, link buttons, the six elements, every badge and the
+trophy case, each drawn the way a run draws it, from the kit's own samples
+and the driftmark specimen, on GitHub's light and dark grounds. Each design
+is drawn as its month's design, the way a page on the collection's calendar
+draws it, so its headers carry the month's mark. The theme-sets page shows
+the collection as one entry and sends a reader here for the rest.
 
 Nothing is fetched and nothing depends on the day it runs, except which month
 the calendar marks as this one, which the reader's own browser works out.
@@ -58,7 +58,8 @@ def design_entry(d, c, key: str) -> dict:
         return month | {"drawn": False}
     shown = TS.months_design(key)       # drawn as the month's design, so its headers carry the month's mark
     sections = (TS.banner_sections(d, key, "standard", shown)
-                + [TS.element_section(d, key, "standard", shown), TS.badge_section(d, key, "standard", shown)])
+                + [TS.element_section(d, key, "standard", shown), TS.badge_section(d, key, "standard", shown),
+                   TS.trophy_section(d, key, "standard", shown)])
     return month | {"drawn": True, "tagline": getattr(held, "tagline", ""), "about": getattr(held, "about", ""),
                     "swatches": swatches(held), "colours": len(held.tokens),
                     "hero": {"day": f"{key}/h1-still-day.svg", "dark": f"{key}/h1-still-dark.svg"},

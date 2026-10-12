@@ -97,6 +97,15 @@ class TestFiles(unittest.TestCase):
         self.assertEqual([r['label'] for r in badges['rows']], ["On a standard page", "On a print's page"])
         self.assertEqual(halloween['use'], 'holidays: true')
 
+    def test_every_theme_shows_its_trophy_case_drawn_in_its_own_look(self) -> None:
+        for entry, look in zip(self.manifest['themes'], ('night', 'halloween night')):
+            trophies = [s for s in entry['sections'] if s['key'] == 'trophies'][0]
+            self.assertEqual([r['label'] for r in trophies['rows']],
+                             ['Level and next up', 'The five styles', 'Every tier', 'Achievements'])
+            self.assertEqual([len(r['chips']) for r in trophies['rows'][1:3]], [5, 6])
+            dark = (self.out / trophies['rows'][1]['chips'][0]['dark']).read_text(encoding='utf-8')
+            self.assertIn(f'<!--markdown-kit v1 trophy {look}-->', dark, entry['key'])
+
     def test_it_never_empties_a_folder_that_is_not_its_own(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             keep = pathlib.Path(tmp) / 'notes.md'
