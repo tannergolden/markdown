@@ -226,7 +226,7 @@ h1 { margin: 0; font: 700 clamp(40px, 5.4vw, 68px)/0.95 var(--display); letter-s
         driftmark specimen. Pick one to see its headers, phone files, footers, elements and badges at the size a
         README shows them, on GitHub's light and dark grounds. Under Games are the four games the kit draws for
         <a href="https://github.com/tannergolden">@tannergolden's profile</a> alone, where they are played live:
-        Tic-Tac-Toe, Connect Four, Checkers and Chess.</p>
+        Tic-Tac-Toe, Connect Four, Checkers and Chess, and the Hall of Fame of all four.</p>
     </div>
     <dl class="titleblock" id="titleblock"></dl>
   </div>
@@ -350,11 +350,13 @@ h1 { margin: 0; font: 700 clamp(40px, 5.4vw, 68px)/0.95 var(--display); letter-s
   // The title block: what the page holds, read from what was drawn.
   function titleblock() {
     const counts = Object.fromEntries(GROUPS.map(([g]) => [g, themes.filter((t) => t.group === g).length]));
+    // The Games group holds the four games and their Hall of Fame, which is counted apart from them.
+    const halls = themes.filter((t) => t.hall).length, games = counts.game - halls;
     const cells = [
       ["Kit", M.kit, "mono"],
       ["Themes", String(themes.length - counts.game), "", `${counts.standard} default, ${counts.print} prints, ${counts.holiday} holiday sets`
         + (counts.collection ? `, ${counts.collection} ${counts.collection === 1 ? "collection" : "collections"}` : "")
-        + (counts.game ? `; and ${counts.game} ${counts.game === 1 ? "game" : "games"}, for @tannergolden's profile alone` : "")],
+        + (games ? `; and ${games} ${games === 1 ? "game" : "games"}${halls ? " and their Hall of Fame" : ""}, for @tannergolden's profile alone` : "")],
       ["Drawings", M.drawings.toLocaleString("en-US"), "", "every one a file a README shows"],
       ["Specimen", "driftmark/driftmark", "mono"],
       ["Light ground", M.grounds.day, "mono", "", M.grounds.day],

@@ -138,18 +138,16 @@ class TheGame(unittest.TestCase):
         self.assertEqual(self.entry['link'], 'https://github.com/tannergolden')
         self.assertEqual(self.entry['link_text'], "See the games live on @tannergolden's profile →")
 
-    def test_its_board_and_its_hall_are_drawn_in_the_standard_theme_and_every_print(self) -> None:
+    def test_its_board_is_drawn_in_the_standard_theme_and_every_print_as_the_other_boards_are(self) -> None:
         tones = [builder.prints.STANDARD, *builder.prints.PRINTS]
         sections = {s['key']: s for s in self.entry['sections']}
-        self.assertEqual(list(sections), ['board', 'hall', 'phones', 'badges'])
-        for key, sheet in (('board', 'Board'), ('hall', 'Hall of Fame')):
-            items = sections[key]['items']
-            self.assertEqual([it['label'].split(', ')[1] for it in items], tones)
-            self.assertTrue(all(it['label'].startswith(sheet) for it in items))
-            self.assertTrue(all('sday' in it and 'sdark' in it for it in items), 'each with its still pair')
-        self.assertEqual([r['label'] for r in sections['badges']['rows']],
-                         ['In standard', "In blackprint, the profile's"])
-        self.assertEqual([len(r['chips']) for r in sections['badges']['rows']], [5, 5], 'a badge for each winner')
+        self.assertEqual(list(sections), ['board', 'phones'], 'its Hall of Fame is the four games\' own entry now')
+        items = sections['board']['items']
+        self.assertEqual([it['label'].split(', ')[1] for it in items], tones)
+        self.assertTrue(all(it['label'].startswith('Board') for it in items))
+        self.assertTrue(all('sday' in it and 'sdark' in it for it in items), 'each with its still pair')
+        self.assertEqual([it['label'] for it in sections['phones']['items']],
+                         ['Board, standard', "Board, blackprint, the profile's"])
 
     def test_every_drawing_the_entry_names_is_beside_the_page(self) -> None:
         for name in drawings_of(self.entry) + list(self.entry['thumb'].values()):
@@ -231,6 +229,56 @@ class TheGamesBesideChess(unittest.TestCase):
                 self.assertIn('tictactoe.yaml: tictactoe: board has 9 X and 0 O', str(raised.exception))
             finally:
                 builder.sample_game.cache_clear()
+
+
+class TheHallOfFame(unittest.TestCase):
+    """The Hall of Fame of all four games is one entry after them in the Games group: its sheet in the standard theme
+    and every print, the files a phone gets and the winners' badges, from its own sample, checked as a run checks it,
+    and in place of what to write, where to see it live."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.out = pathlib.Path(cls.tmp.name) / 'themes'
+        with contextlib.redirect_stdout(io.StringIO()):
+            builder.main([str(cls.out), '--only', 'chess,hall-of-fame'])
+        cls.entries = {e['key']: e for e in manifest_of((cls.out / 'index.html').read_text(encoding='utf-8'))['themes']}
+        cls.entry = cls.entries['hall-of-fame']
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.tmp.cleanup()
+
+    def test_it_comes_after_the_games_and_says_where_to_see_it_live(self) -> None:
+        self.assertEqual(list(self.entries), ['chess', 'hall-of-fame'], 'after the four games')
+        self.assertEqual((self.entry['group'], self.entry['hall']), ('game', True), 'counted apart from the games')
+        self.assertEqual(self.entry['use'], '', 'nothing to write: no other page can draw it')
+        self.assertEqual(self.entry['where'], "On @tannergolden's profile README, and nowhere else")
+        self.assertEqual(self.entry['link'], 'https://github.com/tannergolden')
+
+    def test_its_sheet_phones_and_badges_are_drawn_in_the_standard_theme_and_every_print(self) -> None:
+        tones = [builder.prints.STANDARD, *builder.prints.PRINTS]
+        sections = {s['key']: s for s in self.entry['sections']}
+        self.assertEqual(list(sections), ['hall', 'phones', 'badges'])
+        items = sections['hall']['items']
+        self.assertEqual([it['label'].split(', ')[1] for it in items], tones)
+        self.assertTrue(all(it['label'].startswith('Hall of Fame') for it in items))
+        self.assertTrue(all('sday' in it and 'sdark' in it for it in items), 'each with its still pair')
+        self.assertEqual([it['label'] for it in sections['phones']['items']],
+                         ['Hall of Fame, standard', "Hall of Fame, blackprint, the profile's"])
+        self.assertTrue(all(it['w'] == 360 for it in sections['phones']['items']))
+        self.assertEqual([r['label'] for r in sections['badges']['rows']],
+                         ['In standard', "In blackprint, the profile's"])
+        self.assertEqual([len(r['chips']) for r in sections['badges']['rows']], [5, 5], 'a badge for each winner')
+
+    def test_every_drawing_the_entry_names_is_beside_the_page(self) -> None:
+        for name in drawings_of(self.entry) + list(self.entry['thumb'].values()):
+            self.assertTrue((self.out / name).is_file(), name)
+
+    def test_its_sample_is_the_four_games_own_and_passes_the_kits_checks(self) -> None:
+        sample = builder.sample_game('hall-of-fame')
+        self.assertEqual(list(sample), ['hall-of-fame'])
+        self.assertEqual(list(sample['hall-of-fame']['series']), ['tictactoe', 'connectfour', 'checkers', 'chess'])
 
 
 class TestBundle(unittest.TestCase):

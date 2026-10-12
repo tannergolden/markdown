@@ -1,0 +1,20 @@
+# A sample Hall of Fame of the four games on @tannergolden's profile, for the theme-sets page.
+# The house is real; every other winner is as fictional as driftmark's contributors.
+elements:
+  hall-of-fame:
+    kind: hall-of-fame
+    series: {tictactoe: [9, 4, 2, 3], connectfour: [3, 1, 2, 0], checkers: [5, 2, 2, 1], chess: [12, 5, 6, 1]}
+    people:
+      - [tannergolden, [4, 1, 2, 5], 2 Oct, 29]
+      - [imvale, [1, 1, 0, 2], 19 Sep, 7]
+      - [tokafor, [0, 1, 1, 1], 27 Sep, 9]
+      - [wrencastellan, [1, 0, 1, 0], 4 Sep, 6]
+      - [jhalloran, [0, 0, 0, 1], 8 Oct, 3]
+    names: {imvale: Imogen Vale, tokafor: Tomas Okafor, wrencastellan: Wren Castellan}
+    leaders:
+      - [tannergolden, 1240, 29, [4, 1, 2, 5]]
+      - [imvale, 40, 7, [1, 1, 0, 2]]
+      - [tokafor, 31, 9, [0, 1, 1, 1]]
+      - [wrencastellan, 52, 6, [1, 0, 1, 0]]
+      - [jhalloran, 12, 3, [0, 0, 0, 1]]
+      - [octocat, 9, 2, [0, 0, 0, 0]]
