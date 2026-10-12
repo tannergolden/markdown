@@ -5,8 +5,8 @@
 Each measuring function returns the dict the matching element draws from, so
 the settings name an element and leave the numbers to this. Most of it is
 read from git, through the `git` the run is handed; what git cannot say, a
-placard's description, whether CI passed or a winner's name in the Hall of
-Fame, is read from the GitHub client.
+placard's description, whether CI passed, or a winner's name and the login
+their account has now in the Hall of Fame, is read from the GitHub client.
 Everything measured is kept in the lock, so `check` can redraw without either.
 """
 from __future__ import annotations
@@ -191,18 +191,33 @@ def placard(gh, full: str) -> dict | None:
                       ["Stars", f"{repo.get('stargazers_count', 0):,}"]]}
 
 
-def winners(gh, people) -> dict:
-    """The Hall of Fame's winners by the names their profiles give, where the sheet can letter one; the rest keep
-    their logins."""
+def winners(gh, people, leaders=None) -> dict:
+    """The Hall of Fame's players as their accounts stand now: `names`, each winner's name as their profile gives
+    it, by the login it is shown under, where every tone's sheet can letter it (the rest keep their logins); and
+    `logins`, for every row that carries its account's ID, the login that account has now, since a login can be
+    given up and taken by someone else, or "" when the ID finds no account any more. A row without an ID is read by
+    its login, and the house is never read at all."""
+    def rows(table) -> list:
+        return [row for row in (table if isinstance(table, list) else []) if isinstance(row, list) and row
+                and isinstance(row[0], str) and CG.LOGIN.fullmatch(row[0]) and row[0].casefold() != CG.OWNER]
+
+    accounts: dict[int, dict] = {}  # each ID's account as GitHub has it now, read once; {} for one it cannot find
+    for row in rows(people) + rows(leaders):
+        uid = CG.account(row)
+        if uid is not None and uid not in accounts:
+            answer = gh.rest(f"/user/{uid}")
+            login = answer.get("login") if isinstance(answer, dict) else None
+            accounts[uid] = answer if isinstance(login, str) and CG.LOGIN.fullmatch(login) else {}
     names = {}
-    for row in people or []:
-        login = str(row[0]) if isinstance(row, list) and row else ""
-        if not CG.LOGIN.fullmatch(login) or login.casefold() == CG.OWNER:
-            continue
-        name = " ".join(str((gh.rest(f"/users/{login}") or {}).get("name") or "").split())
-        if name and CG.NAME.fullmatch(name):
+    for row in rows(people):
+        uid = CG.account(row)
+        profile = accounts[uid] if uid is not None else gh.rest(f"/users/{row[0]}") or {}
+        login = profile.get("login", "") if uid is not None else row[0]
+        name = " ".join(str(profile.get("name") or "").split())
+        if login and name and CG.named(name) and CG.letterable(name):
             names[login] = name
-    return names
+    logins = {str(uid): answer.get("login", "") for uid, answer in accounts.items()}
+    return {"names": names, "logins": logins} if logins else {"names": names}
 
 
 def inherited_policy(gh, owner: str) -> str | None:
@@ -283,7 +298,7 @@ def measure(section: dict, before: dict, *, git, gh, subject: str, today: dt.dat
                 if not out:
                     notes.append(f"element {eid}: cannot read {full}; drawn from the settings alone")
         elif kind == "chess-hall" and gh is not None:
-            out = {"names": winners(gh, spec.get("people"))}
+            out = winners(gh, spec.get("people"), spec.get("leaders"))
         if out:
             measured[eid] = out
     return measured

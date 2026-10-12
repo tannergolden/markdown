@@ -5,7 +5,8 @@
 The game is the Max Lange Attack the design was drawn from, game 13 after 21. Nd6+: GitHub to move and in check,
 the knight just landed with check, a few pieces taken each side. The house's turn is the same game after
 21... cxd6, and the opening board is game 1 before anyone has moved. The Hall of Fame is that series after twelve
-games, five winners ranked; an empty one has had no game finish yet."""
+games, five winners ranked; an empty one has had no game finish yet, and a known one is the same Hall with each row's
+account ID, by which a run reads the login every player has now."""
 from __future__ import annotations
 
 import re
@@ -20,12 +21,20 @@ from domain.canvas import BUDGET, lint
 from domain.elements import chess as C
 from domain.elements import data as ED
 from domain.elements import draw as E
+from domain.elements.chess import readme as RM
 from domain.prints import PRINTS, STANDARD
 
 support.install()
 DASHES = ("–", "—", "―")
-LINK = ("https://github.com/tannergolden/play/issues/new?template=move.yml&title=chess%3A%20c7d6%20%C2%B7%20game%2013"
-        "%20%C2%B7%20move%2042")
+
+
+def link(uci: str, game: int = 13, move: int = 42) -> str:
+    """A move's link to its ready-made issue, its title naming the move in UCI."""
+    return (f"https://github.com/tannergolden/play/issues/new?template=move.yml&title=chess%3A%20{uci}%20%C2%B7%20game"
+            f"%20{game}%20%C2%B7%20move%20{move}")
+
+
+LINK = link("c7d6")
 GAME = {
     "kind": "chess", "fen": "2kr4/ppp4p/2nNp3/2b1q3/2p3P1/2PrR3/PP1B1P1P/R4QK1 b - - 3 21",
     "game": 13, "move": 21, "players": 9, "due": "18 Oct", "check": "c8",
@@ -55,15 +64,21 @@ HALL = {"kind": "chess-hall", "games": 12, "house": 5, "world": 6, "draws": 1,
                     ["wrencastellan", 52, 1, 6], ["jhalloran", 12, 1, 3], ["octocat", 9, 0, 2]]}
 EMPTY = {"kind": "chess-hall", "games": 0, "house": 0, "world": 0, "draws": 0, "people": []}
 # The densest board the contract accepts: queens wherever a pawn could have been crowned, every letter and digit in
-# the panel's words and logins, and every number at its longest.
+# the panel's words and logins, and every number at its longest: a game, a move and its players at nine digits, and
+# the move the position is on and the score sheet's rows at five.
 LETTERS = "abcdefghijklmnopqrstuvwxyz0123456789"
-DENSE = dict(GAME, fen="rqqqkqqr/qqqqqqqq/8/8/8/8/QQQQQQQQ/RQQQKQQR b - - 0 987654321", game=123456789,
+DENSE = dict(GAME, fen="rqqqkqqr/qqqqqqqq/8/8/8/8/QQQQQQQQ/RQQQKQQR b - - 0 99999", game=123456789,
              move=987654321, players=102345678, check="e8", taken={"white": "qrbnp" * 3, "black": "qrbnp" * 3},
              last={"san": "Qa1xb2+", "from": "a1", "to": "b2", "piece": "queen", "captured": "knight",
                    "words": "The quick brown fox jumps over a lazy dog 0123456789 THE QUICK BROWN FOX JUMPS V",
                    "by": "@" + LETTERS[:39], "when": "27 Oct"},
-             history=[[987654319, "Qa1xb2+", "exd8=Q#", "@" + LETTERS[3:] + "-xy"],
-                      [987654320, "O-O-O+", "Nb1xc3+", "@" + LETTERS[::-1][:39]], [987654321, "Rh8xg7#", "", ""]])
+             history=[[99997, "Qa1xb2+", "exd8=Q#", "@" + LETTERS[3:] + "-xy"],
+                      [99998, "O-O-O+", "Nb1xc3+", "@" + LETTERS[::-1][:39]], [99999, "Rh8xg7#", "", ""]])
+# The same series as HALL, every row carrying its account's ID, the house's included.
+IDS = {"tannergolden": 24684994, "imvale": 1001, "tokafor": 1002, "wrencastellan": 1003, "jhalloran": 1004,
+       "octocat": 583231}
+KNOWN = dict(HALL, people=[[*row, IDS[row[0]]] for row in HALL["people"]],
+             leaders=[[*row, IDS[row[0]]] for row in HALL["leaders"]])
 TONES = (STANDARD, *sorted(PRINTS))
 
 
@@ -142,6 +157,16 @@ class Board(unittest.TestCase):
         self.assertEqual((C.board_state(GAME)["last"]["number"], C.board_state(GAME)["last"]["side"]), (21, "white"))
         self.assertEqual((C.board_state(HOUSE)["last"]["number"], C.board_state(HOUSE)["last"]["side"]), (21, "black"))
 
+    def test_without_a_move_of_its_own_the_board_is_on_the_move_its_position_says(self):
+        bare = {k: v for k, v in GAME.items() if k != "move"}
+        self.assertEqual(C.check(bare), [])
+        self.assertEqual(C.board_state(bare)["move"], 21)
+        self.assertTrue(E.alt("chess", bare).startswith("Chess: game 13, move 21."))
+        self.assertEqual(C.board_state({**GAME, "move": 20})["move"], 20, "a move of its own is the one drawn")
+        plain = {"kind": "chess", "fen": OPENING["fen"]}
+        self.assertEqual((C.board_state(plain)["game"], C.board_state(plain)["move"], C.board_state(plain)["players"]),
+                         (1, 1, 0))
+
 
 class Hall(unittest.TestCase):
     def test_it_ranks_the_winners_and_says_the_series(self):
@@ -157,6 +182,29 @@ class Hall(unittest.TestCase):
                           ("@WRENCASTELLAN", "WR", False)])
         self.assertEqual([p["handle"] for p in people[:4]],
                          ["the house  ·  white", "@imvale", "@tokafor", "github  ·  black"])
+
+    def test_a_player_is_shown_by_the_login_their_account_has_now(self):
+        # @imvale renamed to @imogen-vale; @tokafor's account is gone, and a stranger may hold that login now;
+        # @wrencastellan's ID has not been read yet; @jhalloran's row carries no ID.
+        logins = {"1001": "imogen-vale", "1002": "", "583231": "octocat"}
+        names = {"imogen-vale": "Imogen Vale", "tokafor": "Mallory Mallet", "imvale": "Someone Else"}
+        d = dict(KNOWN, people=[*KNOWN["people"][:4], HALL["people"][4]], logins=logins, names=names)
+        self.assertEqual(C.check_hall(d), [])
+        h = C.hall_state(d)
+        self.assertEqual([(p["login"], p["name"], p["handle"], p["badge"], p["id"], p["linked"]) for p in h["people"]],
+                         [("tannergolden", "@TANNERGOLDEN", "the house  ·  white", "@tannergolden", 24684994, True),
+                          ("imogen-vale", "IMOGEN VALE", "@imogen-vale", "@imogen-vale", 1001, True),
+                          ("tokafor", "@TOKAFOR", "github  ·  black", "@tokafor", 1002, False),
+                          ("wrencastellan", "@WRENCASTELLAN", "github  ·  black", "@wrencastellan", 1003, True),
+                          ("jhalloran", "@JHALLORAN", "github  ·  black", "@jhalloran", None, True)])
+        self.assertEqual([(r["login"], r["id"], r["linked"], r["house"]) for r in h["leaders"]],
+                         [("tannergolden", 24684994, True, True), ("imogen-vale", 1001, True, False),
+                          ("tokafor", 1002, False, False), ("wrencastellan", 1003, True, False),
+                          ("jhalloran", 1004, True, False), ("octocat", 583231, True, False)])
+        self.assertIn("Ranked by wins: @tannergolden with 5 wins, @imogen-vale with 2 wins, @tokafor with 2 wins",
+                      E.alt("chess-hall", d))
+        house = dict(d, logins={**logins, "24684994": "someone"})
+        self.assertEqual(C.hall_state(house)["people"][0]["login"], "tannergolden", "the house is always the house")
 
     def test_each_winner_has_a_badge_and_the_leaders_has_a_still_twin(self):
         self.assertEqual(E.variants("chess-hall", HALL), ("wide", "narrow", "still", "narrow-still", "badge-1",
@@ -178,7 +226,7 @@ class Settings(unittest.TestCase):
     def test_what_the_board_is_drawn_from_is_checked(self):
         cases = {
             "fen": ("8/8/8/8/8/8/8/8 w - - 0 1", "does not have one king a side"),
-            "check": ("e9", "is not a square"),
+            "check": ("e9", "is not the square of the king to move"),
             "due": ("tomorrow", "is not a day"),
             "last": ({**GAME["last"], "from": "e9"}, "last: from"),
             "taken": ({"white": "kk"}, "taken gives white and black"),
@@ -196,6 +244,136 @@ class Settings(unittest.TestCase):
         self.assertTrue(ED.validate({"chess": {**GAME, "moves": wrong_link}}, {}, subject="tannergolden"))
         self.assertIn("a chess needs fen", " ".join(ED.validate({"chess": {"kind": "chess"}}, {}, subject="tannergolden")))
 
+    def assertTurnedAway(self, d: dict, said: str, check=C.check):
+        errors = check(d)
+        self.assertTrue(any(said in e for e in errors), f"{said!r} not in {errors}")
+
+    def test_text_is_text_and_a_number_a_number_within_its_ceiling(self):
+        # YAML reads `note: 1984` as a number, `true` as a bool and an all-digit login as an int: each is turned
+        # away here rather than reaching the README, which would fail on it.
+        move = ["🏰", "The Royal Retreat", "Kb8", "King from c8 to b8", LINK]
+        texts = {"note": (1984, True, ["a note"]), "prompt": (1984, {"a": 1}), "check": (8, True), "due": (18,),
+                 "fen": (1984, None), "last": ({**GAME["last"], "words": 1984}, {**GAME["last"], "by": None},
+                                              {**GAME["last"], "when": 11}),
+                 "taken": ({"white": 5}, {"white": ["p"]}),
+                 "history": ([[21, 1984, "", ""]], [[21, "Nd6+", "", 7]], [[21, ["Nd6+"], "", ""]]),
+                 "moves": ([{"piece": "king", "list": [[*move[:1], 1984, *move[2:]]]}],
+                           [{"piece": "king", "list": [[*move[:4], 5]]}],
+                           [{"piece": "king", "list": [[1, *move[1:]]]}])}
+        for key, values in texts.items():
+            for bad in values:
+                with self.subTest(key=key, bad=bad):
+                    self.assertTrue(C.check({**GAME, key: bad}))
+        numbers = {"game": ("13", True, 0, -1, 1_000_000_000, 13.0, None), "move": ("21", False, 0, 1_000_000_000),
+                   "players": ("9", True, -1, 1_000_000_000, 9.5)}
+        for key, values in numbers.items():
+            for bad in values:
+                with self.subTest(key=key, bad=bad):
+                    self.assertTurnedAway({**GAME, key: bad}, f"{key} {bad!r} is not a number from")
+        for key, fine in (("game", 999_999_999), ("move", 999_999_999), ("players", 999_999_999), ("players", 0)):
+            with self.subTest(key=key, fine=fine):
+                self.assertEqual(C.check({**GAME, key: fine}), [])
+        for row in ([True, "Bxd2", "Qxg7", "@imvale"], [-19, "Bxd2", "Qxg7", "@imvale"], [0, "Bxd2", "", ""],
+                    [100_000, "Bxd2", "", ""], ["19", "Bxd2", "", ""]):
+            with self.subTest(row=row):
+                self.assertTurnedAway({**GAME, "history": [row]}, "is not a row of a move's number up to 99,999")
+        self.assertEqual(C.check({**GAME, "history": [[99_999, "Bxd2", "Qxg7", "@imvale"]]}), [])
+        for fen in ("2kr4/ppp4p/2nNp3/2b1q3/2p3P1/2PrR3/PP1B1P1P/R4QK1 b - - 3 0",
+                    "2kr4/ppp4p/2nNp3/2b1q3/2p3P1/2PrR3/PP1B1P1P/R4QK1 b - - 3 100000"):
+            with self.subTest(fen=fen):
+                self.assertTurnedAway({**GAME, "fen": fen}, "is not a position in FEN, on a move from 1 to 99,999")
+
+    def test_a_position_is_eight_ranks_of_eight_squares_in_ascii_digits_and_never_crashes_the_check(self):
+        cases = {"7pp/8/8/8/8/8/8/K6k w - - 0 1": "does not have eight squares on every rank",
+                 "88/8/8/8/8/8/8/K6k w - - 0 1": "does not have eight squares on every rank",
+                 "4k2/8/8/8/8/8/8/4K3 w - - 0 1": "does not have eight squares on every rank",
+                 "08/8/8/8/8/8/8/K6k w - - 0 1": "is not a position in FEN",
+                 "٨/8/8/8/8/8/8/K6k w - - 0 1": "is not a position in FEN",
+                 "８/8/8/8/8/8/8/K6k w - - 0 1": "is not a position in FEN",
+                 "4k3/8/8/8/8/8/8/4K3 w - - ٠ ١": "is not a position in FEN",
+                 "4k3/8/8/8/8/8/8/4K3 w - - 0 ２": "is not a position in FEN",
+                 "4k3/8/8/8/8/8/8/4K3 w - - ٣ 1": "is not a position in FEN",
+                 "4k3/8/8/8/8/8/8/4K3 w - - 0 2١": "is not a position in FEN",
+                 "4k3/8/8/8/8/8/8/4K3 w - - ３ 21": "is not a position in FEN"}
+        for fen, said in cases.items():
+            with self.subTest(fen=fen):
+                self.assertTurnedAway({**OPENING, "fen": fen}, said)
+        for history in (5, True, "Nd6+", {"21": "Nd6+"}):
+            with self.subTest(history=history):
+                self.assertTurnedAway({**GAME, "history": history}, "history is a list of the score sheet's rows")
+        self.assertEqual(C.check({**GAME, "history": None}), [])
+        self.assertEqual(C.check({**GAME, "history": []}), [])
+
+    def test_a_line_of_the_readme_never_opens_a_block_or_shows_an_image(self):
+        # The note follows the moves after a blank line and the prompt is the banner's second line, so anything that
+        # opens a block there swallows the README's end marker or turns the alert into a heading.
+        blocks = ("```", "```python", "~~~", "# Heading", "### Heading", "- an item", "* an item", "+ an item",
+                  "1. an item", "21) an item", "    code", "\tcode", " a space first", "---", "===", "=", "-", "***",
+                  "- - -", "_ _ _", "[a]: https://example.com", "[^1]: a footnote")
+        for key in ("note", "prompt"):
+            for bad in blocks:
+                with self.subTest(key=key, bad=bad):
+                    self.assertTurnedAway({**GAME, key: bad}, f"{key} {bad!r} would open a block of its own")
+            for bad in ("![a pawn](https://example.com/pawn.png)", "See ![it](https://example.com/x.png) here"):
+                with self.subTest(key=key, bad=bad):
+                    self.assertTurnedAway({**GAME, key: bad}, f"{key} shows an image")
+        fine = ("🟢 **GitHub's turn!** @tannergolden played 1. e4. Pick a move below by 18 Oct.",
+                "🛑 **@tannergolden's turn!** GitHub played 21... cxd6. Check! Reply due by 19 Oct.",
+                "🛑 **@tannergolden's turn!** @tannergolden opens game 1 as White, and GitHub plays Black.",
+                ("Anyone but @tannergolden can play on this turn, and the first pick in is played. Every finished game"
+                 " is kept as a [PGN](https://github.com/tannergolden/tannergolden/tree/HEAD/.github/chess/games)."),
+                "Game 2 was drawn by stalemate. Only @tannergolden can play on this turn.",
+                "21... cxd6 was the reply.", "**Bold** first.", "#1 on the board.", "+1 for the knight.",
+                "-5 is a lot.")
+        for text in fine:
+            with self.subTest(text=text):
+                self.assertEqual(C.check({**GAME, "note": text, "prompt": text}), [])
+
+    def test_a_move_title_has_no_space_at_either_end(self):
+        for title in ("The Royal Retreat ", " The Royal Retreat", "Retreat  "):
+            with self.subTest(title=title):
+                moves = [{"piece": "king", "list": [["🏰", title, "Kb8", "King from c8 to b8", LINK]]}]
+                self.assertTurnedAway({**GAME, "moves": moves}, "is not an emoji, a title")
+        for title in ("A", "Go!", "The Royal Retreat", "x" * 48):
+            with self.subTest(title=title):
+                moves = [{"piece": "king", "list": [["🏰", title, "Kb8", "King from c8 to b8", LINK]]}]
+                self.assertEqual(C.check({**GAME, "moves": moves}), [])
+
+    def test_the_marks_on_the_board_and_the_score_sheet_are_ones_the_game_can_have(self):
+        self.assertTurnedAway({**GAME, "history": [[21, "", "cxd6", "@wrencastellan"]]},
+                              "has Black's move without White's")
+        for square in ("e4", "d8", "g1"):  # an empty square, a rook, and White's king on Black's turn
+            with self.subTest(check=square):
+                self.assertTurnedAway({**GAME, "check": square}, "is not the square of the king to move")
+        self.assertTurnedAway({**HOUSE, "check": "c8"}, "is not the square of the king to move")
+        self.assertEqual(C.check({**HOUSE, "fen": "2kr4/pp5p/2npp3/2b5/2p3P1/2PrR3/PP1B1P1P/R4qK1 w - - 0 22",
+                                  "check": "g1"}), [])
+        for day in ("99 Zzz", "32 Oct", "31 Sep", "30 Feb", "0 Oct", "18 Octo", "18  Oct"):
+            with self.subTest(due=day):
+                self.assertTurnedAway({**GAME, "due": day}, "is not a day")
+                self.assertTurnedAway({**GAME, "last": {**GAME["last"], "when": day}}, "last: when")
+        for day in ("1 Jan", "29 Feb", "30 Sep", "31 Dec", "18 OCT"):
+            with self.subTest(due=day):
+                self.assertEqual(C.check({**GAME, "due": day}), [])
+        before = {**OPENING, "last": {**GAME["last"]}}
+        self.assertTurnedAway(before, "a board before White's first move has no last move")
+
+    def test_nothing_the_settings_can_hold_makes_the_checks_raise(self):
+        hostile = (None, True, False, 0, -1, 1984, 10 ** 30, 1.5, "", "x", "```", [], [1], [[]], {}, {"a": 1},
+                   ["x", "y", "z", "w", "v"])
+        rows = ("history", "moves", "people", "leaders")
+        for d, check in ((GAME, C.check), (HOUSE, C.check), (KNOWN, C.check_hall)):
+            for key in sorted(set(d) | {"logins", "names", "history", "last", "taken"}):
+                for bad in hostile:
+                    for value in (bad, [bad], [[bad] * 5]) if key in rows else (bad,):
+                        with self.subTest(key=key, value=value):
+                            self.assertIsInstance(check({**d, key: value}), list)
+        for bad in hostile:
+            with self.subTest(last=bad):
+                self.assertIsInstance(C.check({**GAME, "last": {k: bad for k in GAME["last"]}}), list)
+                key = bad if isinstance(bad, (str, int)) else "x"
+                self.assertIsInstance(C.check_hall({**KNOWN, "names": {key: bad}, "logins": {key: bad}}), list)
+
     def test_what_the_hall_is_drawn_from_is_checked(self):
         cases = {
             "games": (11, "add up to 12 games, not the 11 played"),
@@ -208,6 +386,65 @@ class Settings(unittest.TestCase):
         six = HALL["people"] + [["octocat", 1, "1 Oct", 1]]
         self.assertIn("at most 5 winners", " ".join(ED.validate({"h": {**HALL, "people": six}}, {},
                                                                 subject="tannergolden")))
+
+    def test_a_winner_is_a_login_with_counts_the_sheet_can_letter_ranked_by_their_wins(self):
+        def turned_away(d: dict, said: str):
+            errors = C.check_hall(d)
+            self.assertTrue(any(said in e for e in errors), f"{said!r} not in {errors}")
+
+        one = {**HALL, "games": 1, "house": 0, "world": 1, "draws": 0, "names": {}}
+        rows = ([12345, 1, "2 Oct", 1], ["imvale", True, "2 Oct", 1], ["imvale", 1, "2 Oct", False],
+                ["imvale", 0, "2 Oct", 1], ["imvale", -1, "2 Oct", 1], ["imvale", 1_000_000, "2 Oct", 1],
+                ["imvale", 1, "2 Oct", 1_000_000], ["imvale", "1", "2 Oct", 1], ["imvale", 1, 1984, 1],
+                ["imvale", 1, "31 Sep", 1], ["imvale", 1, "2 Oct"], ["imvale", 1, "2 Oct", 1, 1001, 1])
+        for row in rows:
+            with self.subTest(row=row):
+                turned_away({**one, "people": [row]}, f"people: {row!r} is not a winner's login")
+        self.assertEqual(C.check_hall({**one, "people": [["12345", 1, "2 Oct", 1]]}), [], "an all-digit login, as text")
+        for counts in ({"games": True}, {"games": 1_000_000, "house": 1_000_000, "world": 0, "draws": 0},
+                       {"draws": -1}, {"world": "6"}):
+            with self.subTest(counts=counts):
+                turned_away({**HALL, **counts}, "are counts of games, up to 999,999")
+        self.assertEqual(C.check_hall({**EMPTY, "games": 999_999, "house": 999_999}), [])
+        unranked = [["imvale", 1, "2 Oct", 3], ["tokafor", 9, "3 Oct", 12], ["jhalloran", 40, "4 Oct", 50]]
+        turned_away({**HALL, "people": unranked, "games": 60, "house": 10, "world": 50, "draws": 0},
+                    "people: the winners are ranked by their wins, the most first")
+        tied = [HALL["people"][0], HALL["people"][2], HALL["people"][1], HALL["people"][4], HALL["people"][3]]
+        self.assertEqual(C.check_hall({**HALL, "people": tied}), [], "winners on the same wins stand in any order")
+
+    def test_a_name_is_plain_text_without_an_at_that_fits_in_capitals(self):
+        for name in ("@tannergolden", "Tanner @ Home", "ß" * 21, "ﬃ" * 14, " ", "\u200b", "\u200d\u200d", 1984, True,
+                     ["Imogen Vale"], {"first": "Imogen"}, "", "x" * 41):
+            with self.subTest(name=name):
+                errors = C.check_hall({**HALL, "names": {"imvale": name}})
+                self.assertTrue(any(e.startswith("names gives a login its name") for e in errors), errors)
+        for names in ({12345: "Imogen Vale"}, {"not a login!": "Imogen Vale"}, ["imvale"]):
+            with self.subTest(names=names):
+                self.assertTrue(C.check_hall({**HALL, "names": names}))
+        for name in ("ß" * 20, "Imogen Vale", "Tomás Ørsted", "O'Brien-Smith", "J. R. R. T.", "x" * 40, "李"):
+            with self.subTest(name=name):
+                self.assertEqual(C.check_hall({**HALL, "names": {"imvale": name}}), [])
+
+    def test_a_row_of_the_hall_may_carry_its_accounts_id(self):
+        self.assertEqual(C.check_hall(KNOWN), [])
+        self.assertEqual(C.check_hall({**KNOWN, "people": HALL["people"][:2] + KNOWN["people"][2:]}), [],
+                         "rows with an ID and rows without one stand side by side")
+        ceiling = [[*HALL["people"][0], 9_999_999_999_999_999]]
+        self.assertEqual(C.check_hall({**HALL, "people": ceiling, "leaders": [[*HALL["leaders"][0], 1]]}), [])
+        for uid in (0, -1, True, "1001", 10_000_000_000_000_000, 1001.0, None):
+            with self.subTest(uid=uid):
+                people = [[*HALL["people"][0], uid]]
+                self.assertTrue(any(e.startswith("people:") for e in C.check_hall({**HALL, "people": people})))
+                leaders = [[*HALL["leaders"][0], uid]]
+                self.assertTrue(any(e.startswith("leaders:") for e in C.check_hall({**HALL, "leaders": leaders})))
+        for logins in ({"1001": "imogen-vale"}, {"1001": ""}, {"9999999999999999": "octocat"}, {}):
+            with self.subTest(logins=logins):
+                self.assertEqual(C.check_hall({**KNOWN, "logins": logins}), [])
+        for logins in ({1001: "imogen-vale"}, {"01001": "imogen-vale"}, {"1001": "not a login!"}, {"1001": None},
+                       {"1001": 1001}, {"10000000000000000": "octocat"}, {"imvale": "imogen-vale"}, ["1001"], "1001"):
+            with self.subTest(logins=logins):
+                errors = C.check_hall({**KNOWN, "logins": logins})
+                self.assertTrue(any(e.startswith("logins gives an account's ID its login") for e in errors), errors)
 
     def test_what_the_leaderboard_lists_is_checked(self):
         house = ["tannergolden", 9, 1, 2]
@@ -222,12 +459,19 @@ class Settings(unittest.TestCase):
             "players out of order": [house, ["octocat", 9, 0, 2], ["hubot", 3, 1, 1]],
             "eleven players": [house] + [[f"p{i}", 20 - i, 0, 1] for i in range(11)],
             "not a list": "tannergolden",
+            "a count past its ceiling": [["tannergolden", 1_000_000_000, 5, 12]],
+            "a count that is a bool": [house, ["octocat", 9, False, 2]],
+            "a login that is a number": [house, [12345, 9, 0, 2]],
+            "an ID that is text": [house, ["octocat", 9, 0, 2, "583231"]],
+            "an ID past sixteen digits": [house, ["octocat", 9, 0, 2, 10 ** 16]],
+            "a sixth field": [house, ["octocat", 9, 0, 2, 583231, 1]],
         }
         for case, leaders in cases.items():
             with self.subTest(case=case):
                 errors = ED.validate({"h": {**HALL, "leaders": leaders}}, {}, subject="tannergolden")
                 self.assertTrue(errors and all(e.startswith("h: leaders") for e in errors), errors)
-        for fine in ([], [house], [["tannergolden", 0, 0, 0], ["octocat", 1, 0, 1]], HALL["leaders"]):
+        for fine in ([], [house], [["tannergolden", 0, 0, 0], ["octocat", 1, 0, 1]], HALL["leaders"], KNOWN["leaders"],
+                     [["tannergolden", 999_999_999, 999_999_999, 999_999_999, 24684994]]):
             with self.subTest(leaders=fine):
                 self.assertEqual(ED.validate({"h": {**HALL, "leaders": fine}}, {}, subject="tannergolden"), [])
 
@@ -249,12 +493,34 @@ class Readme(unittest.TestCase):
         self.assertIn("♔ <b>@tannergolden's Turn</b> · 4 legal moves · only @tannergolden can play these", text)
 
     def test_a_busy_turn_is_grouped_by_piece(self):
-        many = [{"piece": "knight", "list": [["🐴", f"Ride {i}", "Nf3", "Knight from g1 to f3", LINK] for i in range(7)]},
-                {"piece": "pawn", "list": [["🥾", f"March {i}", "e4", "Pawn from e2 to e4", LINK] for i in range(5)]}]
+        rides = [f"{a}{b}" for a, b in (("b8", "a6"), ("b8", "c6"), ("b8", "d7"), ("g8", "f6"), ("g8", "h6"),
+                                         ("g8", "e7"), ("g8", "g6"))]
+        many = [{"piece": "knight", "list": [["🐴", f"Ride {i}", "Nf6", "Knight from g8 to f6", link(uci)]
+                                             for i, uci in enumerate(rides)]},
+                {"piece": "pawn", "list": [["🥾", f"March {i}", "e5", "Pawn from e7 to e5", link(f"{f}7{f}5")]
+                                           for i, f in enumerate("abcde")]}]
         text = ED.block("chess", {**GAME, "moves": many}, "assets/elements")
         self.assertIn("· 12 legal moves ·", text)
         self.assertIn("<details open>\n<summary>♞ Knights · 7 moves</summary>\n\n|  | Move |", text)
         self.assertIn("<summary>♟ Pawns · 5 moves</summary>", text)
+
+    def test_a_group_is_named_for_one_piece_or_several_by_the_squares_its_moves_leave(self):
+        def row(uci: str) -> list:
+            return ["👑", "Long Live the Queen", "Qd2", "Queen from d1 to d2", link(uci)]
+
+        queens = [row(uci) for uci in ("d1d2", "d1d3", "d1e2", "h8h1", "h8g7", "h8h4")]  # a second queen, crowned
+        knight = [row(uci) for uci in ("g1f3", "g1h3", "g1e2")]
+        king = [row(uci) for uci in ("e1e2", "e1f1")]
+        crowning = [row(uci) for uci in ("a7a8q", "a7a8r", "a7a8b", "a7a8n", "a7b8q", "a7b8n")]  # one pawn, six ways
+        groups = [{"piece": "queen", "list": queens}, {"piece": "knight", "list": knight},
+                  {"piece": "king", "list": king}, {"piece": "pawn", "list": crowning}]
+        text = ED.block("chess", {**HOUSE, "moves": groups}, "assets/elements")
+        for said in ("♕ Queens · 6 moves", "♘ Knight · 3 moves", "♔ King · 2 moves", "♙ Pawn · 6 moves"):
+            self.assertIn(f"<summary>{said}</summary>", text)
+        named = {("rook", ("a1a2", "h1h2")): "Rooks", ("rook", ("a1a2", "a1a3")): "Rook",
+                 ("bishop", ("c1d2", "f1e2", "c1b2")): "Bishops", ("king", ("e1e2",)): "King"}
+        for (piece, ucis), name in named.items():
+            self.assertEqual(RM.group_name(piece, [row(uci) for uci in ucis]), name)
 
     def test_a_phone_asking_for_reduced_motion_gets_its_still_file_first(self):
         pic = ED.picture("chess", GAME, "assets/elements")
@@ -274,6 +540,24 @@ class Readme(unittest.TestCase):
         self.assertEqual(text.count("(prefers-reduced-motion: reduce)"), 6,
                          "the hall's wide and phone still files, and the leader's badge, by day and night")
         self.assertNotIn("badge", ED.block("chess-hall", EMPTY, "assets/elements"))
+
+    def test_the_hall_links_each_player_by_the_login_their_account_has_now_and_never_a_gone_one(self):
+        # @imvale is @imogen-vale now; @tokafor's account is gone, and whoever holds that login now is not linked;
+        # @jhalloran's ID has not been read, so their row's own login stands.
+        d = dict(KNOWN, logins={"1001": "imogen-vale", "1002": "", "1003": "wrencastellan", "583231": "octocat"})
+        text = ED.block("chess-hall", d, "assets/elements")
+        self.assertIn('<a href="https://github.com/imogen-vale"><picture><source media="(prefers-color-scheme: dark)" '
+                      'srcset="assets/elements/chess-hall-badge-2-dark.svg"><img alt="#2 @imogen-vale, 2 wins" ', text)
+        self.assertIn('\n<picture><source media="(prefers-color-scheme: dark)" srcset="assets/elements/chess-hall-'
+                      'badge-3-dark.svg"><img alt="#3 @tokafor, 2 wins" src="assets/elements/chess-hall-badge-3-'
+                      'day.svg"></picture>\n', text)
+        self.assertIn('<a href="https://github.com/jhalloran"><picture>', text)
+        self.assertIn("| 🥇 | [@imogen-vale](https://github.com/imogen-vale) | 40 | 2 | 7 |\n"
+                      "| 🥈 | @tokafor | 31 | 2 | 5 |\n", text)
+        self.assertNotIn("github.com/tokafor", text)
+        self.assertNotIn("github.com/imvale", text)
+        self.assertEqual(text.count("<a href="), 4, "every badge but the gone account's is a link")
+        self.assertEqual(text.count("(https://github.com/"), 5, "every leader but the gone account is linked")
 
     def test_the_leaderboard_is_folded_under_the_badges_with_the_house_on_top(self):
         text = ED.block("chess-hall", HALL, "assets/elements")
@@ -306,15 +590,82 @@ class Sets(unittest.TestCase):
             self.assertEqual(lint(svg, budget=BUDGET["sheet"]), [])
 
 
+def account(uid: int, login: str, name=None) -> dict:
+    """GitHub's answer to /user/{id}: the account as it is now."""
+    return {"login": login, "id": uid, "type": "User", "name": name}
+
+
 class Measured(unittest.TestCase):
     def test_a_winners_name_is_read_from_their_profile_when_the_sheet_can_letter_it(self):
         gh = FakeGitHub({}, users={"imvale": {"name": "Imogen  Vale"}, "tokafor": {"name": "Tomás <O>"},
                                    "jhalloran": {"name": None}})
-        self.assertEqual(measure.winners(gh, HALL["people"]), {"imvale": "Imogen Vale"})
+        self.assertEqual(measure.winners(gh, HALL["people"]), {"names": {"imvale": "Imogen Vale"}})
         self.assertNotIn("/users/tannergolden", [path for path, _ in gh.asked], "the house is never looked up")
         section = {"chess-hall": {**HALL, "names": {}, "measure": {}}}
         out = measure.measure(section, {}, git=None, gh=gh, subject="tannergolden", today=None, notes=[])
         self.assertEqual(out, {"chess-hall": {"names": {"imvale": "Imogen Vale"}}})
+        self.assertFalse([path for path, _ in gh.asked if path.startswith("/user/")], "a row without an ID")
+
+    def test_a_row_with_its_accounts_id_is_read_by_the_id_so_a_login_that_changed_hands_is_never_credited(self):
+        # @imvale renamed to @imogen-vale, and someone else took the login @imvale; @tokafor deleted their account;
+        # @wrencastellan kept theirs; @jhalloran's row carries no ID; @octocat is on the leaderboard alone.
+        paths = {"/user/1001": account(1001, "imogen-vale", "Imogen Vale"),
+                 "/user/1003": account(1003, "wrencastellan"), "/user/1004": account(1004, "jhalloran", "Jo Halloran"),
+                 "/user/583231": account(583231, "octocat", "The Octocat")}
+        users = {"imvale": {"login": "imvale", "name": "Mallory Mallet"},
+                 "tokafor": {"login": "tokafor", "name": "Eve"},
+                 "jhalloran": {"login": "jhalloran", "name": "Jo Halloran"}}
+        gh = FakeGitHub({}, users=users, paths=paths)
+        people = [*KNOWN["people"][:4], HALL["people"][4]]
+        measured = measure.winners(gh, people, KNOWN["leaders"])
+        self.assertEqual(measured, {"names": {"imogen-vale": "Imogen Vale", "jhalloran": "Jo Halloran"},
+                                    "logins": {"1001": "imogen-vale", "1002": "", "1003": "wrencastellan",
+                                               "1004": "jhalloran", "583231": "octocat"}})
+        asked = [path for path, _ in gh.asked]
+        self.assertEqual(sorted(asked), ["/user/1001", "/user/1002", "/user/1003", "/user/1004", "/user/583231",
+                                         "/users/jhalloran"], "each ID read once, the house never, a login only "
+                                                              "for the row without an ID")
+        d = dict(KNOWN, people=people, **measured)
+        self.assertEqual(C.check_hall(d), [])
+        drawn = [(p["name"], p["badge"], p["linked"]) for p in C.hall_state(d)["people"]]
+        self.assertEqual(drawn, [("@TANNERGOLDEN", "@tannergolden", True), ("IMOGEN VALE", "@imogen-vale", True),
+                                 ("@TOKAFOR", "@tokafor", False), ("@WRENCASTELLAN", "@wrencastellan", True),
+                                 ("JO HALLORAN", "@jhalloran", True)])
+        text = ED.block("chess-hall", d, "assets/elements")
+        self.assertNotIn("MALLORY", " ".join(p["name"] for p in C.hall_state(d)["people"]))
+        for gone in ("github.com/imvale", "github.com/tokafor"):
+            self.assertNotIn(gone, text)
+        section = {"chess-hall": {**{k: v for k, v in d.items() if k not in measured}, "measure": {}}}
+        out = measure.measure(section, {}, git=None, gh=gh, subject="tannergolden", today=None, notes=[])
+        self.assertEqual(out, {"chess-hall": measured}, "the run keeps the logins beside the names")
+        self.assertEqual(ED.validate(section, out, subject="tannergolden"), [])
+        merged = ED.merged(section, out, subject="tannergolden")["chess-hall"]
+        self.assertEqual(merged["logins"]["1001"], "imogen-vale")
+
+    def test_a_name_that_poses_as_a_handle_or_that_no_tone_can_letter_is_left_for_the_login(self):
+        names = {"imvale": "@tannergolden", "tokafor": "Иван Петров", "wrencastellan": "山田太郎",
+                 "jhalloran": "Ελένη Παππά"}
+        gh = FakeGitHub({}, users={login: {"name": name} for login, name in names.items()})
+        self.assertEqual(measure.winners(gh, HALL["people"]), {"names": {}})
+        for name in ("مريم", "김민준", "Tanner 🚀", "ß" * 21, "\u200b"):
+            with self.subTest(name=name):
+                gh = FakeGitHub({}, users={"imvale": {"name": name}})
+                self.assertEqual(measure.winners(gh, HALL["people"]), {"names": {}})
+        kept = {"imvale": "Tomás Ørsted", "tokafor": "Łukasz Żółć", "wrencastellan": "Zoë O'Brien-Ångström",
+                "jhalloran": "Đorđe Šćekić"}
+        gh = FakeGitHub({}, users={login: {"name": name} for login, name in kept.items()})
+        self.assertEqual(measure.winners(gh, HALL["people"]), {"names": kept})
+        d = dict(HALL, names=kept)
+        for tone in TONES:
+            with self.subTest(tone=tone):
+                E.WARNINGS.clear()
+                for variant in ("wide", "narrow"):
+                    E.draw("chess-hall", d, tone, "day", variant)
+                self.assertEqual(E.WARNINGS, [], "every name the run keeps is lettered as it is, in every tone")
+        E.WARNINGS.clear()
+        E.draw("chess-hall", dict(HALL, names={"imvale": "Иван Петров"}), STANDARD, "day", "wide")
+        self.assertTrue(E.WARNINGS, "a name the run leaves out would be drawn as question marks")
+        E.WARNINGS.clear()
 
 
 if __name__ == "__main__":

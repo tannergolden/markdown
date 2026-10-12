@@ -337,7 +337,7 @@ its markers, because only the README's author knows which section it belongs in:
 | `certificate` | The checks a repository passes, with the evidence for each.                  | git and GitHub: licence, security policy, pinned actions, Conventional Commits, and `ci: main`. |
 | `placard`     | A card that links to another repository.                                     | GitHub: `measure: owner/name`.                                                                  |
 | `chess`       | The game on @tannergolden's profile, with every legal move named under it.   | Nothing: the profile's own workflow writes it after every move.                                 |
-| `chess-hall`  | That game's Hall of Fame, a badge for each winner and the leaderboard.       | GitHub: each winner's name, from their profile.                                                 |
+| `chess-hall`  | That game's Hall of Fame, a badge for each winner and the leaderboard.       | GitHub: each winner's name, and each player's login now, read by their account's ID.            |
 
 What the settings write wins over what was measured, so any element can carry
 a `title`, a `caption` or a `desc` of its own, and a roster or a certificate
@@ -350,21 +350,45 @@ a made-up project that writes every one of them by hand.
 drawn on that profile alone, and a page anywhere else that names them is told
 so. The game is played by the profile's own workflow, which writes what both
 draw after every move. The board takes the position as `fen`, the `game` and
-`move`, the `last` move with its words and who played it when, any `check`, the
+`move` (without a `move`, the one the position is on), the `last` move with its
+words and who played it when, any `check` (the square of the king to move), the
 day the move is `due` by, how many `players` have moved for GitHub, what each
 side has `taken`, and the score sheet's latest rows as `history`. Its README
 block wraps the picture in the game's words, since an image cannot be clicked
 square by square: the turn's banner from `prompt` above it, and under it every
 legal move in `moves`, each with an emoji, a title of its own, its notation, what
 it does in plain words and a link to its ready-made issue, folded shut, then a
-`note`. The Hall of Fame takes the `games` played and the wins of the `house`,
-of GitHub (`world`) and the `draws`, and its five leading winners as `people`;
-`measure: {}` reads each winner's name from their profile, and its README block
+`note`. The `prompt` and the `note` are one line of text each, with links at
+most: nothing that would open a block of its own in the README, such as a
+heading, a list, a rule or a fence, and no image. The Hall of Fame takes the
+`games` played and the wins of the `house`, of GitHub (`world`) and the
+`draws`, and its five leading winners as `people`, ranked by their wins, each
+`[login, wins, last, games]`; `measure: {}` reads each winner's name from their
+profile, where the sheet can letter it in every theme (a name it cannot, or one
+with an `@` in it, leaves the winner named by their login), and its README block
 adds a badge for each, linking to it. Under the badges it folds shut the
 `leaders`: @tannergolden's own moves, wins and games on top, then GitHub's ten
-leading players by their wins and then their moves, each linking to their
-profile. Both are drawn in the standard theme or the page's print, as one
-layout, whatever holiday or collection is up.
+leading players by their wins and then their moves, each
+`[login, moves, wins, games]` and linking to their profile. Both are drawn in
+the standard theme or the page's print, as one layout, whatever holiday or
+collection is up.
+
+A row of `people` or of `leaders` may carry its player's account ID as a fifth
+field, `[login, wins, last, games, id]` and `[login, moves, wins, games, id]`,
+since a login can be given up and then taken by someone else. `measure: {}`
+reads each such account by its ID and keeps the login it has now in `logins`,
+beside the names, as `{"id": "login"}`: the sheet, the badges and the
+leaderboard show and link the player by that login. An ID that finds no account
+any more is kept as `""`: its row keeps the login it was written with, and the
+README links it nowhere, since that login may be someone else's by now. A row
+without an ID is read by its login.
+
+Every number has a ceiling the sheets have room to letter: the `game`, the
+`move`, the `players` and a leader's moves, wins and games up to 999,999,999;
+the move the `fen` is on and each `history` row's up to 99,999; the Hall's
+`games`, `house`, `world` and `draws`, and a winner's wins and games, up to
+999,999; and an account's ID up to sixteen digits. A number is a number, and
+text is text: a field YAML reads as something else is turned away.
 
 ---
 

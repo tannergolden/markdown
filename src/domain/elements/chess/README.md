@@ -38,6 +38,19 @@ for reduced motion. Round the pictures the README carries the game's words
 linking each winner's profile, and the leaderboard, @tannergolden's own row on
 top of GitHub's ten leading players.
 
+A player is known by their account, not their login, since a login can be
+given up and then taken by someone else. A row of the Hall of Fame may carry
+the player's account ID after its counts, `[login, wins, last, games, id]` on
+the podium and `[login, moves, wins, games, id]` on the leaderboard, and each
+run reads that account as it is now
+([`app/parts/elements.py`](../../../app/parts/elements.py)), keeping its login
+in `logins` beside the winners' `names`. The sheet, the badges and the
+leaderboard show and link the player by that login; an account that is gone
+keeps the login its row was written with, and the README links it nowhere.
+Every field the engine hands over is checked before it is drawn: text is text,
+every number stays under the ceiling the sheets are drawn to fit, and nothing
+in the README's lines can open a block of its own.
+
 ---
 
 ## 📝 File Log
