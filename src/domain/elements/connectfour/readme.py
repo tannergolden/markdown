@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: MIT
 """What the README carries round the Connect Four sheet: the turn's banner, and every open column as a move, folded.
 
-Chess names its moves as orders to an army on the ground; Connect Four's come from the sky, each disc a paratrooper
-dropped down a column: "Green Light, Go!" for the first, "Hold the Drop Zone!" for the centre, "Plug the Gap!" for
-a block, "Link Up, All Four!" for the win. The engine writes the names; this draws the block round the sheet, as
-chess's does (`games.readme`). The side to move is signed with the discs it drops, ⚪ for the house's White and ⚫
-for GitHub's Black, whichever side the Arbiter opened for.
+Each drop is named for what it does on the frame, as chess's moves are in chess's words: "Command the Centre!" for the
+centre column, "Block Column 7 or Lose!" for a block, "Strike Twice, Columns 1 and 5!" for a double threat, "Win It
+Across Row 1!" for the win. The engine writes the names; this draws the block round the sheet, as chess's does
+(`games.readme`). The side to move is signed with the discs it drops, ⚪ for the house's White and ⚫ for GitHub's Black,
+whichever side the Arbiter opened for.
 """
 from __future__ import annotations
 

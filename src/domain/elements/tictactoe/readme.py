@@ -2,10 +2,11 @@
 # SPDX-License-Identifier: MIT
 """What the README carries round the Tic-Tac-Toe sheet: the turn's banner, and every open cell as a move, folded.
 
-Chess names its moves as orders to an army; Tic-Tac-Toe is a duel, and names each move as a call across it: "Strike
-the Heart!" for the centre, "Parry the Thrust!" for a block, "Touché!" for the win. The engine writes the names;
-this draws the block round the sheet, as chess's does (`games.readme`). The side to move is signed with the mark it
-plays, ❌ for the house's X and ⭕ for GitHub's O, whichever side the Arbiter opened for.
+Each move is named for the position it makes, judged by perfect play, with a title of its own for each of the 764
+positions a move can make: "Seize the Centre!", "Save the Draw From the Centre!", "Fork Both Diagonals!", and a loss
+named as a loss. The engine writes the names; this draws the block round the sheet, as chess's does (`games.readme`).
+The side to move is signed with the mark it plays, ❌ for the house's X and ⭕ for GitHub's O, whichever side the Arbiter
+opened for.
 """
 from __future__ import annotations
 

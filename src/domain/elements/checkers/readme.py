@@ -2,12 +2,12 @@
 # SPDX-License-Identifier: MIT
 """What the README carries round the Checkers sheet: the turn's banner, and every legal move, folded.
 
-Chess names its moves as orders to an army on land; Checkers is a fleet at sea, and names each move as an order to
-it: "Full Sail Ahead!" for a step, "Board Them!" for a jump, "Rake Their Whole Line!" for a jump of two or more,
-"Make Him Admiral!" for a man crowned. The engine writes the names; this draws the block round the sheet, as chess's
-does (`games.readme`). The side to move is signed with its men, ⛀ for the house's White and ⛂ for GitHub's Black.
-A turn with more than ten moves is grouped as chess groups its moves by piece: the men's, then the kings', each
-named for as many as have a move in it.
+Each move is named in checkers' own words, as chess's are in chess's: Black's openings by the names the books give them
+("Open the Edinburgh!"), a jump that must be taken, a shot that gives one man to take two ("Spring the Two-for-One!"), a
+man crowned ("Make a King on 3!"). The engine writes the names; this draws the block round the sheet, as chess's does
+(`games.readme`). The side to move is signed with its men, ⛀ for the house's White and ⛂ for GitHub's Black. A turn with
+more than ten moves is grouped as chess groups its moves by piece: the men's, then the kings', each named for as many as
+have a move in it.
 """
 from __future__ import annotations
 
