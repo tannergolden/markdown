@@ -129,6 +129,29 @@ class Specimen(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("element:vitals block differs", out)
 
+    def test_render_takes_away_the_block_of_an_element_taken_out_of_the_settings(self):
+        # render keeps no lock, so what the page carries is read from the README: the blocks the kit drew.
+        self.render()
+        empty = self.root / "empty.json"
+        empty.write_text("{}", encoding="utf-8")
+        lines = self.settings.read_text(encoding="utf-8").splitlines(keepends=True)
+        a, b = lines.index("  vitals:\n"), lines.index("  history:\n")
+        self.settings.write_text("".join(lines[:a] + lines[b:]), encoding="utf-8")
+        mine = "<!-- markdown:element:soon:start -->\n<!-- markdown:element:soon:end -->"
+        self.readme.write_text(self.readme.read_text(encoding="utf-8") + "\n" + mine + "\n", encoding="utf-8")
+        code, out = self.check("--from", str(empty))
+        self.assertEqual(code, 1)
+        self.assertIn("element:vitals block no longer drawn", out)
+        code, out = self.render()
+        self.assertEqual(code, 0, out)
+        text = self.readme.read_text(encoding="utf-8")
+        self.assertNotIn("markdown:element:vitals", text)
+        self.assertFalse(list(self.out.glob("vitals*")))
+        self.assertIn(mine, text, "markers placed by hand, with nothing the kit drew between them, stay")
+        shown = set(re.findall(r"assets/elements/([\w.-]+\.svg)", text))
+        self.assertEqual(shown, {p.name for p in self.out.glob("*.svg")}, "the folder holds what the README shows")
+        self.assertEqual(self.check("--from", str(empty))[0], 0)
+
     def test_blocks_carry_every_variant_in_githubs_order(self):
         self.render()
         text = self.readme.read_text(encoding="utf-8")

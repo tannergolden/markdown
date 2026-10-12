@@ -22,6 +22,7 @@ import dataclasses
 import datetime as dt
 import json
 import posixpath
+import re
 import textwrap
 from pathlib import Path
 
@@ -69,6 +70,28 @@ def remembered(lk: dict) -> dict:
 def _drawn_elements(lk: dict) -> list[str]:
     """The elements the committed page carries: the ones this kit drew last, and so the ones it may take out."""
     return list((lk["parts"].get("elements") or {}).get("drawn") or [])
+
+
+def _shown_elements(page: Page, ports) -> list[str]:
+    """The elements whose blocks the README carries as this kit draws them, each showing its own files from the page's
+    elements folder: what the page carries when no lock says so, as after `render`. Markers with nothing between them,
+    or anything else, are the README's author's, and are left alone."""
+    text = ports.read_text(page.root / page.readme) or ""
+    folder = posixpath.join(page.out.strip("/") or ".", "elements")
+    rel = re.escape(posixpath.relpath(folder, posixpath.dirname(page.readme) or "."))
+    shown: list[str] = []
+    for eid in re.findall(r"<!-- markdown:element:([a-z][a-z0-9-]*):start -->", text):
+        block = readme.current(text, f"element:{eid}") or ""
+        if eid not in shown and re.search(rf'(?:src|srcset)="{rel}/{re.escape(eid)}-[^"/]*\.svg"', block):
+            shown.append(eid)
+    return shown
+
+
+def _carried(page: Page, ports, lk: dict) -> list[str]:
+    """Every element the committed page carries: the ones the lock says this kit drew, and any other whose block the
+    README shows as the kit drew it, so an element taken out of the settings takes its block with its files."""
+    was = _drawn_elements(lk)
+    return was + [eid for eid in _shown_elements(page, ports) if eid not in was]
 
 
 # --- planning ----------------------------------------------------------------------------------
@@ -426,7 +449,7 @@ def finish(page: Page, ports, measured: dict, lk: dict, *, use_lock: bool, advan
     held_was = (lock.drawn(lk) or {}).get("holiday") or ""
     design_was = (lock.drawn(lk) or {}).get("design") or ""
     said = remembered(lk).get("badges") or {}
-    was = _drawn_elements(lk)
+    was = _carried(page, ports, lk)
     reached: dict = {}
     if use_lock and "trophies" in measured and isinstance(page.cfg["trophies"], dict):
         # The case's ledger: a run folds itself in, which gives the cards their weekly change and NEW
@@ -605,7 +628,7 @@ def check(root: Path, cfg: dict, ports, measured: dict | None = None) -> int:
               "or pass --from", file=ports.out)
         return 2
     page = _offline_page(root, cfg, measured, lk, here_of(root, ports))
-    planned = _merge(plan_page(page, measured, was=_drawn_elements(lk)), localize(page, ports, lk, measured))
+    planned = _merge(plan_page(page, measured, was=_carried(page, ports, lk)), localize(page, ports, lk, measured))
     found = stale(page, ports, planned)
     if found:
         print("stale: " + ", ".join(found), file=ports.out)
