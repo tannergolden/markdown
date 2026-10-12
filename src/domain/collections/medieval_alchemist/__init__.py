@@ -538,5 +538,10 @@ class Alchemist(CollectionSet):
     def plate_edge(self, block):
         return step(block, -1)
 
+    # ---- the games
+    def game_squares(self, night):
+        """A board of the green lion on limewash."""
+        return (RAMP["lime"][3], RAMP["green"][3]) if night else (RAMP["lime"][5], RAMP["green"][3])
+
 
 SET = Alchemist()

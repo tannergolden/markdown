@@ -611,5 +611,10 @@ class Thanksgiving(Holiday):
     def plate_edge(self, block):
         return step(block, -1)
 
+    # ---- the games
+    def game_squares(self, night):
+        """A board of bark on wheat, the harvest's, by day and by night."""
+        return RAMP["wheat"][5], RAMP["bark"][4]
+
 
 SET = Thanksgiving()

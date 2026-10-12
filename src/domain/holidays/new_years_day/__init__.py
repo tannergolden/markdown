@@ -503,5 +503,10 @@ class NewYearsDay(Holiday):
     def plate_edge(self, block):
         return step(block, -1)
 
+    # ---- the games
+    def game_squares(self, night):
+        """A board of midnight on champagne."""
+        return (RAMP["champagne"][4], RAMP["midnight"][5]) if night else (RAMP["champagne"][5], RAMP["midnight"][5])
+
 
 SET = NewYearsDay()

@@ -4,8 +4,9 @@
 
 `Holiday` lays out every file the kit draws in a set: the headers, footers
 and link buttons (`banners`), the six elements (`elements`), the badges
-(`badges`) and the trophy case (`trophies`). A set is a subclass that
-overrides the drawing hooks below: its
+(`badges`), the trophy case (`trophies`), and the games on @tannergolden's
+profile with their Hall of Fame (`games`, `boards`, `hall`). A set is a
+subclass that overrides the drawing hooks below: its
 colours (`ink`), its paper and sky, its frame and garland, how its titles are
 lettered, the scenes its headers stand on and the ornaments of its footers,
 elements and badges. The kit calls the entry points at the bottom, with the
@@ -22,12 +23,13 @@ from ..pixel import Pix
 from .badges import Badges
 from .banners import NARROW, WIDE, Banners
 from .elements import Elements
+from .games import Games
 from .trophies import Trophies
 
 __all__ = ["Holiday", "NARROW", "WIDE"]
 
 
-class Holiday(Banners, Elements, Badges, Trophies):
+class Holiday(Banners, Elements, Badges, Trophies, Games):
     """One holiday's set. Subclasses override the hooks; the layouts are shared."""
     key = ""          # the calendar's key: "halloween"
     name = ""         # "Halloween"

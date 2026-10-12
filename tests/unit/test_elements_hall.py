@@ -248,7 +248,8 @@ class Settings(unittest.TestCase):
         d = ED.merged(section, {}, subject="tannergolden")["hall-of-fame"]
         self.assertEqual([(p["login"], p["wins"], p["by_game"]["chess"]) for p in H.state(d)["people"]],
                          [("tannergolden", 12, 5), ("imvale", 3, 2)])
-        self.assertIn("hall-of-fame", ED.OWN_THEMES, "it keeps the page's own theme whatever set is up")
+        self.assertIn("hall-of-fame", ED.OWN_THEMES, "it draws itself in the standard theme and every print")
+        self.assertIn("hall-of-fame", ED.GAMES, "and a holiday's set or a collection's design draws it in its pixels")
 
     def test_it_is_drawn_on_tannergoldens_profile_alone_beside_chess_hall(self):
         section = {"hall-of-fame": dict(HALL), "chess-hall": {"kind": "chess-hall", "games": 0, "house": 0,
@@ -487,10 +488,13 @@ class Readme(unittest.TestCase):
 
 
 class Sets(unittest.TestCase):
-    def test_a_holiday_or_collection_leaves_it_in_the_pages_own_theme(self):
+    def test_a_holiday_or_collection_draws_every_file_of_it_in_its_pixels(self):
         elements = ED.merged({"hall-of-fame": dict(HALL)}, {}, subject="tannergolden")
         printed = ED.render(elements, "blackprint")
-        self.assertEqual(ED.render(elements, "blackprint", "halloween"), printed)
+        drawn = ED.render(elements, "blackprint", "halloween")
+        self.assertEqual(sorted(drawn), sorted(printed), "the same files, the winners' badges among them")
+        for name, svg in drawn.items():
+            self.assertIn("halloween elements hall-of-fame ", svg, name)
         standard = ED.render(elements, STANDARD)
         self.assertEqual(sorted(standard), sorted(printed))
         self.assertIn("hall-of-fame-narrow-still-dark.svg", standard)

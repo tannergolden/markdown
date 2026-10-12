@@ -39,9 +39,14 @@ REQUIRED = {
 # board's own sheet says whose turn it is.
 FOLDS = {"chess": ("♟️ Chess", True), "checkers": ("🏁 Checkers", False), "connectfour": ("⚫ Connect Four", False),
          "tictactoe": ("❌ Tic-Tac-Toe", False)}
-# Kinds that draw themselves in the standard theme and every print, and that no holiday or collection draws yet:
-# they keep the page's own theme whatever set is up.
-OWN_THEMES = frozenset({"tictactoe", "connectfour", "checkers", "chess", "chess-hall", "hall-of-fame"})
+# The games on @tannergolden's profile and their Hall of Fame: drawn in the standard theme and every print by their
+# own packages, and by a holiday's set or a collection's design in its pixels (`holidays.designs.games`), every file
+# of one in the set or none, so a board is never half in one look and half in another.
+GAMES = frozenset({"tictactoe", "connectfour", "checkers", "chess", "hall-of-fame"})
+# Kinds that draw themselves in the standard theme and every print, by their own packages, rather than as the
+# standard theme's or a set's six elements are drawn: the games, which a set draws by its own path instead (`GAMES`),
+# and chess's own Hall of Fame, which no set draws, so it keeps the page's own theme whatever set is up.
+OWN_THEMES = frozenset({"chess-hall"} | GAMES)
 # Kinds the elements kit once drew, and the release that retired each, so settings that still name one
 # are told what happened rather than that the kind is unknown.
 RETIRED = {"plan": "1.3.0", "seal": "1.4.0"}
@@ -131,7 +136,8 @@ def render(elements: dict, tone: str, holiday: str = "") -> dict[str, str]:
     same data into the same files. While `holiday` names a pixel set (a
     holiday's while it is up, or a collection's design for the month; see
     `pixelsets`) it draws them instead, at its own shared half height, and a file it cannot draw within
-    the lint is drawn as it always is.
+    the lint is drawn as it always is. A set draws a game, or the Hall of Fame, whole or not at all
+    (`held_game`).
     """
     std = tone == STANDARD
     half = (SE.half_height if std else E.half_height)(elements)
@@ -144,6 +150,11 @@ def render(elements: dict, tone: str, holiday: str = "") -> dict[str, str]:
     for eid, d in elements.items():
         kind = d["kind"]
         own = kind in OWN_THEMES
+        if held and kind in GAMES:
+            drawn = held_game(held, eid, kind, d)
+            if drawn:
+                files.update(drawn)
+                continue
         for variant in E.variants(kind, d):
             for theme in ("day", "dark"):
                 svg = None
@@ -156,6 +167,21 @@ def render(elements: dict, tone: str, holiday: str = "") -> dict[str, str]:
                 files[file_name(eid, variant, theme)] = svg or (
                     SE.draw(kind, d, theme, variant, height=half) if std and not own else
                     E.draw(kind, d, tone, theme, variant, height=half))
+    return files
+
+
+def held_game(held, eid: str, kind: str, d: dict) -> dict[str, str] | None:
+    """Every file of a game, or of the Hall of Fame, as the set `held` draws it, {name: svg}; None when the set cannot
+    draw one of them within the lint, as when it cannot letter a winner's name, and the whole element keeps the
+    page's own look."""
+    d = E.describe(kind, d)
+    files = {}
+    for variant in E.variants(kind, d):
+        for theme in ("day", "dark"):
+            svg = held.game(kind, d, THEMES[theme], variant)
+            if svg is None or lint(svg, budget=BUDGET[E.KINDS[kind][2]], tokens=held.game_tokens):
+                return None
+            files[file_name(eid, variant, theme)] = svg
     return files
 
 

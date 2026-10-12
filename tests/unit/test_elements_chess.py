@@ -754,10 +754,18 @@ class Finished(unittest.TestCase):
 
 
 class Sets(unittest.TestCase):
-    def test_a_holiday_or_collection_leaves_both_in_the_pages_own_theme(self):
+    def test_a_holiday_or_collection_draws_the_board_in_its_pixels_and_chesss_own_hall_in_the_pages_theme(self):
         elements = ED.merged({"chess": dict(GAME), "chess-hall": dict(HALL)}, {}, subject="tannergolden")
         printed = ED.render(elements, "blackprint")
-        self.assertEqual(ED.render(elements, "blackprint", "halloween"), printed)
+        for held in ("halloween", "medieval-chessmen:2026-02-01"):
+            drawn = ED.render(elements, "blackprint", held)
+            with self.subTest(held=held):
+                self.assertEqual(sorted(drawn), sorted(printed), "the same files, whoever draws them")
+                for name, svg in drawn.items():
+                    if name.startswith("chess-hall"):
+                        self.assertEqual(svg, printed[name], "chess's own Hall keeps the page's own theme")
+                    else:
+                        self.assertIn(f"{held.partition(':')[0]} elements chess ", svg, name)
         standard = ED.render(elements, STANDARD)
         self.assertEqual(sorted(standard), sorted(printed))
         self.assertNotEqual(standard["chess-day.svg"], printed["chess-day.svg"], "the standard theme has its own skin")

@@ -541,5 +541,10 @@ class Chessmen(CollectionSet):
         p.text(A.LINK_TEXT, 4, text, C["ink"])
         return p
 
+    # ---- the games
+    def game_squares(self, night):
+        """A board of ivory and ivory stained red, as the chessmen themselves are."""
+        return (RAMP["ivory"][4], RAMP["stain"][3]) if night else (RAMP["ivory"][5], RAMP["stain"][4])
+
 
 SET = Chessmen()

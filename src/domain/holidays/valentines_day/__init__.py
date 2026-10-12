@@ -492,5 +492,10 @@ class ValentinesDay(Holiday):
     def plate_edge(self, block):
         return step(block, -1)
 
+    # ---- the games
+    def game_squares(self, night):
+        """A board of blush on lace, a love letter's own."""
+        return (RAMP["lace"][3], RAMP["blush"][2]) if night else (RAMP["lace"][4], RAMP["blush"][3])
+
 
 SET = ValentinesDay()

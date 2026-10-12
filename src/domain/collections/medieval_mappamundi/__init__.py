@@ -487,5 +487,21 @@ class MappaMundi(CollectionSet):
     def plate_edge(self, block):
         return self._lift(block, -1)
 
+    # ---- the games
+    def game_title(self, p, x, y, s, night, scale):
+        """A move engraved as the chart's titles are, its letters cut with the engraver's shadow of fine level lines,
+        without the banderole a title unfurls on."""
+        if scale >= 2:
+            n = len(p.words)
+            off = max(1, scale // 2)
+            p.text(x + off, y + off, s, A.INK[4], "57", scale, paint=A.HATCH_NIGHT if night else A.HATCH_DAY,
+                   night=night)
+            del p.words[n:]      # the shadow is cut into the sheet, not a word of its own
+        return p.text(x, y, s, self.ink(night)["title"], "57", scale, **self.lit(night))
+
+    def game_squares(self, night):
+        """A board of the chart's green sea on parchment."""
+        return (RAMP["parch"][5], RAMP["sea"][2]) if night else (RAMP["parch"][6], RAMP["sea"][2])
+
 
 SET = MappaMundi()

@@ -598,4 +598,10 @@ class Hoard(CollectionSet):
         except KeyError:
             return block
 
+    # ---- the games
+    def game_squares(self, night):
+        """A board of the hoard's gold on bone."""
+        return (RAMP["bone"][4], RAMP["gold"][2]) if night else (RAMP["bone"][5], RAMP["gold"][2])
+
+
 SET = Hoard()

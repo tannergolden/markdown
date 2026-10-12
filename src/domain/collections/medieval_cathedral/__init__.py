@@ -510,5 +510,10 @@ class Cathedral(CollectionSet):
     def plate_edge(self, block):
         return step(block, -1)
 
+    # ---- the games
+    def game_squares(self, night):
+        """A board of violet glass on the nave's stone."""
+        return (RAMP["stone"][4], RAMP["violet"][3]) if night else (RAMP["stone"][5], RAMP["violet"][4])
+
 
 SET = Cathedral()

@@ -757,5 +757,10 @@ class Forge(CollectionSet):
     def plate_edge(self, block):
         return step(block, -1)
 
+    # ---- the games
+    def game_squares(self, night):
+        """A board of the smithy's brass on bright steel, by day and by night."""
+        return RAMP["steel"][5], RAMP["brass"][2]
+
 
 SET = Forge()

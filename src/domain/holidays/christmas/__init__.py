@@ -421,5 +421,10 @@ class Christmas(Holiday):
     def plate_edge(self, block):
         return near(block, -1)
 
+    # ---- the games
+    def game_squares(self, night):
+        """A board of pine on snow."""
+        return (RAMP["snow"][2], RAMP["pine"][3]) if night else (RAMP["snow"][4], RAMP["pine"][3])
+
 
 SET = Christmas()

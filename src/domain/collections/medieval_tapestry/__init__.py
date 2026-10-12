@@ -593,5 +593,10 @@ class Tapestry(CollectionSet):
     def plate_edge(self, block):
         return step(block, -1)
 
+    # ---- the games
+    def game_squares(self, night):
+        """A board of terracotta wool on linen."""
+        return (RAMP["linen"][3], RAMP["terracotta"][3]) if night else (RAMP["linen"][4], RAMP["terracotta"][3])
+
 
 SET = Tapestry()

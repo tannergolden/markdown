@@ -283,6 +283,7 @@ class EveryFile(unittest.TestCase):
             fn, variants, klass = E.KINDS[kind]
             self.assertEqual((variants, klass), (("wide", "narrow", "still", "narrow-still"), "board"))
             self.assertIn(kind, ED.OWN_THEMES)
+            self.assertIn(kind, ED.GAMES, "a holiday's set or a collection's design draws it in its pixels")
         self.assertEqual(E.GAMES, ("tictactoe", "connectfour", "checkers"))
 
     def test_a_sheet_is_the_width_of_chesss_and_as_tall_in_every_theme(self):
@@ -318,11 +319,14 @@ class Standard_(unittest.TestCase):
                 self.assertIn(P.hexof(P.ACCENT), standard, "the cobalt of chess's dark squares and the band's block")
                 self.assertIn('fill="url(#', standard)
 
-    def test_a_holiday_or_collection_leaves_the_games_in_the_pages_own_theme(self):
+    def test_a_holiday_or_collection_draws_every_file_of_each_game_in_its_pixels(self):
         elements = ED.merged({d["kind"]: dict(d) for d in (TTT_GITHUB, C4_HOUSE, CK_GITHUB)}, {},
                              subject="tannergolden")
         printed = ED.render(elements, "blackprint")
-        self.assertEqual(ED.render(elements, "blackprint", "halloween"), printed)
+        drawn = ED.render(elements, "blackprint", "halloween")
+        self.assertEqual(sorted(drawn), sorted(printed), "the same files, whoever draws them")
+        for name, svg in drawn.items():
+            self.assertIn(f"halloween elements {name.split('-')[0]} ", svg, name)
         standard = ED.render(elements, STANDARD)
         self.assertEqual(sorted(standard), sorted(printed))
         for key in ("tictactoe", "connectfour", "checkers"):

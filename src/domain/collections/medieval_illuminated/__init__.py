@@ -672,5 +672,17 @@ class Illuminated(CollectionSet):
         except KeyError:
             return G[2]
 
+    # ---- the games
+    def game_title(self, p, x, y, s, night, scale):
+        """A move in gold leaf, every letter edged in dark ink over the shadow its gilding throws, without the panel
+        and the initial a title stands on."""
+        s = fold(s, "57")
+        A.title_edge(p, x, y, s, scale, RAMP["ink"][0], O[0] if night else L[0])
+        return p.text(x, y, s, self.ink(night)["title"], "57", scale, **self.lit(night))
+
+    def game_squares(self, night):
+        """A board of lapis on vellum, the page's own blue."""
+        return (RAMP["vellum"][4], RAMP["lapis"][4]) if night else (RAMP["vellum"][5], RAMP["lapis"][4])
+
 
 SET = Illuminated()

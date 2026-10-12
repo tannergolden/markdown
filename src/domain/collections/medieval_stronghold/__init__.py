@@ -637,5 +637,10 @@ class Stronghold(CollectionSet):
     def plate_edge(self, block):
         return step(block, -1)
 
+    # ---- the games
+    def game_squares(self, night):
+        """A board of the castle's slate on dressed stone."""
+        return (RAMP["cloud"][1], RAMP["slate"][4]) if night else (RAMP["cloud"][3], RAMP["slate"][4])
+
 
 SET = Stronghold()

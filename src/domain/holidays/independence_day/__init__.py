@@ -608,5 +608,10 @@ class IndependenceDay(Holiday):
     def plate_edge(self, block):
         return step(block, -1)
 
+    # ---- the games
+    def game_squares(self, night):
+        """A board of navy on white cloth, the flag's field."""
+        return (RAMP["cloth"][3], RAMP["navy"][4]) if night else (RAMP["cloth"][4], RAMP["navy"][4])
+
 
 SET = IndependenceDay()

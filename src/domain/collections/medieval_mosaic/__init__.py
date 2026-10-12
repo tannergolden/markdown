@@ -714,5 +714,10 @@ class Mosaic(CollectionSet):
     def plate_edge(self, block):
         return step(block, -1)
 
+    # ---- the games
+    def game_squares(self, night):
+        """A board of imperial porphyry on gold tesserae."""
+        return (RAMP["tile"][2], RAMP["porphyry"][4]) if night else (RAMP["tile"][6], RAMP["porphyry"][4])
+
 
 SET = Mosaic()

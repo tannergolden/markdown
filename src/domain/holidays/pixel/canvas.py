@@ -12,8 +12,10 @@ see-through pixels, shapes (the big halos) and uses of symbols drawn once in
 What moves moves in discrete steps, so a pixel is either lit or not: lights
 twinkle, flicker or blink on three staggered phases, a ghost bobs, fog
 drifts, a firework is a run of frames each shown for its moment of the loop,
-and what flies steps round a path. The still file, for reduced motion, keeps
-one frame of each and moves nothing.
+and what flies steps round a path. A part that moves once as the file opens,
+as a game's last move is played again, steps to where it rests and stays
+(`once`). The still file, for reduced motion, keeps one frame of each and
+moves nothing.
 
 Letters are set in the two bitmap faces of `type`, each glyph drawn once as
 one path and reused, stroked in the colour it is set in. A set may paint its
@@ -25,6 +27,7 @@ from __future__ import annotations
 import html
 import math
 import random
+from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Callable
 
@@ -83,6 +86,7 @@ class Pix:
         self.raws: list = []         # (z, order, moving markup, still markup)
         self.lamps: list = []        # flames and bulbs whose light falls on what stands near them
         self.words: list = []        # (x0, y0, x1, y1) of every line of text set, so nothing lies on it
+        self.into: str | None = None  # the layer what is drawn on the base layer goes onto instead (see `onto`)
         self._n = 0
         self.layer("base")
         self.layer("haze")
@@ -121,6 +125,35 @@ class Pix:
         long and hidden the rest of the time. The still file keeps only the frames marked `keep`."""
         return self.layer(name, ("seq", t0, t1, dur, keep), z=z)
 
+    def once(self, name: str, animation: str, z: float = 1, outer: str = "") -> str:
+        """A layer that moves once as the file opens and rests where it ends, as a game's last move is played
+        again: `animation` is its SMIL, every attribute it animates resting at its static value, so the layer
+        is complete without it, and the still file draws the layer at rest. `outer` is attributes for a group
+        round it that holds still while it moves, such as the clip a block rises through."""
+        return self.layer(name, ("once", animation, outer), z=z)
+
+    @contextmanager
+    def onto(self, name: str):
+        """While this lasts, what is drawn on the base layer, and its letters' finish and the haze of their glow,
+        goes onto layer `name` and its own twins instead: so a set's hook, which knows nothing of layers, can draw
+        a part that moves by itself."""
+        was, self.into = self.into, name
+        try:
+            yield
+        finally:
+            self.into = was
+
+    def _on(self, L: str) -> str:
+        """The layer `L` is drawn on: itself, or while `onto` lasts, the base layer's and the haze's twins on the
+        layer drawn onto, made as they are first asked for, moving as it moves."""
+        if not self.into or not (L.startswith("base") or L == "haze"):
+            return L
+        name = self.into + ("haze" if L == "haze" else L[4:])
+        if name not in self.layers:
+            z, anim = (self.meta[self.into][0], self.meta[self.into][2]) if self.into in self.meta else (0, None)
+            self.layer(name, anim, z=z - 20 if L == "haze" else z + {"~": .3, "+": .5}.get(L[4:], 0))
+        return name
+
     def _over(self, L: str) -> str:
         """The see-through layer just above `L`, for light laid over its solid pixels."""
         name = L + "+"
@@ -144,6 +177,7 @@ class Pix:
             return
         x, y = int(x), int(y)
         if 0 <= x < self.w and 0 <= y < self.h:
+            L = self._on(L)
             if L not in self.layers:
                 self.layer(L)
             self.layers[L][(x, y)] = c
@@ -154,6 +188,7 @@ class Pix:
         x, y = int(x), int(y)
         if not (0 <= x < self.w and 0 <= y < self.h) or a <= 0:
             return
+        L = self._on(L)
         if L not in self.layers:
             self.layer(L)
         old = self.layers[L].get((x, y))
@@ -243,6 +278,7 @@ class Pix:
         return sid
 
     def use(self, key, x, y, L="base", stroke=None, scale=1):
+        L = self._on(L)
         if L not in self.layers:
             self.layer(L)
         self.uses[L].append((stroke, self.syms[key], x, y, scale))
@@ -299,6 +335,7 @@ class Pix:
             shape = only is None and max(rx, ry) > 6
         if shape:
             prev = 0.0
+            L = self._on(L)
             for k, a in enumerate(alphas):
                 f = (n - k) / n
                 o = 1 - (1 - a) / (1 - prev)
@@ -664,6 +701,13 @@ class Pix:
                 vals = ";".join(f"0 {-v}" for v in lift)
                 body.append(f'<g>{content}<animateTransform attributeName="transform" type="translate" values="{vals}" '
                             f'dur="{num(dur)}s" repeatCount="indefinite" calcMode="discrete"/></g>')
+            elif anim and anim[0] == "once":
+                _, animation, outer = anim
+                if still:
+                    body.append(f"<g {outer}>{content}</g>" if outer else content)
+                else:
+                    inner = f"<g>{content}{animation}</g>"
+                    body.append(f"<g {outer}>{inner}</g>" if outer else inner)
             elif anim and anim[0] == "drift":
                 _, x0, y0, x1, y1, period, cid, speed = anim
                 if still:

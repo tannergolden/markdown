@@ -826,5 +826,10 @@ class Longship(CollectionSet):
     def plate_edge(self, block):
         return step(block, -1)
 
+    # ---- the games
+    def game_squares(self, night):
+        """A board of the fjord's sea on cream, by night the deep water under the fells."""
+        return (RAMP["fell"][4], RAMP["deep"][5]) if night else (RAMP["cream"][4], RAMP["sea"][3])
+
 
 SET = Longship()

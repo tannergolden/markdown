@@ -520,5 +520,10 @@ class Juneteenth(Holiday):
     def plate_edge(self, block):
         return step(block, -1)
 
+    # ---- the games
+    def game_squares(self, night):
+        """A board of the Gulf on sand, Galveston's."""
+        return (RAMP["sand"][3], RAMP["sea"][3]) if night else (RAMP["sand"][5], RAMP["sea"][4])
+
 
 SET = Juneteenth()
