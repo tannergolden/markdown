@@ -83,13 +83,13 @@ is the example of all of it on a profile repository. Its README is drawn by
 this kit every night at midnight EST, in profile mode, in the `blackprint`,
 with the holidays on, from one stub and one settings file:
 
-| Part         | On the profile                                                                                                                                                                                |
-| :----------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Banners**  | A header read from GitHub, the name and the bio, with a motto, a note and six figures; a footer with its closing words, and four buttons under it.                                            |
-| **Badges**   | Four static badges, and two live ones the run measures: whether the standards pass their own checks, and how long ago the last commit was.                                                    |
-| **Elements** | A schematic of how its repositories fit together, written by hand, and placards for the two latest releases and two good first issues, which its own scripts rewrite weekly.                  |
-| **Game**     | Chess, @tannergolden against GitHub, played live: the board after every move, every legal move a link that plays it, and the Hall of Fame with its leaderboard, drawn for this profile alone. |
-| **Trophies** | The case in profile mode: five core trophies in one row, the level and next-up cards over them, and the achievements under them.                                                              |
+| Part         | On the profile                                                                                                                                                                                                                         |
+| :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Banners**  | A header read from GitHub, the name and the bio, with a motto, a note and six figures; a footer with its closing words, and four buttons under it.                                                                                     |
+| **Badges**   | Four static badges, and two live ones the run measures: whether the standards pass their own checks, and how long ago the last commit was.                                                                                             |
+| **Elements** | A schematic of how its repositories fit together, written by hand, and placards for the two latest releases and two good first issues, which its own scripts rewrite weekly.                                                           |
+| **Games**    | Tic-Tac-Toe, Connect Four, Checkers and Chess, @tannergolden against GitHub, played live: each board after every move, every legal move a link that plays it, and the Hall of Fame with its leaderboard, drawn for this profile alone. |
+| **Trophies** | The case in profile mode: five core trophies in one row, the level and next-up cards over them, and the achievements under them.                                                                                                       |
 
 Its stub is the one below with `mode: profile` and `theme: blackprint`, and
 [its settings](https://github.com/tannergolden/tannergolden/blob/Development/.github/markdown.yaml)
@@ -292,70 +292,155 @@ shows an HTML file as its source.
 
 ---
 
-## ♟️ The Game On @tannergolden's Profile
+## ♟️ The Games On @tannergolden's Profile
 
 > [!IMPORTANT]
-> **The game's designs are exclusive to
+> **The games' designs are exclusive to
 > [@tannergolden's profile README](https://github.com/tannergolden).** The kit
 > draws them for that one page and nowhere else: any other page whose settings
 > name them is told so. **[See the games live on @tannergolden's
 > profile](https://github.com/tannergolden)**, where anyone on GitHub can play
 > the next move.
 
-The kit draws one game for one page: chess, @tannergolden as White against
-everyone else on GitHub as Black. A player picks a move under the board on the
-profile, its link opens a ready-made issue in
-[tannergolden/play](https://github.com/tannergolden/play), and the profile's
-own engine plays it and has the kit draw the page again. Like a theme, the game
-is a design of its own, drawn in every look the page can take:
+The kit draws four games for one page, @tannergolden, the house, against
+everyone else on GitHub, in four tiers, from a game anyone can see to the
+bottom of to one nobody ever will:
 
-- **The board**, as it stands, with the state of play beside it: the two
-  sides, whose turn it is and until when, the last move in words, what each
-  side has taken and the score sheet's latest rows. It opens by playing the
-  last move again, and a king in check is marked on its square.
-- **The Hall of Fame**: the series between the house and GitHub, then a podium
-  of its three leading winners and two more beside it, each named as their
-  GitHub profile names them. Under it in the README, a badge for each winner,
-  the leader's glinting, and the leaderboard folded shut.
-- **Every tone**: the standard theme's enamel and lit pieces, or a print's
-  drawing on drafting paper, poché for the dark squares and line shading for
-  the light. A holiday's set or a collection's design leaves the game in the
-  standard theme's look or the page's print.
+| Tier | Game         | Positions                            | The house plays                                | Who opens                               |
+| :--: | :----------- | :----------------------------------- | :--------------------------------------------- | :-------------------------------------- |
+| 1    | Tic-Tac-Toe  | 765                                  | X when the Arbiter opens for it, else O        | The Arbiter, for a side drawn at random |
+| 2    | Connect Four | about 4.5 × 10¹² (4,531,985,219,092) | Dark when the Arbiter opens for it, else Light | The Arbiter, for a side drawn at random |
+| 3    | Checkers     | about 5 × 10²⁰                       | Dark, the dark men                             | The house                               |
+| 4    | Chess        | about 10⁴³ to 10⁵⁰                   | White                                          | The house                               |
+
+A player picks a move under a board on the profile, its link opens a
+ready-made issue in [tannergolden/play](https://github.com/tannergolden/play),
+and the profile's own engine plays it and has the kit draw the page again.
+
+**Who opens.** The side that moves first always plays a game's first colour:
+X, the dark discs, the dark men, White. The house opens Checkers and Chess,
+whose first move gives little away. In the other two the first player has a
+far higher chance of winning, so **the Arbiter opens every game of Tic-Tac-Toe
+and Connect Four, for a side drawn at random, with a random legal move**, and
+neither side is favoured: the side it opened for plays X or the dark discs, the
+other O or the light, and the house's colour changes from game to game.
+
+- **Connect Four is solved**: whoever drops the first disc can force a win with
+  perfect play, by opening in the centre column (James D. Allen and Victor
+  Allis, independently, in 1988).
+- **Tic-Tac-Toe is a draw with perfect play**, but its first player wins far
+  more often whenever anyone slips: of the 255,168 possible games, X wins
+  131,184 (about 51%), O wins 77,904 (about 31%) and 46,080 are drawn.
+- **Checkers** was weakly solved as a draw in 2007, and its first move's edge is
+  small; **in Chess**, White scores about 55% in master play. The house opens
+  both.
+
+The Arbiter's opening move is its own and counts for nobody: a fresh board of
+Tic-Tac-Toe or Connect Four comes with it already played, and the other side to
+reply.
+
+**The winning board.** Every finished game, chess's included, keeps its final
+board up for two days before a fresh one comes by itself: the final position,
+who won and how on the turn's plate, or that it was drawn, the winning line
+where the game has one, and the day the fresh board comes. Nothing can be played
+on it, so its README block is the banner, the board and the note, with no move
+under it.
+
+Like a theme, each game is a design of its own, drawn in every look the page
+can take, and the four are one family: the same sheet and band, the same panel
+beside the board a section at a time (the two sides, whose turn it is and
+until when, the last move in notation and in words, what the game keeps count
+of, and the score sheet), and the same motion as each file opens:
+
+| Game             | A move is written                                                                                   | The panel counts                                                     | As the file opens                                                                                                                    |
+| :--------------- | :-------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- |
+| **Tic-Tac-Toe**  | Its mark and its cell, named as chess names squares: `Xb2`, with `+` for a threat and `#` for a win | What perfect play says from here, and where each side would win next | The last mark draws itself stroke by stroke, a cell the side to move must block is marked, and a won line is struck through          |
+| **Connect Four** | Its column, numbered 1 to 7 from the left: `4`, with `+` for a threat and `#` for four in a row     | Each side's discs left, a rack of twenty-one emptying                | The last disc is held over its column, falls behind the frame and lands with a bounce, and a won four are ringed and joined          |
+| **Checkers**     | As checkers writes it, its 32 dark squares numbered: `11-15` a step, `22x15x8` a jump               | The men each side has taken, and the kings each has made             | The last man slides, or hops each man it takes, its path drawn in behind it, and is crowned if it lands on the far row               |
+| **Chess**        | In SAN: `Nf3`, `exd5`, `O-O`, `Qxf7#`                                                               | What each side has taken, and the lead                               | The last piece comes in from its square, a knight leaping and a castling king bringing its rook round, and a king in check is marked |
+
+- **Every tone**: the standard theme's enamel, chess's own board and lit pieces
+  under one lamp, the last move marked amber and whatever the side to move must
+  answer (a king in check, a mark or a disc to block, a man that must jump)
+  glowing red; Tic-Tac-Toe's cells and bars are chess's light and dark squares,
+  its X always light and its O always dark whoever plays them, Connect Four's
+  frame is the theme's cobalt, and Checkers plays on chess's own board. Or a
+  print's drawing on drafting paper: poché for the dark squares, the bars and
+  the frame, line shading for the light pieces, phantom lines where a piece
+  stood and a revision cloud round whatever must be answered. A holiday's set or
+  a collection's design leaves the games in the standard theme's look or the
+  page's print.
+- **The Hall of Fame**, chess's: the series between the house and GitHub, then a
+  podium of its three leading winners and two more beside it, each named as
+  their GitHub profile names them. Under it in the README, a badge for each
+  winner, the leader's glinting, and the leaderboard folded shut.
 
 Each sheet comes as a **day** file and a **dark** file, wide and on a phone,
 moving as it opens and still for reduced motion, like a header. Round the
-pictures the README carries the game's words, since an image cannot be clicked
-square by square: the turn's banner, and every legal move with a link that
-opens its ready-made issue.
+pictures the README carries each game's words, since an image cannot be
+clicked square by square: the turn's banner, and every legal move with a link
+that opens its ready-made issue, folded shut under one line saying whose turn
+it is, signed with what that side plays: ❌ or ⭕, ⚫ or ⚪, ⛂ or ⛀, ♔ or ♚.
 
 <table>
   <tr>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-wide-blackprint-still-dark.svg"><img src="docs/themes/chess/chess-wide-blackprint-still-day.svg" alt="The chess board in blackprint, the profile's print, from a sample game" width="100%"></picture></a>
-      <br /><sub>The board, in <code>blackprint</code>, the profile's print</sub>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#tictactoe"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/tictactoe/tictactoe-wide-blackprint-still-dark.svg"><img src="docs/themes/tictactoe/tictactoe-wide-blackprint-still-day.svg" alt="The Tic-Tac-Toe board in blackprint, the profile's print, from a sample game the Arbiter opened for GitHub" width="100%"></picture></a>
+      <br /><sub>Tic-Tac-Toe, in <code>blackprint</code>, the profile's print</sub>
     </td>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-hall-wide-blackprint-still-dark.svg"><img src="docs/themes/chess/chess-hall-wide-blackprint-still-day.svg" alt="The Hall of Fame in blackprint, from a sample game's fictional winners" width="100%"></picture></a>
-      <br /><sub>The Hall of Fame, in <code>blackprint</code></sub>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#connectfour"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/connectfour/connectfour-wide-blackprint-still-dark.svg"><img src="docs/themes/connectfour/connectfour-wide-blackprint-still-day.svg" alt="The Connect Four frame in blackprint, from a sample game the Arbiter opened for GitHub" width="100%"></picture></a>
+      <br /><sub>Connect Four, in <code>blackprint</code></sub>
     </td>
   </tr>
   <tr>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-wide-standard-still-dark.svg"><img src="docs/themes/chess/chess-wide-standard-still-day.svg" alt="The chess board in standard, from a sample game" width="100%"></picture></a>
-      <br /><sub>The board, in <code>standard</code></sub>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#checkers"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/checkers/checkers-wide-blackprint-still-dark.svg"><img src="docs/themes/checkers/checkers-wide-blackprint-still-day.svg" alt="The Checkers board in blackprint, from a sample game" width="100%"></picture></a>
+      <br /><sub>Checkers, in <code>blackprint</code></sub>
     </td>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-hall-wide-standard-still-dark.svg"><img src="docs/themes/chess/chess-hall-wide-standard-still-day.svg" alt="The Hall of Fame in standard, from a sample game's fictional winners" width="100%"></picture></a>
-      <br /><sub>The Hall of Fame, in <code>standard</code></sub>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-wide-blackprint-still-dark.svg"><img src="docs/themes/chess/chess-wide-blackprint-still-day.svg" alt="The chess board in blackprint, from a sample game" width="100%"></picture></a>
+      <br /><sub>Chess, in <code>blackprint</code></sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#tictactoe"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/tictactoe/tictactoe-wide-standard-still-dark.svg"><img src="docs/themes/tictactoe/tictactoe-wide-standard-still-day.svg" alt="The Tic-Tac-Toe board in standard, from a sample game the Arbiter opened for GitHub" width="100%"></picture></a>
+      <br /><sub>Tic-Tac-Toe, in <code>standard</code></sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#connectfour"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/connectfour/connectfour-wide-standard-still-dark.svg"><img src="docs/themes/connectfour/connectfour-wide-standard-still-day.svg" alt="The Connect Four frame in standard, from a sample game the Arbiter opened for GitHub" width="100%"></picture></a>
+      <br /><sub>Connect Four, in <code>standard</code></sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#checkers"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/checkers/checkers-wide-standard-still-dark.svg"><img src="docs/themes/checkers/checkers-wide-standard-still-day.svg" alt="The Checkers board in standard, from a sample game" width="100%"></picture></a>
+      <br /><sub>Checkers, in <code>standard</code></sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-wide-standard-still-dark.svg"><img src="docs/themes/chess/chess-wide-standard-still-day.svg" alt="The chess board in standard, from a sample game" width="100%"></picture></a>
+      <br /><sub>Chess, in <code>standard</code></sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-hall-wide-blackprint-still-dark.svg"><img src="docs/themes/chess/chess-hall-wide-blackprint-still-day.svg" alt="Chess's Hall of Fame in blackprint, from a sample game's fictional winners" width="100%"></picture></a>
+      <br /><sub>Chess's Hall of Fame, in <code>blackprint</code></sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-hall-wide-standard-still-dark.svg"><img src="docs/themes/chess/chess-hall-wide-standard-still-day.svg" alt="Chess's Hall of Fame in standard, from a sample game's fictional winners" width="100%"></picture></a>
+      <br /><sub>Chess's Hall of Fame, in <code>standard</code></sub>
     </td>
   </tr>
 </table>
 
-**[See the game in every tone, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess)**:
-the theme-sets page shows the board, the Hall of Fame, the phone files and the
-winners' badges in the standard theme and every print, from a sample game whose
-winners are as fictional as driftmark's contributors. What the game's settings
-hold is in [Settings](docs/Settings.md#-elements); the game itself is
+**[See the games in every tone, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#tictactoe)**:
+the theme-sets page shows each game's board, its phone files and, for chess,
+the Hall of Fame and the winners' badges, in the standard theme and every
+print, each from a sample game whose players are as fictional as driftmark's
+contributors. What the games' settings hold is in
+[Settings](docs/Settings.md#-elements); the games themselves are
 [live on @tannergolden's profile](https://github.com/tannergolden).
 
 ---
