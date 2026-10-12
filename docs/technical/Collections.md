@@ -49,7 +49,7 @@ Choose the twelve subjects for their months, and make each one a different world
 
 ## ✏️ Drawing a design
 
-Each design is a package beside the collection's registry, `src/domain/collections/<collection>_<name>/`, with its `palette.py`, `art.py` and `__init__.py`, and its tests in `tests/unit/test_<collection>_<name>.py`. Its class subclasses `CollectionSet` and names its collection; the shared layouts in `src/domain/holidays/designs/` draw it, and it fills in their hooks.
+Each design is a package beside the collection's registry, `src/domain/collections/<collection>_<name>/`, with its `palette.py`, `art.py` and `__init__.py`, and its tests in `tests/unit/test_<collection>_<name>.py`. Its class subclasses `CollectionSet` and names its collection; the shared layouts in `src/domain/holidays/designs/` draw it, the trophy case among them, and it fills in their hooks. The trophy case comes from the hooks a design already has, its paper, frame, tags, inks, badge colours and badge touch, so its words keep the hand's inks with no work of its own.
 
 Draw in the hand:
 

@@ -197,8 +197,8 @@ foot; an element goes where you put its markers.
 
 ## 🎨 One Theme For The Whole Page
 
-One setting colours everything, so the header, the badges and the body read as
-one family:
+One setting colours everything, so the header, the badges, the body and the
+trophy case read as one family:
 
 - **`standard`**, the default: the original badges' own look at the size of a
   header. Its header opens with one badge the width of the page, the title in
@@ -217,8 +217,8 @@ one family:
   the first of every month: a longship under the northern lights in January,
   stained glass at Easter, the jousts of May, the Bayeux charge in October,
   a dragon on its hoard in December. Naming one design, like
-  `medieval-forge`, keeps it all year. The trophy case keeps its standard
-  look. See [Collections](docs/Settings.md#-collections).
+  `medieval-forge`, keeps it all year. See
+  [Collections](docs/Settings.md#-collections).
 
 The header, the footer and the body each come as a **day** file and a
 **dark** file, and the README shows one through a `<picture>` that follows the
@@ -227,8 +227,16 @@ phone.
 
 Around each holiday its own set takes over the page, then hands it back: New
 Year's Day, Valentine's Day, Juneteenth, Independence Day, Halloween,
-Thanksgiving and Christmas. A set redraws the banners, the badges and the
-elements as pixel art, in the same files.
+Thanksgiving and Christmas. A set redraws the banners, the badges, the
+elements and the trophy case as pixel art, in the same files.
+
+The trophy case wears the theme too, and keeps its style, its sizes and its
+words: `standard` strikes its cups, crests, medallions, crystals and plaques
+in metal and enamel, a print draws each card as a sheet on its drafting paper,
+drawn further as the tier rises, and a holiday's set or a collection's design
+strikes it in pixels, on its own paper and in its own frame.
+`look: standard` under [`trophies:`](docs/Settings.md#-trophies) keeps the
+standard look in every theme.
 
 <table>
   <tr>
@@ -253,9 +261,31 @@ elements as pixel art, in the same files.
   </tr>
 </table>
 
+<table>
+  <tr>
+    <td width="25%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#standard"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/standard/trophy-trophy-3-dark.svg"><img src="docs/themes/standard/trophy-trophy-3-day.svg" alt="A gold trophy card in standard, the default theme" width="100%"></picture></a>
+      <br /><sub><code>standard</code></sub>
+    </td>
+    <td width="25%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#blueprint"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/blueprint/trophy-trophy-3-dark.svg"><img src="docs/themes/blueprint/trophy-trophy-3-day.svg" alt="A gold trophy card in blueprint, drawn on its drafting paper" width="100%"></picture></a>
+      <br /><sub><code>blueprint</code></sub>
+    </td>
+    <td width="25%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#halloween"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/halloween/trophy-trophy-3-dark.svg"><img src="docs/themes/halloween/trophy-trophy-3-day.svg" alt="A gold trophy card in Halloween's set, in pixels" width="100%"></picture></a>
+      <br /><sub>Halloween's set</sub>
+    </td>
+    <td width="25%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/medieval/index.html"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/medieval/medieval-forge/trophy-trophy-3-dark.svg"><img src="docs/themes/medieval/medieval-forge/trophy-trophy-3-day.svg" alt="A gold trophy card in Forge, the medieval collection's November design" width="100%"></picture></a>
+      <br /><sub><code>medieval</code> in November</sub>
+    </td>
+  </tr>
+</table>
+
 **[See every theme, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html)**:
-the theme-sets page shows each theme's headers, phone files, footers, elements
-and badges on GitHub's light and dark grounds, at the size a README shows them.
+the theme-sets page shows each theme's headers, phone files, footers, elements,
+badges and trophy case on GitHub's light and dark grounds, at the size a README
+shows them.
 The page is [`docs/themes/index.html`](docs/themes/index.html) in this
 repository, and the link opens it through raw.githack.com, because GitHub
 shows an HTML file as its source.

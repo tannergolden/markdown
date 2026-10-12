@@ -101,8 +101,11 @@ inputs of the reusable workflow. A value the stub sets wins over the file's.
 
 The theme reaches every part at once. The banners and the elements are drawn in
 it. The badges are drawn as written in `standard`, and in a print each becomes
-its plate in that print. The trophy case keeps its own five styles in every
-theme, and its standard look in a collection.
+its plate in that print. The trophy case is drawn in it too: its five styles
+are the standard theme's own, a print draws each one on its drafting paper, and
+a collection's design strikes each one in its pixels, at the same sizes and in
+the same words. `look: standard` under [`trophies:`](#-trophies) keeps the
+standard look in every theme.
 
 ### Your own prints
 
@@ -149,10 +152,10 @@ once.
 | November  | Forge       | `medieval-forge`          | `sagittarius` |
 | December  | Hoard       | `medieval-hoard`          | `capricorn`   |
 
-A design redraws the header, the footer and its buttons, the badges and the
-elements, at the same sizes and in the same files, as a holiday's set does.
-The trophy case keeps its standard look. With holidays on, a holiday's set
-still takes over around its day and hands the page back to the month's design.
+A design redraws the header, the footer and its buttons, the badges, the
+elements and the trophy case, at the same sizes and in the same files, as a
+holiday's set does. With holidays on, a holiday's set still takes over around
+its day and hands the page back to the month's design.
 Naming one design, `theme: medieval-forge`, keeps it all year. The commit on
 the first of a month says which design took over.
 
@@ -193,13 +196,15 @@ keeps them all away.
 
 `markdown-kit holidays --year 2026 --days 5` prints every window of a year.
 
-A set redraws the header, the footer and its buttons, the badges and the
-elements as pixel art in its own palette, at the same sizes and in the same
-files, so the README's blocks never change. A badge keeps its style, its icon
-and its files: a plate still has a day file and a night file, and a live badge
-still shows its state, in the set's colours. The trophy case keeps its own
-styles all year. A file a set cannot draw, like a title in letters its pixels
-lack, is drawn in the page's own theme. A `rainbowprint` holds its colour while
+A set redraws the header, the footer and its buttons, the badges, the elements
+and the trophy case as pixel art in its own palette, at the same sizes and in
+the same files, so the README's blocks never change. A badge keeps its style,
+its icon and its files: a plate still has a day file and a night file, and a
+live badge still shows its state, in the set's colours. A trophy keeps its
+style, a cup still a cup and a crest a crest, struck in the set's pixels on the
+set's own paper. A file a set cannot draw, like a title in letters its pixels
+lack, is drawn in the page's own theme; a trophy case is drawn whole, in the
+page's own theme, if any word of it cannot be. A `rainbowprint` holds its colour while
 a set is up and picks up where it was. The commit says when a set goes up and
 when it comes down.
 
@@ -442,6 +447,7 @@ Every trophy and achievement is listed with its threshold and rarity in the
 | Key            | Default             | What it does                                                                  |
 | :------------- | :------------------ | :---------------------------------------------------------------------------- |
 | `style`        | `trophy`            | `trophy`, `crest`, `medallion`, `crystal` or `plaque`.                        |
+| `look`         | `theme`             | `theme` follows the page's theme; `standard` keeps the standard look.         |
 | `case`         | `both`              | `both`, or only `night` or only `day`.                                        |
 | `embed`        | `picture`           | `picture` follows the reader's theme; `fragment` writes GitHub's older links. |
 | `banner`       | `true`              | The level and next-up cards above the trophies.                               |
@@ -453,6 +459,13 @@ Every trophy and achievement is listed with its threshold and rarity in the
 | `private`      | `false`             | Count private contributions too. Needs `MARKDOWN_TOKEN`.                      |
 | `scan-pages`   | `30`                | How many pages of commits, a hundred each, a run reads at most.               |
 | `block`        | `true`              | `false` draws the files and leaves the README to its author.                  |
+
+The case is drawn in the page's theme, as every part is: in `standard` in its
+own styles, struck in metal and enamel; in a print as drawings on the print's
+drafting paper, each card a sheet from the set, drawn further as its tier
+rises; and in a holiday's set or a collection's design in the set's pixels, on
+its paper and in its frame. Every look keeps the style, the sizes and the
+words, so the README's block reads the same in all of them.
 
 The lock keeps the case's history: the day each tier was first reached, which
 dates a NEW ribbon, and the values each card's weekly change is read from. A
@@ -470,6 +483,7 @@ over `.github/trophies.lock.json`.
 - [ADR-0005](adrs/ADR-0005-The-Kit-Measures-Live-Badges.md): the live badges.
 - [ADR-0006](adrs/ADR-0006-A-Collection-Changes-With-The-Month.md): the collections.
 - [ADR-0007](adrs/ADR-0007-A-Collection-Is-Drawn-By-One-Hand.md): one hand for a collection's twelve designs.
+- [ADR-0008](adrs/ADR-0008-The-Trophy-Case-Wears-The-Pages-Theme.md): the trophy case drawn in the page's theme.
 
 ### 🔗 See also
 

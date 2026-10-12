@@ -108,6 +108,7 @@ The kit had two kinds of theme: a single theme, `standard`, and a family of prin
 
 - [ADR-0003](ADR-0003-Holiday-Windows.md): the holiday windows, which still take over a collection's page.
 - [ADR-0004](ADR-0004-Standard-As-The-Default-Theme.md): `standard`, which the trophy case keeps.
+- [ADR-0008](ADR-0008-The-Trophy-Case-Wears-The-Pages-Theme.md): replaces the rule that the trophies stay standard; a collection's design draws the trophy case too.
 
 ### 🔗 See also
 

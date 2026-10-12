@@ -27,7 +27,12 @@ sits against real GitHub data ([`calibration.py`](calibration.py)).
 [`ledger.py`](ledger.py) keeps in the lock what GitHub cannot say afterwards.
 
 [`art.py`](art.py) and [`styles.py`](styles.py) draw the cards in each style,
-lettered in outlines so a trophy looks the same on every device, and
+lettered in outlines so a trophy looks the same on every device: the standard
+theme's look. The case is drawn in the page's theme, and
+[`looks.py`](looks.py) picks the look: the standard one, a print's, which
+[`prints.py`](prints.py) draws on the print's drafting paper, or a pixel set's,
+which every holiday's set and collection's design draws from
+[`holidays/designs/trophies.py`](../holidays/designs/trophies.py).
 [`plan.py`](plan.py) turns one measurement into every file of the case and the
 README's block. [`catalogue_md.py`](catalogue_md.py) writes
 [`docs/Catalogue.md`](../../../docs/Catalogue.md) from the catalogue and the
@@ -49,7 +54,9 @@ calibration, so the two cannot drift.
 | [`catalogue.py`](catalogue.py)       | The catalogue: what a trophy case can hold, in both modes.                                          |
 | [`catalogue_md.py`](catalogue_md.py) | Docs/Catalogue.md, written from the catalogue and the calibration so it cannot drift from them.     |
 | [`ledger.py`](ledger.py)             | The case's record in the lock: what GitHub cannot say afterwards.                                   |
+| [`looks.py`](looks.py)               | The look a case is drawn in: the standard theme's, a print's, or a pixel set's.                     |
 | [`plan.py`](plan.py)                 | From one measurement to every file of the case, the README's block, and what the commit says.       |
+| [`prints.py`](prints.py)             | A trophy case on a print's page: every card a drawing on the print's drafting paper.                |
 | [`README.md`](README.md)             | This file.                                                                                          |
 | [`sample.py`](sample.py)             | Example measurements, for previews and the tests.                                                   |
 | [`scan.py`](scan.py)                 | What a commit says about its author, for every "heavy" achievement.                                 |
