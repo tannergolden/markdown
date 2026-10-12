@@ -121,8 +121,9 @@ NOTES = {
                        "the hand's two inks and its glint on the hand's period, its board, its frame and its podium "
                        "of its own world.",
     "game badges": "A badge for each winner, in a row under the Hall of Fame in the README, each a link to that "
-                   "player's profile. The leader's glints. A holiday's set and a collection's design draw them as "
-                   "they draw every badge.",
+                   "player's profile. The leader's glints. The first three are marked in gold, silver and bronze, "
+                   "and in a print in what its podium draws their blocks in: solid, lined and open. A holiday's set "
+                   "and a collection's design draw them as they draw every badge.",
     "trophies standard": "The case in its own five styles, struck in metal and enamel: the level and next-up cards "
                          "over it, each style, a trophy in every tier, and a row of achievements, from the kit's "
                          "sample repository.",
