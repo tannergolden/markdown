@@ -8,7 +8,8 @@ two sides' ivory and ebony and the trophies' metals, and the same every time. A 
 still twin never moves. Every word is lettered in the set's own inks, a collection's in its hand's two, and keeps to
 the room the set's frame leaves, meeting no other word and no piece, at the limits the data may reach. A game the set
 cannot letter, or draw within its budget, is drawn whole in the page's own look, and chess's own Hall keeps it
-always."""
+always. Every board is built, and every podium cut, of stuffs the set names in its own palette, and no two sets of a
+year stand their winners on the same podium."""
 from __future__ import annotations
 
 import re
@@ -24,6 +25,7 @@ from domain.elements import data as ED
 from domain.elements import draw as E
 from domain.holidays.designs import boards as B
 from domain.holidays.designs import hall as HL
+from domain.holidays.designs import materials as MT
 from domain.holidays.designs.trophies import METALS
 from domain.holidays.pixel import MISSING, Pix
 from infra.yaml_reader import loads
@@ -160,6 +162,45 @@ class EverySet(unittest.TestCase):
             self.assertIn(f'dur="{held._glint_period():g}s"', svg, key)
         self.assertEqual(pixelsets.drawn_by("medieval-forge")._glint_period(),
                          pixelsets.drawn_by("medieval-forge").hand.glint)
+
+
+class TheirStuff(unittest.TestCase):
+    def test_every_set_builds_its_boards_and_its_podium_of_its_own_stuffs(self):
+        # What a board's squares are made of, how it is framed, and what the Hall's podium is cut from and trimmed in:
+        # named in the set's own palette, of grains, frames and podiums the kit knows; a collection's design never of
+        # the colours its hand lends every design alike.
+        for key in SETS:
+            held = pixelsets.drawn_by(key)
+            hand = {t.upper() for t in held.hand.tokens} if getattr(held, "hand", None) else set()
+            for night in (False, True):
+                where = (key, night)
+                b, pod = held.game_board(night), held.game_podium(night)
+                self.assertIsInstance(pod, MT.Podium, where)
+                self.assertIn(b["style"], MT.FRAMES, where)
+                self.assertIn(pod.style, MT.PODIUMS, where)
+                for s in (b["light_stuff"], b["dark_stuff"], b["frame"], pod.stuff, *([pod.trim] if pod.trim else [])):
+                    self.assertIn(s.grain, MT.GRAINS, where)
+                    self.assertLessEqual(s.tokens, held.game_tokens, (where, s.base))
+                for s in (b["light_stuff"], b["dark_stuff"], pod.stuff):
+                    self.assertNotIn(s.base.upper(), hand, where)
+
+    def test_no_two_sets_of_a_year_stand_their_winners_on_the_same_podium(self):
+        for year in ([k for k in SETS if not k.startswith("medieval-")], [k for k in SETS if k.startswith("medieval-")]):
+            seen: dict = {}
+            for key in year:
+                pod = pixelsets.drawn_by(key).game_podium(False)
+                look = (pod.stuff.base, pod.stuff.grain, pod.style)
+                self.assertNotIn(look, seen, (key, seen.get(look)))
+                seen[look] = key
+
+    def test_every_podium_is_cut_from_its_stuff_with_a_plaque_of_every_places_metal(self):
+        for key in SETS:
+            held = pixelsets.drawn_by(key)
+            for theme, night in (("day", False), ("dark", True)):
+                svg = drawn(key)[("hall-of-fame", "still", theme)][0].upper()
+                self.assertIn(held.game_podium(night).stuff.base.upper(), svg, (key, theme))
+                for metal in (3, 2, 1):
+                    self.assertIn(METALS[metal][3].upper(), svg, (key, theme, metal))
 
 
 class TheSame(unittest.TestCase):
