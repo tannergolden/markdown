@@ -22,7 +22,7 @@ elements:
       to: d6
       piece: knight
       captured: ""
-      words: Knight from e4 to d6, check
+      words: Knight from e4 to d6
       by: "@tannergolden"
       when: 11 Oct
     taken: {white: bpp, black: nbp}

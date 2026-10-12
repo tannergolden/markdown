@@ -4,7 +4,8 @@
 # The sample game the theme-sets page draws the Tic-Tac-Toe sheets from: game 9 of
 # @tannergolden against GitHub, which the Arbiter opened for GitHub with the
 # centre, so GitHub's O moved first and the house plays X, as it always does. On
-# GitHub's third move the house threatens a2, and GitHub must block it. The game
+# GitHub's third move the house is a mark from three in a row on a2, and the
+# sheet says nothing of it: nothing on a board helps a player choose. The game
 # itself is drawn on @tannergolden's profile alone, where every move is played
 # live; its players here are driftmark's contributors, and as fictional as they
 # are.
@@ -19,21 +20,19 @@ elements:
     players: 4
     due: 18 Oct
     last:
-      move: Xa3+
-      words: X blocks on a3, threatening a2
+      move: Xa3
+      words: X takes the upper left corner
       by: "@tannergolden"
       when: 12 Oct
-    threats: {house: [a2], github: []}
-    outlook: draw
     history:
       - [1, Ob2, Xa1, the Arbiter]
-      - [2, Oc1+, Xa3+, "@imvale"]
+      - [2, Oc1, Xa3, "@imvale"]
       - [3, "", "", ""]
-    prompt: "🟢 **GitHub's turn as O!** @tannergolden threatens a2: block it, by 18 Oct."
+    prompt: "🟢 **GitHub's turn!** @tannergolden played 2... Xa3. Pick a move below by 18 Oct."
     note: "The Arbiter opens every game for a side drawn at random, with a random first move. The first move to arrive is the one played."
     moves:
-      - ["🛡️", "Turn Their Point Aside!", Oa2+, "O blocks on a2, threatening c2", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20a2%20%C2%B7%20game%209%20%C2%B7%20move%205"]
-      - ["⚠️", "Look Away!", Ob3+, "O takes the head of the board, threatening b1", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20b3%20%C2%B7%20game%209%20%C2%B7%20move%205"]
-      - ["⚠️", "Step Into the Thrust!", Oc3+, "O takes the upper right corner, threatening c2", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20c3%20%C2%B7%20game%209%20%C2%B7%20move%205"]
-      - ["⚠️", "Turn Your Back on the Blade!", Oc2+, "O takes the right edge, threatening c3 and a2", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20c2%20%C2%B7%20game%209%20%C2%B7%20move%205"]
-      - ["⚠️", "Leave Your Flank Open!", Ob1+, "O takes the foot of the board, threatening b3", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20b1%20%C2%B7%20game%209%20%C2%B7%20move%205"]
+      - ["📏", "Take the Edge by Your Centre and Their Corner!", Ob3, "O takes the top edge", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20b3%20%C2%B7%20game%209%20%C2%B7%20move%205"]
+      - ["📐", "Take the Corner by Your Centre!", Oc3, "O takes the upper right corner", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20c3%20%C2%B7%20game%209%20%C2%B7%20move%205"]
+      - ["📏", "Take the Edge by Their Two Corners!", Oa2, "O takes the left edge", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20a2%20%C2%B7%20game%209%20%C2%B7%20move%205"]
+      - ["📏", "Take the Edge by Your Centre and Corner Alone!", Oc2, "O takes the right edge", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20c2%20%C2%B7%20game%209%20%C2%B7%20move%205"]
+      - ["📏", "Take the Edge by Two of Yours and Their Corner!", Ob1, "O takes the bottom edge", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20b1%20%C2%B7%20game%209%20%C2%B7%20move%205"]

@@ -4,12 +4,13 @@
 
 The board stands where chess's does, the same size: three cells a side, each as wide as chess's eight squares
 shared three ways, the bars between them in the material of chess's dark squares, the files a to c under it and the
-ranks 1 to 3 beside it, and the eight lines a game is won on drawn faint through the cells, as a drawing draws its
-centre lines, while a side can still win on them. The last mark draws itself stroke by stroke as the file opens and
-its cell is marked as the pen lifts; a cell the side to move must block is marked as chess marks a king in check,
-the threatening mark in phantom lines inside it; a won line is struck through. In place of chess's taken pieces the
-panel says what perfect play says: the game is solved, so the sheet says how this one ends if neither side errs
-from here, and where each side would win next; once it is over, how it ended and the line.
+ranks 1 to 3 beside it, and the eight lines a game is won on drawn faint through the cells while it goes on, as a
+drawing draws its centre lines: all eight, whatever stands on them, so the board never says which a side could
+still win on. The last mark draws itself stroke by stroke as the file opens and its cell is marked as the pen
+lifts; a won line is struck through. In place of chess's taken pieces the panel counts each side's marks left, a
+rack of five for the side that moved first and four for the other, emptying as the board fills, as Connect Four's
+counts its discs. Nothing on the sheet helps a player choose: no cell a side could win on next, no word of what
+perfect play makes of the game, and no call to block.
 
 The house always plays X, drawn in the light material, and GitHub always O, drawn in the dark, in the standard theme
 and every print, as chess draws White and Black: the matchup has the house as X on the left. Only who moves first
@@ -22,10 +23,15 @@ import sys
 from ...canvas import c
 from ...lettering import f1, fx
 from ..games import sheet as S
-from ..games.sides import GITHUB, HOUSE, name, other
+from ..games.sides import HOUSE, other
 from . import motion as M
 from .game import FILES, KIND, LINES, mark_of  # noqa: F401  (KIND: the sheet's stamp)
 from .shapes import LENGTH, strokes
+
+GAP = 8             # what keeps a label off its tray, chess's
+RACK = 72           # where a rack starts: past its widest label, O · GITHUB, in the standard theme's letters and a
+                    # gap, so the label is never set smaller, in any theme
+MOST = 5            # the most marks a side has: the side that moves first
 
 LABEL = "tic-tac-toe"
 glyph = glyph_width = None              # a move names its mark, Xb2, so the score sheet needs no mark before it
@@ -98,19 +104,16 @@ def board(cv, sk, st, x0, y0, n, *, small=False) -> None:
     cv.defs.append(f'<clipPath id="{clip}"><rect x="{f1(x0)}" y="{f1(y0)}" width="{f1(n)}" height="{f1(n)}"/>'
                    "</clipPath>")
     sk.board_over(cv, clip, x0, y0, n / 8, None, "")      # the board's face catching the lamp, as chess's does
-    danger = [] if st["result"] else st["threats"][other(st["to_move"])]
-    # the eight lines a game is won on, as a drawing shows its centre lines: each still open to one side or both
-    # drawn faint through the cells, a line both sides have marked left out
-    open_lines = []
-    for line in LINES:
-        marks_on = {st["board"].get(c_) for c_ in line} - {None}
-        if len(marks_on) < 2 and not st["result"]:
+    if not st["result"]:
+        # the eight lines a game is won on, as a drawing shows its centre lines: all eight, faint, whatever stands on
+        # them, so the board never singles out a line a side could still win on, or one no side can
+        lines = []
+        for line in LINES:
             (ax, ay), (bx, by) = centre(line[0], x0, y0, n, bar), centre(line[-1], x0, y0, n, bar)
             span = max(abs(bx - ax), abs(by - ay))
             ox, oy = (bx - ax) / span * s * .42, (by - ay) / span * s * .42
-            open_lines.append(f"M{f1(ax - ox)} {f1(ay - oy)}L{f1(bx + ox)} {f1(by + oy)}")
-    if open_lines:
-        cv.add(sk.open_lines("".join(open_lines)))
+            lines.append(f"M{f1(ax - ox)} {f1(ay - oy)}L{f1(bx + ox)} {f1(by + oy)}")
+        cv.add(sk.open_lines("".join(lines)))
     marks = []
     for row in (3, 2, 1):
         for f in FILES:
@@ -118,8 +121,7 @@ def board(cv, sk, st, x0, y0, n, *, small=False) -> None:
             cx, cy = centre(cell, x0, y0, n, bar)
             mark = st["board"].get(cell)
             if not mark:
-                if cell not in danger:
-                    marks.append(sk.centre_mark(cx, cy, s * .1))
+                marks.append(sk.centre_mark(cx, cy, s * .1))
                 continue
             drawn = sk.pen_mark(cv, mark, material(mark), cx - box / 2, cy - box / 2, box,
                                 edge=1.6 if not small else 1.4)
@@ -127,16 +129,6 @@ def board(cv, sk, st, x0, y0, n, *, small=False) -> None:
                 drawn = pen(cv, drawn, mark, cx - box / 2, cy - box / 2, box)
             marks.append(drawn)
     cv.add("".join(marks))
-    threat = mark_of(other(st["to_move"]))
-    for cell in danger:
-        # the cell the side to move must block, marked as chess marks a king in check, blooming as the mark lands,
-        # with the threatening mark in phantom lines where it would fall
-        x, y, w, h = interior(cell, x0, y0, n, bar)
-        side = min(w, h) * .8
-        cx, cy = x + w / 2, y + h / 2
-        pulse = M.ani("opacity", "0;0;1;.45;1;.45;1", "0;.36;.46;.6;.73;.86;1", M.LIFT + 2.2)
-        cv.add(sk.clouded(cv, cx - side / 2, cy - side / 2, side, pulse, clip=clip,
-                          inside=sk.phantom_mark(threat, cx - box / 2, cy - box / 2, box)))
     if st["line"]:
         (ax, ay), (bx, by) = centre(st["line"][0], x0, y0, n, bar), centre(st["line"][-1], x0, y0, n, bar)
         span = max(abs(bx - ax), abs(by - ay))
@@ -174,56 +166,31 @@ def pen(cv, drawn: str, mark: str, x, y, box) -> str:
 
 # --------------------------------------------------------------------------- the panel's count
 def count(cv, sk, st, x0, x1, y, *, small=False) -> float:
-    """What perfect play says, where chess counts what each side took: how the game ends from here if neither side
-    errs (the game is solved), and the cells where each side would win next; once it is over, how, and the line."""
-    cv.add(sk.heading(cv, "perfect play", x0, y))
+    """Each side's marks left, where chess counts what each side took: a rack of five for the side that moved first
+    and four for the other, emptying as the board fills, a used place keeping an open cell's centre mark, the
+    house's X on top, as every pair of the game's sides is listed. It counts and says nothing more: no cell a side
+    could win on, and no word of what perfect play makes of the game."""
+    cv.add(sk.heading(cv, "marks left", x0, y))
     mini = 20 if not small else 18
-    yy, px = y + 10, x0 + 72
-    res = st["result"]
-    cv.add(sk.caps(cv, "result" if res else "from here", x0, yy + mini / 2 + 3, 7.5, ls=.6, role="muted"))
-    if res:
-        w = res["winner"]
-        plate = sk.chip(f"{mark_of(w)} wins" if w else "drawn", "", size=7.5, lab="turn" if w else "label")
-        say = f"{name(w)}, {res['how']}" if w else res["how"]
-    elif st["outlook"] in (HOUSE, GITHUB):
-        plate = sk.chip(f"{mark_of(st['outlook'])} wins", "", size=7.5, lab="turn")
-        say = f"{name(st['outlook'])} wins with best play"
-    else:
-        plate = sk.chip("draw", "", size=7.5, lab="label")
-        say = "best play by both sides draws"
-    cv.add(plate.draw(cv, px, yy + (mini - plate.h) / 2, "outlook"))
-    cv.add(sk.capped(cv, say, px + plate.w + 9, yy + mini / 2 + 3, 7, 6, x1 - px - plate.w - 9, ls=.5)[0])
-    yy += mini + 7
-    cv.add(sk.caps(cv, "the line" if res else "wins next", x0, yy + mini / 2 + 3, 7.5, ls=.6, role="muted"))
-    if res:
-        items = [(mark_of(res["winner"]) if res["winner"] else "", cell) for cell in st["line"]]
-    else:
-        items = [(mark_of(side), cell) for side in (st["to_move"], other(st["to_move"]))
-                 for cell in st["threats"][side]]
-    if not items:
-        sk.tray(cv, px - 4, yy - 1, 58, mini + 2)
-        cv.add(sk.on_tray(cv, "none" if res else "none yet", px + 25, yy + mini / 2 + 3, 7, caps=True, ls=.5,
-                          anchor="middle"))
-        return yy + mini + 7
-    widths = [(mini * .84 if mk else 0) + sk.width(cell, "bold", 9.5) + 9 for mk, cell in items]
-    # as many as the row holds, and how many more there are after them
-    shown, room = len(items), x1 - px - 3
-    while shown and sum(widths[:shown]) + (sk.width(f"+{len(items) - shown}", "bold", 9.5) + 12
-                                           if shown < len(items) else 0) > room:
-        shown -= 1
-    sk.tray(cv, px - 4, yy - 1, sum(widths[:shown]) + 3, mini + 2)
-    if shown < len(items):
-        cv.add(sk.say(cv, f"+{len(items) - shown}", px + sum(widths[:shown]) + 8, yy + mini / 2 + sk.cap(9.5) / 2,
-                      9.5, role="muted"))
-    for (mk, cell), w in zip(items[:shown], widths):
-        tx = px + 2
-        if mk:
-            b = mini * 1.06
-            cv.add(sk.pen_mark(cv, mk, material(mk), px - b * .18, yy + (mini - b) / 2, b, shadow=False, edge=.9))
-            tx = px + mini * .84
-        cv.add(sk.on_tray(cv, cell, tx, yy + mini / 2 + sk.cap(9.5) / 2, 9.5))
-        px += w
-    return yy + mini + 7
+    yy, px = y + 10, x0 + RACK
+    pitch, b = mini * 1.2, mini * 1.04                  # a place on the rack, and the mark that fills it
+    for side in (HOUSE, other(HOUSE)):
+        mark = mark_of(side)
+        cv.add(sk.capped(cv, f"{mark} · {'house' if side == HOUSE else 'github'}", x0, yy + mini / 2 + 3, 7.5, 6,
+                         px - 4 - GAP - x0, ls=.6, role="muted")[0])
+        left = st["left"][side]
+        sk.tray(cv, px - 4, yy - 1, st["each"][side] * pitch + 8, mini + 2)
+        cy = yy + mini / 2
+        places = []
+        for i in range(st["each"][side]):
+            cx = px + 2 + i * pitch + pitch / 2
+            places.append(sk.pen_mark(cv, mark, material(mark), cx - b / 2, cy - b / 2, b, shadow=False, edge=.9)
+                          if i < left else sk.centre_mark(cx, cy, mini * .32))
+        cv.add("".join(places))
+        chip = sk.chip(f"{left}", "", size=7.5, lab="accent" if left else "label")
+        cv.add(chip.draw(cv, px + MOST * pitch + 14, yy + (mini - chip.h) / 2, "left"))
+        yy += mini + 7
+    return yy
 
 
 def board_sheet(sk, st, title, desc, variant="wide") -> str:

@@ -4,12 +4,14 @@
 
 The board arrives as three rows of X, O or a dot, the top row first, as a FEN gives chess's ranks: `O../XX./O.X`.
 Its cells are named as chess names squares, a file and a rank, a1 at the lower left and c3 at the upper right, and
-a move is the mark and its cell, `Xb2`, with a `+` when it makes a threat and a `#` when it wins, as chess marks a
-check and a mate. The house always plays X and GitHub always O. The Arbiter opens every game for a side drawn at
-random, with a random first move, and `opens` says which side that was: its mark moves first, so in a game opened
-for GitHub, O does, and nothing here assumes which. What the engine knows that the board does not say comes with it:
-the cells each side `threatens` to win on next, the `outlook` with perfect play from here (the game is solved: a draw
-from the start), and once a side has won, the three cells of the winning `line`.
+a move is the mark and its cell, `Xb2`, the score sheet adding a `#` to the move that won, as chess marks a mate. The
+house always plays X and GitHub always O. The Arbiter opens every game for a side drawn at random, with a random
+first move, and `opens` says which side that was: its mark moves first, so in a game opened for GitHub, O does, and
+nothing here assumes which. Once a side has won, the three cells of the winning `line` come with the board.
+
+Nothing on the sheet helps a player choose: no cell a side could win on next, no word of what perfect play makes of
+the game, no call to block, and no `+` or `#` on a move still to play. The fields that once said so, `threats` and
+`outlook`, are turned away with a word on why.
 """
 from __future__ import annotations
 
@@ -22,10 +24,11 @@ from ..games.sides import GITHUB, HOUSE, SIDES, name, other
 KIND = "tictactoe"
 FILES = "abc"
 BOARD = re.compile(r"[XO.]{3}/[XO.]{3}/[XO.]{3}")
-CELL = re.compile(r"[a-c][1-3]")
-MOVE = re.compile(r"[XO][a-c][1-3][+#]?")
+MOVE = re.compile(r"[XO][a-c][1-3]#?")
+OFFER = re.compile(r"[XO][a-c][1-3]")    # a move still to play: never a mark that says what it would do
 CODE = r"[a-c][1-3]"                     # a move as an issue's title names it: its cell
-OUTLOOKS = ("draw", HOUSE, GITHUB)
+GONE = {"threats": "the board never shows where a side could win next, which would tell a player where to go",
+        "outlook": "the board never says what perfect play makes of the game, which would tell a player how to play"}
 LINES = (("a1", "b1", "c1"), ("a2", "b2", "c2"), ("a3", "b3", "c3"), ("a1", "a2", "a3"), ("b1", "b2", "b3"),
          ("c1", "c2", "c3"), ("a1", "b2", "c3"), ("a3", "b2", "c1"))
 # How a game ends, and whether that end has a winner: three in a row, or every cell taken without one.
@@ -50,6 +53,11 @@ def mark_of(side: str) -> str:
     return MARK[side]
 
 
+def each(side: str, opens: str) -> int:
+    """The marks a side has for the game: five for the side that moves first, four for the other, nine cells in all."""
+    return 5 if side == opens else 4
+
+
 def to_move(marks: dict[str, str], opens: str) -> str:
     """Whose turn it is: the side that opened when both have made as many marks, else the other side."""
     first = sum(1 for m in marks.values() if m == MARK[opens])
@@ -70,6 +78,7 @@ def check(d: dict) -> list[str]:
                       " or one more")
     if "x" in d:
         errors.append("x is gone: the house always plays X and GitHub O, and opens names the side that moved first")
+    errors += [f"{key} is gone: {why}" for key, why in GONE.items() if key in d]
     opens = d.get("opens")
     if opens not in SIDES:
         return errors + [f"opens {opens!r} is the side the Arbiter opened for, which moved first: house, which plays"
@@ -79,14 +88,6 @@ def check(d: dict) -> list[str]:
         errors.append(f"board has {xs} X and {noughts} O: {first} moved first, the Arbiter having opened for {opens},"
                       f" so {first} has as many marks as {then} or one more")
     turn = to_move(marks, opens)
-    threats = d.get("threats") or {}
-    if not (isinstance(threats, dict) and set(threats) <= set(SIDES)
-            and all(isinstance(v, list) and len(set(map(str, v))) == len(v)
-                    and all(is_text(cell, CELL) and cell not in marks for cell in v)
-                    for v in threats.values())):
-        errors.append("threats gives each side the open cells it would win on next, each once, such as [c2]")
-    if d.get("outlook") and d["outlook"] not in OUTLOOKS:
-        errors.append(f"outlook {d['outlook']!r} is draw, house or github")
     result = d.get("result")
     winner = result.get("winner") if isinstance(result, dict) else None
     line = d.get("line")
@@ -104,12 +105,12 @@ def check(d: dict) -> list[str]:
             errors.append(f"last: move {move!r} is not a mark the board has where it says")
         elif move[0] != MARK[other(turn)]:
             errors.append(f"last: move {move!r} is not the mark of the side that moved last")
-    return errors + D.check(d, KIND, MOVE, CODE, ENDS, other(turn), ("must block",))
+    return errors + D.check(d, KIND, MOVE, CODE, ENDS, other(turn), (), OFFER)
 
 
 def state(d: dict) -> dict:
-    """The board as the sheet draws it: the marks, whose turn it is, the last mark and its number, the threats, the
-    outlook, the winning line, and the common state every game's sheet reads."""
+    """The board as the sheet draws it: the marks, whose turn it is, the last mark and its number, the marks each side
+    has for the game and has left, the winning line, and the common state every game's sheet reads."""
     board = placement(d["board"])
     opens = d["opens"]
     turn = to_move(board, opens)
@@ -117,12 +118,9 @@ def state(d: dict) -> dict:
     if st["last"]:
         mark = st["last"]["move"][0]                 # its number is how many of its marks the board holds
         st["last"].update(cell=st["last"]["move"][1:3], mark=mark, number=sum(1 for m in board.values() if m == mark))
-    threats = {side: [str(c) for c in (d.get("threats") or {}).get(side, [])] for side in SIDES}
-    # a threat must be blocked, unless the side to move can win first
-    if not st["result"] and not st["alert"] and threats[other(turn)] and not threats[turn]:
-        st["alert"] = "must block"
-    st.update(KIND=KIND, board=board, threats=threats, outlook=d.get("outlook") or "",
-              line=[str(c) for c in d.get("line") or []])
+    marks = {side: each(side, opens) for side in SIDES}
+    left = {side: marks[side] - sum(1 for m in board.values() if m == MARK[side]) for side in SIDES}
+    st.update(KIND=KIND, board=board, each=marks, left=left, line=[str(c) for c in d.get("line") or []])
     return st
 
 
@@ -149,7 +147,7 @@ def describe(d: dict) -> dict:
         turn += f" Game {st['game'] + 1} opens {st['next']}." if st["next"] else ""
     else:
         turn = (f" It is {name(st['to_move'])}'s turn as {mark_of(st['to_move'])}"
-                + (", and it must block" if st["alert"] else "") + (f", due by {st['due']}." if st["due"] else "."))
+                + (f", due by {st['due']}." if st["due"] else "."))
     marks = []
     for mark in ("X", "O"):
         cells = sorted(c for c, m in st["board"].items() if m == mark)

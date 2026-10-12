@@ -10,8 +10,8 @@ count inside the panel. Nothing meets anything else, and nothing leaves the card
 
 The data reaches the contract's limits: a game, a move, the players and the score sheet's rows at nine digits,
 logins of 39 letters set in W and M, the widest capitals there are, a move's words of 80, the longest moves (a jump
-of twelve men), a full board, the most kings, every threat a side can be handed, and each finished plate's longest
-way of ending, both ways round."""
+of twelve men), a full board, the most kings, each side's full rack, and each finished plate's longest way of
+ending, both ways round."""
 from __future__ import annotations
 
 import re
@@ -53,14 +53,10 @@ def limits(d: dict, **more) -> dict:
     return {**out, **more}
 
 
-OPEN = ["c2", "b3", "c3", "b1"]
 BOARDS = {
-    "tictactoe": [limits(G.TTT_GITHUB, threats={"house": OPEN, "github": OPEN}, outlook="house"),
-                  limits(G.TTT_HOUSE, threats={"house": ["b3", "a2", "c2", "b1"], "github": ["b1", "a2", "c2", "b3"]}),
-                  limits(G.TTT_FRESH),
+    "tictactoe": [limits(G.TTT_GITHUB), limits(G.TTT_HOUSE), limits(G.TTT_FRESH), limits(G.TTT_FRESH_HOUSE),
                   limits(G.TTT_WON), limits(G.TTT_DRAWN)],
-    "connectfour": [limits(G.C4_GITHUB, threats={"house": [1, 2, 3, 4, 5, 6, 7], "github": [1, 2, 3, 4, 5, 6, 7]}),
-                    limits(G.C4_HOUSE), limits(G.C4_FRESH_HOUSE), limits(G.C4_WON),
+    "connectfour": [limits(G.C4_GITHUB), limits(G.C4_HOUSE), limits(G.C4_FRESH_HOUSE), limits(G.C4_WON),
                     limits(G.C4_WON, line=[[5, 1], [4, 2], [3, 3], [2, 4]])],
     "checkers": [limits(G.CK_GITHUB, history=[[MOST - 2, JUMP, JUMP, "@" + W39], [MOST - 1, "11x18", JUMP, "@" + M39],
                                               [MOST, "", "", ""]]),

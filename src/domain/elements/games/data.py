@@ -11,6 +11,11 @@ two days: then it carries how the game ended and the day the fresh board comes, 
 Nothing here knows a game's rules: a field is checked for its shape, as chess's are (a number is a number within
 its ceiling and never a bool or text YAML read in its place, a day is a real day, a line of the README opens no
 block of its own), since a title and a login end up in the README; the game's own module checks its board.
+
+Nothing on a board helps a player choose a move. A move still to play is written as it is played, never with a mark
+that says what it does: no `+` for a check or a threat and no `#` for the move that wins, which only the score sheet
+writes once the move is made. A turn calls out only what the rules make the side to move do, a king in check or a
+jump to take, and never a threat to block.
 """
 from __future__ import annotations
 
@@ -30,10 +35,11 @@ def link(kind: str, code: str) -> re.Pattern:
 
 
 def check(d: dict, kind: str, notation: re.Pattern, code: str, ends: dict[str, bool], moved: str,
-          alerts: tuple[str, ...]) -> list[str]:
-    """What the fields every game shares get wrong, said precisely: `notation` is the shape of the game's moves,
-    `code` how an issue's title names one, `ends` how the game can end and whether each end has a winner, `moved`
-    the side that made the last move, the only one that can have won, and `alerts` what its turn's plate can say."""
+          alerts: tuple[str, ...], offered: re.Pattern) -> list[str]:
+    """What the fields every game shares get wrong, said precisely: `notation` is the shape of the game's moves on
+    the score sheet, `offered` of a move still to play, `code` how an issue's title names one, `ends` how the game
+    can end and whether each end has a winner, `moved` the side that made the last move, the only one that can have
+    won, and `alerts` what its turn's plate can say, if anything."""
     errors = []
     for key, low in (("game", 1), ("move", 1), ("players", 0)):
         if key in d and not is_number(d[key], low, MOST):
@@ -42,7 +48,10 @@ def check(d: dict, kind: str, notation: re.Pattern, code: str, ends: dict[str, b
         errors.append(f"due {d['due']!r} is not a day, such as 18 Oct")
     elif not d.get("due") and not d.get("result"):
         errors.append("due: a game under way says the day its move is due by, such as 18 Oct, its first move's too")
-    if d.get("alert") and d["alert"] not in alerts:
+    if d.get("alert") and not alerts:
+        errors.append("alert is gone: this game's turn calls nothing out, since a call to block would tell the side"
+                      " to move where to go")
+    elif d.get("alert") and d["alert"] not in alerts:
         errors.append(f"alert {d['alert']!r} is not what this game's turn can say: {', '.join(alerts)}")
     elif d.get("alert") and d.get("result"):
         errors.append("alert: a finished board has nothing left to block or to take")
@@ -66,16 +75,34 @@ def check(d: dict, kind: str, notation: re.Pattern, code: str, ends: dict[str, b
                           " move, the reply and who chose it")
         elif row[2] and not row[1]:
             errors.append(f"history: {row!r} has the reply without the move it answers")
-    errors += check_lines(d)
+    errors += check_lines(d) + plus_gone(d, notation)
     moves = d.get("moves") or []
     if not isinstance(moves, list):
         return errors + ["moves is a list of every legal move"] + check_end(d, moved, ends, 0)
     shape = link(kind, code)
     for move in moves:
-        if not (isinstance(move, list) and len(move) == 5 and is_text(move[0], EMOJI) and is_text(move[1], TITLE)
-                and is_text(move[2], notation) and is_text(move[3], WORDS) and is_text(move[4], shape)):
+        whole = isinstance(move, list) and len(move) == 5
+        if not (whole and is_text(move[0], EMOJI) and is_text(move[1], TITLE) and is_text(move[2], notation)
+                and is_text(move[3], WORDS) and is_text(move[4], shape)):
             errors.append(f"moves: {move!r} is not an emoji, a title, a move, its words and its link")
+        elif not is_text(move[2], offered):
+            errors.append(f"moves: {move[2]!r} says what the move would do: a move still to play is written without a"
+                          " + or #, which only the score sheet writes, once the move is made")
     return errors + check_end(d, moved, ends, len(moves))
+
+
+def plus_gone(d: dict, notation: re.Pattern) -> list[str]:
+    """A move written with the `+` a game once gave a move that threatened, wherever a move is written: the last
+    move, the score sheet and the moves still to play. Said once, with why, beside each field's own error."""
+    last = d.get("last") if isinstance(d.get("last"), dict) else {}
+    rows = d.get("history") if isinstance(d.get("history"), list) else []
+    moves = d.get("moves") if isinstance(d.get("moves"), list) else []
+    written = ([last.get("move")] + [cell for row in rows if isinstance(row, list) for cell in row[1:3]]
+               + [move[2] for move in moves if isinstance(move, list) and len(move) == 5])
+    if any(isinstance(w, str) and w.endswith("+") and is_text(w[:-1], notation) for w in written):
+        return ["+ is gone: a move is written as it was played, the score sheet adding only the # of the move that"
+                " won, so nothing says a move left a threat"]
+    return []
 
 
 def number(d: dict, key: str, low: int = 0) -> int:

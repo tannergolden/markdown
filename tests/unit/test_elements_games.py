@@ -9,10 +9,12 @@ boards both ways round: opened for the house, which moves first with X or a Whit
 moves first with O or a Black disc. GitHub opens Checkers, since Black moves first. Each game has a board under way,
 the fresh board whose only move is the Arbiter's opening move (or, in Checkers, the board before Black's first
 move), and a finished board, kept up for two days with the result on its plate and nothing left to play. The samples
-are legal games: Tic-Tac-Toe's GitHub's turn faces a threat on c2, and its finished board is the house's three in a
-row on the diagonal; Connect Four's GitHub's turn faces the house's threat down column 7, and GitHub won game 3 on
-the diagonal; Checkers' GitHub's turn must jump after the house's jump back, and its crowned board is the house's
-double jump that crowns a White king on Black's back row."""
+are legal games, and no sheet says what a move would do: Tic-Tac-Toe's GitHub's turn comes with the house a mark from
+three in a row on c2, its house's turn with the house able to win on b3, and its finished board is the house's three
+in a row on the diagonal; Connect Four's GitHub's turn comes with the house a disc from four down column 7, its
+house's turn with the house able to connect four down column 5, and GitHub won game 3 on the diagonal; Checkers'
+GitHub's turn must jump after the house's jump back, which the rules make it do and its sheet says, and its crowned
+board is the house's double jump that crowns a White king on Black's back row."""
 from __future__ import annotations
 
 import re
@@ -28,6 +30,8 @@ from domain.elements import connectfour as C4
 from domain.elements import data as ED
 from domain.elements import draw as E
 from domain.elements import tictactoe as TTT
+from domain.elements.games.skin import Print as GamePrint
+from domain.elements.games.skin import Standard as GameStandard
 from domain.lettering import Lettering
 from domain.prints import PRINTS, STANDARD
 from domain.standard import pieces as P
@@ -49,49 +53,44 @@ def row(kind: str, emoji: str, title: str, move: str, words: str, game: int, ply
 
 
 # --------------------------------------------------------------------------- Tic-Tac-Toe
-# The Arbiter opened for the house, so X moved first: GitHub's turn as O, facing the house's threat on c2.
+# The Arbiter opened for the house, so X moved first: GitHub's turn as O, the house a mark from three in a row on c2.
 TTT_GITHUB = {
     "kind": "tictactoe", "board": "O../XX./O.X", "opens": "house", "game": 9, "move": 3, "players": 4,
     "due": "18 Oct",
-    "history": [[1, "Xb2", "Oa1", "@imvale"], [2, "Xc1+", "Oa3+", "@tokafor"], [3, "Xa2+", "", ""]],
-    "last": {"move": "Xa2+", "words": "X blocks on a2, threatening c2", "by": "@tannergolden", "when": "11 Oct"},
-    "threats": {"house": ["c2"], "github": []}, "outlook": "draw",
-    "moves": [row("tictactoe", "⚠️", "Drop Your Guard!", "Ob3+", "O takes the head of the board, threatening c3", 9, 6),
-              row("tictactoe", "🛡️", "Parry the Thrust!", "Oc2", "O blocks on c2", 9, 6)],
-    "prompt": "🟢 **GitHub's turn as O!** X threatens c2: block it, by 18 Oct.", "note": NOTE}
-# The Arbiter opened for GitHub, so O moved first: the house's turn as X, with a win of its own on b3.
+    "history": [[1, "Xb2", "Oa1", "@imvale"], [2, "Xc1", "Oa3", "@tokafor"], [3, "Xa2", "", ""]],
+    "last": {"move": "Xa2", "words": "X takes the left edge", "by": "@tannergolden", "when": "11 Oct"},
+    "moves": [row("tictactoe", "📏", "Mark the Head of the Board!", "Ob3", "O takes the head of the board", 9, 6),
+              row("tictactoe", "📏", "Mark the Right Edge!", "Oc2", "O takes the right edge", 9, 6)],
+    "prompt": "🟢 **GitHub's turn!** @tannergolden played 3. Xa2. Pick a move below by 18 Oct.", "note": NOTE}
+# The Arbiter opened for GitHub, so O moved first: the house's turn as X, b3 a cell it would win on.
 TTT_HOUSE = {
     "kind": "tictactoe", "board": "X.X/.O./O.O", "opens": "github", "game": 10, "move": 3, "players": 3,
     "due": "19 Oct",
-    "history": [[1, "Ob2", "Xa3", "the Arbiter"], [2, "Oa1+", "Xc3+", "@tokafor"], [3, "Oc1+", "", "@wrencastellan"]],
-    "last": {"move": "Oc1+", "words": "O takes the lower right corner, threatening b1", "by": "@wrencastellan",
-             "when": "12 Oct"},
-    "threats": {"github": ["b1"], "house": ["b3"]}, "outlook": "house",
-    "moves": [row("tictactoe", "🏆", "Strike the Final Blow!", "Xb3#", "X takes b3, three in a row from a3 to c3", 10,
-                  6),
-              row("tictactoe", "🛡️", "Turn Their Point Aside!", "Xb1+", "X blocks on b1, threatening b3", 10, 6)],
-    "prompt": "🛑 **@tannergolden's turn as X!** GitHub played 3. Oc1+.", "note": NOTE}
+    "history": [[1, "Ob2", "Xa3", "the Arbiter"], [2, "Oa1", "Xc3", "@tokafor"], [3, "Oc1", "", "@wrencastellan"]],
+    "last": {"move": "Oc1", "words": "O takes the lower right corner", "by": "@wrencastellan", "when": "12 Oct"},
+    "moves": [row("tictactoe", "📏", "Mark the Head of the Board!", "Xb3", "X takes the head of the board", 10, 6),
+              row("tictactoe", "📏", "Mark the Foot of the Board!", "Xb1", "X takes the foot of the board", 10, 6)],
+    "prompt": "🛑 **@tannergolden's turn!** GitHub played 3. Oc1. Reply due by 19 Oct.", "note": NOTE}
 # A fresh board: the Arbiter opened game 11 for GitHub with O in the centre, and it is the house's turn as X.
 TTT_FRESH = {
     "kind": "tictactoe", "board": ".../.O./...", "opens": "github", "game": 11, "move": 1, "players": 0,
     "due": "21 Oct", "history": [[1, "Ob2", "", "the Arbiter"]],
     "last": {"move": "Ob2", "words": "O takes the centre", "by": "the Arbiter", "when": "14 Oct"},
-    "threats": {"github": [], "house": []}, "outlook": "draw",
-    "moves": [row("tictactoe", "🗡️", "Hold the Corner!", "Xa3", "X takes the upper left corner", 11, 2),
-              row("tictactoe", "🪶", "Probe the Line!", "Xb3", "X takes the head of the board", 11, 2)],
-    "prompt": "🛑 **@tannergolden's turn as X!** The Arbiter opened game 11 for GitHub with 1. Ob2.",
+    "moves": [row("tictactoe", "📐", "Mark the Upper Left Corner!", "Xa3", "X takes the upper left corner", 11, 2),
+              row("tictactoe", "📏", "Mark the Head of the Board!", "Xb3", "X takes the head of the board", 11, 2)],
+    "prompt": "🛑 **@tannergolden's turn!** The Arbiter opened game 11 for GitHub with 1. Ob2, at random.",
     "note": "The Arbiter opens every game for a side drawn at random, with a random first move."}
 # The same fresh board the other way round: opened for the house with X, and GitHub to reply as O.
 TTT_FRESH_HOUSE = dict(TTT_FRESH, board=".../.../X..", opens="house",
                        last={"move": "Xa1", "words": "X takes the lower left corner", "by": "the Arbiter",
                              "when": "14 Oct"}, history=[[1, "Xa1", "", ""]],
-                       moves=[row("tictactoe", "🎯", "Strike the Heart!", "Ob2", "O takes the centre", 11, 2)],
-                       prompt="🟢 **GitHub's turn as O!** The Arbiter opened game 11 for @tannergolden with 1. Xa1.")
+                       moves=[row("tictactoe", "🔳", "Mark the Centre!", "Ob2", "O takes the centre", 11, 2)],
+                       prompt="🟢 **GitHub's turn!** The Arbiter opened game 11 for @tannergolden with 1. Xa1, at"
+                              " random.")
 TTT_WON = {
     "kind": "tictactoe", "board": "X.O/OX./XOX", "opens": "house", "game": 8, "move": 4, "players": 6,
-    "history": [[2, "Xa1+", "Oc3", "@tokafor"], [3, "Xc1+", "Ob1", "@jhalloran"], [4, "Xa3#", "", ""]],
-    "last": {"move": "Xa3#", "words": "X takes a3, three in a row from a3 to c1", "by": "@tannergolden",
-             "when": "10 Oct"},
+    "history": [[2, "Xa1", "Oc3", "@tokafor"], [3, "Xc1", "Ob1", "@jhalloran"], [4, "Xa3#", "", ""]],
+    "last": {"move": "Xa3#", "words": "X takes the upper left corner", "by": "@tannergolden", "when": "10 Oct"},
     "result": {"winner": "house", "how": "three in a row"}, "line": ["a3", "b2", "c1"], "next": "14 Oct",
     "prompt": "🏆 **@tannergolden wins game 8!** X took a3, b2 and c1. Game 9 opens 14 Oct.", "note": NOTE}
 # Opened for GitHub, so O moved first, and drawn on a full board after O's fifth mark.
@@ -103,54 +102,49 @@ TTT_DRAWN = {
     "prompt": "🤝 **Game 6 is drawn!** Nine marks and no line. Game 7 opens 14 Oct.", "note": NOTE}
 
 # --------------------------------------------------------------------------- Connect Four
-# The Arbiter opened for GitHub, so a Black disc dropped first: GitHub's turn, the house threatening column 7.
+# The Arbiter opened for GitHub, so a Black disc dropped first: GitHub's turn, the house a disc from four down column 7.
 C4_GITHUB = {
     "kind": "connectfour", "board": "......./..D..../..LD.../..DD.../D.DLLL./L.DLDLL", "opens": "github",
     "game": 4, "move": 9, "players": 7, "due": "18 Oct",
-    "history": [[7, "4", "6", "@devonaraki"], [8, "4", "5+", "@hollyfenwick"], [9, "", "", ""]],
-    "last": {"move": "5+", "words": "A White disc down column 5, to row 2, threatening column 7",
-             "by": "@tannergolden", "when": "12 Oct"},
-    "threats": {"house": [7], "github": []},
-    "moves": [row("connectfour", "🛡️", "Plug the Gap!", "7", "A Black disc down column 7 blocks on row 2", 4, 17),
-              row("connectfour", "⚠️", "Look the Wrong Way!", "2", "A Black disc down column 2, to row 1", 4, 17)],
-    "prompt": "🟢 **GitHub's turn as Black!** The house threatens column 7: block it, by 18 Oct.", "note": NOTE}
-# The Arbiter opened for the house, so a White disc dropped first: the house to move, with a win down column 5.
+    "history": [[7, "4", "6", "@devonaraki"], [8, "4", "5", "@hollyfenwick"], [9, "", "", ""]],
+    "last": {"move": "5", "words": "A White disc down column 5, to row 2", "by": "@tannergolden", "when": "12 Oct"},
+    "moves": [row("connectfour", "⬇️", "Drop Down Column 7!", "7", "A Black disc down column 7, to row 2", 4, 17),
+              row("connectfour", "⬇️", "Drop Down Column 2!", "2", "A Black disc down column 2, to row 1", 4, 17)],
+    "prompt": "🟢 **GitHub's turn!** @tannergolden played 8... ⚪5. Pick a move below by 18 Oct.", "note": NOTE}
+# The Arbiter opened for the house, so a White disc dropped first: the house to move, able to win down column 5.
 C4_HOUSE = {
     "kind": "connectfour", "board": "......./......./......./..DD.../.LLL.../DDLLDLD", "opens": "house",
     "game": 5, "move": 7, "players": 5, "due": "19 Oct",
-    "history": [[5, "3", "3", "@imvale"], [6, "5+", "7", "@octocat"], [7, "", "", ""]],
+    "history": [[5, "3", "3", "@imvale"], [6, "5", "7", "@octocat"], [7, "", "", ""]],
     "last": {"move": "7", "words": "A Black disc down column 7, to row 1", "by": "@octocat", "when": "10 Oct"},
-    "threats": {"house": [1, 5], "github": []},
-    "moves": [row("connectfour", "🏆", "Link Up, All Four!", "5#", "A White disc down column 5 connects four across"
-                  " row 2", 5, 13)],
-    "prompt": "🛑 **@tannergolden's turn as White!** GitHub played 6... ⚫7.", "note": NOTE}
+    "moves": [row("connectfour", "⬇️", "Drop Down Column 5!", "5", "A White disc down column 5, to row 2", 5, 13)],
+    "prompt": "🛑 **@tannergolden's turn!** GitHub played 6... ⚫7. Reply due by 19 Oct.", "note": NOTE}
 # A fresh board: the Arbiter opened game 6 for GitHub down the centre column, and it is the house's turn as White.
 C4_FRESH = {
     "kind": "connectfour", "board": "......./......./......./......./......./...D...", "opens": "github",
     "game": 6, "move": 1, "players": 0, "due": "21 Oct",
     "history": [[1, "4", "", "the Arbiter"]],
     "last": {"move": "4", "words": "A Black disc down column 4, to row 1", "by": "the Arbiter", "when": "14 Oct"},
-    "threats": {"house": [], "github": []},
-    "moves": [row("connectfour", "🪂", "Stack the Squad!", "4", "A White disc down column 4, to row 2", 6, 2),
-              row("connectfour", "🏔️", "Drop on the Flank!", "1", "A White disc down column 1, to row 1", 6, 2)],
-    "prompt": "🛑 **@tannergolden's turn as White!** The Arbiter opened game 6 for GitHub with 1. ⚫4.",
+    "moves": [row("connectfour", "⬇️", "Drop Down Column 4!", "4", "A White disc down column 4, to row 2", 6, 2),
+              row("connectfour", "⬇️", "Drop Down Column 1!", "1", "A White disc down column 1, to row 1", 6, 2)],
+    "prompt": "🛑 **@tannergolden's turn!** The Arbiter opened game 6 for GitHub with 1. ⚫4, at random.",
     "note": "The Arbiter opens every game for a side drawn at random, with a random first move."}
 # The same fresh board the other way round: opened for the house with a White disc, and GitHub to reply as Black.
 C4_FRESH_HOUSE = dict(C4_FRESH, board="......./......./......./......./......./..L....", opens="house",
                       history=[[1, "3", "", ""]],
                       last={"move": "3", "words": "A White disc down column 3, to row 1", "by": "the Arbiter",
                             "when": "14 Oct"},
-                      moves=[row("connectfour", "🪂", "Stack the Squad!", "3", "A Black disc down column 3, to row 2", 6,
-                                 2),
-                             row("connectfour", "🏔️", "Drop on the Flank!", "1", "A Black disc down column 1, to row 1",
-                                 6, 2)],
-                      prompt="🟢 **GitHub's turn as Black!** The Arbiter opened game 6 for @tannergolden with 1. ⚪3.")
+                      moves=[row("connectfour", "⬇️", "Drop Down Column 3!", "3", "A Black disc down column 3, to row"
+                                 " 2", 6, 2),
+                             row("connectfour", "⬇️", "Drop Down Column 1!", "1", "A Black disc down column 1, to row"
+                                 " 1", 6, 2)],
+                      prompt="🟢 **GitHub's turn!** The Arbiter opened game 6 for @tannergolden with 1. ⚪3, at"
+                             " random.")
 C4_WON = {
     "kind": "connectfour", "board": "....D../....D../.D..L../.LDLD../.LDDDL./DLLLDL.", "opens": "github",
     "game": 3, "move": 10, "players": 9,
-    "history": [[8, "3+", "6", "@tokafor"], [9, "3", "2+", "@wrencastellan"], [10, "2#", "", "@jhalloran"]],
-    "last": {"move": "2#", "words": "A Black disc down column 2 connects four on the diagonal", "by": "@jhalloran",
-             "when": "10 Oct"},
+    "history": [[8, "3", "6", "@tokafor"], [9, "3", "2", "@wrencastellan"], [10, "2#", "", "@jhalloran"]],
+    "last": {"move": "2#", "words": "A Black disc down column 2, to row 4", "by": "@jhalloran", "when": "10 Oct"},
     "result": {"winner": "github", "how": "four in a row"}, "line": [[2, 4], [3, 3], [4, 2], [5, 1]],
     "next": "14 Oct", "prompt": "🏆 **GitHub wins game 3!** Four Black discs on the diagonal. Game 4 opens 14 Oct.",
     "note": NOTE}
@@ -161,8 +155,8 @@ CK_OPENING = {
     "kind": "checkers", "fen": "B:W21,22,23,24,25,26,27,28,29,30,31,32:B1,2,3,4,5,6,7,8,9,10,11,12",
     "game": 6, "move": 1, "players": 0, "due": "21 Oct", "history": [[1, "", "", ""]],
     "kings": {"house": 0, "github": 0},
-    "moves": [row("checkers", "⚓", "Drop Anchor!", "9-13", "Man from 9 to 13", 6, 1),
-              row("checkers", "⛵", "Into Open Water!", "9-14", "Man from 9 to 14", 6, 1)],
+    "moves": [row("checkers", "👣", "Push the Man From 9 to 13!", "9-13", "Man from 9 to 13", 6, 1),
+              row("checkers", "👣", "Push the Man From 9 to 14!", "9-14", "Man from 9 to 14", 6, 1)],
     "prompt": "🟢 **GitHub's turn as Black!** Black opens game 6, by 21 Oct.",
     "note": "A jump must be taken when there is one. " + NOTE}
 # The house has just jumped back, and GitHub's Black must jump again.
@@ -173,8 +167,8 @@ CK_GITHUB = {
     "kings": {"house": 0, "github": 0},
     "last": {"move": "20x11", "words": "Man from 20 jumps 16, landing on 11", "by": "@tannergolden", "when": "12 Oct"},
     "alert": "must jump",
-    "moves": [row("checkers", "⚔️", "Board Them!", "8x15", "Man from 8 jumps 11, landing on 15", 6, 21)],
-    "prompt": "🟢 **GitHub's turn as Black!** A jump is waiting, and it must be taken, by 18 Oct.",
+    "moves": [row("checkers", "⚔️", "Jump the Man on 11!", "8x15", "Man from 8 jumps 11, landing on 15", 6, 21)],
+    "prompt": "🟢 **GitHub's turn!** @tannergolden played 10... 20x11. Must jump! Pick one below by 18 Oct.",
     "note": "A jump must be taken when there is one."}
 # The house's double jump has crowned a White king on Black's back row, and it is GitHub's turn.
 CK_CROWNED = {
@@ -184,8 +178,8 @@ CK_CROWNED = {
     "kings": {"house": 1, "github": 0},
     "last": {"move": "19x10x1", "words": "Man from 19 jumps 15 and 6, landing on 1, crowned", "by": "@tannergolden",
              "when": "9 Oct", "crowned": True},
-    "moves": [row("checkers", "🎣", "Send In the Fire Ship!", "5-9", "Man from 5 to 9", 5, 37),
-              row("checkers", "⛵", "Full Sail Ahead!", "8-11", "Man from 8 to 11", 5, 37)],
+    "moves": [row("checkers", "👣", "March the Man From 5 to 9!", "5-9", "Man from 5 to 9", 5, 37),
+              row("checkers", "👣", "March the Man From 8 to 11!", "8-11", "Man from 8 to 11", 5, 37)],
     "prompt": "🟢 **GitHub's turn as Black!** @tannergolden played 18... 19x10x1 and crowned a king, by 17 Oct.",
     "note": "A jump must be taken when there is one."}
 # The house's White man took GitHub's last: Black has no move left, and the house wins.
@@ -261,6 +255,30 @@ class EveryFile(unittest.TestCase):
                         with self.subTest(board=name(d), tone=tone, variant=variant, theme=theme):
                             self.assertEqual(lint(svg, budget=BUDGET["board"]), [])
                             self.assertEqual(svg.count("<svg"), 1)
+
+    def test_no_sheet_of_tic_tac_toe_or_connect_four_singles_out_a_cell_a_column_or_a_line(self):
+        # nothing the rules make the side to move answer, so nothing clouded or glowing; and the board's faint lines
+        # are all eight while a game goes on, whatever stands on them, never only the ones a side could still win on
+        lines = []
+
+        def faint(skin, d):
+            lines.append(d.count("M"))
+            return ""
+
+        def clouded(*_, **__):
+            raise AssertionError("a cell or a hole singled out")
+
+        with mock.patch.object(GameStandard, "clouded", clouded), mock.patch.object(GamePrint, "clouded", clouded), \
+                mock.patch.object(TTT.Standard, "open_lines", faint), mock.patch.object(TTT.Print, "open_lines", faint):
+            for d in GAMES["tictactoe"][1] + GAMES["connectfour"][1]:
+                for tone in TONES:
+                    for variant in E.variants(d["kind"], d):
+                        for theme in ("day", "dark"):
+                            lines.clear()
+                            E.draw(d["kind"], d, tone, theme, variant)
+                            with self.subTest(board=name(d), tone=tone, variant=variant, theme=theme):
+                                want = [] if d["kind"] == "connectfour" or d.get("result") else [8]
+                                self.assertEqual(lines, want)
 
     def test_the_still_files_stand_still_and_the_rest_move(self):
         for d in BOARDS:
@@ -406,8 +424,8 @@ class TicTacToe(unittest.TestCase):
     def test_the_house_plays_x_and_github_o_whichever_side_the_arbiter_opened_for(self):
         # opened for the house, X moves first; opened for GitHub, O does: the marks never change hands
         self.assertEqual((TTT.game.mark_of("house"), TTT.game.mark_of("github")), ("X", "O"))
-        for d, opens, turn, said in ((TTT_GITHUB, "house", "github", "after 3. Xa2+"),
-                                     (TTT_HOUSE, "github", "house", "after 3. Oc1+"),
+        for d, opens, turn, said in ((TTT_GITHUB, "house", "github", "after 3. Xa2"),
+                                     (TTT_HOUSE, "github", "house", "after 3. Oc1"),
                                      (TTT_FRESH, "github", "house", "after 1. Ob2, the Arbiter's move for GitHub"),
                                      (TTT_FRESH_HOUSE, "house", "github",
                                       "after 1. Xa1, the Arbiter's move for @tannergolden")):
@@ -461,42 +479,40 @@ class TicTacToe(unittest.TestCase):
                                      r == "O  ·  EVERYONE ELSE"], "GitHub as O")
                     self.assertFalse([r for r in runs if r.startswith(("O  ·  THE HOUSE", "X  ·  EVERY"))])
 
-    def test_what_is_set_on_a_tray_reads_by_night(self):
-        # a tray is the board's light square: by night its letters are dark, as the square's own would be, where the
-        # card's light letters would vanish into it
-        P.PAIRS.clear()
-        for d in (TTT_HOUSE, TTT_DRAWN):
-            E.draw("tictactoe", d, STANDARD, "dark", "still")
-        on_tray = {(fill, ground) for fill, ground, what in P.PAIRS if what == "on a tray"}
-        self.assertEqual(on_tray, {("charcoal", "ash")})
-        self.assertGreaterEqual(P.contrast("charcoal", "ash"), 4.5)
-        P.PAIRS.clear()
-        E.draw("tictactoe", TTT_HOUSE, STANDARD, "day", "still")
-        self.assertFalse([p for p in P.PAIRS if p[2] == "on a tray"], "by day a tray's letters are the card's")
-
-    def test_a_threat_asks_the_side_to_move_to_block_unless_it_can_win_first(self):
+    def test_each_side_has_five_marks_if_it_moved_first_and_four_if_not_and_the_rack_counts_them_down(self):
         st = TTT.state(TTT_GITHUB)
-        self.assertEqual((st["to_move"], st["alert"], st["last"]["number"]), ("github", "must block", 3))
-        self.assertIn('stroke-dasharray="', TTT.draw("tictactoe", TTT_GITHUB, "blackprint", "day", "still"),
-                      "the threatening mark in phantom lines")
-        st = TTT.state(TTT_HOUSE)
-        self.assertEqual((st["to_move"], st["alert"]), ("house", ""), "the house can win on b3 before it blocks b1")
+        self.assertEqual((st["to_move"], st["alert"], st["last"]["number"]), ("github", "", 3))
+        self.assertEqual((st["each"], st["left"]), ({"house": 5, "github": 4}, {"house": 2, "github": 2}))
+        st = TTT.state(TTT_FRESH)
+        self.assertEqual((st["each"], st["left"]), ({"house": 4, "github": 5}, {"house": 4, "github": 4}))
+        st = TTT.state(TTT_DRAWN)
+        self.assertEqual(st["left"], {"house": 0, "github": 0}, "nine marks down, none left to either side")
 
     def test_what_the_board_is_drawn_from_is_checked(self):
-        cases = {"board": ("XXX/.../...", "the sides take turns"), "outlook": ("win", "outlook"),
-                 "threats": ({"house": ["d4"]}, "threats gives"),
+        cases = {"board": ("XXX/.../...", "the sides take turns"),
                  "line": (["a1", "b1", "c2"], "three cells in a row"),
                  "last": ({**TTT_GITHUB["last"], "move": "Xc3"}, "not a mark the board has")}
         for key, (bad, said) in cases.items():
             with self.subTest(key=key):
                 self.assertIn(said, " ".join(TTT.check({**TTT_GITHUB, key: bad})))
-        self.assertIn("each once", " ".join(TTT.check({**TTT_GITHUB, "threats": {"house": ["c2", "c2"]}})))
-        self.assertIn("threats gives", " ".join(TTT.check({**TTT_GITHUB, "threats": {"house": ["a1"]}})),
-                      "a threat is an open cell")
         self.assertIn("not the mark of the side that moved last",
                       " ".join(TTT.check({**TTT_GITHUB, "last": {**TTT_GITHUB["last"], "move": "Oa1"}})))
-        self.assertIn("alert 'must jump' is not what this game's turn can say",
-                      " ".join(TTT.check({**TTT_GITHUB, "alert": "must jump"})))
+
+    def test_nothing_that_would_help_a_player_choose_is_taken(self):
+        # where a side could win next, what perfect play makes of the game, a call to block, and a move offered with
+        # the mark that says it wins: each turned away, with a word on why
+        for key, bad, said in (("threats", {"house": ["c2"], "github": []}, "threats is gone: the board never shows"),
+                               ("outlook", "draw", "outlook is gone: the board never says what perfect play"),
+                               ("alert", "must block", "alert is gone: this game's turn calls nothing out")):
+            with self.subTest(key=key):
+                self.assertIn(said, " ".join(TTT.check({**TTT_GITHUB, key: bad})))
+        won = row("tictactoe", "📏", "Mark the Head of the Board!", "Xb3#", "X takes the head of the board", 10, 6)
+        self.assertIn("'Xb3#' says what the move would do", " ".join(TTT.check({**TTT_HOUSE, "moves": [won]})))
+        self.assertIn("+ is gone", " ".join(TTT.check({**TTT_GITHUB, "last": {**TTT_GITHUB["last"], "move": "Xa2+"}})))
+        self.assertIn("+ is gone", " ".join(TTT.check({**TTT_GITHUB, "history": [[1, "Xb2", "Oa1", "@imvale"],
+                                                                                  [2, "Xc1+", "Oa3", "@tokafor"],
+                                                                                  [3, "Xa2", "", ""]]})))
+        self.assertEqual(TTT.check(TTT_WON), [], "the score sheet still marks the move that won")
 
     def test_a_won_game_names_its_line_and_only_a_won_game_has_one(self):
         self.assertIn("a won game names its winning line", " ".join(TTT.check({**TTT_WON, "line": []})))
@@ -517,7 +533,7 @@ class ConnectFour(unittest.TestCase):
     def test_the_house_drops_white_and_github_black_whichever_side_the_arbiter_opened_for(self):
         # a game opens with a White disc when it was opened for the house and a Black one when for GitHub
         self.assertEqual((C4.game.material_of("house"), C4.game.material_of("github")), ("light", "dark"))
-        for d, opens, turn, said in ((C4_GITHUB, "github", "github", "after 8... 5+"),
+        for d, opens, turn, said in ((C4_GITHUB, "github", "github", "after 8... 5"),
                                      (C4_HOUSE, "house", "house", "after 6... 7"),
                                      (C4_FRESH, "github", "house",
                                       "after 1. 4, the Arbiter's move for GitHub: a Black"),
@@ -562,7 +578,7 @@ class ConnectFour(unittest.TestCase):
 
     def test_the_last_disc_lands_where_gravity_puts_it_and_a_win_joins_four(self):
         st = C4.state(C4_GITHUB)
-        self.assertEqual((st["last"]["column"], st["last"]["row"], st["alert"]), (5, 2, "must block"))
+        self.assertEqual((st["last"]["column"], st["last"]["row"], st["alert"]), (5, 2, ""))
         self.assertEqual(st["left"], {"house": 13, "github": 13})
         self.assertIn("not topped by a disc of the side that moved last",
                       " ".join(C4.check({**C4_GITHUB, "last": {**C4_GITHUB["last"], "move": "3"}})))
@@ -575,10 +591,16 @@ class ConnectFour(unittest.TestCase):
                 self.assertIn(said, " ".join(C4.check({**C4_WON, "line": line})))
         self.assertEqual(C4.check({**C4_WON, "line": [[5, 1], [4, 2], [3, 3], [2, 4]]}), [])
 
-    def test_a_threat_is_a_column_that_is_not_full(self):
-        self.assertTrue(C4.check({**C4_GITHUB, "threats": {"house": [8]}}))
-        self.assertTrue(C4.check({**C4_GITHUB, "threats": {"house": [True]}}))
-        self.assertIn("each once", " ".join(C4.check({**C4_GITHUB, "threats": {"house": [7, 7]}})))
+    def test_nothing_that_would_help_a_player_choose_is_taken(self):
+        # the columns a side could connect four down next, a call to block, and a move offered with the mark that
+        # says it wins: each turned away, with a word on why
+        self.assertIn("threats is gone: the frame never shows a column",
+                      " ".join(C4.check({**C4_GITHUB, "threats": {"house": [7], "github": []}})))
+        self.assertIn("alert is gone", " ".join(C4.check({**C4_GITHUB, "alert": "must block"})))
+        won = row("connectfour", "⬇️", "Drop Down Column 5!", "5#", "A White disc down column 5, to row 2", 5, 13)
+        self.assertIn("'5#' says what the move would do", " ".join(C4.check({**C4_HOUSE, "moves": [won]})))
+        self.assertIn("+ is gone", " ".join(C4.check({**C4_GITHUB, "last": {**C4_GITHUB["last"], "move": "5+"}})))
+        self.assertEqual(C4.check(C4_WON), [], "the score sheet still marks the drop that won")
 
 
 class Checkers(unittest.TestCase):
@@ -682,8 +704,8 @@ class Finished(unittest.TestCase):
         self.assertIn("result is how the game ended", " ".join(CK.check({**CK_WON, "result": {"winner": "house"}})))
         self.assertIn("no move left, repetition, forty moves",
                       " ".join(CK.check({**CK_WON, "result": {"winner": "house", "how": "checkmate"}})))
-        self.assertIn("a finished board has nothing left to block", " ".join(TTT.check({**TTT_WON,
-                                                                                         "alert": "must block"})))
+        self.assertIn("a finished board has nothing left to block", " ".join(CK.check({**CK_WON,
+                                                                                        "alert": "must jump"})))
 
     def test_its_plate_says_who_won_and_how_and_when_the_fresh_board_comes(self):
         for d, label in ((TTT_WON, "@tannergolden wins"), (TTT_DRAWN, "drawn"), (C4_WON, "GitHub wins"),
@@ -708,11 +730,11 @@ class Finished(unittest.TestCase):
 class Readme(unittest.TestCase):
     def test_each_board_has_its_turns_banner_above_and_every_move_folded_under(self):
         text = ED.block("tictactoe", TTT_GITHUB, "assets/elements")
-        self.assertTrue(text.startswith("<!-- markdown:element:tictactoe:start -->\n> [!TIP]\n> 🟢 **GitHub's turn"
-                                        " as O!**"))
+        self.assertTrue(text.startswith("<!-- markdown:element:tictactoe:start -->\n> [!TIP]\n> 🟢 **GitHub's turn!**"
+                                        " @tannergolden played 3. Xa2."))
         self.assertIn("</picture>\n\n<details>\n<summary>⭕ <b>GitHub's Turn</b> · 2 open cells · open to choose one"
-                      "</summary>\n\n|  | Move | What it does | Play |\n| :-: | :--- | :--- | :-: |\n", text)
-        self.assertIn("| ⚠️ | **Drop Your Guard!** `Ob3+` | O takes the head of the board, threatening c3 |", text)
+                      "</summary>\n\n|  | Move | In words | Play |\n| :-: | :--- | :--- | :-: |\n", text)
+        self.assertIn("| 📏 | **Mark the Head of the Board!** `Ob3` | O takes the head of the board |", text)
         self.assertTrue(text.endswith(f"</details>\n\n{NOTE}\n<!-- markdown:element:tictactoe:end -->"))
         text = ED.block("checkers", CK_OPENING, "assets/elements")
         self.assertIn("> [!TIP]\n> 🟢 **GitHub's turn as Black!**", text)
@@ -735,8 +757,9 @@ class Readme(unittest.TestCase):
         white_turn = dict(CK_CROWNED, fen="W:WK1,20,21,24,28,30:B5,9,12,17,18", move=19, history=[
             [18, "10x17", "19x10x1", "@tokafor"], [19, "5-9", "", "@imvale"]],
             last={"move": "5-9", "words": "Man from 5 to 9", "by": "@imvale", "when": "10 Oct"},
-            moves=[row("checkers", "⛵", "Full Sail Ahead!", "24-19", "Man from 24 to 19", 5, 38)],
-            prompt="🛑 **@tannergolden's turn as White!** GitHub played 19. 5-9.")
+            moves=[row("checkers", "⚔️", "Jump the Man on 17!", "21x14", "Man from 21 jumps 17, landing on 14", 5, 38)],
+            alert="must jump", prompt="🛑 **@tannergolden's turn!** GitHub played 19. 5-9. Must jump! Reply due by"
+                                      " 17 Oct.")
         self.assertEqual(CK.check(white_turn), [])
         self.assertIn("<summary>⛀ <b>@tannergolden's Turn</b> · 1 legal move · only @tannergolden can play these"
                       "</summary>", ED.block("checkers", white_turn, "assets/elements"))

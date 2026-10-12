@@ -4,8 +4,7 @@
 
 The board's edge is drawn in as chess's is and the panel rises a section at a time on chess's beats. The last
 mark draws itself, stroke by stroke, as the pen would: the X's two strokes one after the other, the O in one sweep;
-its cell is marked as the pen lifts; a threat's mark blooms as chess's check does; and a won line is struck through
-once the winning mark is down. Every animated attribute holds its resting value, so a file is complete without SMIL,
+its cell is marked as the pen lifts; and a won line is struck through once the winning mark is down. Every animated attribute holds its resting value, so a file is complete without SMIL,
 and inside `at_rest()` nothing moves at all: the still files.
 """
 from __future__ import annotations

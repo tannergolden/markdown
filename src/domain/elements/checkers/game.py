@@ -127,7 +127,7 @@ def check(d: dict) -> list[str]:
     kings = d.get("kings") or {}
     if not (isinstance(kings, dict) and set(kings) <= set(SIDES) and all(is_number(v, 0, MEN) for v in kings.values())):
         errors.append(f"kings gives each side the number of kings it has made, up to {MEN}")
-    return errors + D.check(d, KIND, MOVE, CODE, ENDS, other(turn), ("must jump",))
+    return errors + D.check(d, KIND, MOVE, CODE, ENDS, other(turn), ("must jump",), MOVE)
 
 
 def state(d: dict) -> dict:

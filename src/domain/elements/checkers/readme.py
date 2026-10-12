@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: MIT
 """What the README carries round the Checkers sheet: the turn's banner, and every legal move, folded.
 
-Each move is named in checkers' own words, as chess's are in chess's: Black's openings by the names the books give them
-("Open the Edinburgh!"), a jump that must be taken, a shot that gives one man to take two ("Spring the Two-for-One!"), a
-man crowned ("Make a King on 3!"). The engine writes the names; this draws the block round the sheet, as chess's does
-(`games.readme`). The side to move is signed with its men, ⛀ for the house's White and ⛂ for GitHub's Black. A turn with
+Each move is named in checkers' own words for what it is, never for what it does, as chess's are: a man's step ("Push
+the Man From 9 to 13!"), a jump and the men it takes ("Jump the Man on 11!"), a man crowned ("Crown the Man From 6 on
+1!"), with no opening's name and nothing of what follows. The engine writes the names; this draws the block round the
+sheet, as chess's does (`games.readme`). The side to move is signed with its men, ⛀ for the house's White and ⛂ for GitHub's Black. A turn with
 more than ten moves is grouped as chess groups its moves by piece: the men's, then the kings', each named for as many as
 have a move in it.
 """

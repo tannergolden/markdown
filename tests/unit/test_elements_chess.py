@@ -375,10 +375,12 @@ class Settings(unittest.TestCase):
             with self.subTest(title=title):
                 moves = [{"piece": "king", "list": [["🏰", title, "Kb8", "King from c8 to b8", LINK]]}]
                 self.assertTurnedAway({**GAME, "moves": moves}, "is not an emoji, a title")
-        for title in ("A", "Go!", "The Royal Retreat", "x" * 48):
+        for title in ("A", "Go!", "The Royal Retreat", "x" * 100):
             with self.subTest(title=title):
                 moves = [{"piece": "king", "list": [["🏰", title, "Kb8", "King from c8 to b8", LINK]]}]
                 self.assertEqual(C.check({**GAME, "moves": moves}), [])
+        moves = [{"piece": "king", "list": [["🏰", "x" * 101, "Kb8", "King from c8 to b8", LINK]]}]
+        self.assertTurnedAway({**GAME, "moves": moves}, "is not an emoji, a title")
 
     def test_the_marks_on_the_board_and_the_score_sheet_are_ones_the_game_can_have(self):
         self.assertTurnedAway({**GAME, "history": [[21, "", "cxd6", "@wrencastellan"]]},
@@ -525,7 +527,7 @@ class Readme(unittest.TestCase):
         self.assertTrue(text.startswith("<!-- markdown:element:chess:start -->\n> [!TIP]\n> 🟢 **GitHub's turn!**"))
         self.assertIn("by 18 Oct.\n\n<picture>", text)
         self.assertIn("</picture>\n\n<details>\n<summary>♚ <b>GitHub's Turn</b> · 4 legal moves · open to choose one"
-                      "</summary>\n\n|  | Move | What it does | Play |\n| :-: | :--- | :--- | :-: |\n", text)
+                      "</summary>\n\n|  | Move | In words | Play |\n| :-: | :--- | :--- | :-: |\n", text)
         self.assertIn(f"| 🏰 | **The Royal Retreat** `Kb8` | King from c8 to b8 | [Play ↗]({LINK}) |", text)
         self.assertTrue(text.endswith("</details>\n\nThe first move to arrive is the one played.\n"
                                       "<!-- markdown:element:chess:end -->"))

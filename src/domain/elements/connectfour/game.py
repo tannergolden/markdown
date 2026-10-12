@@ -4,14 +4,17 @@
 
 The board arrives as its six rows, the top row first, each seven cells of L (a White disc, the house's), D (a Black
 one, GitHub's) or a dot, as a FEN gives chess's ranks. Its columns are numbered 1 to 7 from the left and its rows 1 to
-6 from the foot, and a move is the column a disc is dropped down, `4`, with a `+` when it makes a threat and a `#`
-when it connects four.
+6 from the foot, and a move is the column a disc is dropped down, `4`, the score sheet adding a `#` to the drop
+that connected four.
 
 The house always drops the White discs and GitHub the Black. The Arbiter opens every game for a side drawn at
 random, with a random first move, and `opens` says which side that was, so a game opens with a White disc when it
 was opened for the house and a Black one when for GitHub. Nothing here assumes which side opened: the two sides are
-told apart by their discs, never by their order. What the engine knows that the board does not say comes with it:
-the columns each side `threatens` to win down next, and once a side has won, the four cells of the winning `line`.
+told apart by their discs, never by their order. Once a side has won, the four cells of the winning `line` come
+with the board.
+
+Nothing on the sheet helps a player choose: no column a side could connect four down next, no call to block, and
+no `+` or `#` on a move still to play. The field that once said so, `threats`, is turned away with a word on why.
 """
 from __future__ import annotations
 
@@ -24,8 +27,11 @@ from ..games.sides import GITHUB, HOUSE, SIDES, name, other
 KIND = "connectfour"
 COLS, ROWS, EACH = 7, 6, 21          # the frame, and the discs each side has
 BOARD = re.compile(r"(?:[LD.]{7}/){5}[LD.]{7}")
-MOVE = re.compile(r"[1-7][+#]?")
+MOVE = re.compile(r"[1-7]#?")
+OFFER = re.compile(r"[1-7]")         # a move still to play: never a mark that says what it would do
 CODE = r"[1-7]"                      # a move as an issue's title names it: its column
+GONE = {"threats": "the frame never shows a column a side could connect four down next, which would tell a player"
+                   " where to drop"}
 # How a game ends, and whether that end has a winner: four in a row, or every hole filled without one.
 ENDS = {"four in a row": True, "a full frame": False}
 STEPS = ((1, 0), (0, 1), (1, 1), (1, -1))   # a line's direction: across, up, and the two diagonals
@@ -84,6 +90,7 @@ def check(d: dict) -> list[str]:
     if "light" in d:
         errors.append("light is gone: the house always drops the White discs and GitHub the Black, and opens names"
                       " the side that dropped first")
+    errors += [f"{key} is gone: {why}" for key, why in GONE.items() if key in d]
     opens = d.get("opens")
     if opens not in SIDES:
         return errors + [f"opens {opens!r} is the side the Arbiter opened for, which dropped the first disc: house,"
@@ -95,14 +102,6 @@ def check(d: dict) -> list[str]:
                       f" the Arbiter having opened for {opens}, so it has as many as {COLOUR[other(opens)]} or one"
                       " more")
     turn = to_move(discs, opens)
-    tall = heights(discs)
-    threats = d.get("threats") or {}
-    if not (isinstance(threats, dict) and set(threats) <= set(SIDES)
-            and all(isinstance(v, list) and len(set(map(str, v))) == len(v)
-                    and all(is_number(n, 1, COLS) and tall[n] < ROWS for n in v)
-                    for v in threats.values())):
-        errors.append("threats gives each side the open columns it would connect four down next, each once,"
-                      " such as [5]")
     result = d.get("result")
     winner = result.get("winner") if isinstance(result, dict) else None
     line = d.get("line")
@@ -123,12 +122,12 @@ def check(d: dict) -> list[str]:
             errors.append(f"last: move {move!r} is down a column with no disc in it")
         elif discs[(col, top)] != LETTER[other(turn)]:
             errors.append(f"last: move {move!r} is not topped by a disc of the side that moved last")
-    return errors + D.check(d, KIND, MOVE, CODE, ENDS, other(turn), ("must block",))
+    return errors + D.check(d, KIND, MOVE, CODE, ENDS, other(turn), (), OFFER)
 
 
 def state(d: dict) -> dict:
-    """The board as the sheet draws it: the discs, whose turn it is, the last disc and where it landed, the threats,
-    the winning line, the discs each side has left, and the common state every game's sheet reads."""
+    """The board as the sheet draws it: the discs, whose turn it is, the last disc and where it landed, the winning
+    line, the discs each side has left, and the common state every game's sheet reads."""
     board = placement(d["board"])
     opens = d["opens"]
     turn = to_move(board, opens)
@@ -138,13 +137,8 @@ def state(d: dict) -> dict:
         col = int(st["last"]["move"][0])
         mine = sum(1 for v in board.values() if v == LETTER[st["last"]["side"]])
         st["last"].update(column=col, row=tall[col], number=mine)
-    threats = {side: [int(n) for n in (d.get("threats") or {}).get(side, [])] for side in SIDES}
-    # a threat must be blocked, unless the side to move can win first
-    if not st["result"] and not st["alert"] and threats[other(turn)] and not threats[turn]:
-        st["alert"] = "must block"
     left = {side: EACH - sum(1 for v in board.values() if v == LETTER[side]) for side in SIDES}
-    st.update(KIND=KIND, board=board, threats=threats, left=left, heights=tall,
-              line=[tuple(p) for p in d.get("line") or []])
+    st.update(KIND=KIND, board=board, left=left, line=[tuple(p) for p in d.get("line") or []])
     return st
 
 
@@ -170,7 +164,7 @@ def describe(d: dict) -> dict:
         turn += f" Game {st['game'] + 1} opens {st['next']}." if st["next"] else ""
     else:
         turn = (f" It is {name(st['to_move'])}'s turn as {COLOUR[st['to_move']]}"
-                + (", and it must block" if st["alert"] else "") + (f", due by {st['due']}." if st["due"] else "."))
+                + (f", due by {st['due']}." if st["due"] else "."))
     cols = []
     for col in range(1, COLS + 1):
         stack = [st["board"][(col, row)] for row in range(1, ROWS + 1) if (col, row) in st["board"]]

@@ -36,17 +36,20 @@ keeps count of, and the score sheet. A finished game keeps its final board up
 for two days, the same plate saying who won and how and the day the fresh board
 comes. The two materials are chess's skins with what a game adds to both
 ([`skin.py`](skin.py)): words fitted to their room, the light and dark
-materials, a side's medallion, and the mark on whatever the side to move must
-answer, glowing red in the standard theme as chess's king in check does, and
-clouded on a print.
+materials, a side's medallion, and the mark on whatever the rules make the side
+to move answer, a man that must jump, glowing red in the standard theme as
+chess's king in check does, and clouded on a print.
 
-What a game's data is checked for ([`data.py`](data.py)) is checked as
-strictly as chess's: a number is a whole number within its ceiling, a day is a
-real day, a line of the README opens no block of its own, a move's link opens
-its own ready-made issue and nothing else, and a finished board offers nothing
-to play. The sides are the house and GitHub ([`sides.py`](sides.py)), and the
-README's words round each sheet ([`readme.py`](readme.py)) are the turn's
-banner and every legal move, folded, as chess's are.
+What a game's data is checked for ([`data.py`](data.py)) is checked as strictly
+as chess's: a number is a whole number within its ceiling, a day is a real day,
+a line of the README opens no block of its own, a move's link opens its own
+ready-made issue and nothing else, and a finished board offers nothing to play.
+Nothing that would help a player choose is taken: no cell or column a side could
+win on next, no call to block, and no `+` or `#` on a move still to play, which
+only the score sheet writes, once the move is made. The sides are the house and
+GitHub ([`sides.py`](sides.py)), and the README's words round each sheet
+([`readme.py`](readme.py)) are the turn's banner and every legal move, folded,
+as chess's are.
 
 A game's own package draws its board and its pieces and says how its moves are
 written; everything else is here or is chess's, imported rather than copied.

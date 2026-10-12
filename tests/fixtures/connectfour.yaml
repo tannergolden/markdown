@@ -4,10 +4,11 @@
 # The sample game the theme-sets page draws the Connect Four sheets from: game 4
 # of @tannergolden against GitHub, which the Arbiter opened for GitHub, so
 # GitHub's Black disc dropped first and the house drops White, as it always
-# does. On GitHub's ninth move the house threatens column 7, and GitHub must
-# block it. The game itself is drawn on @tannergolden's profile alone, where
-# every move is played live; its players here are driftmark's contributors, and
-# as fictional as they are.
+# does. On GitHub's ninth move the house is a disc from four down column 7, and
+# the sheet says nothing of it: nothing on a board helps a player choose. The
+# game itself is drawn on @tannergolden's profile alone, where every move is
+# played live; its players here are driftmark's contributors, and as fictional
+# as they are.
 
 elements:
   connectfour:
@@ -19,22 +20,21 @@ elements:
     players: 7
     due: 18 Oct
     last:
-      move: 5+
-      words: A White disc down column 5, to row 2, threatening column 7
+      move: "5"
+      words: A white disc down column 5, to row 2
       by: "@tannergolden"
       when: 12 Oct
-    threats: {house: [7], github: []}
     history:
       - [7, "4", "6", "@devonaraki"]
-      - [8, "4", 5+, "@hollyfenwick"]
+      - [8, "4", "5", "@hollyfenwick"]
       - [9, "", "", ""]
-    prompt: "🟢 **GitHub's turn as Black!** @tannergolden threatens column 7: block it, by 18 Oct."
+    prompt: "🟢 **GitHub's turn!** @tannergolden played 8... ⚪5. Pick a move below by 18 Oct."
     note: "The Arbiter opens every game for a side drawn at random, with a random first move. The first move to arrive is the one played."
     moves:
-      - ["⚠️", "Jump Into the Wind!", "1", "A Black disc down column 1, to row 3", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=connectfour%3A%201%20%C2%B7%20game%204%20%C2%B7%20move%2017"]
-      - ["⚠️", "Look the Wrong Way!", "2", "A Black disc down column 2, to row 1", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=connectfour%3A%202%20%C2%B7%20game%204%20%C2%B7%20move%2017"]
-      - ["⚠️", "Drift Off Course!", "3", "A Black disc down column 3, to row 6", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=connectfour%3A%203%20%C2%B7%20game%204%20%C2%B7%20move%2017"]
-      - ["⚠️", "Land Behind Your Own Lines!", 4+, "A Black disc down column 4, to row 5, threatening column 4", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=connectfour%3A%204%20%C2%B7%20game%204%20%C2%B7%20move%2017"]
-      - ["⚠️", "Leave the Gap Open!", 5+, "A Black disc down column 5, to row 3, threatening column 6", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=connectfour%3A%205%20%C2%B7%20game%204%20%C2%B7%20move%2017"]
-      - ["⚠️", "Abandon the Drop Zone!", 6+, "A Black disc down column 6, to row 3, threatening column 5", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=connectfour%3A%206%20%C2%B7%20game%204%20%C2%B7%20move%2017"]
-      - ["🛡️", "Cut Off Their Advance!", "7", "A Black disc down column 7 blocks on row 2", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=connectfour%3A%207%20%C2%B7%20game%204%20%C2%B7%20move%2017"]
+      - ["🧱", "Stack Black to Row 3 on the Left Edge!", "1", "A black disc down column 1, to row 3", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=connectfour%3A%201%20%C2%B7%20game%204%20%C2%B7%20move%2017"]
+      - ["⬇️", "Send Black to the Floor in Column 2!", "2", "A black disc down column 2, to row 1", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=connectfour%3A%202%20%C2%B7%20game%204%20%C2%B7%20move%2017"]
+      - ["🔝", "Lay the Sixth Disc in Column 3!", "3", "A black disc down column 3, to row 6", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=connectfour%3A%203%20%C2%B7%20game%204%20%C2%B7%20move%2017"]
+      - ["🧱", "Stack Black on Black in the Centre Column!", "4", "A black disc down column 4, to row 5", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=connectfour%3A%204%20%C2%B7%20game%204%20%C2%B7%20move%2017"]
+      - ["🧱", "Stack Black on White in Column 5!", "5", "A black disc down column 5, to row 3", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=connectfour%3A%205%20%C2%B7%20game%204%20%C2%B7%20move%2017"]
+      - ["🧱", "Put Black on White in Column 6!", "6", "A black disc down column 6, to row 3", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=connectfour%3A%206%20%C2%B7%20game%204%20%C2%B7%20move%2017"]
+      - ["🧱", "Set Black Atop White on the Right Edge!", "7", "A black disc down column 7, to row 2", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=connectfour%3A%207%20%C2%B7%20game%204%20%C2%B7%20move%2017"]

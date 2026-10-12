@@ -218,8 +218,8 @@ class Words(unittest.TestCase):
     """The last move's words stand on a line or two of their own under the move, inside the panel: an engine's
     sentence keeps its size and every word, and only words two lines cannot hold at the floor end in an ellipsis."""
 
-    SAID = ("Queen from e5 takes the knight on d6, check",                        # cut at "d6, c" on a phone before
-            "Pawn from b7 takes the knight on a8, becoming a knight, checkmate")  # the longest an engine writes
+    SAID = ("Queen from e5 takes the knight on d6, check",                        # cut at "d6, c" on a phone once
+            "Pawn from b7 takes the knight on a8, becoming a knight, checkmate")  # longer than an engine now writes
     WIDEST = (("WWWWWWW " * 10).strip(), "W" * 80)                                # the limit, in the widest letter
 
     def lines(self, d: dict, tone: str, variant: str) -> tuple[Run, list[Run], tuple[float, float], list[Run]]:

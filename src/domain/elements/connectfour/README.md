@@ -37,22 +37,23 @@ Its sheet is chess's ([`../games/`](../games/README.md)): the same card or
 drafting sheet, band and panel, around a frame of its own
 ([`layout.py`](layout.py)) as wide as chess's board, drawn in elevation: seven
 columns numbered under it and six rows up its side, on two legs on the ground. A
-move is written as its column, `4`, `+` for a threat and `#` for four in a row,
-with the disc that dropped it before it on the sheet. In place of chess's taken
-pieces the panel counts each side's discs left, a rack of twenty-one emptying as
-the frame fills, the house's White on top. Every word on the sheet says White
+move is written as its column, `4`, the score sheet adding a `#` to the drop
+that connected four, with the disc that dropped it before it on the sheet. In
+place of chess's taken pieces the panel counts each side's discs left, a rack of
+twenty-one emptying as the frame fills, the house's White on top. Nothing on the
+sheet helps a player choose: no column a side could connect four down next, and
+no call to block. Every word on the sheet says White
 and Black. The frame and the discs ([`shapes.py`](shapes.py)) come in the two
 materials ([`skins.py`](skins.py)): the theme's cobalt enamel and discs lit as
 chess's pieces are, in the standard theme; section lining and ink on a print.
 
 As the file opens ([`motion.py`](motion.py)) the last disc is held over its
 column, let go, glimpsed through each hole it passes behind, and lands with a
-bounce, its hole ringed; a hole the side to move must block blooms as chess's
-check does, with the disc that would land there in phantom lines; and a won
-game's four are ringed one after another and joined. A finished game's frame
-stays up for two days, and the README's words round the sheet
-([`readme.py`](readme.py)) are the turn's banner and every open column as a
-move, each disc a paratrooper dropped from the sky.
+bounce, its hole ringed; and a won game's four are ringed one after another and
+joined. A finished game's frame stays up for two days, and the README's words
+round the sheet ([`readme.py`](readme.py)) are the turn's banner and every open
+column as a move, each named for the disc, its column and the row it lands on,
+never for what it does.
 
 ---
 

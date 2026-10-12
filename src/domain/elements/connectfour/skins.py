@@ -6,8 +6,7 @@ sheets are (`games.skin`), with the frame's and the discs' own materials.
   standard  the frame in the theme's cobalt enamel, the colour of chess's dark squares, lit from the upper left as
             chess's board is, every hole cut clean through it and its wall in shade on the side the lamp misses; two
             legs on a ground line; the discs enamel, White's lit white edged in black and Black's black with the
-            lamp's highlight, as chess's pieces are; the last disc's hole ringed amber, a hole to block glowing red as
-            chess's king in check, a won line joined in amber
+            lamp's highlight, as chess's pieces are; the last disc's hole ringed amber, a won line joined in amber
   print     the frame drawn in elevation, as a part standing on the ground is: its face in section lining, as chess
             lines its dark squares, every hole cut through it with a centre mark while it is empty and a shade line
             on the side the lamp misses; two legs on a ground line hatched beneath; the whole casting its shadow down
@@ -148,11 +147,6 @@ class Print(GamePrint):
         return (f'<g>{appear}<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(r)}" fill="none" stroke="{c(self.mark)}" '
                 f'stroke-width="{fx(width, 1)}"/></g>')
 
-    def phantom_disc(self, cx, cy, r) -> str:
-        """A disc in phantom lines, long and short dashes: where a threatened disc would land."""
-        return (f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(r)}" fill="none" stroke="{c(self.mark)}" '
-                f'stroke-width="1.1" stroke-opacity=".85" stroke-dasharray="4 1.4 1 1.4"/>')
-
     def slot(self, cx, cy) -> str:
         """A rack's empty slot, where a disc that has been dropped stood: a small mark, faint."""
         return (f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="1.1" fill="{c(self.col["ink"])}" '
@@ -268,11 +262,6 @@ class Standard(GameStandard):
         """A hole ringed amber, as chess marks the square a piece lands on."""
         return (f'<g>{appear}<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(r)}" fill="none" stroke="{c("amber")}" '
                 f'stroke-width="{fx(width + .6, 1)}"/></g>')
-
-    def phantom_disc(self, cx, cy, r) -> str:
-        """A disc in phantom lines, white on the red glow: where a threatened disc would land."""
-        return (f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(r)}" fill="none" stroke="{c("white")}" '
-                f'stroke-width="1.4" stroke-opacity=".9" stroke-dasharray="4 1.4 1 1.4"/>')
 
     def slot(self, cx, cy) -> str:
         """A rack's empty slot, where a disc that has been dropped stood: a small dot, faint."""

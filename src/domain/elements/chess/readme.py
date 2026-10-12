@@ -4,8 +4,10 @@
 
 An image cannot be clicked square by square, so the board's README block puts the game's words round it: the turn's
 banner above, green on GitHub's turn and red on the house's; under it every legal move as a row of its emoji, its
-title and notation, what it does in plain words, and a link that opens its ready-made issue, folded shut under one
-line saying whose moves they are and how many; then the note. A finished game's block is its banner, an important
+title and notation, the move in plain words, and a link that opens its ready-made issue, folded shut under one line
+saying whose moves they are and how many; then the note. A move is named for what it is, never for what it does
+("Bring Out the King's Knight to f3!", "Take the Pawn on f7 With the Queen!"), and written without the `+` or `#`
+that would say it checks or mates, so a mate reads as any other move of its piece. A finished game's block is its banner, an important
 note of who won and when the fresh board comes, its final board and its note, with no move under it to play. A turn
 with more than ten moves is grouped by piece, each group named for as many of the pieces as have a move in it. The
 Hall of Fame's block follows its sheet with a row of badges, one per winner, each linking to that player's profile,
@@ -41,7 +43,7 @@ def banner(d: dict) -> str:
 
 
 def table(moves: list) -> str:
-    rows = ["|  | Move | What it does | Play |", "| :-: | :--- | :--- | :-: |"]
+    rows = ["|  | Move | In words | Play |", "| :-: | :--- | :--- | :-: |"]
     rows += [f"| {emoji} | **{title}** `{san}` | {words} | [Play ↗]({url}) |" for emoji, title, san, words, url in moves]
     return "\n".join(rows)
 

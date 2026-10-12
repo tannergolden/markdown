@@ -35,22 +35,25 @@ Its sheet is chess's ([`../games/`](../games/README.md)): the same card or
 drafting sheet, band and panel, around a board of its own
 ([`layout.py`](layout.py)): three cells a side as wide as chess's board, named
 as chess names squares, a1 to c3, with the eight lines a game is won on drawn
-faint through them while a side can still win on them. A move is written as the
-mark and its cell, `Xb2`, `+` for a threat and `#` for a win. In place of
-chess's taken pieces the panel says what perfect play says from here, and where
-each side would win next. The marks are pen strokes ([`shapes.py`](shapes.py))
+faint through them while it goes on, all eight, whatever stands on them. A move
+is written as the mark and its cell, `Xb2`, the score sheet adding a `#` to the
+move that won. In place of chess's taken pieces the panel counts each side's
+marks left, a rack of five for the side that moved first and four for the
+other. Nothing on the sheet helps a player choose: no cell a side could win on
+next, no word of what perfect play makes of the game, and no call to block. The
+marks are pen strokes ([`shapes.py`](shapes.py))
 in the two materials ([`skins.py`](skins.py)): enamel on chess's board, its
 cells the light squares and its bars the dark, in the standard theme; ink and
 line shading on a print. The house's X is always drawn light and GitHub's O
 always dark, and the matchup always has the house on the left as X.
 
 As the file opens ([`motion.py`](motion.py)) the last mark draws itself stroke
-by stroke as a pen would, its cell is marked as the pen lifts, a cell the side
-to move must block blooms as chess's check does, with the threatening mark in
-phantom lines inside it, and a won line is struck through. A finished game's
-board stays up for two days with its line struck and its plate saying who won,
-and the README's words round the sheet ([`readme.py`](readme.py)) are the
-turn's banner and every open cell as a move, named as a call across a duel.
+by stroke as a pen would, its cell is marked as the pen lifts, and a won line is
+struck through. A finished game's board stays up for two days with its line
+struck and its plate saying who won, and the README's words round the sheet
+([`readme.py`](readme.py)) are the turn's banner and every open cell as a move,
+each named for where its mark goes among the others, with a title of its own
+across the whole game, and never for what it does.
 
 ---
 

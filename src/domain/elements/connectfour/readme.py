@@ -2,11 +2,12 @@
 # SPDX-License-Identifier: MIT
 """What the README carries round the Connect Four sheet: the turn's banner, and every open column as a move, folded.
 
-Each drop is named for what it does on the frame, as chess's moves are in chess's words: "Command the Centre!" for the
-centre column, "Block Column 7 or Lose!" for a block, "Strike Twice, Columns 1 and 5!" for a double threat, "Win It
-Across Row 1!" for the win. The engine writes the names; this draws the block round the sheet, as chess's does
-(`games.readme`). The side to move is signed with the discs it drops, ⚪ for the house's White and ⚫ for GitHub's Black,
-whichever side the Arbiter opened for.
+Each drop is named for what it plainly is, never for what it does, as chess's moves are: the disc, the column and the
+row it lands on, and what it lands on ("Send Black to the Floor in Column 2!", "Stack Black on White in Column 5!",
+"Lay the Sixth Disc in Column 3!"), so a drop that wins and one that changes nothing read alike, and no `+` or `#`
+marks one out. The engine writes the names; this draws the block round the sheet, as chess's does (`games.readme`).
+The side to move is signed with the discs it drops, ⚪ for the house's White and ⚫ for GitHub's Black, whichever side the
+Arbiter opened for.
 """
 from __future__ import annotations
 

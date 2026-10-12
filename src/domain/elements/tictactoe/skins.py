@@ -5,14 +5,14 @@ sheets are (`games.skin`), with the marks' own materials.
 
   standard  chess's standard board: its cells the light squares and the bars between them the dark, sunk in the
             card under the same lamp; the marks pen strokes in enamel, X lit white edged in black and O black with
-            the lamp's highlight on it, as chess's pieces are, whoever plays them; the last mark's cell amber, a
-            cell to block glowing red as chess's king in check, a won line struck in amber
+            the lamp's highlight on it, as chess's pieces are, whoever plays them; the last mark's cell amber, a won
+            line struck in amber
   print     a plan view drawn as chess's board is: its shadow in section lining, the bars lined as chess lines its
             dark squares, a fine edge round every cell, and its edge drawn in; X paper edged in ink and
             line-shaded, O solid ink with a glint, as a print draws chess's pieces
 
 Either way each mark has its soft shadow down and to the right, away from the lamp, and the eight lines a game is
-won on are drawn faint through the cells while a side can still win on them.
+won on are drawn faint through the cells while it goes on, all eight, whatever stands on them.
 """
 from __future__ import annotations
 
@@ -65,13 +65,6 @@ def cells(x0: float, y0: float, n: float, bar: float) -> str:
     return "".join(out)
 
 
-def dashed(k: float, op: str, colour: str, width: float) -> str:
-    """Phantom lines, long and short dashes, as they stand on the sheet whatever the mark's scale `k`."""
-    return (f'fill="none" stroke="{c(colour)}" stroke-width="{fx(width / k, 2)}" stroke-opacity="{op}" '
-            f'stroke-dasharray="{fx(4 / k, 2)} {fx(1.4 / k, 2)} {fx(1 / k, 2)} {fx(1.4 / k, 2)}" '
-            'stroke-linejoin="round"')
-
-
 class Print(GamePrint):
     """A print's Tic-Tac-Toe: the board drawn in plan, the marks as pen strokes with a body."""
 
@@ -96,7 +89,7 @@ class Print(GamePrint):
                 f'{hair(self.col, .4)} stroke-width=".7"/>')
 
     def open_lines(self, d: str) -> str:
-        """The lines a game can still be won on, faint, long and short dashes, as a drawing draws centre lines."""
+        """The eight lines a game is won on, faint, long and short dashes, as a drawing draws centre lines."""
         return (f'<path d="{d}" fill="none" stroke="{c(self.col["line"])}" stroke-opacity=".28" stroke-width=".7" '
                 f'stroke-dasharray="12 3 2 3"/>')
 
@@ -131,13 +124,6 @@ class Print(GamePrint):
                        f'stroke-opacity="{".35" if self.dark else ".55"}" stroke-width="{fx(1.3 / k, 2)}" '
                        f'stroke-linecap="round"/>')
         return "".join(out) + "</g>"
-
-    def phantom_mark(self, mark: str, x: float, y: float, size: float) -> str:
-        """A mark in phantom lines, long and short dashes: where a threatened mark would fall, as chess draws where
-        a piece stood."""
-        k = size / 100
-        return (f'<path d="{BODY[mark]}" transform="translate({f1(x)} {f1(y)}) scale({fx(k, 4)})" '
-                + dashed(k, ".85", self.mark, 1.1) + "/>")
 
     def strike(self, line_d: str, width: float, extra: str = "", anim: str = "") -> str:
         """A won line struck through, as a pen strikes a row: a band of paper first, so it reads across the marks,
@@ -176,7 +162,7 @@ class Standard(GameStandard):
                 f'stroke="{c(tone)}" stroke-opacity=".55" stroke-width=".9"/>')
 
     def open_lines(self, d: str) -> str:
-        """The lines a game can still be won on, faint, in the accent."""
+        """The eight lines a game is won on, faint, in the accent."""
         return (f'<path d="{d}" fill="none" stroke="{c(P.ACCENT)}" stroke-opacity="{".5" if self.dark else ".38"}" '
                 f'stroke-width=".9" stroke-dasharray="12 3 2 3"/>')
 
@@ -200,12 +186,6 @@ class Standard(GameStandard):
             out.append(f'<path d="{SPEC if mark == "O" else GLINT}" fill="none" stroke="{c("white")}" '
                        f'stroke-opacity=".5" stroke-width="{fx(1.3 / k, 2)}" stroke-linecap="round"/>')
         return "".join(out) + "</g>"
-
-    def phantom_mark(self, mark: str, x: float, y: float, size: float) -> str:
-        """A mark in phantom lines, white on the red glow: where a threatened mark would fall."""
-        k = size / 100
-        return (f'<path d="{BODY[mark]}" transform="translate({f1(x)} {f1(y)}) scale({fx(k, 4)})" '
-                + dashed(k, ".9", "white", 1.4) + "/>")
 
     def strike(self, line_d: str, width: float, extra: str = "", anim: str = "") -> str:
         """A won line struck through in amber, the colour the last move is marked in, edged in black so it reads

@@ -5,11 +5,11 @@
 The frame stands where chess's board does, as wide, drawn in elevation: seven columns numbered under it between its
 legs, six rows numbered up its left side, two legs on the ground. As the file opens the last disc is held over its
 column, an arrow marking where it goes in, falls down it behind the plate, glimpsed through each hole it passes, and
-lands with a bounce, its column's number set on a block and its hole ringed; a hole the side to move must block is
-marked as chess marks a king in check, with the disc that would land there in phantom lines; a won game's four are
-ringed one after another and joined by a line. In place of chess's taken pieces the panel counts each side's discs
-left, its rack emptying as the frame fills. The house always drops the White discs and GitHub the Black, and every
-word on the sheet says so: WHITE and BLACK, the house's White first.
+lands with a bounce, its column's number set on a block and its hole ringed; a won game's four are ringed one after
+another and joined by a line. In place of chess's taken pieces the panel counts each side's discs left, its rack
+emptying as the frame fills. Nothing on the sheet helps a player choose: no column a side could connect four down
+next, and no call to block. The house always drops the White discs and GitHub the Black, and every word on the sheet
+says so: WHITE and BLACK, the house's White first.
 """
 from __future__ import annotations
 
@@ -119,16 +119,6 @@ def board(cv, sk, st, x0, y0, n, *, small=False) -> None:
         discs.append(sk.disc(cv, mat, cx, cy, p))
     cv.add("".join(discs))
     sk.plate(cv, g["x"], g["y"], g["w"], g["h"], holes, p, empty)
-    danger = [] if st["result"] else st["threats"][other(st["to_move"])]
-    for col in danger:
-        row = st["heights"][col] + 1
-        if row > ROWS:
-            continue
-        cx, cy = centre(g, col, row)
-        side = p * .9
-        pulse = M.ani("opacity", "0;0;1;.45;1;.45;1", "0;.36;.46;.6;.73;.86;1", land + 2.2)
-        cv.add(sk.clouded(cv, cx - side / 2, cy - side / 2, side, pulse, inside=sk.phantom_disc(cx, cy, rh * .86),
-                          round_=True))
     if last:
         cx, cy = centre(g, last["column"], last["row"])
         cv.add(sk.hole_ring(cv, cx, cy, rh + 2.6, M.appear(land - .02, .12) if M.moving() else ""),

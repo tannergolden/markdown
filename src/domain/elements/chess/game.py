@@ -7,7 +7,9 @@ after every move: `chess`, the board as it stands, and `chess-hall`, the series 
 Nothing here knows the rules. The position arrives as FEN and the moves in notation, each with the title and the
 plain words the engine gave it, and every field is checked before it is drawn, since a move's title and a
 player's login end up in the README. A field YAML reads as something else, a number for a name or a list for a
-note, is turned away like any other mistake, and every number has a ceiling the sheets have room to letter.
+note, is turned away like any other mistake, and every number has a ceiling the sheets have room to letter. A move
+still to play is written without a `+` or `#`, which would say it checks or mates: only the score sheet writes them,
+once the move is made.
 
 A finished game keeps its final board up for two days before the fresh one comes. Its data then carries how it
 ended (`result`: the winner, the house or GitHub, or none for a draw, and how) and the day the fresh board comes
@@ -46,6 +48,7 @@ FEN = re.compile(r"(?:[pnbrqkPNBRQK1-8]{1,8}/){7}[pnbrqkPNBRQK1-8]{1,8} [wb] (?:
                  r"[0-9]+ [1-9][0-9]{0,4}")
 SQUARE = re.compile(r"[a-h][1-8]")
 SAN = re.compile(r"(?:O-O(?:-O)?|[KQRBN][a-h]?[1-8]?x?[a-h][1-8]|[a-h](?:x[a-h])?[1-8](?:=[QRBN])?)[+#]?")
+OFFER = re.compile(SAN.pattern.removesuffix("[+#]?"))  # a move still to play: no check or mate said
 # A move's link opens its ready-made issue in tannergolden/play, and nothing else: no space, bracket or quote.
 LINK = re.compile(r"https://github\.com/tannergolden/play/issues/new\?template=move\.yml&title=chess%3A%20"
                   r"[a-h][1-8][a-h][1-8][qrbn]?%20%C2%B7%20game%20[1-9][0-9]{0,8}%20%C2%B7%20move%20[1-9][0-9]{0,8}")
@@ -54,8 +57,9 @@ LINE = re.compile(r"[^<>|\n\r]{1,400}")
 # Nor anything that starts a block of its own where the line is set: space before it, a fence, a heading, a quote, a
 # list's item, a link's definition, or a rule, which under the banner's first line would make that line a heading.
 BLOCK = re.compile(r"\s|```|~~~|#{1,6}(?:\s|$)|>|[-*+](?:\s|$)|[0-9]+[.)](?:\s|$)|\[[^\]]*\]:|[-=*_\s]+$")
-# A move's title, set in bold in the README, which a space at either end would leave as plain asterisks.
-TITLE = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9 ,.'!-]{0,46}[A-Za-z0-9,.'!-])?")
+# A move's title, set in bold in the README, which a space at either end would leave as plain asterisks: up to 100
+# letters, room for Tic-Tac-Toe to name every move apart from every other in plain words.
+TITLE = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9 ,.'!-]{0,98}[A-Za-z0-9,.'!-])?")
 WORDS = re.compile(r"[A-Za-z][A-Za-z0-9 ,.'-]{0,79}")
 EMOJI = re.compile("[←-⯿\U0001f000-\U0001faff‍️]{1,8}")
 LOGIN = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})")
@@ -259,6 +263,9 @@ def check(d: dict) -> list[str]:
             if not (isinstance(move, list) and len(move) == 5 and is_text(move[0], EMOJI) and is_text(move[1], TITLE)
                     and is_text(move[2], SAN) and is_text(move[3], WORDS) and is_text(move[4], LINK)):
                 errors.append(f"moves: {move!r} is not an emoji, a title, a move in SAN, its words and its link")
+            elif not is_text(move[2], OFFER):
+                errors.append(f"moves: {move[2]!r} says what the move would do: a move still to play is written"
+                              " without a + or #, which only the score sheet writes, once the move is made")
     offered = sum(len(g["list"]) for g in moves if isinstance(g, dict) and isinstance(g.get("list"), list))
     # the side that made the last move: Black, when it is White's turn
     return errors + check_end(d, GITHUB if white else HOUSE, ENDS, offered)
