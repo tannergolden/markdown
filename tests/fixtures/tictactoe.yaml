@@ -31,8 +31,8 @@ elements:
     prompt: "🟢 **GitHub's turn!** @tannergolden played 2... Xa3. Pick a move below by 18 Oct."
     note: "The Arbiter opens every game for a side drawn at random, with a random first move. The first move to arrive is the one played."
     moves:
-      - ["📏", "Take the Edge by Your Centre and Their Corner!", Ob3, "O takes the top edge", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20b3%20%C2%B7%20game%209%20%C2%B7%20move%205"]
-      - ["📐", "Take the Corner by Your Centre!", Oc3, "O takes the upper right corner", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20c3%20%C2%B7%20game%209%20%C2%B7%20move%205"]
-      - ["📏", "Take the Edge by Their Two Corners!", Oa2, "O takes the left edge", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20a2%20%C2%B7%20game%209%20%C2%B7%20move%205"]
+      - ["📏", "Take the Edge by One of Theirs, Away From Your Corner!", Ob3, "O takes the top edge", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20b3%20%C2%B7%20game%209%20%C2%B7%20move%205"]
+      - ["📐", "Take the Corner by Your Centre Alone, Against Their Two Corners!", Oc3, "O takes the upper right corner", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20c3%20%C2%B7%20game%209%20%C2%B7%20move%205"]
+      - ["📏", "Take the Edge by Your Centre and Their Two Corners!", Oa2, "O takes the left edge", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20a2%20%C2%B7%20game%209%20%C2%B7%20move%205"]
       - ["📏", "Take the Edge by Your Centre and Corner Alone!", Oc2, "O takes the right edge", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20c2%20%C2%B7%20game%209%20%C2%B7%20move%205"]
-      - ["📏", "Take the Edge by Two of Yours and Their Corner!", Ob1, "O takes the bottom edge", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20b1%20%C2%B7%20game%209%20%C2%B7%20move%205"]
+      - ["📏", "Take the Edge by Your Centre and Corner and Their Corner!", Ob1, "O takes the bottom edge", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictactoe%3A%20b1%20%C2%B7%20game%209%20%C2%B7%20move%205"]
