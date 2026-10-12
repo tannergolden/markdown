@@ -65,7 +65,8 @@ The owner asked for the games in every theme. The question was how a pixel set d
 ### Rationale for Selection
 
 - **One setting.** The theme, or the holiday's set that is up, decides the games as it decides every other part: nothing new in the settings, nothing to keep in step.
-- **One layout, every set.** The layouts live with the sets' others, in `holidays/designs/` (`games.py`, `boards.py` and `hall.py`), the same sheet, panel and sections as the standard theme's and the prints', and each set brings what it already has: its paper and sky, its frame, its tags, its inks and its lettering, and two of its own colours for the board's squares, picked from its palette near its tags' hue and its paper's or named by `game_squares`.
+- **One layout, every set.** The layouts live with the sets' others, in `holidays/designs/` (`games.py`, `boards.py` and `hall.py`), the same sheet, panel and sections as the standard theme's and the prints', and each set brings what it already has: its paper and sky, its frame, its tags, its inks and its lettering.
+- **Built of each set's world.** A set names what its games are made of (`materials.py`): its board's squares (`game_squares`) and its frame (`game_frame`), each a ramp of its own tones with a grain, and what its Hall's podium is cut from and how it is worked (`game_podium`). So the Longship's board is painted planks in an oak frame and its podium tarred timber with her shields along its rail, the Cathedral's board violet glass in its lead and its podium the rose window's blue, and the Stronghold's podium crenellated ashlar; a plaque of the trophies' metals is set in every block. A set that names none has its squares picked from its palette, near its tags' hue and its paper's. The last move's mark and what must be answered take the set's accent and red, or, where one would be lost on its board, the first of its inks that stands clear of both squares.
 - **The same pieces in every world.** Every piece is drawn once, in pixels, at each size a sheet needs (`pieces.py`): chessmen, stacked checkers men, discs and a pen's marks, the house's in ivory and GitHub's in ebony in every set, so a knight is the same knight by moonlight and in a scriptorium, and the house's pieces are the light ones, as they are in every look.
 - **A collection's hand holds.** A design letters every word in its hand's two inks and glints on its hand's period. Its title lettering sets the counts and the moves, and a design whose titles stand in a box of their own, an illuminated initial or a banderole, letters them for a panel instead (`game_title`).
 - **Motion as pixel art moves.** Each file opens as it does in every look, a board playing its last move again and the Hall filling its series and raising its podium, in discrete steps as the sets' scenes move, and holds where it lands; its still twin is drawn at rest for a reader who asks for reduced motion.
@@ -102,7 +103,7 @@ The owner asked for the games in every theme. The question was how a pixel set d
 
 ### Option C: The games follow the page's theme
 
-- ✅ One layout per game, every set, the same game in every look.
+- ✅ One layout per game, every set, the same game in every look, each set's board and podium of its own world.
 - ❌ The shared layout has to suit every set's paper, frame and lettering, and every set's palette has to give a board.
 
 ---
@@ -113,7 +114,7 @@ The owner asked for the games in every theme. The question was how a pixel set d
 - [ADR-0003](ADR-0003-Holiday-Windows.md): the holiday windows, whose sets now draw the games too.
 - [ADR-0006](ADR-0006-A-Collection-Changes-With-The-Month.md): the collection whose designs draw the games month by month.
 - [ADR-0007](ADR-0007-A-Collection-Is-Drawn-By-One-Hand.md): the hand a design's games are lettered in.
-- [ADR-0008](ADR-0008-The-Trophy-Case-Wears-The-Pages-Theme.md): the trophy case, the part drawn in the page's theme before them, whose metals the Hall's podium is struck in.
+- [ADR-0008](ADR-0008-The-Trophy-Case-Wears-The-Pages-Theme.md): the trophy case, the part drawn in the page's theme before them, whose metals the plaques on the Hall's podium are struck in.
 
 ### 🔗 See also
 

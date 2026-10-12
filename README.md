@@ -381,10 +381,12 @@ of, and the score sheet), and the same motion as each file opens:
   bars and the frame, line shading for the light pieces, phantom lines where a
   piece stood and a revision cloud round whatever must be answered. Or, while a
   holiday's set or a collection's design is up, its pixels: its paper, frame and
-  lettering, the board's squares in two of the set's own colours, and the same
-  hand-drawn ivory and ebony pieces in every set, a collection's words in its
-  hand's two inks. A set draws a game whole, or leaves it in the page's own
-  look.
+  lettering, a board built of its own world's stuff, a ship's planks, a
+  cathedral's leaded glass or a mosaic's tesserae, in a frame of its own, and
+  the Hall's podium cut from it too, crenellated for a castle or tied with
+  ribbon for Christmas; the same hand-drawn ivory and ebony pieces in every set,
+  and a collection's words in its hand's two inks. A set draws a game whole, or
+  leaves it in the page's own look.
 - **The Hall of Fame** of all four games: the series between the house and
   GitHub, each game on its own row under the four together, in the README's
   order and each named by its two pieces, the house's first; then a podium of
