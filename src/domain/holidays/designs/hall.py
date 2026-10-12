@@ -52,10 +52,15 @@ def plural(n: int, word: str) -> str:
     return f"{n} {word}{'s' if n != 1 else ''}"
 
 
-def games_line(s: dict) -> str:
+def games_line(s: dict, room: int | None = None) -> str:
+    """How many games of a series have finished and how many were drawn, in capitals: its dot set wide, or set close
+    where `room` is too short for that, before any letters need setting tighter."""
     if not s["games"]:
-        return "no game finished yet"
-    return f"{plural(s['games'], 'game')}  ·  {s['draws']} drawn"
+        return "NO GAME FINISHED YET"
+    wide = f"{plural(s['games'], 'game')}  ·  {s['draws']} drawn".upper()
+    if room is None or measure(fold(wide, "35"), "35") <= room:
+        return wide
+    return f"{plural(s['games'], 'game')} · {s['draws']} drawn".upper()
 
 
 # --------------------------------------------------------------------------- a count
@@ -614,8 +619,8 @@ def draw(h, p, hs: dict, night: bool, wide: bool, moving: bool, measure_only: bo
             hw = count(h, p, cols["house"], y + 8, str(t["house"]), size, night, anchor="end")
             count(h, p, cols["github"], y + 8, str(t["github"]), size, night)
             h.say(p, cols["name"], y + 1, "ALL FOUR GAMES", k["body"])
-            h.say(p, cols["name"], y + 9, games_line(t).upper(), k["muted"],
-                  room=cols["house"] - hw - GAP - cols["name"])
+            room = cols["house"] - hw - GAP - cols["name"]
+            h.say(p, cols["name"], y + 9, games_line(t, room), k["muted"], room=room)
             shares(h, p, t, cols["bar0"], cols["bar1"], y + 5, night)
         y += 22
         p.hline(cols["name"], x1, y - 4, k["rule"])
@@ -626,8 +631,8 @@ def draw(h, p, hs: dict, night: bool, wide: bool, moving: bool, measure_only: bo
                 hw = count(h, p, cols["house"], y + 4, str(s["house"]), sizes[1 + i], night, anchor="end")
                 count(h, p, cols["github"], y + 4, str(s["github"]), sizes[1 + i], night)
                 h.say(p, cols["name"], y, R.TITLES[game].upper(), k["body"])
-                h.say(p, cols["name"], y + 7, games_line(s).upper(), k["muted"],
-                      room=cols["house"] - hw - GAP - cols["name"])
+                room = cols["house"] - hw - GAP - cols["name"]
+                h.say(p, cols["name"], y + 7, games_line(s, room), k["muted"], room=room)
                 shares(h, p, s, cols["bar0"], cols["bar1"], y + 2, night)
             y += 17
     else:
@@ -640,8 +645,10 @@ def draw(h, p, hs: dict, night: bool, wide: bool, moving: bool, measure_only: bo
             size = sized((str(t["house"]), str(t["github"])), SIZES["total"], (room, room))
             count(h, p, mid - vs // 2 - 6, y + 7, str(t["house"]), size, night, anchor="end")
             count(h, p, mid + vs // 2 + 6, y + 7, str(t["github"]), size, night)
-            h.say(p, mid, y + 17, f"ALL FOUR GAMES  ·  {games_line(t)}".upper(), k["muted"], anchor="middle",
-                  room=x1 - x0)
+            line = f"ALL FOUR GAMES  ·  {games_line(t)}"
+            if measure(fold(line, "35"), "35") > x1 - x0:
+                line = f"ALL FOUR GAMES · {games_line(t, 0)}"
+            h.say(p, mid, y + 17, line, k["muted"], anchor="middle", room=x1 - x0)
             shares(h, p, t, x0, x1, y + 25, night)
         y += 37
         cols = phone_columns(hs, x0, x1)
@@ -651,7 +658,8 @@ def draw(h, p, hs: dict, night: bool, wide: bool, moving: bool, measure_only: bo
                 mark(p, game, x0, y)
                 title = R.TITLES[game].upper()
                 tw = h.say(p, cols["name"], y, title, k["body"])
-                h.say(p, x1, y, games_line(s).upper(), k["muted"], anchor="end", room=x1 - cols["name"] - tw - 6)
+                room = x1 - cols["name"] - tw - 6
+                h.say(p, x1, y, games_line(s, room), k["muted"], anchor="end", room=room)
                 h.say(p, cols["house"], y + 9, str(s["house"]), k["body"], anchor="end")
                 h.say(p, cols["github"], y + 9, str(s["github"]), k["body"])
                 shares(h, p, s, cols["bar0"], cols["bar1"], y + 9, night)
