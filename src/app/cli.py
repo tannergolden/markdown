@@ -47,6 +47,7 @@ from domain.elements import draw as elements_draw
 from domain.trophies import art as trophies_art
 from domain.trophies import catalogue as trophies_catalogue
 from domain.trophies import catalogue_md
+from domain.trophies import looks as trophies_looks
 from domain.trophies import plan as trophies_plan
 from domain.trophies import sample as trophies_sample
 
@@ -207,23 +208,51 @@ def badge_specimens() -> list[tuple[str, dict, str]]:
     return out
 
 
-def trophy_specimens():
-    """Every trophy style at every tier in both cases, every pin in every state, and both banner cards."""
-    for style, draw in trophies_art.STYLES.items():
-        for case, theme in trophies_art.CASES.items():
-            for cores in (trophies_catalogue.CORE, trophies_catalogue.RCORE):
-                for core in cores:
-                    for v in (0, 310, 3610, 23500, 640000):
-                        yield f"{style} {core.key} {v} {case}", draw(theme, core, v, {"rank": True, "delta": 9, "new": True})
+def case_specimens(look, styles=(), values=(0, 310, 3610, 23500, 640000), pins=None, cores=None):
+    """The trophy files of a look, `look(style)`, as (what, svg, problems): every style of `styles` at every
+    value in both cases, for every core trophy or those of `cores`; then the pins of `pins` (every achievement's
+    when None) in every state, and both banner cards. A file the look cannot draw, as a set cannot letter a word,
+    is a problem here, where a run would draw it in another look."""
+    def checked(drawn, what, svg):
+        return what, svg or "", (trophies_plan.lint(svg) + drawn.lint(svg)) if svg else ["it cannot draw it"]
+
+    for style in styles:
+        drawn = look(style)
+        for case in ("night", "day"):
+            for core in cores or (*trophies_catalogue.CORE, *trophies_catalogue.RCORE):
+                for v in values:
+                    yield checked(drawn, f"{style} {core.key} {v} {case}",
+                                  drawn.card(case, core, v, {"rank": True, "delta": 9, "new": True}))
+    drawn = look("trophy")
     for mode, s in trophies_sample.SAMPLES.items():
         m = trophies_catalogue.MODES[mode]
-        for case, theme in trophies_art.CASES.items():
-            for a in m["ach"]:
+        for case in ("night", "day"):
+            for a in m["ach"] if pins is None else [a for a in m["ach"] if a.slug in pins]:
                 for cur in (None, 0, a.tiers[-1]):
-                    yield f"pin {a.slug} {cur} {case}", trophies_art.pin(theme, a, cur)
-            yield f"level {mode} {case}", trophies_art.level_card(theme, m["core"], s["values"], m["ach"], s["curs"],
-                                                                   s["subject"], ("flame", "#000000", "X", "Y"))
-            yield f"next-up {mode} {case}", trophies_art.next_up_card(theme, m["core"], s["values"], m["ach"], s["curs"])
+                    yield checked(drawn, f"pin {a.slug} {cur} {case}", drawn.pin(case, a, cur))
+            yield checked(drawn, f"level {mode} {case}", drawn.level(case, m["core"], s["values"], m["ach"], s["curs"],
+                                                                     s["subject"], ("flame", "#000000", "X", "Y")))
+            yield checked(drawn, f"next-up {mode} {case}", drawn.next_up(case, m["core"], s["values"], m["ach"],
+                                                                         s["curs"]))
+
+
+def trophy_specimens():
+    """Every trophy style at every tier in both cases, every pin in every state and both banner cards, in the
+    standard look and in the blueprint; and every style at every tier in both cases in each other print, whose
+    drawings are the blueprint's in their own colours: as (what, svg, problems)."""
+    styles = tuple(trophies_art.STYLES)
+    yield from case_specimens(trophies_looks.Standard, styles)
+    for tone in prints.PRINTS:
+        whole = tone == "blueprint"
+        yield from ((f"{tone} {what}", svg, found) for what, svg, found in
+                    case_specimens(lambda style, tone=tone: trophies_looks.Drafted(style, tone), styles,
+                                   pins=None if whole else (),
+                                   cores=None if whole else (trophies_catalogue.CORE[0], trophies_catalogue.RCORE[2])))
+
+
+# The achievements whose names a set's pins must letter on two lines: the longest, and those broken at a hyphen.
+LONG_NAMES = ("constellation", "containerized", "conversation-starter", "well-formed", "well-maintained",
+              "first-watcher", "good-first-issues")
 
 
 def holiday_specimens(held, elements: dict | None = None):
@@ -244,6 +273,11 @@ def holiday_specimens(held, elements: dict | None = None):
                         svg = held.link(label, theme, i)
                         yield (f"{name} link {label} {theme['name']}", svg,
                                lint_svg(svg, budget=BUDGET["link"], tokens=held.tokens))
+    cores = (trophies_catalogue.CORE[0], trophies_catalogue.RCORE[2])
+    for what, svg, problems in case_specimens(lambda style: trophies_looks.Pixels(style, held),
+                                              tuple(trophies_art.STYLES), (0, 310, 23500, 640000),
+                                              pins=LONG_NAMES + ("ghost", "first-star", "hello-world"), cores=cores):
+        yield f"trophy {what}", svg, problems
     for what, b, theme in badge_specimens():
         files = badges_data.in_set(held, b, {}, theme=theme, seed="2026W01") or {}
         if not files:
@@ -298,10 +332,10 @@ def cmd_lint(args, ports: Ports) -> int:
           + ("" if not problems else f"  PROBLEMS: {problems}"), file=ports.out)
     failed += bool(problems)
     largest, problems, n = 0, [], 0
-    for what, svg in trophy_specimens():
+    for what, svg, found in trophy_specimens():
         n += 1
         largest = max(largest, len(svg.encode("utf-8")))
-        problems += [f"{what}: {p}" for p in trophies_plan.lint(svg)]
+        problems += [f"{what}: {p}" for p in found]
     print(f"trophies   {n:,} specimens, largest {largest / 1000:.1f} KB"
           + ("" if not problems else f"  PROBLEMS: {problems[:5]}"), file=ports.out)
     failed += bool(problems)

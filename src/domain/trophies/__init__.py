@@ -12,12 +12,18 @@
   text          outlined lettering on the kit's shared glyphs
   art, styles   the cards (crest, trophy, medallion, crystal, plaque), the
                 achievement pins, and the level and next-up cards
+  prints        the same, drawn on a print's drafting paper
+  looks         which look a case is drawn in: the standard one, a print's, or a
+                pixel set's (`holidays.designs.trophies`)
   block         the README block: the cards, then the achievements by group
   plan          one measurement to every file, the block, and what the commit says
   settings      the `trophies:` section of the settings
   sample        made-up measurements for previews and the tests
   catalogue_md  docs/Catalogue.md, written from the catalogue
 
-A case is drawn in its own five styles all year: neither the page's theme nor
-the holiday sets change it.
+A case is drawn in the page's theme, as every part is: its five styles are
+the standard theme's, a print draws them on its drafting paper, and a
+holiday's set or a collection's design strikes them in its pixels. Each look
+keeps the style, the sizes and the words, and `look: standard` in the
+settings keeps the standard look in every theme.
 """

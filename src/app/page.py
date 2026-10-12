@@ -8,12 +8,11 @@ clock and the lock, and every part draws from the same one, so a page never
 mixes two themes or two days.
 
 A page in a collection is drawn in the collection's design for the month (see
-`collections`), and a holiday's set still takes over around its day. The
-trophies keep the standard look on such a page: the designs draw the banners,
-the badges and the elements. A page that follows the collection's calendar
-carries the month's mark in its headers; a page that keeps one design all
-year does not. A page that chose a sign, `sign: leo`, carries that one
-instead, either way.
+`collections`), and a holiday's set still takes over around its day: the
+design draws the banners, the badges, the elements and the trophy case, as a
+holiday's set does. A page that follows the collection's calendar carries the
+month's mark in its headers; a page that keeps one design all year does not.
+A page that chose a sign, `sign: leo`, carries that one instead, either way.
 """
 from __future__ import annotations
 
@@ -35,7 +34,7 @@ class Page:
     readme: str             # the README's path, relative to the root
     out: str                # the folder the files go in, relative to the root
     theme: str              # what the page is drawn in: standard, or a print (rainbowprint resolved to one);
-                            # standard for a collection, which the trophies keep
+                            # standard for a collection, for any file its design cannot draw
     rainbow: str | None     # the print rainbowprint is on, or None for any other theme
     holiday: holidays.Window | None  # the holiday whose set draws the page today, or None
     design: str = ""        # the collection's design for the month, or the design the settings name; ""

@@ -389,6 +389,35 @@ def crest(theme: dict, core: Core, value: int, o: dict | None = None) -> str:
 
 
 # --- the achievement pin -------------------------------------------------------
+def pin_label(a: Achievement, cur) -> str:
+    """What a pin says to a reader, the same in every look: its name, and earned, how far along, or a secret."""
+    st = ach_state(a, cur)
+    pct = 1.0 if st["done"] else st["pct"]
+    nm = a.name + (f" {st['tier']}" if st["tier"] else "")
+    if st["secret"]:
+        return "Secret achievement"
+    if st["earned"]:
+        label = f"{nm}: earned, {RARITY_NAMES[st['rarity']]}"
+        if not st["done"]:
+            label += f", {int(pct * 100)}% to {a.name} {st['next_tier']}"
+        return label
+    if st["measured"]:
+        return f"{nm}: {int(pct * 100)}% ({fmt(st['cur'])} of {fmt(st['next'])})"
+    return f"{nm}: not measured yet"
+
+
+def pin_caption(st: dict) -> str:
+    """The line under a pin's name: its rarity once earned, else how far along, or that it is a secret."""
+    pct = 1.0 if st["done"] else st["pct"]
+    if st["secret"]:
+        return "SECRET"
+    if st["earned"]:
+        return RARITY_NAMES[st["rarity"]].upper() + ("" if st["done"] else f" · {fmt(st['cur'])}/{fmt(st['next'])}")
+    if st["measured"]:
+        return f"{int(pct * 100)}% · {fmt(st['cur'])}/{fmt(st['next'])}"
+    return "NOT MEASURED YET"
+
+
 def pin(theme: dict, a: Achievement, cur) -> str:
     st = ach_state(a, cur)
     cx, cy = 52, 48
@@ -397,16 +426,7 @@ def pin(theme: dict, a: Achievement, cur) -> str:
     c = TIERS[t]
     pct = 1.0 if st["done"] else st["pct"]
     nm = a.name + (f" {st['tier']}" if st["tier"] else "")
-    if secret:
-        label = "Secret achievement"
-    elif earned:
-        label = f"{nm}: earned, {RARITY_NAMES[st['rarity']]}"
-        if not st["done"]:
-            label += f", {int(pct * 100)}% to {a.name} {st['next_tier']}"
-    elif st["measured"]:
-        label = f"{nm}: {int(pct * 100)}% ({fmt(st['cur'])} of {fmt(st['next'])})"
-    else:
-        label = f"{nm}: not measured yet"
+    label = pin_label(a, cur)
     cv = Canvas(theme, PIN_W, PIN_H, label, t, {}, 1.0, 12)
     th = cv.th
     hue = a.hue if earned else mix(a.hue, "#D5DAE0" if th["day"] else "#262C35", .74)
@@ -443,14 +463,7 @@ def pin(theme: dict, a: Achievement, cur) -> str:
     nsize = 7.6 if len(nm) > 15 else 9
     cv.add(cv.txt("???" if secret else nm, face="serif", size=nsize, x=cx, y=101, anchor="middle", ls=.3,
                   fill=th["ghost_icon"] if secret else (th["value"] if earned else th["muted"])))
-    if secret:
-        cap = "SECRET"
-    elif earned:
-        cap = RARITY_NAMES[st["rarity"]].upper() + ("" if st["done"] else f" · {fmt(st['cur'])}/{fmt(st['next'])}")
-    elif st["measured"]:
-        cap = f"{int(pct * 100)}% · {fmt(st['cur'])}/{fmt(st['next'])}"
-    else:
-        cap = "NOT MEASURED YET"
+    cap = pin_caption(st)
     cv.add(cv.txt(cap, face="meta", size=8.5, x=cx, y=114, anchor="middle", ls=.8, fill=cv.tier_fill(st["rarity"]) if earned else th["muted"]))
     return cv.close()
 
@@ -489,12 +502,25 @@ def level_stats(cores: list, values: dict, ach: list, curs: dict) -> dict:
             "ms": ms, "earned": earned, "completion": completion}
 
 
+def level_label(st: dict, subject: str, foot: tuple) -> str:
+    """What the level card says to a reader, the same in every look."""
+    return f"{subject}: level {st['L']}, {fmt(st['xp'])} XP, case {round(st['completion'] * 100)}% complete, {foot[2].lower()}"
+
+
+def case_title(subject: str) -> str:
+    """The level card's title. A repository is named by its own name: the owner is in the README and the alt
+    text, and the title face has no slash. A name that already ends in an S takes the bare apostrophe, so
+    "trophies" reads as TROPHIES’ TROPHY CASE rather than TROPHIES’S."""
+    name = subject.rsplit("/", 1)[-1].upper()
+    return f"{name}{'’' if name.endswith('S') else '’S'} TROPHY CASE"
+
+
 def level_card(theme: dict, cores: list, values: dict, ach: list, curs: dict, subject: str, foot: tuple) -> str:
     """`foot` is (icon, hue, main text, muted text): the streak line or the release line."""
     W, H = 420, 152
     st = level_stats(cores, values, ach, curs)
     bt, c = st["bt"], TIERS[st["bt"]]
-    label = f"{subject}: level {st['L']}, {fmt(st['xp'])} XP, case {round(st['completion'] * 100)}% complete, {foot[2].lower()}"
+    label = level_label(st, subject, foot)
     cv = Canvas(theme, W, H, label, bt, {}, 1.0, 16)
     th = cv.th
     cv.add("<defs>" + cv.common_defs()
@@ -517,12 +543,7 @@ def level_card(theme: dict, cores: list, values: dict, ach: list, curs: dict, su
            + cv.txt(str(st["L"]), face="num", size=36, x=78, y=94, anchor="middle", fill="#FFFFFF")
            + f'<rect x="154" y="22" width="1" height="108" fill="{th["edge"][0]}" fill-opacity="{th["edge"][1]}"/>')
     x0, w = 170, 234
-    # A repository is named by its own name: the owner is in the README and
-    # the alt text, and the title face has no slash. A name that already
-    # ends in an S takes the bare apostrophe, so "trophies" reads as
-    # TROPHIES’ TROPHY CASE rather than TROPHIES’S.
-    name = subject.rsplit("/", 1)[-1].upper()
-    ttl = f"{name}{'’' if name.endswith('S') else '’S'} TROPHY CASE"
+    ttl = case_title(subject)
     tsz, tls = 12.5, 2.0
     while width(ttl, "serif", tsz, tls) > w and tsz > 8:
         tsz -= .5
@@ -555,10 +576,15 @@ def next_up_items(cores: list, values: dict, ach: list, curs: dict, n: int = 3) 
     return items[:n]
 
 
+def next_up_label(items: list) -> str:
+    """What the next-up card says to a reader, the same in every look."""
+    return "Next up: " + ", ".join(f"{i['name']} {int(i['pct'] * 100)}%" for i in items)
+
+
 def next_up_card(theme: dict, cores: list, values: dict, ach: list, curs: dict) -> str:
     W, H = 328, 152
     items = next_up_items(cores, values, ach, curs)
-    label = "Next up: " + ", ".join(f"{i['name']} {int(i['pct'] * 100)}%" for i in items)
+    label = next_up_label(items)
     cv = Canvas(theme, W, H, label, 0, {}, 1.0, 16)
     th = cv.th
     cv.add("<defs>" + cv.common_defs() + "</defs>" + cv.card_base())

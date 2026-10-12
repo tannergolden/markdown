@@ -27,7 +27,7 @@ that takes a design's key takes it with a day and a sign as well.
 
 With holidays on, a holiday's set still takes over around its day and hands
 the page back to the month's design after. A collection draws the banners,
-the badges and the elements; the trophies keep the `standard` look.
+the badges, the elements and the trophy case.
 
 Every collection has exactly twelve designs, January's first, and a page can
 pick a collection, or one of its designs, only once all twelve are drawn.

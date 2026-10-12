@@ -33,9 +33,14 @@ def planned(section: dict | None = None, mode: str = "profile", owners: dict | N
 class Settings(unittest.TestCase):
     def test_the_defaults(self):
         cfg = TS.check(None)
-        self.assertEqual((cfg["style"], cfg["case"], cfg["embed"], cfg["banner"], cfg["block"]),
-                         ("trophy", "both", "picture", True, True))
+        self.assertEqual((cfg["style"], cfg["look"], cfg["case"], cfg["embed"], cfg["banner"], cfg["block"]),
+                         ("trophy", "theme", "both", "picture", True, True))
         self.assertEqual(TS.check(True), cfg)
+
+    def test_the_look_follows_the_theme_or_keeps_the_standard_one(self):
+        self.assertEqual(TS.check({"look": "standard"})["look"], "standard")
+        with self.assertRaisesRegex(TS.TrophiesSettingsError, "look: 'blueprint' is not one of theme, standard"):
+            TS.check({"look": "blueprint"})
 
     def test_the_documented_shapes(self):
         cfg = TS.check({"style": "crest", "core": ["stars", "forks"], "enamel": {"stars": "amber"}, "card": "rank",

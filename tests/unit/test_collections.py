@@ -1,10 +1,11 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
 """The collections: twelve designs to a collection, one for each month, picked by the page's own day; a
-collection still being drawn cannot be picked; a holiday's set still takes over; the trophies stay standard;
-and the commit says when a month's design takes over."""
+collection still being drawn cannot be picked; a holiday's set still takes over; the design draws the trophy
+case with the rest of the page; and the commit says when a month's design takes over."""
 from __future__ import annotations
 
+import dataclasses
 import datetime as dt
 import unittest
 from pathlib import Path
@@ -162,7 +163,7 @@ class Complete(Patched):
         cfg = S.validate({"theme": theme, "holidays": holidays, "sign": sign}, None, catalogue=support.install())
         return settle(Path("."), cfg, mode="repository", subject="o/r", here="o/r", today=today, lk={})
 
-    def test_the_page_is_drawn_in_the_months_design_with_the_trophies_standard(self):
+    def test_the_page_is_drawn_in_the_months_design_with_its_own_theme_kept_for_after(self):
         page = self.page("standin", dt.date(2027, 3, 9))
         self.assertEqual((page.design, page.drawn_in, page.theme, page.rainbow),
                          ("standin-march", "standin-march:2027-03-09", "standard", None))
@@ -212,10 +213,22 @@ class Complete(Patched):
         self.assertEqual(subject, "draw April's standin design, Design 4")
         self.assertIn("It is April, so the page is drawn in Design 4, the standin collection's design for the month",
                       para)
-        self.assertIn("with the trophies in the standard look. On May 1 the next design takes over.", para)
+        self.assertIn("design for the month: the banners, the badges, the elements and the trophy case. On May 1 the "
+                      "next design takes over.", para)
         self.assertEqual(R._set_news(page, "", "standin-april"), ("", ""))
         december = self.page("standin", dt.date(2027, 12, 1))
         self.assertIn("On January 1 the next design takes over.", R._set_news(december, "", "")[1])
+
+    def test_the_commit_names_the_trophy_case_among_what_a_design_draws_unless_it_keeps_the_standard_look(self):
+        page = self.page("standin", dt.date(2027, 4, 1))
+        kept = dataclasses.replace(page, cfg=page.cfg | {"trophies": {"look": "standard"}})
+        self.assertIn("the banners, the badges and the elements, with the trophies in the standard look. On May 1",
+                      R._set_news(kept, "", "standin-march")[1])
+        off = dataclasses.replace(page, cfg=page.cfg | {"trophies": False})
+        self.assertIn("the banners, the badges and the elements. On May 1", R._set_news(off, "", "standin-march")[1])
+        up = self.page("standin", dt.date(2027, 10, 30))
+        self.assertIn("the banners, the badges, the elements and the trophy case are drawn in it",
+                      R._set_news(up, "", "standin-october")[1])
 
     def test_the_commit_says_where_the_page_goes_when_a_holiday_comes_and_goes(self):
         up = self.page("standin", dt.date(2027, 10, 30))

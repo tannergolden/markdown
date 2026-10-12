@@ -8,6 +8,7 @@ import copy
 import datetime as dt
 import io
 import json
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -55,7 +56,8 @@ def run(root: Path, argv: list[str], case: dict | None = None, today: str = "202
     return code, out.getvalue()
 
 
-class Case(unittest.TestCase):
+class Page(unittest.TestCase):
+    """A profile's repository on disk, its settings and its README, and the kit run on it."""
     settings = "mode: profile\nsubject: octo-dev\nbanners: false\n"
 
     def setUp(self):
@@ -88,6 +90,8 @@ class Case(unittest.TestCase):
     def readme(self) -> str:
         return (self.root / "README.md").read_text(encoding="utf-8")
 
+
+class Case(Page):
     def test_a_first_run_draws_the_case_folds_it_into_the_lock_and_names_what_it_reached(self):
         code, out = self.run_kit()
         self.assertEqual(code, 0, out)
@@ -189,6 +193,44 @@ class Case(unittest.TestCase):
         code, out = run(self.root, ["check"])
         self.assertEqual(code, 2)
         self.assertIn("check needs a measurement of the trophies", out)
+
+
+class InThePagesTheme(Page):
+    """The case is drawn in the page's theme: a print on its paper, a holiday's set while it is up, a collection's
+    design for the month; and `look: standard` keeps the trophies kit's case in every theme."""
+
+    def stamped(self) -> set:
+        return {re.search(r"<!--markdown-kit v1 trophy ([^>]*)-->", p.read_text(encoding="utf-8"))[1]
+                for p in self.out.rglob("*.svg")}
+
+    def test_a_page_in_a_print_draws_its_case_in_the_print_and_checks(self):
+        self.set(self.settings + "theme: blueprint\n")
+        code, out = self.run_kit()
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.stamped(), {"blueprint day", "blueprint night"})
+        self.assertEqual(run(self.root, ["check"])[0], 0, "a check draws the case in the print again")
+
+    def test_a_holidays_set_draws_the_case_while_it_is_up_and_hands_it_back(self):
+        self.set(self.settings + "theme: blueprint\n")
+        code, out = self.run_kit(None, "2026-10-31")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.stamped(), {"halloween day", "halloween night"})
+        self.assertEqual(run(self.root, ["check"])[0], 0, "the lock remembers the set the case was drawn in")
+        self.run_kit(None, "2026-11-05")
+        self.assertEqual(self.stamped(), {"blueprint day", "blueprint night"})
+
+    def test_a_collection_draws_the_case_in_the_months_design(self):
+        self.set(self.settings + "theme: medieval\n")
+        code, out = self.run_kit(None, "2026-11-10")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.stamped(), {"medieval-forge day", "medieval-forge night"})
+        self.assertEqual(run(self.root, ["check"])[0], 0)
+
+    def test_look_standard_keeps_the_standard_case_in_every_theme(self):
+        self.set(self.settings + "theme: blueprint\ntrophies:\n  look: standard\n")
+        code, out = self.run_kit(None, "2026-10-31")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.stamped(), {"day", "night"})
 
 
 class WithBanners(Case):

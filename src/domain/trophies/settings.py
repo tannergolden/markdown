@@ -6,6 +6,8 @@ Whose case it is, where its files go and whether the lock keeps its history
 are the page's (`mode`, `subject`, `out`, `lock`); everything else is here:
 
   style         trophy (a cup), crest, medallion, crystal or plaque
+  look          theme (the case is drawn in the page's theme, as every part is), or standard (its
+                standard look in every theme)
   case          both, or only night or only day
   embed         picture (a <picture> that follows the reader's theme), or fragment
                 (the #gh-dark-mode-only links GitHub no longer honours)
@@ -25,6 +27,7 @@ from .catalogue import MODES
 
 DEFAULTS = {
     "style": "trophy",
+    "look": "theme",
     "case": "both",
     "embed": "picture",
     "banner": True,
@@ -37,8 +40,8 @@ DEFAULTS = {
     "scan_pages": 30,
     "block": True,
 }
-CHOICES = {"style": ("trophy", "crest", "medallion", "crystal", "plaque"), "case": ("both", "night", "day"),
-           "embed": ("picture", "fragment"), "streak": ("current", "longest")}
+CHOICES = {"style": ("trophy", "crest", "medallion", "crystal", "plaque"), "look": ("theme", "standard"),
+           "case": ("both", "night", "day"), "embed": ("picture", "fragment"), "streak": ("current", "longest")}
 CARD = ("rank", "weekly", "new")
 BOOLS = ("banner", "private", "block")
 # Settings the trophies kit read that are now the page's, and two it named otherwise.

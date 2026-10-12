@@ -117,11 +117,13 @@ def plan_page(page: Page, measured: dict, *, draw: bool = True, was: list[str] =
     if cfg["trophies"] is False:
         result["blocks"]["trophies"] = None
     elif "trophies" in measured:
-        p = trophies.plan(measured["trophies"], cfg["trophies"], out=page.out, readme=page.readme)
+        p = trophies.plan(measured["trophies"], cfg["trophies"], out=page.out, readme=page.readme, theme=page.theme,
+                          holiday=page.drawn_in)
         result["parts"]["trophies"] = p
         result["files"].update(p["files"])
         if p["block"] is not None:  # a case drawn with block: false leaves the README to its author
             result["blocks"]["trophies"] = p["block"]
+        result["notes"] += p["notes"]
     else:
         result["hold"].append("trophies/")
     return result
@@ -312,16 +314,29 @@ def _own(page: Page) -> str:
     return page.cfg["theme"]
 
 
+def _drawn_in_set(page: Page) -> tuple[str, str]:
+    """What a set draws on this page, in words, and what it leaves: (the banners, the badges, the elements and
+    the trophy case; "") on a page whose case follows its theme, or the case named apart when it keeps the
+    standard look."""
+    case = page.cfg["trophies"]
+    if isinstance(case, dict) and case.get("look") == "standard":
+        return "the banners, the badges and the elements", "with the trophies in the standard look"
+    if case is False:
+        return "the banners, the badges and the elements", ""
+    return "the banners, the badges, the elements and the trophy case", ""
+
+
 def _set_news(page: Page, held_was: str, design_was: str = "") -> tuple[str, str]:
     """(a subject, a paragraph) when a holiday's set went up or came down with this run, or a collection's
     design took over the page, else two blanks."""
     own = _own(page)
+    parts, apart = _drawn_in_set(page)
     if page.held != held_was:
         if page.held:
             w = page.holiday
             return (f"put up the {w.name} set",
-                    f"The {w.name} set is up from {w.start:%B} {w.start.day} to {w.end:%B} {w.end.day}: the banners, "
-                    f"the badges and the elements are drawn in it, and the page goes back to {own} after.")
+                    f"The {w.name} set is up from {w.start:%B} {w.start.day} to {w.end:%B} {w.end.day}: {parts} "
+                    f"are drawn in it{', ' + apart if apart else ''}, and the page goes back to {own} after.")
         name = holidays.NAMES.get(held_was, held_was)
         if page.design:
             return f"take down the {name} set", f"The {name} set is down, and the page is drawn in {own}."
@@ -332,14 +347,12 @@ def _set_news(page: Page, held_was: str, design_was: str = "") -> tuple[str, str
     name = collections.name_of(page.design)
     if page.pinned:
         return (f"draw the page in {name}",
-                f"The page is drawn in {own}: the banners, the badges and the elements, all year, with the "
-                "trophies in the standard look.")
+                f"The page is drawn in {own}: {parts}, all year{', ' + apart if apart else ''}.")
     month, after = collections.MONTHS[page.today.month - 1], collections.MONTHS[page.today.month % 12]
     subject = f"draw {month}'s {c.key} design, {name}"
     return (subject if len(subject) <= 52 else f"draw the {c.key} collection's {month} design",
-            f"It is {month}, so the page is drawn in {name}, the {c.key} collection's design for the month: the "
-            f"banners, the badges and the elements, with the trophies in the standard look. On {after} 1 the "
-            "next design takes over.")
+            f"It is {month}, so the page is drawn in {name}, the {c.key} collection's design for the month: "
+            f"{parts}{', ' + apart if apart else ''}. On {after} 1 the next design takes over.")
 
 
 def commit_message(page: Page, planned: dict, before: dict | None, changed: list[str], run_id: str = "",

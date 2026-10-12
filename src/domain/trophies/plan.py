@@ -2,9 +2,10 @@
 # SPDX-License-Identifier: MIT
 """From one measurement to every file of the case, the README's block, and what the commit says.
 
-`plan(result, section, ...)` decides every file and its content. Nothing here
-talks to GitHub, so a measurement kept in the lock can be drawn again forever,
-which is how `check`, `render` and the tests work.
+`plan(result, section, ...)` decides every file and its content, in the look
+the page's theme gives the case (see `looks`). Nothing here talks to GitHub,
+so a measurement kept in the lock can be drawn again forever, which is how
+`check`, `render` and the tests work.
 """
 from __future__ import annotations
 
@@ -14,7 +15,9 @@ from dataclasses import replace
 
 from .. import KIT, KIT_VERSION
 from ..canvas import BUDGET, hazards
-from . import art, styles  # noqa: F401  (styles registers itself)
+from ..prints import STANDARD
+from . import art
+from . import looks as L
 from .block import block
 from .catalogue import MODES, PAL, TIER_NAMES, ach_state, measure
 
@@ -81,11 +84,65 @@ def _sort_key(a, st):
     return (rank, -st["rarity"] if st["earned"] else -st["pct"], a.name)
 
 
-def plan(result: dict, section: dict, *, folder: str, base: str) -> dict:
+def foot_of(result: dict, section: dict) -> tuple:
+    """The level card's last line, (icon, hue, main text, muted text): a profile's streak, or a repository's
+    latest release."""
+    extra = result.get("extra", {})
+    if result["mode"] == "profile":
+        streak = extra.get("currentStreak", 0) if section["streak"] == "current" else extra.get("streak", 0)
+        head = f"{streak}-DAY STREAK" if section["streak"] == "current" else f"LONGEST STREAK {streak} DAYS"
+        tail = f"  ·  LONGEST {extra.get('streak', 0)} DAYS" if section["streak"] == "current" else ""
+        return ("flame", PAL["tangerine"], head, tail)
+    lr = extra.get("lastRelease")
+    head = f"RELEASED {lr} DAYS AGO" if lr is not None else "NO RELEASE YET"
+    return ("tag", PAL["teal"], head, f"  ·  {extra.get('commits30', 0):,} COMMITS THIS MONTH")
+
+
+def _drawn(look, result: dict, section: dict, cores: list, ach: list, *, folder: str) -> tuple[dict, dict]:
+    """Every file of the case in `look`, by path, and each file's alt text by its name. Raises CannotDraw when
+    the look cannot draw the case or a file it draws fails the lint, so the case can be drawn in another."""
+    mode, subject = result["mode"], result["subject"]
+    curs, values = result["curs"], result["values"]
+    delta = result.get("delta", {}) if "weekly" in section["card"] else {}
+    new = result.get("new", {}) if "new" in section["card"] else {}
+    rank = "rank" in section["card"]
+    cases = ["night", "day"] if section["case"] == "both" else [section["case"]]
+    files: dict[str, str] = {}
+    alts: dict[str, str] = {}
+
+    def put(name: str, render):
+        for case in cases:
+            svg = render(case)
+            rel = f"{folder}/{name}{'-day' if case == 'day' else ''}.svg"
+            problems = lint(svg) + look.lint(svg)
+            if problems:
+                raise L.CannotDraw(f"{rel} fails the lint in {look.name}: {'; '.join(problems)}")
+            files[rel] = svg.rstrip("\n") + "\n"
+            if name not in alts:
+                a = svg.split('aria-label="', 1)[1].split('"', 1)[0]
+                alts[name] = a.replace("&quot;", '"').replace("&amp;", "&")
+
+    for c in cores:
+        o = {"rank": rank, "delta": delta.get(c.key, 0), "new": bool(new.get(c.key))}
+        put(c.key, lambda case, c=c, o=o: look.card(case, c, values[c.key], o))
+    if section["banner"]:
+        foot = foot_of(result, section)
+        put("level", lambda case: look.level(case, cores, values, ach, curs, subject, foot))
+        put("next-up", lambda case: look.next_up(case, cores, values, ach, curs))
+    for a in ach:
+        put(f"achievements/{a.slug}", lambda case, a=a: look.pin(case, a, curs.get(a.slug)))
+    return files, alts
+
+
+def plan(result: dict, section: dict, *, folder: str, base: str, theme: str = STANDARD, holiday: str = "") -> dict:
     """Every file of the case by path, the README's block, and the facts a commit names.
 
     `folder` is where the files go, from the repository's root, and `base`
-    the same folder as the README reaches it.
+    the same folder as the README reaches it. `theme` is the page's theme,
+    rainbowprint already resolved to its print, and `holiday` the pixel set
+    the page is drawn in, a holiday's while it is up or a collection's design
+    (as `pixelsets` reads it): the case is drawn in the look they give it,
+    unless the section keeps it standard (see `looks`).
     """
     mode = result["mode"]
     if mode not in MODES:
@@ -96,48 +153,21 @@ def plan(result: dict, section: dict, *, folder: str, base: str) -> dict:
     groups = MODES[mode]["groups"]
     curs = result["curs"]
     values = result["values"]
-    delta = result.get("delta", {}) if "weekly" in section["card"] else {}
-    new = result.get("new", {}) if "new" in section["card"] else {}
-    rank = "rank" in section["card"]
-    cases = ["night", "day"] if section["case"] == "both" else [section["case"]]
-    draw = art.STYLES[section["style"]]
-    files: dict[str, str] = {}
-    alts: dict[str, str] = {}
-
-    def put(name: str, render):
-        for case in cases:
-            svg = render(art.CASES[case])
-            rel = f"{folder}/{name}{'-day' if case == 'day' else ''}.svg"
-            problems = lint(svg)
-            if problems:
-                raise TrophiesError(f"trophies: {rel} fails the lint: {'; '.join(problems)}")
-            files[rel] = svg.rstrip("\n") + "\n"
-            if name not in alts:
-                a = svg.split('aria-label="', 1)[1].split('"', 1)[0]
-                alts[name] = a.replace("&quot;", '"').replace("&amp;", "&")
-
-    for c in cores:
-        o = {"rank": rank, "delta": delta.get(c.key, 0), "new": bool(new.get(c.key))}
-        put(c.key, lambda th, c=c, o=o: draw(th, c, values[c.key], o))
-    if section["banner"]:
-        extra = result.get("extra", {})
-        if mode == "profile":
-            streak = extra.get("currentStreak", 0) if section["streak"] == "current" else extra.get("streak", 0)
-            head = f"{streak}-DAY STREAK" if section["streak"] == "current" else f"LONGEST STREAK {streak} DAYS"
-            tail = f"  ·  LONGEST {extra.get('streak', 0)} DAYS" if section["streak"] == "current" else ""
-            foot = ("flame", PAL["tangerine"], head, tail)
-        else:
-            lr = extra.get("lastRelease")
-            head = f"RELEASED {lr} DAYS AGO" if lr is not None else "NO RELEASE YET"
-            foot = ("tag", PAL["teal"], head, f"  ·  {extra.get('commits30', 0):,} COMMITS THIS MONTH")
-        put("level", lambda th: art.level_card(th, cores, values, ach, curs, subject, foot))
-        put("next-up", lambda th: art.next_up_card(th, cores, values, ach, curs))
+    notes = []
+    tried = L.looks(section, theme, holiday)
+    for i, look in enumerate(tried):
+        try:
+            files, alts = _drawn(look, result, section, cores, ach, folder=folder)
+            break
+        except L.CannotDraw as exc:
+            if i == len(tried) - 1:
+                raise TrophiesError(f"trophies: {exc}") from exc
+            notes.append(f"trophies: {exc}, so the case is drawn in {tried[i + 1].name}")
     pins = []
     earned = 0
     for a in ach:
         st = ach_state(a, curs.get(a.slug))
         earned += st["earned"]
-        put(f"achievements/{a.slug}", lambda th, a=a: art.pin(th, a, curs.get(a.slug)))
         pins.append((a.g, a.slug, alts[f"achievements/{a.slug}"], st))
     pins.sort(key=lambda p: (p[0], _sort_key(next(x for x in ach if x.slug == p[1]), p[3])))
     nxt = art.next_up_items(cores, values, list(ach), curs, 1)
@@ -149,7 +179,8 @@ def plan(result: dict, section: dict, *, folder: str, base: str) -> dict:
                   section["banner"]) if section["block"] else None)
     tiers = {c.key: TIER_NAMES[measure(c, values[c.key])["t"]] for c in cores}
     return {"files": files, "block": text, "summary": summary, "tiers": tiers, "earned": earned, "total": len(ach),
-            "unmeasured": unmeasured, "subject": subject, "mode": mode, "cores": cores, "ach": ach}
+            "unmeasured": unmeasured, "subject": subject, "mode": mode, "cores": cores, "ach": ach,
+            "look": look.name, "notes": notes}
 
 
 def describe(planned: dict) -> str:

@@ -562,6 +562,29 @@ class Pix:
             at = (sx + n, sy) if kind == "h" else (sx, sy + n)
         return "".join(out).replace(" -", "-")
 
+    def markup(self, pix: dict) -> str:
+        """Pixels as markup of their own, {(x, y): colour}, for a part placed with `raw` that moves by itself."""
+        return self._paths(pix)
+
+    @staticmethod
+    def area(cells) -> str:
+        """Path data that fills exactly the pixels `cells`, a row's run at a time: the shape a clip takes."""
+        rows = {}
+        for (x, y) in cells:
+            rows.setdefault(y, []).append(x)
+        out = []
+        for y in sorted(rows):
+            xs = sorted(rows[y])
+            start = prev = xs[0]
+            for x in xs[1:] + [None]:
+                if x is not None and x == prev + 1:
+                    prev = x
+                    continue
+                out.append(f"M{start} {y}h{prev - start + 1}v1h-{prev - start + 1}z")
+                if x is not None:
+                    start = prev = x
+        return "".join(out)
+
     def _paths(self, pix: dict) -> str:
         by = {}
         for (x, y), c in pix.items():

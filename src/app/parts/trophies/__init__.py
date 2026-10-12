@@ -82,11 +82,12 @@ def fold(record: dict, result: dict, section: dict, today: dt.date) -> dict:
     return reached
 
 
-def plan(result: dict, section: dict, *, out: str, readme: str) -> dict:
-    """Every file of the case by path, the README's block, and the facts a commit names."""
+def plan(result: dict, section: dict, *, out: str, readme: str, theme: str = "standard", holiday: str = "") -> dict:
+    """Every file of the case by path, the README's block, and the facts a commit names, on a page in `theme`
+    (and in the pixel set `holiday` names, a holiday's while it is up or a collection's design)."""
     problems = TS.for_mode(section, result["mode"])
     if problems:
         raise TP.TrophiesError("; ".join(problems))
     folder = posixpath.join(out.strip("/") or ".", "trophies")
     base = posixpath.relpath(folder, posixpath.dirname(readme) or ".")
-    return TP.plan(result, section, folder=folder, base=base)
+    return TP.plan(result, section, folder=folder, base=base, theme=theme, holiday=holiday)
