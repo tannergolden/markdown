@@ -760,8 +760,9 @@ class Forge(CollectionSet):
 
     # ---- the games
     def game_squares(self, night):
-        """A board of the smithy's brass on bright steel, riveted, by day and by night."""
-        return Stuff(RAMP["steel"], 5, "metal"), Stuff(RAMP["brass"], 2, "metal")
+        """A board of the smithy's brass on bright steel, riveted, the steel a tone down by night, as every board of
+        the year is dimmer after dark."""
+        return Stuff(RAMP["steel"], 4 if night else 5, "metal"), Stuff(RAMP["brass"], 2, "metal")
 
     def game_frame(self, night):
         """A frame of iron, riveted."""
