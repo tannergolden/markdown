@@ -30,9 +30,11 @@ from domain.holidays.designs import boards as B
 from domain.holidays.designs import games as G
 from domain.holidays.designs import hall as HL
 from domain.holidays.designs import materials as MT
+from domain.holidays.designs import pieces as PC
 from domain.holidays.designs.trophies import METALS
 from domain.holidays.pixel import MISSING, Pix
 from infra.yaml_reader import loads
+from tests.unit import test_elements_games as SAMPLES
 
 support.install()
 SETS = [k for k in holidays.KEYS if k in holidays.SETS] + list(collections.COLLECTIONS["medieval"].keys)
@@ -294,6 +296,111 @@ class TheirStuff(unittest.TestCase):
                 self.assertIn(held.game_podium(night).stuff.base.upper(), svg, (key, theme))
                 for metal in (3, 2, 1):
                     self.assertIn(METALS[metal][3].upper(), svg, (key, theme, metal))
+
+
+class TheirMarks(unittest.TestCase):
+    """What a pixel set's Tic-Tac and Pentago boards mark, and how, in every set alike."""
+
+    def test_what_the_rules_point_to_and_what_wins_is_in_the_trophies_gold(self):
+        # The board a Tic-Tac mark is sent to, a line of three boards and a Pentago five, in gilt, outlined in the
+        # gold's darkest, the same in every set, where a set's own accent could be its board's own colour; and only
+        # there: a board with no board to send a mark to and nothing won carries none.
+        darkest = METALS[3][0].upper()
+        sent = GAMES["tictac"]
+        won = {"tictac": E.describe("tictac", dict(SAMPLES.TT_WON)),
+               "pentago": E.describe("pentago", dict(SAMPLES.PG_WON))}
+        plain = {"tictac": E.describe("tictac", dict(SAMPLES.TT_DRAWN)), "pentago": GAMES["pentago"]}
+        for key in TWO:
+            held = pixelsets.drawn_by(key)
+            for theme in ("day", "dark"):
+                for kind, d, gold in (("tictac", sent, True), ("tictac", won["tictac"], True),
+                                      ("pentago", won["pentago"], True), ("tictac", plain["tictac"], False),
+                                      ("pentago", plain["pentago"], False)):
+                    svg = held.game(kind, d, E.THEMES[theme], "wide").upper()
+                    self.assertEqual(darkest in svg, gold, (key, theme, kind, d["game"]))
+
+    def test_tic_tacs_nine_boards_are_a_chequer_of_the_sets_two_stuffs(self):
+        # As chess's squares are: the four edge boards in the dark stuff a tone up, the corners and the centre in the
+        # light, so the board of boards reads at a glance and every set's world is seen at board size.
+        laid: list = []
+        lay = MT.lay
+
+        def recorded(p, s, *a, **k):
+            if k.get("L") == "cells":
+                laid.append(s.key)
+            return lay(p, s, *a, **k)
+        for key in TWO:
+            held = pixelsets.drawn_by(key)
+            for theme, night in (("day", False), ("dark", True)):
+                b = held.game_board(night)
+                dark = b["dark_stuff"]
+                deep = MT.Stuff(dark.ramp, min(len(dark.ramp) - 1, dark.at + 1), dark.grain, dark.fleck)
+                laid.clear()
+                with mock.patch.object(MT, "lay", recorded):
+                    held.game("tictac", GAMES["tictac"], E.THEMES[theme], "wide")
+                self.assertEqual((laid.count(b["light_stuff"].key), laid.count(deep.key)), (45, 36), (key, theme))
+
+    def test_an_empty_pentago_hole_never_reads_as_a_white_marble(self):
+        # A hole's floor is the light stuff in the hole's shadow, far from a White marble's ivory and a Black one's
+        # ebony, in every set by day and by night: the light stuff itself is as light as ivory in most sets.
+        for key in SETS:
+            held = pixelsets.drawn_by(key)
+            for night in (False, True):
+                floor = B.Pentago.floor(held.game_board(night), night)
+                self.assertGreaterEqual(G._delta(floor.base, PC.IVORY[4]), 20, (key, night, floor.base))
+                self.assertGreaterEqual(G._delta(floor.base, PC.EBONY[2]), 20, (key, night, floor.base))
+                self.assertIn(floor.base.upper(), held.game_tokens, (key, night))
+
+    def test_pentagos_plates_lie_in_a_bed_inside_the_frame_and_turn_clear_of_it(self):
+        # The plates stop short of the board's box, so the bed shows all round them and between them, as a real
+        # board's, and a quarter turning its quarter turn sweeps over the bed, never the frame.
+        seen: list = []
+        geometry = B.Pentago.geometry
+
+        def measured(box, small):
+            g = geometry(box, small)
+            seen.append((box, g))
+            return g
+        held = pixelsets.drawn_by(TWO[0])
+        for variant in ("wide", "narrow"):
+            seen.clear()
+            with mock.patch.object(B.Pentago, "geometry", staticmethod(measured)):
+                held.game("pentago", GAMES["pentago"], E.THEMES["day"], variant)
+            self.assertTrue(seen, variant)
+            for (x0, y0, n), g in seen:
+                reach = 2 * g["q"] + g["gap"]
+                self.assertGreaterEqual(min(g["x"] - x0, g["y"] - y0), 2, variant)
+                self.assertLessEqual(g["x"] + reach, x0 + n - 2, variant)
+                self.assertLessEqual(g["y"] + reach, y0 + n - 2, variant)
+
+    def test_every_board_is_framed_pentagos_as_chesss_is(self):
+        framed: list = []
+        frame = B.framed
+
+        def recorded(h, p, *a, **k):
+            framed.append(a)
+            return frame(h, p, *a, **k)
+        for key in TWO:
+            held = pixelsets.drawn_by(key)
+            for kind in ("chess", "tictac", "pentago"):
+                framed.clear()
+                with mock.patch.object(B, "framed", recorded):
+                    held.game(kind, GAMES[kind], E.THEMES["day"], "wide")
+                self.assertEqual(len(framed), 1, (key, kind))
+
+    def test_the_houses_x_is_as_heavy_as_githubs_o_and_its_ivory_bevelled(self):
+        # Ivory's light tones alone lost the X on a set's light squares: it reaches as far as the O and is as heavy,
+        # and its bars are lit along one flank and shaded along the other, at every size a sheet sets it.
+        def span(cells):
+            return max(x for x, _ in cells) - min(x for x, _ in cells)
+        for size in (7, 9, 12, 13, 15, 16, 40, 46, 48):
+            x, o = PC.pen("X", "light", size), PC.pen("O", "dark", size)
+            xs, os_ = [xy for xy, _ in x[0]], [xy for xy, _ in o[0]]
+            tones = {colour for _, colour in x[0]}
+            self.assertGreaterEqual(span(xs), span(os_), size)
+            self.assertGreaterEqual(len(xs), len(os_), size)
+            self.assertTrue(tones & {PC.IVORY[2], PC.IVORY[3]}, size)
+            self.assertTrue(tones & {PC.IVORY[5], PC.IVORY[6]}, size)
 
 
 class TheSame(unittest.TestCase):

@@ -519,10 +519,10 @@ class EveryFile(unittest.TestCase):
 
     def test_no_sheet_of_tic_tac_or_pentago_singles_out_a_square_a_hole_or_a_turn(self):
         # Nothing is clouded or glowing, since nothing the rules make the side to move answer is there. Tic-Tac boxes
-        # the last move's square alone and brackets only the board the rules send the next mark to, never a square or
-        # a board a side could win on; Pentago rings the last marble's hole and a won game's five alone, and draws the
-        # turn of the last move's quarter alone, never a hole or a turn that would make five.
-        seen: dict[str, list] = {"brackets": [], "boxed": [], "rings": [], "turns": []}
+        # the last move's square alone and tones and brackets only the board the rules send the next mark to, never a
+        # square or a board a side could win on; Pentago rings the last marble's hole and a won game's five alone, and
+        # draws the turn of the last move's quarter alone, never a hole or a turn that would make five.
+        seen: dict[str, list] = {"brackets": [], "toned": [], "boxed": [], "rings": [], "turns": []}
 
         def clouded(*_, **__):
             raise AssertionError("a square or a hole singled out")
@@ -539,6 +539,7 @@ class EveryFile(unittest.TestCase):
         patches = [mock.patch.object(skin, "clouded", clouded) for skin in (GameStandard, GamePrint)]
         for skin in (TT.Standard, TT.Print):
             patches += [mock.patch.object(skin, "brackets", recording("brackets", skin.brackets, corner)),
+                        mock.patch.object(skin, "target", recording("toned", skin.target, corner)),
                         mock.patch.object(skin, "cell_mark", recording("boxed", skin.cell_mark,
                                                                        lambda cv, x, y, *_: corner(x, y)))]
         for skin in (PG.Standard, PG.Print):
@@ -564,6 +565,7 @@ class EveryFile(unittest.TestCase):
                             sent = [] if st["result"] or st["target"] is None else [st["target"]]
                             self.assertEqual(seen["brackets"],
                                              [corner(*TT.layout.board_box(b, x0, y0, n, small)) for b in sent])
+                            self.assertEqual(seen["toned"], seen["brackets"])
                             boxed = [st["last"]["cell"]] if st["last"] else []
                             self.assertEqual(seen["boxed"],
                                              [corner(*TT.layout.cell_box(c, x0, y0, n, small)) for c in boxed])
@@ -869,6 +871,41 @@ class TicTac(unittest.TestCase):
         self.assertIn("alert 'any board' is not where the side to move must play: place a ghost",
                       reasons(TT, {**TT_GHOST, "alert": "any board"}))
 
+    def test_a_ghost_just_placed_is_boxed_over_its_square_as_any_last_move_is(self):
+        # A ghost covers the square it locks, so the box that marks the last move goes on again over it, at its edge,
+        # and the ghost just placed is told from the one placed before it, in the standard theme and in a print.
+        game = E.game_of("tictac")
+        for tone in (STANDARD, "blackprint"):
+            skin = TT.Standard if tone == STANDARD else TT.Print
+            for d in GAMES["tictac"][1]:
+                st = game.state(game.describe(d))
+                for small, variant in ((False, "still"), (True, "narrow-still")):
+                    boxed = []
+
+                    def ghost_mark(self, x, y, q, *a, _drawn=skin.ghost_mark, _boxed=boxed, **k):
+                        _boxed.append((round(x, 1), round(y, 1)))
+                        return _drawn(self, x, y, q, *a, **k)
+                    with mock.patch.object(skin, "ghost_mark", ghost_mark):
+                        E.draw("tictac", d, tone, "day", variant)
+                    x0, y0, n = AT[small]
+                    last = st["last"]
+                    want = ([tuple(round(v, 1) for v in TT.layout.cell_box(last["cell"], x0, y0, n, small)[:2])]
+                            if last and last["ghost"] else [])
+                    with self.subTest(board=name(d), tone=tone, variant=variant):
+                        self.assertEqual(boxed, want)
+
+    def test_after_dark_a_closed_board_is_washed_in_charcoal_and_a_won_boards_o_edged_in_ash(self):
+        # Under a film of the night's black card a won board's black O stood no higher than the O's under it: after
+        # dark the film is the band's charcoal, pushing back every mark under it alike, and the board's own O is
+        # edged in ash, so it stands above its board. By day the film is the card's own.
+        film = f'fill="{P.hexof("charcoal")}" fill-opacity=".8"'
+        dark = E.draw("tictac", TT_WON, STANDARD, "dark", "still")
+        day = E.draw("tictac", TT_WON, STANDARD, "day", "still")
+        self.assertIn(film, dark)
+        self.assertNotIn(film, day)
+        self.assertIn(f'stroke="{P.hexof("ash")}" stroke-width', dark)
+        self.assertNotIn(f'stroke="{P.hexof("ash")}" stroke-width', day)
+
     def test_a_mark_sends_the_other_side_to_the_board_in_its_place_and_the_plate_says_where(self):
         st = TT.state(TT_GITHUB)
         self.assertEqual((st["last"]["cell"], st["target"], st["alert"]), ("i7", (2, 0), "lower right board"))
@@ -1083,6 +1120,52 @@ class Pentago(unittest.TestCase):
                         self.assertIn((m["cell"] + ("#" if m["won"] and not m["quarter"] else "")).upper(), runs)
                         if m["quarter"]:
                             self.assertIn(m["quarter"].upper() + ("#" if m["won"] else ""), runs)
+
+    def test_before_the_first_ghost_the_move_to_come_is_written_with_a_ghost_whoever_sets_it(self):
+        # The first move under the Ghost Rule is a ghost, whichever side the Arbiter drew to set it, so the panel
+        # writes it with a ghost before its hole, never with that side's own marble; once a move is made, never.
+        game = E.game_of("pentago")
+        for tone in (STANDARD, "blackprint"):
+            for d in GAMES["pentago"][1]:
+                st = game.state(game.describe(d))
+                opened = []
+
+                def opening_glyph(*a, _drawn=PG.layout.opening_glyph, _opened=opened, **k):
+                    _opened.append(a)
+                    return _drawn(*a, **k)
+                with mock.patch.object(PG.layout, "opening_glyph", opening_glyph):
+                    E.draw("pentago", d, tone, "day", "still")
+                with self.subTest(board=name(d), tone=tone):
+                    self.assertEqual(bool(opened), not st["last"])     # drawn, and measured first, or never
+
+    def test_black_written_small_on_a_dark_sheet_is_a_dark_stone_never_a_ring(self):
+        # A small Black marble edged light, as it holds on a tray, reads on the night's card as a ring, the sign a
+        # reader takes for White: written with its move it is a slate stone edged in gray in the standard theme, and
+        # in a print a dot of ink edged faint, with no groove.
+        standard = E.draw("pentago", PG_HOUSE, STANDARD, "dark", "still")
+        printed = E.draw("pentago", PG_HOUSE, "blackprint", "dark", "still")
+        self.assertIn(f'fill="{P.hexof("slate")}" stroke="{P.hexof("gray")}"', standard)
+        self.assertIn('stroke-width=".8" stroke-opacity=".38"', printed)
+        for svg in (E.draw("pentago", PG_HOUSE, STANDARD, "day", "still"),
+                    E.draw("pentago", PG_HOUSE, "blackprint", "day", "still")):
+            self.assertNotIn(f'fill="{P.hexof("slate")}" stroke="{P.hexof("gray")}"', svg)
+            self.assertNotIn('stroke-width=".8" stroke-opacity=".38"', svg)
+
+    def test_every_marble_casts_its_shadow_on_the_floor_of_its_hole_and_a_ghost_none(self):
+        game = E.game_of("pentago")
+        for tone in (STANDARD, "blackprint"):
+            skin = PG.Standard if tone == STANDARD else PG.Print
+            for d in (PG_HOUSE, PG_GHOSTS, PG_FULL):
+                st = game.state(game.describe(d))
+                cast = []
+
+                def shadow(self, cv, cx, cy, r, _drawn=skin.cast, _cast=cast):
+                    _cast.append((cx, cy))
+                    return _drawn(self, cv, cx, cy, r)
+                with mock.patch.object(skin, "cast", shadow):
+                    E.draw("pentago", d, tone, "day", "still")
+                with self.subTest(board=name(d), tone=tone):
+                    self.assertEqual(len(cast), sum(1 for v in st["cells"].values() if v != PG.game.GHOST))
 
     def test_each_hole_is_offered_with_its_eight_turns_each_linked_to_its_own_issue(self):
         first = PG_GITHUB["moves"][0]
