@@ -222,9 +222,24 @@ class Elements:
         p.hline(4, p.w - 4, 20, k["rule"])
         self.rule_decor(p, 5, p.w - 5, 20, seed, night)
 
-    def _free(self, p: Pix, x0, y0, x1, y1, taken) -> bool:
-        """Whether the box (x0, y0, x1, y1) touches no text and none of `taken`."""
-        return p.clear_of_words(x0, y0, x1, y1) and all(x1 <= a or x0 >= c or y1 <= b or y0 >= d for a, b, c, d in taken)
+    def _free(self, p: Pix, x0, y0, x1, y1, taken, touch=()) -> bool:
+        """Whether the box (x0, y0, x1, y1) touches no text and none of `taken`, and stays a unit clear of
+        every cell of `touch`, the cards' own touch."""
+        if not p.clear_of_words(x0, y0, x1, y1):
+            return False
+        if not all(x1 <= a or x0 >= c or y1 <= b or y0 >= d for a, b, c, d in taken):
+            return False
+        return not touch or not any((x, y) in touch for x in range(x0 - 1, x1 + 1) for y in range(y0 - 1, y1 + 1))
+
+    def touches(self, p: Pix, night, cards) -> set:
+        """Every cell the touch of `cards`, each (x, y, w, h, seed, lid) as `node` draws it, inks outside its
+        own card on `p`, so a word set before the cards can keep clear of what they will carry."""
+        out = set()
+        for x, y, w, h, seed, lid in cards:
+            q = _Ink(p.w, p.h)
+            self.node_deco(q, night, x, y, w, h, seed, lid)
+            out |= {(cx, cy) for cx, cy in q.cells() if not (x <= cx < x + w and y <= cy < y + h)}
+        return out
 
     def place_ornament(self, kind, p: Pix, night, spots, taken):
         """Set the ornament in the first of `spots` (its top-left) where it is free."""
@@ -296,9 +311,11 @@ class Elements:
         k = self.ink(night)
         return (k["fill"], k["dim"])
 
-    def wire(self, p: Pix, night, pts, label=None, seed=0, taken=()):
+    def wire(self, p: Pix, night, pts, label=None, seed=0, taken=(), touch=()):
         """A wire between steps, the set's lights on it, an arrow at its end, and its label on a backing,
-        set where it is clear of the cards and of every word already set."""
+        set where it is clear of the cards, their touch and every word already set. A level wire too short
+        for its label along it, as one between two cards side by side, has it set over its middle as near
+        it as is clear, over the cards or under them."""
         k = self.ink(night)
         col = self.wire_ink(night)
         pts = [(int(round(x)), int(round(y))) for x, y in pts]
@@ -331,24 +348,37 @@ class Elements:
             if y0 == y1 and abs(x1 - x0) >= lw + 8:
                 mx = (x0 + x1) // 2 - lw // 2
                 for lx, ly in ((mx, y0 - 7), (mx, y0 + 3)):
-                    if self._free(p, lx - 2, ly - 1, lx + lw + 2, ly + 6, taken):
+                    if self._free(p, lx - 2, ly - 1, lx + lw + 2, ly + 6, taken, touch):
                         p.rect(lx - 2, ly - 1, lw + 4, 7, self.bg_at(p, night, ly))
                         p.text(lx, ly, label, k["muted"], "35")
                         return
             if x0 == x1 and abs(y1 - y0) >= 12:
                 my = (y0 + y1) // 2 - 3
                 for lx in (x0 + 4, x0 - 4 - lw):
-                    if self._free(p, lx - 2, my - 1, lx + lw + 2, my + 6, taken) and 4 < lx and lx + lw < p.w - 4:
+                    inside = 4 < lx and lx + lw < p.w - 4
+                    if inside and self._free(p, lx - 2, my - 1, lx + lw + 2, my + 6, taken, touch):
                         p.rect(lx - 2, my - 1, lw + 4, 7, self.bg_at(p, night, my))
                         p.text(lx, my, label, k["muted"], "35")
                         return
                 if abs(y1 - y0) >= lw + 6:
                     vy = (y0 + y1) // 2 - lw // 2
                     for bx in (x0 + 2, x0 - 9):
-                        if 4 < bx and bx + 7 < p.w - 4 and self._free(p, bx, vy - 2, bx + 7, vy + lw + 2, taken):
+                        if 4 < bx and bx + 7 < p.w - 4 and self._free(p, bx, vy - 2, bx + 7, vy + lw + 2, taken, touch):
                             p.rect(bx, vy - 2, 7, lw + 4, self.bg_at(p, night, vy))
                             p.vtext(bx + 1, vy, label, k["muted"])
                             return
+        level = [s for s in segs if s[0][1] == s[1][1]]
+        if level:
+            (x0, y0), (x1, y1) = level[0]
+            lx = min(max((x0 + x1) // 2 - lw // 2, 8), p.w - 8 - lw)
+            # Over the cards first, as a label rides its wire, then under them; never into the sheet's head,
+            # whose rule is at 20, and never further than a card's height from the wire.
+            for ly in [*range(y0 - 7, y0 - 36, -1), *range(y0 + 3, y0 + 32)]:
+                clear = 30 <= ly - 1 and ly + 6 <= p.h - 8
+                if clear and self._free(p, lx - 2, ly - 1, lx + lw + 2, ly + 6, taken, touch):
+                    p.rect(lx - 2, ly - 1, lw + 4, 7, self.bg_at(p, night, ly))
+                    p.text(lx, ly, label, k["muted"], "35")
+                    return
 
     def wire_ink(self, night) -> str:
         return self.ink(night)["body"]
@@ -437,8 +467,9 @@ class Elements:
             lx = (x0 + x1) // 2 - lw // 2
             p.rect(lx - 2, y0 - 1, lw + 4, 3, self.bg_at(p, night, y0))
             p.text(lx, y0 + 3, label, k["muted"], "35")
+        touch = self.touches(p, night, [(b.x, b.y, b.w, b.h, i, i % 3 != 2) for i, b in enumerate(boxes)])
         for i, pts, label in self._routes(d, by, boxes):
-            self.wire(p, night, pts, label, seed=i, taken=taken)
+            self.wire(p, night, pts, label, seed=i, taken=taken, touch=touch)
         for i, b in enumerate(boxes):
             self.node(p, night, b.x, b.y, b.w, b.h, d["boxes"][b.key], seed=i, lid=i % 3 != 2)
         ny = H - 8 - n_rows * 10
@@ -487,6 +518,7 @@ class Elements:
         k = self.ink(night)
         self.frame_element(p, night, "SCHEMATIC", d.get("subject", ""), seed=31)
         taken = [(x0 - 2, ys[key] - 2, x0 + w + 2, ys[key] + 30) for key in order]
+        touch = self.touches(p, night, [(x0, ys[key], w, 28, i, i % 3 != 2) for i, key in enumerate(order)])
         for gk, label in groups.items():
             members = [key for key in order if d["boxes"][key].get("in") == gk]
             if not members:
@@ -500,12 +532,13 @@ class Elements:
                 continue
             label = rest[0] if rest else None
             if row[b] == row[a] + 1:
-                self.wire(p, night, [(cx, ys[a] + 28), (cx, ys[b] - 1)], label, seed=i, taken=taken)
+                self.wire(p, night, [(cx, ys[a] + 28), (cx, ys[b] - 1)], label, seed=i, taken=taken, touch=touch)
             else:
                 ch = round(x0 + w + 10 + step * channel)
                 channel += 1
                 ya, yb = ys[a] + 20, ys[b] + 14
-                self.wire(p, night, [(x0 + w, ya), (ch, ya), (ch, yb), (x0 + w + 1, yb)], label, seed=i, taken=taken)
+                self.wire(p, night, [(x0 + w, ya), (ch, ya), (ch, yb), (x0 + w + 1, yb)], label, seed=i, taken=taken,
+                          touch=touch)
         for i, key in enumerate(order):
             self.node(p, night, x0, ys[key], w, 28, d["boxes"][key], seed=i, lid=i % 3 != 2)
         for gk, label in groups.items():
