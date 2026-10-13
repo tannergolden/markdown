@@ -46,15 +46,16 @@ between them, their squares named as chess names squares, a1 to i9, and the
 boards as Tic-Tac-Toe names its cells, a1 the lower left board. A move is
 written as the mark and its square, `Xe5`, the score sheet adding a `#` to the
 move that won; a ghost's square is written alone on the score sheet's G row. The
-board the next mark is sent to is bracketed at its four corners, since the
-rules send it there, and the turn's plate says so: the board, any board, or a
-ghost to place. In place of chess's taken pieces the panel counts the boards
+board the next mark is sent to is toned and bracketed at its four corners, since
+the rules send it there, and the turn's plate says so: the board, any board, or
+a ghost to place. In place of chess's taken pieces the panel counts the boards
 each side has won. Nothing on the sheet helps a player choose: no square a side
-could win a board on next, no board a side could win the game on, and no call
-to block. The marks are pen strokes ([`shapes.py`](shapes.py)) in the two
-materials ([`skins.py`](skins.py)): enamel on chess's board in the standard
-theme; ink and line shading on a print. A ghost's square is filled as the bars
-are and edged in phantom lines, long and short dashes.
+could win a board on next, no board a side could win the game on, and no call to
+block. The marks are pen strokes ([`shapes.py`](shapes.py)) in the two materials
+([`skins.py`](skins.py)): enamel on chess's board in the standard theme; ink and
+line shading on a print. A ghost's square is filled as the bars are and edged in
+phantom lines, long and short dashes, and boxed as any last move's square is
+when it is the last move.
 
 As the file opens ([`motion.py`](motion.py)) the last mark draws itself stroke
 by stroke as a pen would and its square is boxed as the pen lifts. A mark that

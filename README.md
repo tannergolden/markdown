@@ -388,15 +388,17 @@ of, and the score sheet), and the same motion as each file opens:
   and Checkers plays on chess's own board, White at the foot as chess's White
   is; a ghost is the board's own material, ringed or edged in phantom lines. Or
   a print's drawing on drafting paper: poché for the dark squares, the bars and
-  the quarters, line shading for the light pieces, phantom lines where a
-  piece stood and a revision cloud round whatever must be answered. Or, while a
+  the quarters, line shading for the light pieces, phantom lines where a piece
+  stood and a revision cloud round whatever must be answered. Or, while a
   holiday's set or a collection's design is up, its pixels: its paper, frame and
   lettering, a board built of its own world's stuff, a ship's planks, a
-  cathedral's leaded glass or a mosaic's tesserae, in a frame of its own, and
-  the Hall's podium cut from it too, crenellated for a castle or tied with
-  ribbon for Christmas; the same hand-drawn ivory and ebony pieces in every set,
-  and a collection's words in its hand's two inks. A set draws a game whole, or
-  leaves it in the page's own look.
+  cathedral's leaded glass or a mosaic's tesserae, in a frame of its own,
+  Tic-Tac's nine boards a chequer of it and Pentago's plates lying in a bed
+  inside the frame, and the Hall's podium cut from it too, crenellated for a
+  castle or tied with ribbon for Christmas; the same hand-drawn ivory and ebony
+  pieces in every set, what the rules point to and what wins in the trophies'
+  gold, and a collection's words in its hand's two inks. A set draws a game
+  whole, or leaves it in the page's own look.
 - **The Hall of Fame** of all four games: the series between the house and
   GitHub, each game on its own row under the four together, in the README's
   order and each named by its two pieces, the house's first; then a podium of

@@ -44,15 +44,17 @@ holes a side with a gap between them so each can turn, the holes named as chess
 names squares, a1 to f6. A move is written as its hole, its quarter and the way
 it turned, `e4-ur-cw`, and the sheet draws it as `e4 ↻ UR`, the score sheet
 adding a `#` to the move that won; a marble that makes five on its own wins
-before any quarter turns and is written as its hole alone, `e4#`. A ghost's
-hole is written alone on the score sheet's G row. In place of chess's taken
+before any quarter turns and is written as its hole alone, `e4#`. A ghost's hole
+is written alone on the score sheet's G row, and before the first ghost the move
+to come is written with a ghost, whoever sets it. In place of chess's taken
 pieces the panel counts each side's marbles left, a rack of seventeen, and says
 where the ghosts stand now. Nothing on the sheet helps a player choose: no hole
 or turn that would make five, and no call to block. The plates and the marbles
 ([`shapes.py`](shapes.py)) come in the two materials ([`skins.py`](skins.py)):
 the theme's cobalt enamel and marbles lit as chess's pieces are, in the standard
-theme; section lining and ink on a print. A ghost is a marble of the plate's own
-material, ringed in phantom lines.
+theme; section lining and ink on a print; each marble casting its shadow on the
+floor of its hole. A ghost is a marble of the plate's own material, ringed in
+phantom lines.
 
 As the file opens ([`motion.py`](motion.py)) the last marble is set in its hole,
 which is ringed, with a ripple; then its quarter turns its quarter turn from
