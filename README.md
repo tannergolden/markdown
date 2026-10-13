@@ -83,13 +83,13 @@ is the example of all of it on a profile repository. Its README is drawn by
 this kit every night at midnight EST, in profile mode, in the `blackprint`,
 with the holidays on, from one stub and one settings file:
 
-| Part         | On the profile                                                                                                                                                                                                                         |
-| :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Banners**  | A header read from GitHub, the name and the bio, with a motto, a note and six figures; a footer with its closing words, and four buttons under it.                                                                                     |
-| **Badges**   | Four static badges, and two live ones the run measures: whether the standards pass their own checks, and how long ago the last commit was.                                                                                             |
-| **Elements** | A schematic of how its repositories fit together, written by hand, and placards for the two latest releases and two good first issues, which its own scripts rewrite weekly.                                                           |
-| **Games**    | Chess, Checkers, Connect Four and Tic-Tac-Toe, @tannergolden against GitHub, played live: each board after every move, every legal move a link that plays it, and the Hall of Fame with its leaderboard, drawn for this profile alone. |
-| **Trophies** | The case in profile mode: five core trophies in one row, the level and next-up cards over them, and the achievements under them.                                                                                                       |
+| Part         | On the profile                                                                                                                                                                                                                |
+| :----------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Banners**  | A header read from GitHub, the name and the bio, with a motto, a note and six figures; a footer with its closing words, and four buttons under it.                                                                            |
+| **Badges**   | Four static badges, and two live ones the run measures: whether the standards pass their own checks, and how long ago the last commit was.                                                                                    |
+| **Elements** | A schematic of how its repositories fit together, written by hand, and placards for the two latest releases and two good first issues, which its own scripts rewrite weekly.                                                  |
+| **Games**    | Chess, Checkers, Pentago and Tic-Tac, @tannergolden against GitHub, played live: each board after every move, every legal move a link that plays it, and the Hall of Fame with its leaderboard, drawn for this profile alone. |
+| **Trophies** | The case in profile mode: five core trophies in one row, the level and next-up cards over them, and the achievements under them.                                                                                              |
 
 Its stub is the one below with `mode: profile` and `theme: blackprint`, and
 [its settings](https://github.com/tannergolden/tannergolden/blob/Development/.github/markdown.yaml)
@@ -305,54 +305,63 @@ shows an HTML file as its source.
 The kit draws four games for one page, @tannergolden, the house, against
 everyone else on GitHub, from the deepest to the quickest:
 
-| Game         | Positions                            | The house plays | GitHub plays | Who opens                               |
-| :----------- | :----------------------------------- | :-------------- | :----------- | :-------------------------------------- |
-| Chess        | about 10⁴³ to 10⁵⁰                   | White           | Black        | The house                               |
-| Checkers     | about 5 × 10²⁰                       | White           | Black        | GitHub, as Black moves first            |
-| Connect Four | about 4.5 × 10¹² (4,531,985,219,092) | White           | Black        | The Arbiter, for a side drawn at random |
-| Tic-Tac-Toe  | 765                                  | X               | O            | The Arbiter, for a side drawn at random |
+| Game     | Board                                                            | The house plays | GitHub plays | Who opens                                            |
+| :------- | :--------------------------------------------------------------- | :-------------- | :----------- | :--------------------------------------------------- |
+| Chess    | 8 × 8 squares, about 10⁴³ to 10⁵⁰ positions                      | White           | Black        | The house                                            |
+| Checkers | The 32 dark squares of 8 × 8, about 5 × 10²⁰ positions           | White           | Black        | GitHub, as Black moves first                         |
+| Pentago  | 6 × 6 holes in four quarters that turn, about 3 × 10¹⁵ positions | White           | Black        | The side the Arbiter draws once both ghosts are down |
+| Tic-Tac  | Nine boards of 3 × 3 squares, three a side                       | X               | O            | The side the Arbiter draws once both ghosts are down |
 
 A player picks a move under a board on the profile, its link opens a
 ready-made issue in [tannergolden/play](https://github.com/tannergolden/play),
 and the profile's own engine plays it and has the kit draw the page again.
 
 **Who plays what, and who opens.** Each player's colour is fixed: the house
-always plays White in Chess, Checkers and Connect Four, and X in Tic-Tac-Toe,
-and GitHub the other side. Only who moves first can change. The house opens
-Chess, as White does. Checkers follows American checkers, where Black moves
-first, so GitHub opens it. In the other two the first player has a far higher
-chance of winning, so **the Arbiter opens every game of Connect Four and
-Tic-Tac-Toe, for a side drawn at random, with a random legal move**, and neither
-side is favoured: a game opened for GitHub starts with a black disc, or an O.
+always plays White in Chess, Checkers and Pentago, and X in Tic-Tac, and GitHub
+the other side. Only who moves first can change. The house opens Chess, as
+White does. Checkers follows American checkers, where Black moves first, so
+GitHub opens it. In the other two the first player has a far higher chance of
+winning, so **Pentago and Tic-Tac are played under the Ghost Rule**: before the
+first move each side places one ghost, a hole or a square that is nobody's, the
+Arbiter drawing the side that places first, and once both ghosts are down the
+Arbiter draws the side that moves first, so neither side is favoured. A side
+that goes a week without placing its ghost gets one at random.
 
-- **Connect Four is solved**: whoever drops the first disc can force a win with
-  perfect play, by opening in the centre column (James D. Allen and Victor
-  Allis, independently, in 1988).
-- **Tic-Tac-Toe is a draw with perfect play**, but its first player wins far
-  more often whenever anyone slips: of the 255,168 possible games, the first
-  player wins 131,184 (about 51%), the second 77,904 (about 31%) and 46,080
-  are drawn.
+- **Pentago is solved**: the side that sets the first marble wins with perfect
+  play (Geoffrey Irving, 2014).
+- **Tic-Tac is Ultimate Tic-Tac-Toe**, nine games of Tic-Tac-Toe as one, and it
+  favours its first player heavily too.
 - **Checkers** was weakly solved as a draw in 2007, and its first move's edge is
   small; **in Chess**, White scores about 55% in master play. Neither needs the
-  Arbiter's draw.
+  Ghost Rule.
 
 These reasons belong to the kit's documentation and the play repository's ADR
-alone: a board, its banner and its note say only who opens.
-
-The Arbiter's opening move is its own and counts for nobody: a fresh board of
-Tic-Tac-Toe or Connect Four comes with it already played, and the other side to
-reply.
+alone: a board and its note say only who places and who opens.
 
 **The winning board.** Every finished game, chess's included, keeps its final
 board up for two days before a fresh one comes by itself: the final position,
 who won and how on the turn's plate, or that it was drawn, the winning line
-where the game has one, and the day the fresh board comes. Nothing can be played
-on it, so its README block is the banner, the board and the note, with no move
-under it.
+where the game has one, and in place of the count a countdown to the moment the
+fresh board comes, its dial drawn in as the file opens. A README runs nothing,
+so the countdown says how long was left as of its drawing, and it is redrawn
+only when the page is drawn for something else, never in a commit of its own.
+Nothing can be played on a finished board, so its README block is the board and
+the note, with no move under it.
+
+**The replay.** A game won by a person's own move is played again: the kit's
+`replay` command draws, from the facts the profile's engine writes, the board
+in its frame playing every move with the README's own motion, the panel
+following the game move by move, and a finale of the winner ringed and the
+losing side faded, all on one loop, by day and by dark. Each player is a
+halftone of their avatar, dots in the print's ink and no image in the file, or
+their initials, and an account that is gone is an empty dial with no name. A
+replay is drawn in the page's print, and in blackprint when the page's theme
+has no replay look of its own. tannergolden/play keeps each game's newest 25
+and posts each on its winning move's issue.
 
 **Nothing on a board helps a player choose.** A sheet and its README say what
 has happened and what the rules make the side to move do, a king in check or a
-jump to take, and never what a move would do: no cell or column a side could win
+jump to take, and never what a move would do: no square or hole a side could win
 on next, no word of what perfect play makes of a game, no call to block, and no
 `+` or `#` on a move still to play. Every move is named for what it is, never
 for whether it is any good.
@@ -363,22 +372,23 @@ beside the board a section at a time (the two sides, whose turn it is and
 until when, the last move in notation and in words, what the game keeps count
 of, and the score sheet), and the same motion as each file opens:
 
-| Game             | A move is written                                                                      | The panel counts                                                                            | As the file opens                                                                                                                    |
-| :--------------- | :------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------- |
-| **Chess**        | In SAN: `Nf3`, `exd5`, `O-O`, and `Qxf7#` once played                                  | What each side has taken, and the lead                                                      | The last piece comes in from its square, a knight leaping and a castling king bringing its rook round, and a king in check is marked |
-| **Checkers**     | As checkers writes it, its 32 dark squares numbered: `11-15` a step, `22x15x8` a jump  | The men each side has taken, and the kings each has made                                    | The last man slides, or hops each man it takes, its path drawn in behind it, and is crowned if it lands on the far row               |
-| **Connect Four** | Its column, numbered 1 to 7 from the left: `4`, and `4#` once it has connected four    | Each side's discs left, a rack of twenty-one emptying                                       | The last disc is held over its column, falls behind the frame and lands with a bounce, and a won four are ringed and joined          |
-| **Tic-Tac-Toe**  | Its mark and its cell, named as chess names squares: `Xb2`, and `Xb2#` once it has won | Each side's marks left, a rack of five for the side that moved first and four for the other | The last mark draws itself stroke by stroke, and a won line is struck through                                                        |
+| Game         | A move is written                                                                                                                                         | The panel counts                                                              | As the file opens                                                                                                                                              |
+| :----------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Chess**    | In SAN: `Nf3`, `exd5`, `O-O`, and `Qxf7#` once played                                                                                                     | What each side has taken, and the lead                                        | The last piece comes in from its square, a knight leaping and a castling king bringing its rook round, and a king in check is marked                           |
+| **Checkers** | As checkers writes it, its 32 dark squares numbered: `11-15` a step, `22x15x8` a jump                                                                     | The men each side has taken, and the kings each has made                      | The last man slides, or hops each man it takes, its path drawn in behind it, and is crowned if it lands on the far row                                         |
+| **Pentago**  | Its hole, the quarter it turned and which way: `e4-ur-cw`, drawn `e4 ↻ UR`; a marble that makes five on its own, its hole alone: `e4#`; a ghost, its hole | Each side's marbles left, a rack of seventeen, and where the ghosts stand now | The last marble is set in its hole and its quarter turns its quarter turn, an arrow drawn round it the way it went, and a won five are ringed and joined       |
+| **Tic-Tac**  | Its mark and its square, named as chess names squares: `Xe5`, and `Xe5#` once it has won; a ghost, its square                                             | The boards each side has won, and where the ghosts stand                      | The last mark draws itself stroke by stroke, a board it wins is struck and its winner's mark drawn across it, and the board the next mark goes to is bracketed |
 
 - **Every tone**: the standard theme's enamel, chess's own board and lit pieces
   under one lamp, the last move marked amber and whatever the rules make the
   side to move answer (a king in check, a man that must jump) glowing red; the
-  house's pieces are the light ones in every game, White's men and discs and the
-  X, and GitHub's the dark, Black's and the O; Tic-Tac-Toe's cells and bars are
-  chess's light and dark squares, Connect Four's frame is the theme's cobalt,
+  house's pieces are the light ones in every game, White's men and marbles and
+  the X, and GitHub's the dark, Black's and the O; Tic-Tac's squares and bars
+  are chess's light and dark squares, Pentago's quarters are the theme's cobalt,
   and Checkers plays on chess's own board, White at the foot as chess's White
-  is. Or a print's drawing on drafting paper: poché for the dark squares, the
-  bars and the frame, line shading for the light pieces, phantom lines where a
+  is; a ghost is the board's own material, ringed or edged in phantom lines. Or
+  a print's drawing on drafting paper: poché for the dark squares, the bars and
+  the quarters, line shading for the light pieces, phantom lines where a
   piece stood and a revision cloud round whatever must be answered. Or, while a
   holiday's set or a collection's design is up, its pixels: its paper, frame and
   lettering, a board built of its own world's stuff, a ship's planks, a
@@ -417,12 +427,12 @@ it is, signed with what that side plays: ♔ or ♚, ⛀ or ⛂, ⚪ or ⚫, ❌
   </tr>
   <tr>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#connectfour"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/connectfour/connectfour-wide-blackprint-still-dark.svg"><img src="docs/themes/connectfour/connectfour-wide-blackprint-still-day.svg" alt="The Connect Four frame in blackprint, from a sample game the Arbiter opened for GitHub" width="100%"></picture></a>
-      <br /><sub>Connect Four, in <code>blackprint</code></sub>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#pentago"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/pentago/pentago-wide-blackprint-still-dark.svg"><img src="docs/themes/pentago/pentago-wide-blackprint-still-day.svg" alt="The Pentago board in blackprint, from a sample game under the Ghost Rule" width="100%"></picture></a>
+      <br /><sub>Pentago, in <code>blackprint</code></sub>
     </td>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#tictactoe"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/tictactoe/tictactoe-wide-blackprint-still-dark.svg"><img src="docs/themes/tictactoe/tictactoe-wide-blackprint-still-day.svg" alt="The Tic-Tac-Toe board in blackprint, the profile's print, from a sample game the Arbiter opened for GitHub" width="100%"></picture></a>
-      <br /><sub>Tic-Tac-Toe, in <code>blackprint</code></sub>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#tictac"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/tictac/tictac-wide-blackprint-still-dark.svg"><img src="docs/themes/tictac/tictac-wide-blackprint-still-day.svg" alt="The Tic-Tac board in blackprint, the profile's print, from a sample game under the Ghost Rule" width="100%"></picture></a>
+      <br /><sub>Tic-Tac, in <code>blackprint</code></sub>
     </td>
   </tr>
   <tr>
@@ -437,12 +447,12 @@ it is, signed with what that side plays: ♔ or ♚, ⛀ or ⛂, ⚪ or ⚫, ❌
   </tr>
   <tr>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#connectfour"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/connectfour/connectfour-wide-standard-still-dark.svg"><img src="docs/themes/connectfour/connectfour-wide-standard-still-day.svg" alt="The Connect Four frame in standard, from a sample game the Arbiter opened for GitHub" width="100%"></picture></a>
-      <br /><sub>Connect Four, in <code>standard</code></sub>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#pentago"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/pentago/pentago-wide-standard-still-dark.svg"><img src="docs/themes/pentago/pentago-wide-standard-still-day.svg" alt="The Pentago board in standard, from a sample game under the Ghost Rule" width="100%"></picture></a>
+      <br /><sub>Pentago, in <code>standard</code></sub>
     </td>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#tictactoe"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/tictactoe/tictactoe-wide-standard-still-dark.svg"><img src="docs/themes/tictactoe/tictactoe-wide-standard-still-day.svg" alt="The Tic-Tac-Toe board in standard, from a sample game the Arbiter opened for GitHub" width="100%"></picture></a>
-      <br /><sub>Tic-Tac-Toe, in <code>standard</code></sub>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#tictac"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/tictac/tictac-wide-standard-still-dark.svg"><img src="docs/themes/tictac/tictac-wide-standard-still-day.svg" alt="The Tic-Tac board in standard, from a sample game under the Ghost Rule" width="100%"></picture></a>
+      <br /><sub>Tic-Tac, in <code>standard</code></sub>
     </td>
   </tr>
   <tr>
@@ -514,7 +524,8 @@ python3 src/markdown-kit.py collections                    # each collection's d
 ```
 
 `python3 src/markdown-kit.py --help` lists the rest: `run`, `render`,
-`measure`, `lint`, `catalogue`, `calibrate`, `palette`, `icons` and `version`.
+`measure`, `lint`, `catalogue`, `calibrate`, `palette`, `icons`, `version`, and
+`replay`, which draws a finished game's replay for @tannergolden's profile.
 
 ---
 

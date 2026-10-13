@@ -223,50 +223,62 @@ when it comes down.
 The games are four, @tannergolden, the house, against everyone else on GitHub,
 each drawn as an element of its own, which the profile's own engine writes into
 its settings after every move (see [`elements:`](#-elements)): `chess`,
-`checkers`, `connectfour` and `tictactoe`, with the Hall of Fame of all four as
+`checkers`, `pentago` and `tictac`, with the Hall of Fame of all four as
 `hall-of-fame`. They come from the deepest to the quickest:
 
-| Element       | Positions                            | The house plays | GitHub plays | Who opens                               |
-| :------------ | :----------------------------------- | :-------------- | :----------- | :-------------------------------------- |
-| `chess`       | about 10⁴³ to 10⁵⁰                   | White           | Black        | The house                               |
-| `checkers`    | about 5 × 10²⁰                       | White           | Black        | GitHub, as Black moves first            |
-| `connectfour` | about 4.5 × 10¹² (4,531,985,219,092) | White           | Black        | The Arbiter, for a side drawn at random |
-| `tictactoe`   | 765                                  | X               | O            | The Arbiter, for a side drawn at random |
+| Element    | Board                                                            | The house plays | GitHub plays | Who opens                                            |
+| :--------- | :--------------------------------------------------------------- | :-------------- | :----------- | :--------------------------------------------------- |
+| `chess`    | 8 × 8 squares, about 10⁴³ to 10⁵⁰ positions                      | White           | Black        | The house                                            |
+| `checkers` | The 32 dark squares of 8 × 8, about 5 × 10²⁰ positions           | White           | Black        | GitHub, as Black moves first                         |
+| `pentago`  | 6 × 6 holes in four quarters that turn, about 3 × 10¹⁵ positions | White           | Black        | The side the Arbiter draws once both ghosts are down |
+| `tictac`   | Nine boards of 3 × 3 squares, three a side                       | X               | O            | The side the Arbiter draws once both ghosts are down |
 
 **Who plays what, and who opens.** Each player's colour is fixed: the house
-always plays White in Chess, Checkers and Connect Four, and X in Tic-Tac-Toe,
-and GitHub the other side. Only who moves first can change. The house opens
-Chess. Checkers follows American checkers, where Black moves first, so GitHub
-opens it. **The Arbiter opens every game of Connect Four and Tic-Tac-Toe, for a
-side drawn at random, with a random legal move**, since in both the first player
-has a far higher chance of winning, and so neither side is favoured. Connect
-Four is solved: whoever drops the first disc can force a win by opening in the
-centre column (James D. Allen and Victor Allis, independently, in 1988).
-Tic-Tac-Toe is a draw with perfect play, but of its 255,168 possible games the
-first player wins 131,184 (about 51%), the second 77,904 (about 31%) and 46,080
-are drawn. Checkers was weakly solved as a draw in 2007, with a small edge for
-the first move, and in Chess White scores about 55% in master play. `opens`
-names the side the Arbiter opened for, which moved first, and every sheet and
-move reads right whichever it is. The Arbiter's move is its own and counts for
-nobody: a fresh board comes with it already played, and the other side to reply.
-These reasons are given here and in the play repository's ADR alone: a board and
-its note say only who opens.
+always plays White in Chess, Checkers and Pentago, and X in Tic-Tac, and GitHub
+the other side. Only who moves first can change. The house opens Chess.
+Checkers follows American checkers, where Black moves first, so GitHub opens it.
+**Pentago and Tic-Tac are played under the Ghost Rule**, since in both the first
+player has a far higher chance of winning: before the first move each side
+places one ghost, a hole or a square that is nobody's, the Arbiter drawing the
+side that places first (`places`), and once both ghosts are down the Arbiter
+draws the side that moves first (`opens`), so neither side is favoured. A side
+that goes a week without placing its ghost gets one at random from the Arbiter.
+Pentago is solved: the side that sets the first marble wins with perfect play
+(Geoffrey Irving, 2014). Tic-Tac is Ultimate Tic-Tac-Toe, which favours the
+first player heavily too. Checkers was weakly solved as a draw in 2007, with a
+small edge for the first move, and in Chess White scores about 55% in master
+play. Every sheet and move reads right whichever side places or opens. These
+reasons are given here and in the play repository's ADR alone: a board and its
+note say only who places and who opens.
 
 **The winning board.** A finished game, in all four, keeps its final board up
 for two days before the fresh one comes by itself: the final position, who won
 and how on the turn's plate (or that it was drawn), the winning line where the
-game has one, and the day the fresh board comes. Nothing can be played on it, so
-its README block is the board and the note, with no move under it.
+game has one, and in place of the count, a countdown to the moment the fresh
+board comes, its dial the share of the two days still to go, drawn in as the
+file opens. A README runs nothing, so the countdown says how long was left as of
+its drawing, and it is drawn again only when the page is drawn for something
+else: it never makes a commit of its own. Nothing can be played on a finished
+board, so its README block is the board and the note, with no move under it.
 
-| Sheet            | What it draws                                                                                                                                                                                                                                                              | Files                                                              |
-| :--------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------- |
-| A game's board   | The position, with the state of play beside it: the sides, the turn and when it is due, the last move in notation and in words, what the game keeps count of and the score sheet's latest rows; once the game is over, who won and how, and the day the fresh board comes. | Wide and a phone's, each moving and still, by day and dark.        |
-| The Hall of Fame | All four games': the series between the house and GitHub, each game on its own row under the four together, and a podium of the leading winners across them with their wins by game, each named as their GitHub profile names them.                                        | Wide and a phone's, each moving and still, by day and dark.        |
-| A winner's badge | One for each winner under the Hall in the README, each a link to that player's profile.                                                                                                                                                                                    | A day file and a dark one; the leader's glints, with a still twin. |
+**The replay.** A game won by a person's own move gets a replay, which the
+kit's `replay` command draws from the facts the profile's engine writes beside
+the game's record, `games/game-<N>.replay.json`: the board playing every move
+with the README's own motion, the panel following the game, and the finale, on
+one loop, by day and by dark. It is no setting of a page's: tannergolden/play's
+Replay workflow runs it, keeps each game's newest 25, and posts each on its
+winning move's issue, where the final board's note links it. A draw gets none,
+and neither does a win the Arbiter's move made.
+
+| Sheet            | What it draws                                                                                                                                                                                                                                                                 | Files                                                              |
+| :--------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------- |
+| A game's board   | The position, with the state of play beside it: the sides, the turn and when it is due, the last move in notation and in words, what the game keeps count of and the score sheet's latest rows; once the game is over, who won and how, and the countdown to the fresh board. | Wide and a phone's, each moving and still, by day and dark.        |
+| The Hall of Fame | All four games': the series between the house and GitHub, each game on its own row under the four together, and a podium of the leading winners across them with their wins by game, each named as their GitHub profile names them.                                           | Wide and a phone's, each moving and still, by day and dark.        |
+| A winner's badge | One for each winner under the Hall in the README, each a link to that player's profile.                                                                                                                                                                                       | A day file and a dark one; the leader's glints, with a still twin. |
 
 **Nothing on a board helps a player choose.** A sheet and its README say what
 has happened and what the rules make the side to move do, a king in check or a
-jump to take, and never what a move would do: no cell or column a side could
+jump to take, and never what a move would do: no square or hole a side could
 win on next, no word of what perfect play makes of a game, no call to block,
 and no `+` or `#` on a move still to play, which only the score sheet writes,
 once the move is made. Every move's name says what the move is, never whether
@@ -277,17 +289,17 @@ finished game and fresh board redraws the same files in place, and nothing an
 old board drew is left behind. A Hall that shows fewer winners takes their
 badges away, as every run takes away whatever the kit drew and draws no longer.
 
-| Game             | A move is written                                                                      | The panel counts                                                                            | As the file opens                                                                                                                    |
-| :--------------- | :------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------------------------------------------------------------------- |
-| **Chess**        | In SAN: `Nf3`, `exd5`, `O-O`, and `Qxf7#` once played                                  | What each side has taken, and the lead                                                      | The last piece comes in from its square, a knight leaping and a castling king bringing its rook round, and a king in check is marked |
-| **Checkers**     | As checkers writes it, its 32 dark squares numbered: `11-15` a step, `22x15x8` a jump  | The men each side has taken, and the kings each has made                                    | The last man slides, or hops each man it takes, its path drawn in behind it, and is crowned if it lands on the far row               |
-| **Connect Four** | Its column, numbered 1 to 7 from the left: `4`, and `4#` once it has connected four    | Each side's discs left, a rack of twenty-one emptying                                       | The last disc is held over its column, falls behind the frame and lands with a bounce, and a won four are ringed and joined          |
-| **Tic-Tac-Toe**  | Its mark and its cell, named as chess names squares: `Xb2`, and `Xb2#` once it has won | Each side's marks left, a rack of five for the side that moved first and four for the other | The last mark draws itself stroke by stroke, and a won line is struck through                                                        |
+| Game         | A move is written                                                                                                                                         | The panel counts                                                              | As the file opens                                                                                                                                              |
+| :----------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Chess**    | In SAN: `Nf3`, `exd5`, `O-O`, and `Qxf7#` once played                                                                                                     | What each side has taken, and the lead                                        | The last piece comes in from its square, a knight leaping and a castling king bringing its rook round, and a king in check is marked                           |
+| **Checkers** | As checkers writes it, its 32 dark squares numbered: `11-15` a step, `22x15x8` a jump                                                                     | The men each side has taken, and the kings each has made                      | The last man slides, or hops each man it takes, its path drawn in behind it, and is crowned if it lands on the far row                                         |
+| **Pentago**  | Its hole, the quarter it turned and which way: `e4-ur-cw`, drawn `e4 ↻ UR`; a marble that makes five on its own, its hole alone: `e4#`; a ghost, its hole | Each side's marbles left, a rack of seventeen, and where the ghosts stand now | The last marble is set in its hole and its quarter turns its quarter turn, an arrow drawn round it the way it went, and a won five are ringed and joined       |
+| **Tic-Tac**  | Its mark and its square, named as chess names squares: `Xe5`, and `Xe5#` once it has won; a ghost, its square                                             | The boards each side has won, and where the ghosts stand                      | The last mark draws itself stroke by stroke, a board it wins is struck and its winner's mark drawn across it, and the board the next mark goes to is bracketed |
 
-| Theme                | How the games are drawn                                                                                                                                                                                                                                                                                                               |
-| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `standard`           | Enamel and lit pieces under one lamp, in chess's colours: the dark squares, Tic-Tac-Toe's bars and Connect Four's frame in the theme's blue, the last move amber, and whatever the rules make the side to move answer (a king in check, a man that must jump) glowing red.                                                            |
-| A print              | A drawing on drafting paper in the print's colour: poché for the dark squares, the bars and the frame, line shading for the light pieces, phantom lines where a piece stood and a revision cloud round whatever must be answered.                                                                                                     |
+| Theme                | How the games are drawn                                                                                                                                                                                                                                                                                                                                                          |
+| :------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `standard`           | Enamel and lit pieces under one lamp, in chess's colours: the dark squares, Tic-Tac's bars and Pentago's quarters in the theme's blue, the last move amber, and whatever the rules make the side to move answer (a king in check, a man that must jump) glowing red.                                                                                                             |
+| A print              | A drawing on drafting paper in the print's colour: poché for the dark squares, the bars and the quarters, line shading for the light pieces, phantom lines where a piece stood and a revision cloud round whatever must be answered.                                                                                                                                             |
 | A holiday or a month | The set's pixels, as it draws every part of the page: its paper, frame and lettering, a board built of its own world's stuff in a frame of its own and the Hall's podium cut from it, the same hand-drawn ivory and ebony pieces in every set, and a collection's words in its hand's two inks. A set draws a game whole, every file of it, or leaves it in the page's own look. |
 
 Round the pictures the README carries each game's words, since an image cannot
@@ -427,20 +439,20 @@ its markers, because only the README's author knows which section it belongs in:
 <!-- markdown:element:how-it-runs:end -->
 ```
 
-| Kind           | What it draws                                                                  | `measure:` fills it from                                                                        |
-| :------------- | :----------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
-| `schematic`    | Boxes and the wires between them, laid out by the kit.                         | Nothing: it is written by hand.                                                                 |
-| `instruments`  | Commits per week, days since the last release, bytes by file type, counters.   | git: `weeks` (10), and `count:` a map of `LABEL: glob` counted in the tree.                     |
-| `milestones`   | Every version tag on a time line.                                              | git: `notable` (a map of `tag: [notes]`) and `planned` releases.                                |
-| `roster`       | The people who made it, by commit count.                                       | git: `most` (4), `bots` (true), and `rename` to correct a name.                                 |
-| `certificate`  | The checks a repository passes, with the evidence for each.                    | git and GitHub: licence, security policy, pinned actions, Conventional Commits, and `ci: main`. |
-| `placard`      | A card that links to another repository.                                       | GitHub: `measure: owner/name`.                                                                  |
-| `chess`        | Chess on @tannergolden's profile, with every legal move named under it.        | Nothing: the profile's own workflow writes it after every move.                                 |
-| `checkers`     | Checkers on @tannergolden's profile, with every legal move named under it.     | Nothing: the profile's own workflow writes it after every move.                                 |
-| `connectfour`  | Connect Four on @tannergolden's profile, with every legal move named under it. | Nothing: the profile's own workflow writes it after every move.                                 |
-| `tictactoe`    | Tic-Tac-Toe on @tannergolden's profile, with every legal move named under it.  | Nothing: the profile's own workflow writes it after every move.                                 |
-| `chess-hall`   | Chess's Hall of Fame, a badge for each winner and the leaderboard.             | GitHub: each winner's name, and each player's login now, read by their account's ID.            |
-| `hall-of-fame` | The four games' Hall of Fame, a badge for each winner and the leaderboard.     | GitHub: each winner's name, and each player's login now, read by their account's ID.            |
+| Kind           | What it draws                                                                | `measure:` fills it from                                                                        |
+| :------------- | :--------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
+| `schematic`    | Boxes and the wires between them, laid out by the kit.                       | Nothing: it is written by hand.                                                                 |
+| `instruments`  | Commits per week, days since the last release, bytes by file type, counters. | git: `weeks` (10), and `count:` a map of `LABEL: glob` counted in the tree.                     |
+| `milestones`   | Every version tag on a time line.                                            | git: `notable` (a map of `tag: [notes]`) and `planned` releases.                                |
+| `roster`       | The people who made it, by commit count.                                     | git: `most` (4), `bots` (true), and `rename` to correct a name.                                 |
+| `certificate`  | The checks a repository passes, with the evidence for each.                  | git and GitHub: licence, security policy, pinned actions, Conventional Commits, and `ci: main`. |
+| `placard`      | A card that links to another repository.                                     | GitHub: `measure: owner/name`.                                                                  |
+| `chess`        | Chess on @tannergolden's profile, with every legal move named under it.      | Nothing: the profile's own workflow writes it after every move.                                 |
+| `checkers`     | Checkers on @tannergolden's profile, with every legal move named under it.   | Nothing: the profile's own workflow writes it after every move.                                 |
+| `pentago`      | Pentago on @tannergolden's profile, with every legal move named under it.    | Nothing: the profile's own workflow writes it after every move.                                 |
+| `tictac`       | Tic-Tac on @tannergolden's profile, with every legal move named under it.    | Nothing: the profile's own workflow writes it after every move.                                 |
+| `chess-hall`   | Chess's Hall of Fame, a badge for each winner and the leaderboard.           | GitHub: each winner's name, and each player's login now, read by their account's ID.            |
+| `hall-of-fame` | The four games' Hall of Fame, a badge for each winner and the leaderboard.   | GitHub: each winner's name, and each player's login now, read by their account's ID.            |
 
 What the settings write wins over what was measured, so any element can carry
 a `title`, a `caption` or a `desc` of its own, and a roster or a certificate
@@ -451,10 +463,10 @@ a made-up project that writes every one of them by hand, and the games', drawn
 for one profile alone, in a sample game of each beside it:
 [`chess.yaml`](../tests/fixtures/chess.yaml),
 [`checkers.yaml`](../tests/fixtures/checkers.yaml),
-[`connectfour.yaml`](../tests/fixtures/connectfour.yaml) and
-[`tictactoe.yaml`](../tests/fixtures/tictactoe.yaml).
+[`pentago.yaml`](../tests/fixtures/pentago.yaml) and
+[`tictac.yaml`](../tests/fixtures/tictac.yaml).
 
-**The game elements, `chess`, `checkers`, `connectfour`, `tictactoe` and
+**The game elements, `chess`, `checkers`, `pentago`, `tictac` and
 `chess-hall`, are @tannergolden's own.** They are drawn on that profile alone,
 and a page anywhere else that names them is told so. The games are played by the
 profile's own workflows, which write what each draws after every move. The chess
@@ -486,42 +498,55 @@ The other three boards take what chess's does wherever a game shares it: the
 `game` and `move`, the `players`, the day the move is `due` by, the `last` move
 as its `move` in the game's notation, its `words`, who played it (`by`) and
 `when`, the score sheet's latest rows as `history`, each `[number, the opening
-side's move, the reply, who chose it]`, and the README's `note` and `moves`,
+side's move, the reply, who chose it]`, under the Ghost Rule the first of them
+the ghosts', `["G", the first ghost, the second, who chose it]`, and the
+README's `note` and `moves`,
 each move `[emoji, title, notation, words, link]` in one list, a title up to 100
 letters and its words up to 80, its link opening that move's ready-made issue
 and nothing else (a turn of Checkers with more than ten is grouped into men and
 kings in the README, as chess's are by piece), and its notation never with a `+`
 or `#`. In place of chess's `check`, Checkers' turn plate can say what the rules
-make the side to move do as its `alert`, `must jump`; Tic-Tac-Toe and Connect
-Four take no `alert`, since a call to block would tell a player where to go.
-Each game's own board:
+make the side to move do as its `alert`, `must jump`; Tic-Tac's says where the
+rules send the side to move, and Pentago's only that a ghost is to be set,
+since a call to block would tell a player where to go. Each game's own board:
 
 - **`checkers`**: the position as a PDN `fen`, whose turn and then White's and
   Black's men's squares, a `K` before a king's (`B:W21,22,K30:B1,2,9`): GitHub
   plays Black, whose men start on 1 to 12 and move first, and the house plays
   White, drawn at the foot; the `kings` each side has made; and whether the
   `last` move `crowned` its man. A fresh board is GitHub's turn and has a `due`.
-- **`connectfour`**: the `board` as six rows of seven `L`, a White disc (the
-  house's), `D`, a Black disc (GitHub's), or a dot, the top row first; `opens`,
-  the side the Arbiter opened for, which dropped the first disc; and once a
-  side has won, the `line`'s four cells, each `[column, row]` counted from the
-  lower left.
-- **`tictactoe`**: the `board` as three rows of X, O or a dot, the top row first
-  (`O../XX./O.X`): the house always plays X, drawn light, and GitHub O, drawn
-  dark; `opens`, the side the Arbiter opened for, `house` or `github`, which
-  moved first (so O moves first in a game opened for GitHub); and once a side
-  has won, the winning `line`, its three cells.
+- **`pentago`**: the `board` as six rows of six `W`, a White marble (the
+  house's), `B`, a Black one (GitHub's), `G`, a ghost, or a dot, the top row
+  first; `places`, the side the Arbiter drew to set the first ghost, `house` or
+  `github`; once both ghosts are down, `opens`, the side it drew to set the
+  first marble; and once a side has won, the `line`'s five holes, such as
+  `[a3, b3, c3, d3, e3]`. Its `alert` is `set a ghost` while the ghosts go down,
+  and nothing after. A move is two choices, a hole and then a turn, so each row
+  of `moves` is an empty hole, and in place of its link a list of its eight
+  turns, each `[quarter, way, link]`: `ul`, `ur`, `ll` or `lr`, then `cw` or
+  `acw`. A ghost's hole is one choice, and its row one link.
+- **`tictac`**: the `board` as nine rows of nine X, O, `G` (a ghost) or a dot,
+  the top row first: the house always plays X, drawn light, and GitHub O, drawn
+  dark; `places` and `opens` as Pentago's, for the first ghost and the first
+  mark; and once a side has won, the winning `line`, its three boards, each
+  named as Tic-Tac-Toe names a cell, such as `[a3, b2, c1]`. Its `alert` names
+  the board the rules send the side to move to, by its place, such as
+  `upper right board`, or says `any board` when it may play any open board, or
+  `place a ghost` while the ghosts go down.
 
 **A finished game**, in all four, takes its `result`, `{winner, how}`: the
 winner, `house` or `github`, or null for a draw, and how it ended, as the game
-can end. Tic-Tac-Toe is won by `three in a row` or drawn on `a full board`;
-Connect Four is won by `four in a row` or drawn on `a full frame`; Checkers is
-won when the side to move has `no move left` and drawn by `repetition` or `forty
-moves`; Chess is won by `checkmate` and drawn by `stalemate`, `insufficient
-material`, `fivefold repetition`, `seventy-five moves` or a `dead position`. The
-winner is the side that made the last move, a won game of Tic-Tac-Toe or Connect
-Four names its `line`, and `next` is the day the fresh board comes, which only a
-finished board has. A finished board lists no `moves` and says no `alert`, and
+can end. Tic-Tac is won by `three boards in a row` and drawn when there is `no
+line left`; Pentago is won by `five in a row` and drawn by `five for both` or `a
+full board`; Checkers is won when the side to move has `no move left` and drawn
+by `repetition` or `forty moves`; Chess is won by `checkmate` and drawn by
+`stalemate`, `insufficient material`, `fivefold repetition`, `seventy-five
+moves` or a `dead position`. The winner is the side that made the last move,
+but in Pentago either side, since a quarter's turn can make five for the side
+that did not move, a win that counts in the series and for no player. A won
+game of Tic-Tac or Pentago names its `line`. `next` is the day the fresh board
+comes and `next_at` its moment, such as `2026-10-15T01:00:00Z`, which the
+countdown counts down to and only a finished board has. A finished board lists no `moves` and says no `alert`, and
 its README block is its board and its `note`, which can say what the picture
 cannot, a link and all.
 
@@ -550,15 +575,15 @@ something else is turned away.
 
 **The `hall-of-fame` element is @tannergolden's own too**: the Hall of Fame of
 all four games played on that profile, shown to a reader as Chess, Checkers,
-Connect Four and Tic-Tac-Toe, in that order, while its data keeps the order
-Tic-Tac-Toe, Connect Four, Checkers and Chess. Each game's own workflow
+Pentago and Tic-Tac, in that order, while its data keeps the order Tic-Tac,
+Pentago, Checkers and Chess. Each game's own workflow
 writes it after every move, from all four games' state, as chess's writes
 `chess-hall`:
 
 ```yaml
 hall-of-fame:
   kind: "hall-of-fame"
-  series: {"tictactoe": [9, 4, 2, 3], "connectfour": [3, 1, 2, 0], "checkers": [5, 2, 2, 1], "chess": [12, 5, 6, 1]}
+  series: {"tictac": [9, 4, 2, 3], "pentago": [3, 1, 2, 0], "checkers": [5, 2, 2, 1], "chess": [12, 5, 6, 1]}
   people:
     - ["tannergolden", [4, 1, 2, 5], "2 Oct", 29, 24684994]
     - ["imvale", [0, 1, 0, 2], "19 Sep", 7, 1001]
@@ -578,8 +603,8 @@ played, ranked by their wins in all four games; the sheet stands the first three
 on its podium, each with their wins in every game beside that game's own mark,
 and two more after it. A game's mark is its two pieces, the house's first, as
 the house plays White in three games and X in the fourth: the white king then
-the black, the white man then the black, the white disc then the black, X then
-O. The `leaders` are @tannergolden's own row, then GitHub's leading players by
+the black, the white man then the black, the white marble then the black, X
+then O. The `leaders` are @tannergolden's own row, then GitHub's leading players by
 their wins in all four games and then their moves, each
 `[login, moves, games, [wins by game], id]`, with no more wins in all than
 games, nor games than moves; a player without a move is not on it. The account
