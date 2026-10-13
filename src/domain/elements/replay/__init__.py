@@ -10,8 +10,8 @@ The profile's engine writes what each turn did (`check` says the shape), and thi
 the profile's frame, every turn played with the README's own last-move motion (`chess`, `checkers`, `pentago`,
 `tictac`), the panel following the game turn by turn, and the finale, the winner ringed and the losers fading, all on
 one loop (`sheet`, `clock`). Each player is drawn as a halftone of their avatar, made from a small grey bitmap of it
-(`portrait`). A replay is drawn in a print, as the profile's own board is in blackprint: a page in a theme with no
-replay look of its own, the standard theme, a holiday's set or a collection's design, has its replay in blackprint.
+(`portrait`). A replay is drawn in a print: a page in a theme with no replay look of its own, the standard theme, a
+holiday's set or a collection's design, as the profile's Chessmen is, has its replay in blackprint.
 It is drawn for that profile alone, and only from what its engine wrote.
 """
 from __future__ import annotations

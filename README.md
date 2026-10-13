@@ -80,8 +80,9 @@ A page is a person's profile or a repository. Organization pages are next.
 [@tannergolden](https://github.com/tannergolden).** Its repository,
 [**tannergolden/tannergolden**](https://github.com/tannergolden/tannergolden),
 is the example of all of it on a profile repository. Its README is drawn by
-this kit every night at midnight EST, in profile mode, in the `blackprint`,
-with the holidays on, from one stub and one settings file:
+this kit every night at midnight EST, in profile mode, in the medieval
+collection's Chessmen all year, with the holidays on, from one stub and one
+settings file:
 
 | Part         | On the profile                                                                                                                                                                                                                |
 | :----------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -91,7 +92,8 @@ with the holidays on, from one stub and one settings file:
 | **Games**    | Chess, Checkers, Pentago and Tic-Tac, @tannergolden against GitHub, played live: each board after every move, every legal move a link that plays it, and the Hall of Fame with its leaderboard, drawn for this profile alone. |
 | **Trophies** | The case in profile mode: five core trophies in one row, the level and next-up cards over them, and the achievements under them.                                                                                              |
 
-Its stub is the one below with `mode: profile` and `theme: blackprint`, and
+Its stub is the one below with `mode: profile`, `theme: medieval-chessmen` and
+`holidays: 'true'`, and
 [its settings](https://github.com/tannergolden/tannergolden/blob/Development/.github/markdown.yaml)
 set up every part, with a comment on each. This README is the other example:
 this repository's own page, in repository mode, in the `blueprint`, with the
@@ -422,7 +424,7 @@ and each of the other three games is folded shut under its name.
   <tr>
     <td width="50%" align="center">
       <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-wide-blackprint-still-dark.svg"><img src="docs/themes/chess/chess-wide-blackprint-still-day.svg" alt="The chess board in blackprint, from a sample game" width="100%"></picture></a>
-      <br /><sub>Chess, in <code>blackprint</code>, the profile's print</sub>
+      <br /><sub>Chess, in <code>blackprint</code></sub>
     </td>
     <td width="50%" align="center">
       <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#checkers"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/checkers/checkers-wide-blackprint-still-dark.svg"><img src="docs/themes/checkers/checkers-wide-blackprint-still-day.svg" alt="The Checkers board in blackprint, from a sample game" width="100%"></picture></a>
@@ -435,7 +437,7 @@ and each of the other three games is folded shut under its name.
       <br /><sub>Pentago, in <code>blackprint</code></sub>
     </td>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#tictac"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/tictac/tictac-wide-blackprint-still-dark.svg"><img src="docs/themes/tictac/tictac-wide-blackprint-still-day.svg" alt="The Tic-Tac board in blackprint, the profile's print, from a sample game under the Ghost Rule" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#tictac"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/tictac/tictac-wide-blackprint-still-dark.svg"><img src="docs/themes/tictac/tictac-wide-blackprint-still-day.svg" alt="The Tic-Tac board in blackprint, from a sample game under the Ghost Rule" width="100%"></picture></a>
       <br /><sub>Tic-Tac, in <code>blackprint</code></sub>
     </td>
   </tr>
