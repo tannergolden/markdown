@@ -202,11 +202,11 @@ class TheGame(unittest.TestCase):
 
 
 class TheGamesBesideChess(unittest.TestCase):
-    """Checkers, Connect Four and Tic-Tac-Toe are each one entry in the Games group, after chess's and in the
-    README's order: the board in the standard theme and every print, and the files a phone gets, each from its own
-    sample game, checked as a run checks it."""
+    """Checkers, Pentago and Tic-Tac are each one entry in the Games group, after chess's and in the README's
+    order: the board in the standard theme and every print, and the files a phone gets, each from its own sample
+    game, checked as a run checks it."""
 
-    KEYS = ('checkers', 'connectfour', 'tictactoe')
+    KEYS = ('checkers', 'pentago', 'tictac')
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -222,7 +222,7 @@ class TheGamesBesideChess(unittest.TestCase):
 
     def test_each_is_a_game_in_its_tiers_order_that_says_where_to_see_it_live(self) -> None:
         self.assertEqual(list(self.entries), list(self.KEYS))
-        self.assertEqual(builder.GAMES, ('chess', 'checkers', 'connectfour', 'tictactoe'), 'the README\'s order')
+        self.assertEqual(builder.GAMES, ('chess', 'checkers', 'pentago', 'tictac'), 'the README\'s order')
         for key, entry in self.entries.items():
             with self.subTest(key=key):
                 self.assertEqual(entry['group'], 'game')
@@ -247,23 +247,30 @@ class TheGamesBesideChess(unittest.TestCase):
                 for name in drawings_of(entry) + list(entry['thumb'].values()):
                     self.assertTrue((self.out / name).is_file(), name)
 
-    def test_the_arbiter_opened_the_samples_of_the_games_it_opens_for_github(self) -> None:
-        self.assertEqual(builder.sample_game('tictactoe')['tictactoe']['opens'], 'github')
-        self.assertEqual(builder.sample_game('connectfour')['connectfour']['opens'], 'github')
+    def test_the_samples_of_the_games_under_the_ghost_rule_name_the_sides_the_arbiter_drew(self) -> None:
+        # Tic-Tac's sample: the house drawn to place the first ghost and GitHub to make the first mark; Pentago's:
+        # the house drawn to set the first ghost and the first marble
+        tictac, pentago = builder.sample_game('tictac')['tictac'], builder.sample_game('pentago')['pentago']
+        self.assertEqual((tictac['places'], tictac['opens']), ('house', 'github'))
+        self.assertEqual((pentago['places'], pentago['opens']), ('house', 'house'))
         self.assertNotIn('dark', builder.sample_game('checkers')['checkers'], 'GitHub plays Black and opens Checkers')
-        self.assertIn('The Arbiter opens every game for a side drawn at random', self.entries['tictactoe']['note'])
-        self.assertIn('The Arbiter opens every game', builder.sample_game('connectfour')['connectfour']['note'])
+        for key in ('tictac', 'pentago'):
+            with self.subTest(key=key):
+                self.assertIn('Under the Ghost Rule', self.entries[key]['note'])
+                self.assertIn('Under the Ghost Rule', builder.sample_game(key)[key]['note'])
 
     def test_a_sample_game_the_kit_would_turn_away_is_never_drawn(self) -> None:
-        bad = 'elements:\n  tictactoe:\n    kind: tictactoe\n    board: XXX/XXX/XXX\n    opens: github\n'
+        # a board of Tic-Tac-Toe's three rows under Tic-Tac's name
+        bad = 'elements:\n  tictac:\n    kind: tictac\n    board: XXX/XXX/XXX\n    places: house\n'
         with tempfile.TemporaryDirectory() as tmp:
             game = pathlib.Path(tmp) / 'chess.yaml'
-            (pathlib.Path(tmp) / 'tictactoe.yaml').write_text(bad, encoding='utf-8')
+            (pathlib.Path(tmp) / 'tictac.yaml').write_text(bad, encoding='utf-8')
             builder.sample_game.cache_clear()
             try:
                 with mock.patch.object(builder, 'GAME', game), self.assertRaises(SystemExit) as raised:
-                    builder.sample_game('tictactoe')
-                self.assertIn('tictactoe.yaml: tictactoe: board has 9 X and 0 O', str(raised.exception))
+                    builder.sample_game('tictac')
+                self.assertIn("tictac.yaml: tictac: board 'XXX/XXX/XXX' is not nine rows of nine X, O, G or dots",
+                              str(raised.exception))
             finally:
                 builder.sample_game.cache_clear()
 
@@ -320,7 +327,7 @@ class TheHallOfFame(unittest.TestCase):
     def test_its_sample_is_the_four_games_own_and_passes_the_kits_checks(self) -> None:
         sample = builder.sample_game('hall-of-fame')
         self.assertEqual(list(sample), ['hall-of-fame'])
-        self.assertEqual(list(sample['hall-of-fame']['series']), ['tictactoe', 'connectfour', 'checkers', 'chess'])
+        self.assertEqual(list(sample['hall-of-fame']['series']), ['tictac', 'pentago', 'checkers', 'chess'])
 
 
 class TestBundle(unittest.TestCase):

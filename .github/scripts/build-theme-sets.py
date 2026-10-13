@@ -5,8 +5,8 @@ WHY THIS EXISTS. A theme is easier to choose by looking than by reading. The
 page shows every theme's headers, phone files, footers, elements, badges and
 trophy case, each drawn the way a run draws it, from the kit's own samples and
 the driftmark specimen, on GitHub's light and dark grounds. The four games the
-kit draws for @tannergolden's profile alone (Chess, Checkers, Connect Four and
-Tic-Tac-Toe, the README's order) are shown beside them, each from a sample
+kit draws for @tannergolden's profile alone (Chess, Checkers, Pentago and
+Tic-Tac, the README's order) are shown beside them, each from a sample
 game, in the standard theme and every print, in every holiday's set and in
 every month's design of a collection, as they are drawn on that profile.
 
@@ -62,8 +62,8 @@ SPECIMEN = ROOT / "tests" / "fixtures" / "driftmark" / ".github" / "markdown.yam
 GAME = ROOT / "tests" / "fixtures" / "chess.yaml"  # the sample game the chess sheets are drawn from
 # The games on that profile, in the order its README shows them, each drawn from a sample game beside chess's:
 # tests/fixtures/<key>.yaml.
-GAMES = ("chess", "checkers", "connectfour", "tictactoe")
-TITLES = {"tictactoe": "Tic-Tac-Toe", "connectfour": "Connect Four", "checkers": "Checkers", "chess": "Chess"}
+GAMES = ("chess", "checkers", "pentago", "tictac")
+TITLES = {"tictac": "Tic-Tac", "pentago": "Pentago", "checkers": "Checkers", "chess": "Chess"}
 # The Hall of Fame of all four, one entry after them, drawn from its own sample: tests/fixtures/hall-of-fame.yaml.
 HALL = "hall-of-fame"
 # The game is drawn on one page, @tannergolden's profile, in the standard theme or a print; there, in blackprint.
@@ -95,14 +95,16 @@ NOTES = {
     "chess board": "The board as it stands, with the state of play beside it: the players, whose turn it is and until "
              "when, the last move in words, what each side has taken and the score sheet's latest rows. It opens by "
              "playing the last move again; Motion: Still shows the file a reader who asks for reduced motion gets.",
-    "tictactoe board": "The board as it stands, with the state of play beside it: the players and the mark each plays "
-                       "this game, whose turn it is and until when, the last mark in words, the marks each side has "
-                       "left and the score sheet's latest rows. It opens by drawing the last mark again; Motion: Still "
-                       "shows the file a reader who asks for reduced motion gets.",
-    "connectfour board": "The frame as it stands, with the state of play beside it: the players and the discs each "
-                         "drops this game, whose turn it is and until when, the last disc in words, the discs each "
-                         "side has left and the score sheet's latest rows. It opens by dropping the last disc again; "
-                         "Motion: Still shows the file a reader who asks for reduced motion gets.",
+    "tictac board": "The nine boards as they stand, with the state of play beside it: the players and the mark each "
+                    "plays, whose turn it is, until when and the board the rules send it to, the last mark in words, "
+                    "the boards each side has won and the score sheet's latest rows, its ghosts first. It opens by "
+                    "drawing the last mark again; Motion: Still shows the file a reader who asks for reduced motion "
+                    "gets.",
+    "pentago board": "The four quarters as they stand, with the state of play beside it: the players and the marbles "
+                     "each sets, whose turn it is and until when, the last move in words, the marbles each side has "
+                     "left and where the ghosts stand, and the score sheet's latest rows, its ghosts first. It opens "
+                     "by setting the last marble and turning its quarter again; Motion: Still shows the file a reader "
+                     "who asks for reduced motion gets.",
     "checkers board": "The board as it stands, its squares numbered as checkers writes its moves, with the state of "
                       "play beside it: the players, whose turn it is and until when, the last move in words, the men "
                       "each side has taken and the kings it has made, and the score sheet's latest rows. It opens by "
@@ -415,10 +417,12 @@ GAME_NOTES = {
     "checkers": f"Checkers on @{chess.OWNER}'s profile README, @{chess.OWNER} as White against everyone else on GitHub "
                 "as Black, which opens every game, as Black does in American checkers, on the 32 dark squares numbered "
                 "as checkers writes its moves.",
-    "connectfour": f"Connect Four on @{chess.OWNER}'s profile README, @{chess.OWNER} as White against everyone else on "
-                   "GitHub as Black. The Arbiter opens every game for a side drawn at random, with a random move.",
-    "tictactoe": f"Tic-Tac-Toe on @{chess.OWNER}'s profile README, @{chess.OWNER} as X against everyone else on GitHub "
-                 "as O. The Arbiter opens every game for a side drawn at random, with a random move.",
+    "pentago": f"Pentago on @{chess.OWNER}'s profile README, @{chess.OWNER} as White against everyone else on GitHub "
+               "as Black. Under the Ghost Rule each side first sets a ghost, the Arbiter drawing the side that sets "
+               "first, and then the side that sets the first marble.",
+    "tictac": f"Tic-Tac on @{chess.OWNER}'s profile README, nine games of Tic-Tac-Toe as one, @{chess.OWNER} as X "
+              "against everyone else on GitHub as O. Under the Ghost Rule each side first locks a square with a "
+              "ghost, the Arbiter drawing the side that places first, and then the side that makes the first mark.",
 }
 DRAWN_IN = (" It is drawn in whatever theme the page is in: the standard theme's enamel, a print's drawing on "
             "drafting paper, or the pixels of the holiday's set or the collection's design that is up, one family "
