@@ -542,15 +542,16 @@ class Settings(unittest.TestCase):
 
 
 class Readme(unittest.TestCase):
-    def test_the_board_is_folded_open_under_its_name_and_every_move_folded_under_it(self):
-        # no banner stands over the fold: the board's own sheet says whose turn it is
+    def test_the_board_is_never_folded_and_every_move_is_folded_shut_under_it(self):
+        # no banner stands over the board, whose own sheet says whose turn it is, and nothing folds it away
         text = ED.block("chess", GAME, "assets/elements")
-        self.assertTrue(text.startswith("<!-- markdown:element:chess:start -->\n<details open>\n<summary><b>♟️ Chess"
-                                        "</b></summary>\n\n<picture>"))
+        self.assertTrue(text.startswith("<!-- markdown:element:chess:start -->\n<picture>"))
+        self.assertNotIn("♟️ Chess", text)
+        self.assertNotIn("<details open>", text)
         self.assertIn("</picture>\n\n<details>\n<summary>♚ <b>GitHub's Turn</b> · 4 legal moves · open to choose one"
                       "</summary>\n\n|  | Move | In words | Play |\n| :-: | :--- | :--- | :-: |\n", text)
         self.assertIn(f"| 🏰 | **The Royal Retreat** `Kb8` | King from c8 to b8 | [Play ↗]({LINK}) |", text)
-        self.assertTrue(text.endswith("</details>\n\nThe first move to arrive is the one played.\n\n</details>\n"
+        self.assertTrue(text.endswith("</details>\n\nThe first move to arrive is the one played.\n"
                                       "<!-- markdown:element:chess:end -->"))
 
     def test_the_houses_moves_are_the_houses_alone(self):
@@ -566,8 +567,9 @@ class Readme(unittest.TestCase):
                                            for i, f in enumerate("abcde")]}]
         text = ED.block("chess", {**GAME, "moves": many}, "assets/elements")
         self.assertIn("· 12 legal moves ·", text)
-        self.assertIn("<details open>\n<summary>♞ Knights · 7 moves</summary>\n\n|  | Move |", text)
-        self.assertIn("<summary>♟ Pawns · 5 moves</summary>", text)
+        self.assertIn("<details>\n<summary>♞ Knights · 7 moves</summary>\n\n|  | Move |", text)
+        self.assertIn("<details>\n<summary>♟ Pawns · 5 moves</summary>", text)
+        self.assertNotIn("<details open>", text, "every group folded shut, as the list they are in is")
 
     def test_a_group_is_named_for_one_piece_or_several_by_the_squares_its_moves_leave(self):
         def row(uci: str) -> list:
@@ -726,11 +728,10 @@ class Finished(unittest.TestCase):
             text = ED.block("chess", d, "assets/elements")
             with self.subTest(game=d["game"], note=bool(d.get("note"))):
                 self.assertEqual(C.check(d), [])
-                self.assertTrue(text.startswith("<!-- markdown:element:chess:start -->\n<details open>\n<summary><b>"
-                                                "♟️ Chess</b></summary>\n\n<picture>"))
-                self.assertEqual(text.count("<details"), 1, "the game's own fold, and no move in it")
+                self.assertTrue(text.startswith("<!-- markdown:element:chess:start -->\n<picture>"))
+                self.assertNotIn("<details", text, "no fold, and no move to play")
                 under = f"\n\n{d['note']}" if d.get("note") else ""
-                self.assertTrue(text.endswith(f"</picture>{under}\n\n</details>\n<!-- markdown:element:chess:end -->"),
+                self.assertTrue(text.endswith(f"</picture>{under}\n<!-- markdown:element:chess:end -->"),
                                 "its board and its note, with no move to play")
 
     def test_how_it_ended_is_checked_as_strictly_as_the_rest_of_the_board(self):

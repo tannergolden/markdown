@@ -79,19 +79,23 @@ class Clock(unittest.TestCase):
                 self.assertNotEqual(after[name], before[name], f"{name} is redrawn in place")
             before = after
 
-    def test_each_game_is_folded_under_its_name_chess_open_and_the_other_three_shut(self):
-        # no banner stands over a fold: the board's own sheet says whose turn it is
+    def test_each_game_but_chess_is_folded_shut_under_its_name_and_chess_is_never_folded(self):
+        # no banner stands over a board: its own sheet says whose turn it is; and every move list starts shut
         self.draw()
         text = self.readme.read_text(encoding="utf-8")
-        for eid, fold in (("chess", "<details open>\n<summary><b>♟️ Chess</b></summary>"),
-                          ("checkers", "<details>\n<summary><b>🏁 Checkers</b></summary>"),
-                          ("pentago", "<details>\n<summary><b>🌀 Pentago</b></summary>"),
-                          ("tictac", "<details>\n<summary><b>❌ Tic-Tac</b></summary>")):
+        for eid, fold in (("chess", ""),
+                          ("checkers", "<details>\n<summary><b>🏁 Checkers</b></summary>\n\n"),
+                          ("pentago", "<details>\n<summary><b>🌀 Pentago</b></summary>\n\n"),
+                          ("tictac", "<details>\n<summary><b>❌ Tic-Tac</b></summary>\n\n")):
             with self.subTest(game=eid):
                 block = re.search(rf"element:{eid}:start -->\n(.*?)\n<!-- markdown:element:{eid}:end", text,
                                   re.S).group(1)
-                self.assertTrue(block.startswith(f"{fold}\n\n<picture>"), block[:120])
-                self.assertTrue(block.endswith("\n\n</details>"), "the note is the fold's last word")
+                self.assertTrue(block.startswith(f"{fold}<picture>"), block[:120])
+                if fold:
+                    self.assertTrue(block.endswith("\n\n</details>"), "the note is the fold's last word")
+                else:
+                    self.assertFalse(block.endswith("</details>"), "the note is the board's last word")
+                self.assertNotIn("<details open>", block)
                 self.assertNotIn("[!", block)
         self.draw()
         self.assertEqual(self.readme.read_text(encoding="utf-8"), text, "and a second run changes nothing")

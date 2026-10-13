@@ -1308,8 +1308,9 @@ class Readme(unittest.TestCase):
                 self.assertEqual(E.game_of(d["kind"]).check(d), [])
                 text = ED.block(d["kind"], d, "assets/elements")
                 self.assertIn(f"· {unit} ·", text)
-                self.assertEqual(re.findall(r"<details open>\n<summary>(.*?)</summary>", text),
+                self.assertEqual(re.findall(r"<details>\n<summary>([^<]*?)</summary>", text),
                                  [f"{sign} {title} · {n} moves" for sign, title, n in groups])
+                self.assertNotIn("<details open>", text, "every group folded shut, as the list they are in is")
 
     def test_a_board_before_its_first_mark_or_marble_says_who_the_arbiter_drew(self):
         self.assertEqual(E.alt("tictac", TT_FRESH), "Tic-Tac: game 11, the ghosts. Game 11 of @tannergolden against"
@@ -1348,7 +1349,7 @@ class Readme(unittest.TestCase):
             with self.subTest(board=name(d), note=d["note"][:20]):
                 self.assertEqual(E.game_of(d["kind"]).check(d), [])
                 self.assertTrue(text.startswith(f"<!-- markdown:element:{d['kind']}:start -->\n<details>\n<summary><b>"
-                                                f"{ED.FOLDS[d['kind']][0]}</b></summary>\n\n<picture>"))
+                                                f"{ED.FOLDS[d['kind']]}</b></summary>\n\n<picture>"))
                 self.assertEqual(text.count("<details"), 1, "the game's own fold, and no move in it")
                 self.assertTrue(text.endswith(f"</picture>\n\n{d['note']}\n\n</details>\n"
                                               f"<!-- markdown:element:{d['kind']}:end -->"))
@@ -1361,8 +1362,9 @@ class Readme(unittest.TestCase):
                      moves=many + kings)
         text = ED.block("checkers", board, "assets/elements")
         self.assertIn("· 12 legal moves ·", text)
-        self.assertIn("<details open>\n<summary>⛂ Men · 11 moves</summary>", text)
-        self.assertIn("<details open>\n<summary>⛂ King · 1 move</summary>", text)
+        self.assertIn("<details>\n<summary>⛂ Men · 11 moves</summary>", text)
+        self.assertIn("<details>\n<summary>⛂ King · 1 move</summary>", text)
+        self.assertNotIn("<details open>", text)
 
 
 if __name__ == "__main__":
