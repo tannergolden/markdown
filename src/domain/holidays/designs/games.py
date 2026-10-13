@@ -608,6 +608,42 @@ class Games:
             y += 11
         return y
 
+    def countdown(self, p: Pix, st: dict, x0: int, x1: int, y: int, night: bool, small: bool, moving: bool) -> int:
+        """The next game's countdown, where a board under way counts what it counts: a dial of the final board's two
+        days, the time still to go an arc of the set's accent from the top, clockwise, drawn in an arc at a time as
+        the file opens; the moment the next game opens, lettered as the set letters its titles; and how long was left
+        as of the drawing under it. It leads with what is true whenever it is read."""
+        k = self.ink(night)
+        cd = st["countdown"]
+        self.heading(p, x0, y, "next game", night)
+        self.say(p, x1, y, f"GAME {st['game'] + 1}", k["muted"], anchor="end")
+        y += 9
+        r = 9 if not small else 8
+        cx, cy = x0 + r + 1, y + r + 1
+        b = self.game_board(night)
+        accent = self.game_marks(night)["last"]
+        frac = max(0.0, min(1.0, cd["left"] / cd["of"]))
+        track, arc = [], []
+        for yy in range(math.floor(cy - r) - 2, math.ceil(cy + r) + 2):
+            for xx in range(math.floor(cx - r) - 2, math.ceil(cx + r) + 2):
+                d = math.hypot(xx + .5 - cx, yy + .5 - cy)
+                if r - 2 <= d < r + .5:
+                    turn = (math.atan2(xx + .5 - cx, -(yy + .5 - cy)) / (2 * math.pi)) % 1
+                    (arc if turn < frac else track).append((xx, yy, turn))
+        for (xx, yy, _) in track:
+            p.px(xx, yy, b["edge"])
+        n = 12
+        for i in range(n):
+            L = p.once(f"left{i}", appear(.75 + i * .06), z=.7) if moving else "base"
+            for (xx, yy, turn) in arc:
+                if int(turn / max(frac, 1e-9) * n) == i or (i == n - 1 and int(turn / max(frac, 1e-9) * n) >= n):
+                    p.px(xx, yy, accent, L)
+        p.rect(round(cx) - 1, round(cy) - 1, 2, 2, accent)
+        tx = cx + r + 6
+        self.game_title(p, tx, y + 1, clip(fold(f"OPENS {cd['opens'].upper()}", "57"), x1 - tx, "57"), night, 1)
+        self.say(p, tx, y + 12, f"IN {cd['in'].upper()}  ·  AS OF {cd['asof'].upper()}", k["muted"], room=x1 - tx)
+        return y + 2 * r + 3
+
     # --------------------------------------------------------------------------- the sheet
     def head(self, p: Pix, night: bool, g, title: str, note: str | None) -> None:
         """The sheet's head, as every element of the set is headed: its kind on the set's tag, after the game's own
@@ -653,7 +689,10 @@ class Games:
         p.hline(x0, x1, y, k["rule"])
         y += 6
         with section(2):
-            y = g.count(self, p, st, x0, x1, y, night, small)
+            if st.get("countdown"):          # a final board counts down to the next game in the count's room
+                y = self.countdown(p, st, x0, x1, y, night, small, moving)
+            else:
+                y = g.count(self, p, st, x0, x1, y, night, small)
         y += 3
         p.hline(x0, x1, y, k["rule"])
         y += 6

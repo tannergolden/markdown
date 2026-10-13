@@ -96,13 +96,20 @@ def _carried(page: Page, ports, lk: dict) -> list[str]:
 
 # --- planning ----------------------------------------------------------------------------------
 
-def plan_page(page: Page, measured: dict, *, draw: bool = True, was: list[str] = ()) -> dict:
+def stamp(moment: dt.datetime) -> str:
+    """A moment as the lock keeps it and a countdown reads it: UTC, to the minute, `2026-10-13T10:47:00Z`."""
+    return moment.astimezone(dt.timezone.utc).replace(second=0, microsecond=0).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def plan_page(page: Page, measured: dict, *, draw: bool = True, was: list[str] = (), asof: str = "",
+              zone: dt.tzinfo | None = None) -> dict:
     """Everything a run writes for this page: every part's files by path, the README's blocks, and the notes.
 
     `was` names the elements the committed page carries, so one no longer in
     the settings has its block taken out; a block the kit never drew is never
     touched. A part that is on but has nothing measured to draw from, like a
     trophy case with no lock yet, keeps its files and its block as they are.
+    `asof` is the moment a finished game's countdown says it was drawn at.
     """
     cfg = page.cfg
     result: dict = {"parts": {}, "files": {}, "blocks": {}, "notes": [], "hold": []}
@@ -132,7 +139,7 @@ def plan_page(page: Page, measured: dict, *, draw: bool = True, was: list[str] =
     if section:
         p = elements.plan(section, measured.get("elements") or {}, subject=page.subject,
                           today=page.today.isoformat(), tone=page.theme, out=page.out, readme=page.readme, draw=draw,
-                          holiday=page.drawn_in)
+                          holiday=page.drawn_in, asof=asof, zone=zone)
         result["parts"]["elements"] = p
         result["files"].update(p["files"])
         result["blocks"].update(p["blocks"])
@@ -460,7 +467,13 @@ def finish(page: Page, ports, measured: dict, lk: dict, *, use_lock: bool, advan
         else:
             trophies_ledger.remember(record, measured["trophies"])
     extra = localize(page, ports, lk, measured)
-    planned = _merge(plan_page(page, measured, was=was), extra)
+    # A finished game's countdown says how long was left as of the drawing, so it never makes a commit of its own:
+    # the page is drawn as of the moment the lock kept, and only when it changes for something else is it drawn
+    # again as of now, its countdowns brought up to date with it.
+    asof_was = (lk["parts"].get("elements") or {}).get("asof") or ""
+    asof = asof_was if asof_was or not page.now else stamp(page.now)
+    zone = ports.zone(page.cfg["timezone"])
+    planned = _merge(plan_page(page, measured, was=was, asof=asof, zone=zone), extra)
     shade_was = (lock.drawn(lk) or {}).get("rainbow")
     if (page.rainbow and not (page.held or held_was) and advance and shade_was in prints.SPECTRUM
             and stale(page, ports, planned)):
@@ -468,7 +481,10 @@ def finish(page: Page, ports, measured: dict, lk: dict, *, use_lock: bool, advan
         # set is up, nor as it comes down: the page was not in the print, so it picks up where it was.
         nxt = prints.rainbow_after(page.rainbow)
         page = dataclasses.replace(page, theme=nxt, rainbow=nxt)
-        planned = _merge(plan_page(page, measured, was=was), extra)
+        planned = _merge(plan_page(page, measured, was=was, asof=asof, zone=zone), extra)
+    if page.now and use_lock and asof != stamp(page.now) and stale(page, ports, planned):
+        asof = stamp(page.now)
+        planned = _merge(plan_page(page, measured, was=was, asof=asof, zone=zone), extra)
     print(describe(page, planned), file=ports.out)
     changed, unplaced, gone = write(page, ports, planned)
     notes = planned["notes"] + [f"{name}: the README has no markers for it yet, so it is not shown; add "
@@ -485,6 +501,8 @@ def finish(page: Page, ports, measured: dict, lk: dict, *, use_lock: bool, advan
                 record = lock.part(lk, "elements")
                 record["measured"] = measured.get("elements") or {}
                 record["drawn"] = planned["parts"]["elements"]["names"] if "elements" in planned["parts"] else []
+                if asof:
+                    record["asof"] = asof     # what every finished game's countdown was drawn as of
             if "badges" in planned["parts"] or "badges" in lk["parts"] or extra:
                 record = lock.part(lk, "badges")
                 record["measured"] = measured.get("badges") or {}
@@ -534,6 +552,9 @@ def measure_page(root: Path, cfg: dict, ports, today: dt.date | None = None) -> 
         raise settings.SettingsError("organization pages are not drawn yet; set mode: repository for now")
     day = today or ports.today(cfg["timezone"])
     page = settle(root, cfg, mode=mode, subject=subject, here=here, today=day, lk=lk)
+    # the moment the run draws at: now, or noon of the day a preview or a test was told it is
+    now = dt.datetime.combine(today, dt.time(12), dt.timezone.utc) if today else ports.now()
+    page = dataclasses.replace(page, now=now)
     measured = {}
     if cfg["banners"] is not False:
         measured["banners"] = banners.measure(gh, mode, subject, here or f"{subject}/{subject}",
@@ -628,7 +649,10 @@ def check(root: Path, cfg: dict, ports, measured: dict | None = None) -> int:
               "or pass --from", file=ports.out)
         return 2
     page = _offline_page(root, cfg, measured, lk, here_of(root, ports))
-    planned = _merge(plan_page(page, measured, was=_carried(page, ports, lk)), localize(page, ports, lk, measured))
+    asof = (lk["parts"].get("elements") or {}).get("asof") or ""
+    planned = _merge(plan_page(page, measured, was=_carried(page, ports, lk), asof=asof,
+                               zone=ports.zone(cfg["timezone"])),
+                     localize(page, ports, lk, measured))
     found = stale(page, ports, planned)
     if found:
         print("stale: " + ", ".join(found), file=ports.out)

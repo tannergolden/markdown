@@ -328,12 +328,13 @@ def measure(section: dict, before: dict, *, git, gh, subject: str, today: dt.dat
 
 
 def plan(section: dict, measured: dict, *, subject: str, today: str, tone: str, out: str, readme: str,
-         draw: bool = True, holiday: str = "") -> dict:
-    """Every element's files by path, its README block, and notes on anything drawn short."""
+         draw: bool = True, holiday: str = "", asof: str = "", zone: dt.tzinfo | None = None) -> dict:
+    """Every element's files by path, its README block, and notes on anything drawn short. `asof` is the moment the
+    page is drawn as of, and `zone` the time zone it tells time in, which a finished game's countdown reads."""
     problems = ED.validate(section, measured, subject=subject)
     if problems:
         raise ED.ElementsError("elements: " + "; ".join(problems))
-    elements = ED.merged(section, measured, subject=subject, today=today)
+    elements = ED.merged(section, measured, subject=subject, today=today, asof=asof, zone=zone)
     folder = posixpath.join(out.strip("/") or ".", "elements")
     rel = posixpath.relpath(folder, posixpath.dirname(readme) or ".")
     E.WARNINGS.clear()

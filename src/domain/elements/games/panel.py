@@ -168,6 +168,7 @@ def panel(cv, sk, g, st, x0, x1, y, *, small=False) -> float:
     cv.add(sk.rule(x0, x1, y + (14 if small else 16)))
     y = M.risen(cv, .3, last_move, cv, sk, g, st, x0, x1, y + (34 if small else 36), small=small)
     cv.add(sk.rule(x0, x1, y - (2 if small else 4)))
-    y = M.risen(cv, .45, g.count, cv, sk, st, x0, x1, y + (18 if small else 16), small=small)
+    count = CL.countdown if st.get("countdown") else g.count   # a final board counts down to the next game
+    y = M.risen(cv, .45, count, cv, sk, st, x0, x1, y + (18 if small else 16), small=small)
     cv.add(sk.rule(x0, x1, y + 1))
     return M.risen(cv, .6, history, cv, sk, g, st, x0, x1, y + 21, rows=2 if small else 3, small=small)

@@ -23,9 +23,9 @@ from infra import clock, files, git, github, resources, yaml_reader  # noqa: E40
 
 def ports() -> Ports:
     return Ports(catalogue=resources.install(), read_text=files.read_text, parse_yaml=yaml_reader.loads,
-                 today=clock.today, write_text=files.write_text, append_text=files.append_text, drawn=files.drawn,
-                 prune=files.prune, remove=files.remove, github=github.GitHub, git=git.Git, paced=github.Paced,
-                 slug=lambda root: git.Git(root).slug(),
+                 today=clock.today, zone=clock.zone, write_text=files.write_text, append_text=files.append_text,
+                 drawn=files.drawn, prune=files.prune, remove=files.remove, github=github.GitHub, git=git.Git,
+                 paced=github.Paced, slug=lambda root: git.Git(root).slug(),
                  env=dict(os.environ))
 
 

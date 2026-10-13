@@ -29,6 +29,8 @@ class Ports:
     read_text: Callable[[Path], str | None]            # a file's text, or None when it is missing
     parse_yaml: Callable[[str], object]                # a YAML document's value
     today: Callable[[str], dt.date]                    # the date in a time zone, by name
+    now: Callable[[], dt.datetime] = field(default_factory=lambda: (lambda: dt.datetime.now(dt.timezone.utc)))
+    zone: Callable[[str], dt.tzinfo] = field(default_factory=lambda: (lambda name: dt.timezone.utc))  # a zone, by name
     write_text: Callable[[Path, str], bool] = field(default_factory=lambda: _missing("a way to write files"))
     append_text: Callable[[Path, str], None] = field(default_factory=lambda: _missing("a way to append to files"))
     drawn: Callable[[Path], list] = field(default_factory=lambda: _missing("a way to list drawn files"))

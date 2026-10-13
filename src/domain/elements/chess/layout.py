@@ -255,10 +255,10 @@ def turn_row(cv, sk, st, x0, x1, y, *, small=False) -> float:
 
 def finished(st: dict) -> tuple[str, str, str, bool, tuple[str, ...]]:
     """A finished game's plate, as every game sets it in the turn's place: who won, under the winner's side, with
-    how in its second panel, or that it was drawn; and across the row the day the fresh board comes.
-    (label, message, icon, on the right, notes)"""
+    how in its second panel, or that it was drawn; and across the row the day the fresh board comes, unless the
+    countdown under it says when. (label, message, icon, on the right, notes)"""
     winner, how = st["result"]["winner"], st["result"]["how"]
-    notes = ((f"next game {st['next']}", f"next {st['next']}") if st["next"]
+    notes = ((f"next game {st['next']}", f"next {st['next']}") if st["next"] and not st.get("countdown")
              else (f"game {st['game']} is over", "game over"))
     return (f"{called(winner)} wins" if winner else "drawn", how, "trophy" if winner else "scale",
             winner == GITHUB, notes)
@@ -447,6 +447,27 @@ def history(cv, sk, st, x0, x1, y, rows=3) -> float:
     return yy
 
 
+def countdown(cv, sk, st, x0, x1, y, *, small=False, mini=20) -> float:
+    """The next game's countdown, in the room the count has on a board under way: the two days of a final board as a
+    dial, the time still to go drawn in as an arc as the file opens, the moment the next game opens set large, and
+    how long was left as of the board's drawing under it. It leads with what is true whenever it is read: a README
+    runs nothing, and the board is drawn again only when the page is drawn for something else."""
+    cd = st["countdown"]
+    cv.add(sk.heading(cv, "next game", x0, y))
+    cv.add(sk.caps(cv, f"game {st['game'] + 1}", x1, y, 7.5, ls=.6, anchor="end"))
+    r = 21 if not small else 19
+    cx, cy = x0 + r + 3, y + 12 + r
+    cv.add(sk.timer(cv, cx, cy, r, cd["left"] / cd["of"]))
+    tx = cx + r + 14
+    big, size = f"opens {cd['opens']}".upper(), 20.0
+    while size > 12 and sk.width(big, "bold", size, .5) > x1 - tx:
+        size -= .5
+    cv.add(sk.say(cv, big, tx, cy + 1, size, ls=.5))
+    said = f"in {cd['in']}  ·  as of {cd['asof']}"
+    cv.add(sk.caps(cv, said, tx, cy + 17, fit(sk, said, "caps", 7.5, 6, x1 - tx, .6), ls=.6))
+    return y + 64
+
+
 def board_sheet(sk, st: dict, title: str, desc: str, variant: str = "wide") -> str:
     still = "" if M.MOTION else " still"
     subject = f"game {st['game']}  ·  move {st['move']}"
@@ -464,7 +485,7 @@ def board_sheet(sk, st: dict, title: str, desc: str, variant: str = "wide") -> s
         cv.add(sk.rule(px0, px1, y + 16))
         y = M.risen(cv, .3, last_move, cv, sk, st, px0, px1, y + 36)
         cv.add(sk.rule(px0, px1, y - 4))
-        y = M.risen(cv, .45, taken, cv, sk, st, px0, px1, y + 16)
+        y = M.risen(cv, .45, countdown if st["countdown"] else taken, cv, sk, st, px0, px1, y + 16)
         cv.add(sk.rule(px0, px1, y + 1))
         M.risen(cv, .6, history, cv, sk, st, px0, px1, y + 21)
         return cv.svg()
@@ -481,7 +502,10 @@ def board_sheet(sk, st: dict, title: str, desc: str, variant: str = "wide") -> s
     cv.add(sk.rule(px0, px1, y + 14))
     y = M.risen(cv, .3, last_move, cv, sk, st, px0, px1, y + 34, small=True)
     cv.add(sk.rule(px0, px1, y - 2))
-    y = M.risen(cv, .45, taken, cv, sk, st, px0, px1, y + 18, mini=18)
+    if st["countdown"]:
+        y = M.risen(cv, .45, countdown, cv, sk, st, px0, px1, y + 18, small=True)
+    else:
+        y = M.risen(cv, .45, taken, cv, sk, st, px0, px1, y + 18, mini=18)
     cv.add(sk.rule(px0, px1, y + 1))
     M.risen(cv, .6, history, cv, sk, st, px0, px1, y + 21, rows=2)
     return cv.svg()

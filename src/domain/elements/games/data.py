@@ -22,7 +22,8 @@ from __future__ import annotations
 import re
 from typing import Callable
 
-from ..chess.game import (EMOJI, MOST, TITLE, WHO, WORDS, check_end, check_lines, is_day, is_number, is_text)
+from ..chess.game import (EMOJI, MOST, TITLE, WHO, WORDS, check_end, check_lines, countdown, is_day, is_number,
+                          is_text)
 from .sides import GITHUB, HOUSE
 
 NUMBER = r"[1-9][0-9]{0,8}"
@@ -131,7 +132,7 @@ def state(d: dict, *, to_move: str, opens: str) -> dict:
     return {"to_move": to_move, "opens": opens, "last": last, "result": result,
             "game": number(d, "game", 1), "move": number(d, "move", 1), "players": number(d, "players"),
             "due": str(d.get("due") or ""), "next": str(d.get("next") or "") if result else "",
-            "alert": "" if result else str(d.get("alert") or ""), "history": history}
+            "alert": "" if result else str(d.get("alert") or ""), "history": history, "countdown": countdown(d)}
 
 
 def numbered(st: dict) -> str:

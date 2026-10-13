@@ -80,6 +80,21 @@ def lights(cv, std: dict) -> dict:
     return L
 
 
+def _arc(cx, cy, r, frac, ink, width, *, track: str = "") -> str:
+    """An arc of a circle from its top, clockwise, `frac` of the way round, drawn in from nothing as the file opens
+    on the turn ring's beat, and a dot at its centre; over a faint `track` of the whole circle when one is given."""
+    C = 2 * math.pi * r
+    arc = C * max(0.0, min(1.0, frac))
+    under = (f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(r)}" fill="none" stroke="{track}" stroke-width="{fx(width)}"'
+             f' stroke-opacity=".55"/>' if track else "")
+    draw = (f' stroke-dasharray="{f1(arc)} {f1(C)}" stroke-dashoffset="{f1(arc)}">'
+            + M.ani("stroke-dashoffset", f"{f1(arc)};{f1(arc)};0", f"0;{fx(1.1 / 1.7, 3)};1", 1.7,
+                    spline="0 0 1 1;.3 0 .2 1") + "</circle>") if M.MOTION else f' stroke-dasharray="{f1(arc)} {f1(C)}"/>'
+    return (under + f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(r)}" fill="none" stroke="{ink}" '
+            f'stroke-width="{fx(width)}" transform="rotate(-90 {f1(cx)} {f1(cy)})"' + draw
+            + f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="1.6" fill="{ink}"/>')
+
+
 class StdChip(Chip):
     """The standard badge, which can also draw its two panels apart, so a panel can slide open out of the other."""
 
@@ -357,6 +372,12 @@ class Standard:
                 f'transform="rotate(-90 {f1(cx)} {f1(cy)})"' + dash
                 + f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(r)}" fill="none" stroke="url(#{L["mt"]})" '
                   f'stroke-width="2.6" stroke-opacity=".7"/>')
+
+    def timer(self, cv, cx, cy, r, frac) -> str:
+        """The next game's dial: an enamel disc, its track in the rule's tone, and the time still to go as a cobalt
+        arc from the top, clockwise, drawn in as the turn ring is."""
+        return self.enamel(cv, cx, cy, r, self.std["label"]) + _arc(cx, cy, r - 6.5, frac, c(P.ACCENT), 5,
+                                                                   track=c(self.std["rule"]))
 
     def chip(self, label, message="", *, icon=None, size=11.0, lab="label", msg="count") -> StdChip:
         labs = {"label": self.std["label"], "turn": self.std["label"], "accent": P.ACCENT, "safe": "amber",
@@ -973,6 +994,11 @@ class Print:
                         spline="0 0 1 1;.3 0 .2 1") + "</circle>") if M.MOTION else "/>"
         return (f'<circle cx="{f1(cx)}" cy="{f1(cy)}" r="{f1(r)}" fill="none" stroke="{c(self.mark)}" '
                 f'stroke-width="2.2" transform="rotate(-90 {f1(cx)} {f1(cy)})"' + dash)
+
+    def timer(self, cv, cx, cy, r, frac) -> str:
+        """The next game's dial: the prints' medallion and its ticks, and the time still to go as an arc in the
+        print's mark from the top, clockwise, drawn in as the turn ring is."""
+        return self.dial(cx, cy, r) + _arc(cx, cy, r - 6.5, frac, c(self.mark), 5)
 
     def chip(self, label, message="", *, icon=None, size=11.0, lab="label", msg="count") -> Plate:
         """A plate; a place after the podium's wins (`msg` "place") plain, as its badge is, where a count is solid."""

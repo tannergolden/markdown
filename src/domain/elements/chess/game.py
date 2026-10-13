@@ -25,6 +25,7 @@ a game ended (`check_end`) are every game's on the profile, so the four are chec
 """
 from __future__ import annotations
 
+import datetime as dt
 import re
 import unicodedata
 
@@ -64,6 +65,8 @@ WORDS = re.compile(r"[A-Za-z][A-Za-z0-9 ,.'-]{0,79}")
 EMOJI = re.compile("[←-⯿\U0001f000-\U0001faff‍️]{1,8}")
 LOGIN = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})")
 WHO = re.compile(r"@[A-Za-z0-9][A-Za-z0-9-]{0,38}|the Arbiter")
+# A moment with its offset, as the engines write the one a fresh board comes at and a run the one it drew at.
+MOMENT = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(?::[0-9]{2})?(?:Z|[+-][0-9]{2}:[0-9]{2})")
 DATE = re.compile(r"([1-9][0-9]?) ([A-Za-z]{3})")  # 18 Oct, a real day of a real month (`DAYS`)
 DAYS = {"jan": 31, "feb": 29, "mar": 31, "apr": 30, "may": 31, "jun": 30, "jul": 31, "aug": 31, "sep": 30, "oct": 31,
         "nov": 30, "dec": 31}
@@ -129,6 +132,47 @@ def is_day(value) -> bool:
     """Whether `value` is a day as the sheets letter it, such as 18 Oct: a real day of a real month."""
     m = DATE.fullmatch(value) if isinstance(value, str) else None
     return m is not None and int(m[1]) <= DAYS.get(m[2].casefold(), 0)
+
+
+def moment(value) -> dt.datetime | None:
+    """A moment as the engines write one, ISO 8601 with its offset, such as 2026-10-15T01:00:00Z: or None."""
+    if not isinstance(value, str) or not MOMENT.fullmatch(value):
+        return None
+    try:
+        at = dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return at if at.tzinfo else None
+
+
+def zone_of(zone) -> dt.tzinfo:
+    """The page's time zone, as the run hands it over from the zone its settings name: UTC when it hands none. The
+    domain reads no zone database of its own."""
+    return zone if isinstance(zone, dt.tzinfo) else dt.timezone.utc
+
+
+def left_words(hours: float) -> str:
+    """How long is left, in words: `1 day 14 hrs`, `2 days`, `5 hrs`, `under an hour`."""
+    d, h = divmod(int(hours), 24)
+    if d and h:
+        return f"{d} day{'s' if d > 1 else ''} {h} hr{'s' if h != 1 else ''}"
+    if d:
+        return f"{d} day{'s' if d > 1 else ''}"
+    return f"{h} hr{'s' if h != 1 else ''}" if hours >= 1 else "under an hour"
+
+
+def countdown(d: dict) -> dict | None:
+    """The next game's countdown on a finished board: the moment its fresh board comes, in the page's time, the
+    moment the board was drawn, and the hours left between them, of the two days a final board stays up. None
+    without either moment: a countdown is only ever drawn from what is true whenever it is read."""
+    at, asof = moment(d.get("next_at")), moment(d.get("asof"))
+    if not (d.get("result") and at and asof):
+        return None
+    zone = zone_of(d.get("zone"))
+    a, b = at.astimezone(zone), asof.astimezone(zone)
+    left = max(0.0, (at - asof).total_seconds() / 3600)
+    return {"opens": f"{a.day} {a:%b}, {a:%H:%M} {a.tzname()}", "asof": f"{b.day} {b:%b}, {b:%H:%M} {b.tzname()}",
+            "left": left, "of": 48.0, "in": left_words(left)}
 
 
 def _int(d: dict, key: str, default: int, low: int = 0, high: int = MOST) -> int:
@@ -202,6 +246,11 @@ def check_end(d: dict, moved: str | tuple[str, ...], ends: dict[str, bool], offe
         errors.append(f"next {nxt!r} is not a day, such as 14 Oct")
     elif nxt and not result:
         errors.append("next is the day a finished game's fresh board comes: a game under way has none")
+    at = d.get("next_at")
+    if at is not None and not moment(at):
+        errors.append(f"next_at {at!r} is not a moment, such as 2026-10-15T01:00:00Z")
+    elif at is not None and not result:
+        errors.append("next_at is the moment a finished game's fresh board comes: a game under way has none")
     return errors
 
 
@@ -301,7 +350,7 @@ def board_state(d: dict) -> dict:
     return {"fen": fen, "placement": placement(fen), "to_move": to_move, "last": last, "taken": took,
             "check": d.get("check") or None, "game": _int(d, "game", 1, 1), "move": _int(d, "move", fullmove, 1),
             "players": _int(d, "players", 0), "due": str(d.get("due") or ""), "history": history,
-            "result": result, "next": str(d.get("next") or "") if result else ""}
+            "result": result, "next": str(d.get("next") or "") if result else "", "countdown": countdown(d)}
 
 
 def pieces_in_words(board: dict[str, str]) -> str:

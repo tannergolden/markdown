@@ -39,6 +39,7 @@ class Page:
     holiday: holidays.Window | None  # the holiday whose set draws the page today, or None
     design: str = ""        # the collection's design for the month, or the design the settings name; ""
                             # for any other theme. A holiday's set still draws the page while it is up
+    now: dt.datetime | None = None  # the moment a run draws at, in UTC: None for a redraw from the lock alone
 
     @property
     def held(self) -> str:

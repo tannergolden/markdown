@@ -14,6 +14,7 @@ An element's files are named for its id: `ID-day.svg` and `ID-dark.svg`, with
 """
 from __future__ import annotations
 
+import datetime as dt
 import re
 from html import escape
 
@@ -72,8 +73,10 @@ def check(section) -> dict:
     return {eid: dict(spec) for eid, spec in section.items()}
 
 
-def merged(section: dict, measured: dict, *, subject: str = "", today: str = "") -> dict:
-    """Each element's data: what was measured for it, with what the settings say over it."""
+def merged(section: dict, measured: dict, *, subject: str = "", today: str = "", asof: str = "",
+           zone: dt.tzinfo | None = None) -> dict:
+    """Each element's data: what was measured for it, with what the settings say over it, and the run's day; and
+    for a game, the moment the page is drawn as of and the time zone it tells time in, which its countdown reads."""
     out = {}
     for eid, spec in section.items():
         d = dict(measured.get(eid, {}))
@@ -81,6 +84,10 @@ def merged(section: dict, measured: dict, *, subject: str = "", today: str = "")
         d.setdefault("subject", subject)
         if today:
             d.setdefault("today", today)
+        if asof and d.get("kind") in GAMES:
+            d.setdefault("asof", asof)
+        if zone and d.get("kind") in GAMES:
+            d.setdefault("zone", zone)
         out[eid] = d
     return out
 
