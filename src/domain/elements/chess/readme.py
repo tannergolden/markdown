@@ -5,15 +5,16 @@
 An image cannot be clicked square by square, so the README carries the game's words under the board: every legal move as
 a row of its emoji, its title and notation, the move in plain words, and a link that opens its ready-made issue, folded
 shut under one line saying whose moves they are and how many; then the note. No banner goes over the board, whose sheet
-says whose turn it is and by when, and the block folds the game open under its name (`data.fold`). A move is named for
-what it is, never for what it does ("Bring Out the King's Knight to f3!", "Take the Pawn on f7 With the Queen!"), and
-written without the `+` or `#` that would say it checks or mates, so a mate reads as any other move of its piece. A
-finished game's block is its final board, whose sheet says who won and when the fresh board comes, and its note, with no
-move under it to play. A turn with more than ten moves is grouped by piece, each group named for as many of the pieces
-as have a move in it. The Hall of Fame's block follows its sheet with a row of badges, one per winner, each linking to
-that player's profile, since the names in a sheet cannot be clicked either; then the leaderboard, folded shut like the
-moves: the house's own moves, wins and games on top, and GitHub's leading players under it. Each player is linked by the
-login their account has now, and one whose account is gone is left out of both, the players under them moving up.
+says whose turn it is and by when, and the board itself is never folded, always in view (`data.fold`). A move is
+named for what it is, never for what it does ("Bring Out the King's Knight to f3!", "Take the Pawn on f7 With the
+Queen!"), and written without the `+` or `#` that would say it checks or mates, so a mate reads as any other move of its
+piece. A finished game's block is its final board, whose sheet says who won and when the fresh board comes, and its
+note, with no move under it to play. A turn with more than ten moves is grouped by piece, each group folded shut under
+its own line and named for as many of the pieces as have a move in it. The Hall of Fame's block follows its sheet with a
+row of badges, one per winner, each linking to that player's profile, since the names in a sheet cannot be clicked
+either; then the leaderboard, folded shut like the moves: the house's own moves, wins and games on top, and GitHub's
+leading players under it. Each player is linked by the login their account has now, and one whose account is gone is
+left out of both, the players under them moving up.
 """
 from __future__ import annotations
 
@@ -48,8 +49,8 @@ def group_name(piece: str, moves: list) -> str:
 
 
 def move_list(d: dict) -> str:
-    """Every legal move, folded shut under the line that says whose turn it is and how many moves it has; nothing
-    once the game is over."""
+    """Every legal move, folded shut under the line that says whose turn it is and how many moves it has, and past
+    ten, each piece's group folded shut again under its own; nothing once the game is over."""
     groups = [g for g in d.get("moves") or [] if g.get("list")]
     n = sum(len(g["list"]) for g in groups)
     if not n or d.get("result"):
@@ -66,7 +67,7 @@ def move_list(d: dict) -> str:
         parts = []
         for g in groups:
             k = len(g["list"])
-            parts.append(f"<details open>\n<summary>{SIGN[side][g['piece']]} {group_name(g['piece'], g['list'])} ·"
+            parts.append(f"<details>\n<summary>{SIGN[side][g['piece']]} {group_name(g['piece'], g['list'])} ·"
                          f" {k} move{'s' if k != 1 else ''}</summary>\n\n{table(g['list'])}\n\n</details>")
         inside = "\n\n".join(parts)
     return f"<details>\n<summary>{line}</summary>\n\n{inside}\n\n</details>"

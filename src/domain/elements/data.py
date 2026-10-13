@@ -35,11 +35,10 @@ REQUIRED = {
     "tictac": ("board", "places"), "pentago": ("board", "places"), "checkers": ("fen",),
     "chess": ("fen",), "chess-hall": (), "hall-of-fame": (),
 }
-# Each game's name on @tannergolden's profile, where its block folds the game under it, and whether the fold opens with
-# the page: Chess open, the one board in view, and the other three shut, a click away. No banner stands over a fold: the
-# board's own sheet says whose turn it is.
-FOLDS = {"chess": ("♟️ Chess", True), "checkers": ("🏁 Checkers", False), "pentago": ("🌀 Pentago", False),
-         "tictac": ("❌ Tic-Tac", False)}
+# Each game's name on @tannergolden's profile where its block folds the game under it, shut, a click away: every game
+# but Chess, whose board is never folded, the one board always in view. No banner stands over a game: the board's own
+# sheet says whose turn it is.
+FOLDS = {"checkers": "🏁 Checkers", "pentago": "🌀 Pentago", "tictac": "❌ Tic-Tac"}
 # The games on @tannergolden's profile and their Hall of Fame: drawn in the standard theme and every print by their
 # own packages, and by a holiday's set or a collection's design in its pixels (`holidays.designs.games`), every file
 # of one in the set or none, so a board is never half in one look and half in another.
@@ -231,16 +230,18 @@ def picture(eid: str, d: dict, rel: str) -> str:
 
 
 def fold(kind: str, inside: str) -> str:
-    """`inside`, a game's picture and what goes under it, folded under the game's name: open for chess, shut for
-    the other three."""
-    name, shown = FOLDS[kind]
-    return f"<details{' open' if shown else ''}>\n<summary><b>{name}</b></summary>\n\n{inside}\n\n</details>"
+    """`inside`, a game's picture and what goes under it, folded shut under the game's name; chess's as it is, never
+    folded."""
+    if kind not in FOLDS:
+        return inside
+    return f"<details>\n<summary><b>{FOLDS[kind]}</b></summary>\n\n{inside}\n\n</details>"
 
 
 def block(eid: str, d: dict, rel: str) -> str:
-    """The README block: the picture; for a game, the game folded under its name, its picture and every legal move
-    under it, folded shut, then its note (once the game is over, no move); for a Hall of Fame, chess's or all four
-    games', a badge per winner under it, each linking to that player's profile, and the leaderboard."""
+    """The README block: the picture; for a game, its picture and every legal move under it, folded shut, then its
+    note (once the game is over, no move), all folded shut under the game's name but chess's, which is never folded;
+    for a Hall of Fame, chess's or all four games', a badge per winner under it, each linking to that player's
+    profile, and the leaderboard."""
     snippet = picture(eid, d, rel)
     if d["kind"] == "chess" or d["kind"] in E.GAMES:
         from . import chess

@@ -7,8 +7,8 @@ An image cannot be clicked cell by cell, so each move is a row of its emoji, a t
 notation, the move in plain words and a link that opens its ready-made issue, none of them saying what the move would do
 to the game. No banner goes over the picture: the sheet itself says whose turn it is and by when, and once the game is
 over, who won and when the fresh board comes, so a finished board's block is its picture and its note, with no move to
-play. The block folds the game under its name (`data.fold`). A turn with more than ten moves is grouped, as chess groups
-its moves by piece, when the game says how (`groups`).
+play. The block folds the game shut under its name (`data.fold`). A turn with more than ten moves is grouped, as chess
+groups its moves by piece, when the game says how (`groups`), each group folded shut under its own line.
 """
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ def move_list(d: dict, st: dict, sign: dict, unit: tuple[str, str],
               table: Callable[[list], str] = table) -> str:
     """Every legal move, folded shut under the line that says whose turn it is and how many it has: `sign` is each
     side's mark, `unit` what a move is called, one and many ("open cell", "open cells"). Past ten, `groups` sorts
-    the moves into named groups, each folded open under its own line, as chess sorts its moves by piece. A game
+    the moves into named groups, each folded shut under its own line, as chess sorts its moves by piece. A game
     whose move is two choices sets its own `table`, its second choices linked in each row."""
     moves = d.get("moves") or []
     if not moves or st["result"]:
@@ -39,7 +39,7 @@ def move_list(d: dict, st: dict, sign: dict, unit: tuple[str, str],
     if n <= FEW or groups is None:
         inside = table(moves)
     else:
-        inside = "\n\n".join(f"<details open>\n<summary>{sign[side]} {title} · {len(rows)}"
+        inside = "\n\n".join(f"<details>\n<summary>{sign[side]} {title} · {len(rows)}"
                              f" move{'s' if len(rows) != 1 else ''}</summary>\n\n{table(rows)}\n\n</details>"
                              for title, rows in groups(moves))
     return f"<details>\n<summary>{line}</summary>\n\n{inside}\n\n</details>"
