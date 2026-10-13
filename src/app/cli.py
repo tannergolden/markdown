@@ -123,6 +123,15 @@ def parser() -> argparse.ArgumentParser:
     sub.add_parser("palette", help="the 64 colour tokens")
     sub.add_parser("icons", help="the 64 icons")
     sub.add_parser("version", help="the kit and the version of the files it draws")
+    rp = sub.add_parser("replay", help="draw a finished game's replay, by day and dark, from its engine's facts")
+    rp.add_argument("facts", type=Path, help="the facts the profile's engine wrote: games/game-<N>.replay.json")
+    rp.add_argument("--out", type=Path, default=Path("."), help="the folder the two files go in (default: here)")
+    rp.add_argument("--name", default="", help="the files' name, before -day.svg and -dark.svg (default: game-<N>)")
+    rp.add_argument("--tone", default="blackprint", help="the page's theme: a print is drawn in, any other theme in "
+                    "blackprint (default: blackprint)")
+    rp.add_argument("--faces", type=Path, help="a folder of each player's avatar as a grey PGM, named <account ID>.pgm")
+    rp.add_argument("--gone", default="", help="the account IDs whose accounts are gone, comma separated: drawn with "
+                    "no face and no name")
     return p
 
 
@@ -445,10 +454,45 @@ def cmd_version(args, ports: Ports) -> int:
     return 0
 
 
+def cmd_replay(args, ports: Ports) -> int:
+    """A finished game's replay, by day and by dark, from the facts the profile's engine wrote, each player drawn
+    from their avatar's grey bitmap when the folder has one."""
+    from domain.elements import replay
+    from domain.elements.replay.portrait import read
+
+    text = ports.read_text(args.facts)
+    if text is None:
+        raise Usage(f"{args.facts}: no such file")
+    try:
+        facts = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise Usage(f"{args.facts}: not JSON: {exc}") from exc
+    errors = replay.check(facts)
+    if errors:
+        raise Usage(f"{args.facts}: " + "; ".join(errors))
+    faces = {}
+    if args.faces:
+        for path in sorted(Path(args.faces).glob("*.pgm")):
+            grid = read(path.read_bytes()) if path.stem.isdigit() else None
+            if grid:
+                faces[int(path.stem)] = grid
+    try:
+        gone = frozenset(int(v) for v in args.gone.split(",") if v.strip())
+    except ValueError as exc:
+        raise Usage(f"--gone {args.gone!r} is account IDs, comma separated") from exc
+    name = args.name or f"game-{facts['game']}"
+    for theme in ("day", "dark"):
+        svg = replay.draw(facts, args.tone, theme, faces, gone)
+        path = args.out / f"{name}-{theme}.svg"
+        ports.write_text(path, svg)
+        print(f"{path}  {len(svg.encode()) // 1024} KB", file=ports.out)
+    return 0
+
+
 COMMANDS = {"run": cmd_run, "render": cmd_render, "check": cmd_check, "preview": cmd_preview, "measure": cmd_measure,
             "set": cmd_set, "lint": cmd_lint, "catalogue": cmd_catalogue, "calibrate": cmd_calibrate, "settings": cmd_settings, "holidays": cmd_holidays,
             "collections": cmd_collections, "palette": cmd_palette,
-            "icons": cmd_icons, "version": cmd_version}
+            "icons": cmd_icons, "version": cmd_version, "replay": cmd_replay}
 
 
 def main(argv: list[str], ports: Ports) -> int:

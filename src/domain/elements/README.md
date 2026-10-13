@@ -29,7 +29,8 @@ The games played on @tannergolden's profile are drawn there alone: Tic-Tac
 Checkers ([`checkers/`](checkers/README.md)), and Chess with chess's own Hall of
 Fame ([`chess/`](chess/README.md)), four boards drawn by one hand
 ([`games/`](games/README.md)), and the Hall of Fame of all four games
-([`hall/`](hall/README.md)).
+([`hall/`](hall/README.md)), with a replay of every game a person's own move
+won ([`replay/`](replay/README.md)).
 What each draws from is the `elements:` section of the page's settings
 ([`data.py`](data.py)).
 
@@ -49,6 +50,7 @@ coordinate.
 | [`games/`](games/README.md)       | What the four games on @tannergolden's profile share: one sheet, one panel and one pair of materials, so they read as one hand.       |
 | [`hall/`](hall/README.md)         | The Hall of Fame of all four games on @tannergolden's profile: the series, the podium and the leaderboard, one layout in every theme. |
 | [`pentago/`](pentago/README.md)   | The Pentago element: the second tier of the games on @tannergolden's profile, one layout in every theme.                              |
+| [`replay/`](replay/README.md)     | Replays: a finished game on @tannergolden's profile played again move by move on its own board, looping, for tannergolden/play.       |
 | [`tictac/`](tictac/README.md)     | The Tic-Tac element: the first tier of the games on @tannergolden's profile, one layout in every theme.                               |
 | [`__init__.py`](__init__.py)      | The elements: the body of a README, drawn on the same paper as its header and footer.                                                 |
 | [`data.py`](data.py)              | The `elements:` section of a page's settings: which elements it draws, and what each is drawn from.                                   |

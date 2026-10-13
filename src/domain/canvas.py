@@ -41,9 +41,11 @@ THEMES = {"day": DAY, "dark": DARK}
 # in motion, and a panel whose words and logins can use every letter there
 # is. A board over budget fails the whole run and leaves the page's moves a
 # turn behind, so the board's budget clears the densest board by over a
-# tenth.
+# tenth. A replay is no README element: one file plays a whole game, about
+# 100 KB and 4 KB more for each move, and only its own page and play's gallery
+# of the newest load it, so its budget is room for a game of over 200 moves.
 BUDGET = {"header": 48_000, "footer": 48_000, "link": 12_000, "sheet": 72_000, "card": 32_000, "badge": 48_000,
-          "trophy": 40_000, "board": 96_000}
+          "trophy": 40_000, "board": 96_000, "replay": 1_000_000}
 
 
 def c(token: str) -> str:
