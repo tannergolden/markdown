@@ -999,7 +999,7 @@ class SharedElements(unittest.TestCase):
         cards, real = [], A.cartouche_card
 
         def kept(p, x, y, w, h, night, seed, ink, fill):
-            cards.append((x, y, w, h))
+            cards.append((p, x, y, w, h))
             return real(p, x, y, w, h, night, seed, ink, fill)
         washes = {C["sea"], C["land"], RAMP["verm"][5], GOLD[5], RAMP["deep"][5], RAMP["dusk"][5], RAMP["verm"][2],
                   GOLD[2], SEA[3], RAMP["land"][3], RAMP["verm"][3], GOLD[3], RAMP["deep"][3], RAMP["dusk"][3],
@@ -1010,8 +1010,10 @@ class SharedElements(unittest.TestCase):
                     cards.clear()
                     p = SET.draw_element("schematic", spec, night, variant, None)
                     edge = INK[1] if not night else GOLD[2]
-                    self.assertGreater(len(cards), 3, variant)
-                    for (x, y, w, h) in cards:
+                    # Only the sheet's own cards: the layout also draws a card's touch on scratch canvases.
+                    on_sheet = [c[1:] for c in cards if c[0] is p]
+                    self.assertGreater(len(on_sheet), 3, variant)
+                    for (x, y, w, h) in on_sheet:
                         for (cx, cy, sx, sy) in ((x - 1, y - 1, 1, 1), (x + w, y - 1, -1, 1), (x - 1, y + h, 1, -1),
                                                  (x + w, y + h, -1, -1)):
                             for (dx, dy) in A.CURL:
