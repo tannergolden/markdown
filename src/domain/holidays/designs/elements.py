@@ -70,6 +70,35 @@ def _phone_order(keys, edges):
     return sorted(keys, key=lambda k: (lay[k], k in onward, keys.index(k)))
 
 
+class _Ink(Pix):
+    """A scratch canvas that keeps every cell it is inked on, by its pixels and by every symbol placed on
+    it, a stamp's or a reused sprite's. A see-through pixel is light, not ink, and does not count."""
+
+    def __init__(self, w: int, h: int):
+        super().__init__(w, h)
+        self.solid: dict = {}
+        self.placed: set = set()
+
+    def symbol(self, key, cells=None, shapes="", mono=False):
+        sid = super().symbol(key, cells, shapes, mono)
+        if sid not in self.solid:
+            pairs = cells.items() if isinstance(cells, dict) else ((xy, "") for xy in cells or ())
+            self.solid[sid] = [xy for xy, c in pairs if ":" not in str(c)]
+        return sid
+
+    def use(self, key, x, y, L="base", stroke=None, scale=1):
+        super().use(key, x, y, L, stroke, scale)
+        for cx, cy in self.solid.get(self.syms[key], ()):
+            self.placed |= {(x + cx * scale + i, y + cy * scale + j) for i in range(scale) for j in range(scale)}
+
+    def cells(self) -> set:
+        return self.placed | {xy for cells in self.layers.values() for xy, c in cells.items() if ":" not in c}
+
+
+# How far each set's card touch rises above a card, by (set, night, card size, cards): see `Elements.crown`.
+_CROWNS: dict = {}
+
+
 class Elements:
     """The element layouts. Every drawing hook a set overrides is listed first, with its default."""
 
@@ -220,6 +249,22 @@ class Elements:
         return rows * 10
 
     # ------------------------------------------------------------------------------------- schematic
+    def crown(self, night, w: int, h: int, n: int) -> int:
+        """How many rows the touch of a sheet's `n` cards, `w` by `h`, rises above their lids at its tallest:
+        each card's touch drawn as `node` draws it, with its seed and its lid, on a scratch canvas. A group's
+        label is set over its first cards, and lifted by this to keep two rows clear of their touch."""
+        key = (type(self), night, w, h, n)
+        if key not in _CROWNS:
+            rise = 0
+            for i in range(n):
+                q = _Ink(w + 48, h + 48)
+                self.node_deco(q, night, 24, 24, w, h, i, i % 3 != 2)
+                rows = [y for _, y in q.cells()]
+                if rows:
+                    rise = max(rise, 24 - min(rows))
+            _CROWNS[key] = rise
+        return _CROWNS[key]
+
     def node(self, p: Pix, night, x, y, w, h, spec, seed=0, lid=True):
         """A step of the flow as a card: its icon in its own cell, the set's touch on its edge and lid,
         its title, its path (wrapped at a slash when it is long) and its note's number."""
@@ -345,11 +390,16 @@ class Elements:
         by = {b.key: b for b in boxes}
         top = 40
         grouped_top = any(d["boxes"][k].get("in") for k in keys)
+        # A group's label hangs under its dashed top, over its first cards. It is lifted clear of the set's
+        # touch on them, two rows clear, and the first row is let down as far, so a group at the top keeps
+        # its label clear of the frame.
+        lift = max(0, self.crown(night, 106, 28, len(keys)) - 1) if grouped_top else 0
+        pad = 4 + lift if grouped_top else 0
         # A wire that goes round a box in the last column runs down a channel beyond it. The placement gives
         # up width until that channel, and a label set upright beside it, stays inside the set's frame.
         span = 383
         while True:
-            placed = snake(boxes, edges, left=16, top=top + (4 if grouped_top else 0), width=span, per_row=3,
+            placed = snake(boxes, edges, left=16, top=top + pad, width=span, per_row=3,
                            box_w=106, box_h=28, gap_x=34, gap_y=30, stack_gap=14)
             for b in boxes:
                 b.x, b.y, b.w, b.h = round(b.x), round(b.y), round(b.w), round(b.h)
@@ -360,13 +410,13 @@ class Elements:
         notes = [(n, t) for n, t in d.get("notes", ())]
         ow, oh = self.ornament("schematic", None, 0, 0, night)
         n_rows = math.ceil(len(notes) / 2) if notes else 0
-        H = top + (4 if grouped_top else 0) + round(placed) + 16 + n_rows * 10 + 8
+        H = top + pad + round(placed) + 16 + n_rows * 10 + 8
         p = self.canvas(WIDE, H)
         k = self.ink(night)
         self.frame_element(p, night, "SCHEMATIC", d.get("subject", ""), d.get("caption") or "NOT TO SCALE", seed=21)
         taken = [(b.x - 2, b.y - 2, b.x + b.w + 2, b.y + b.h + 2) for b in boxes]
         for label, members in self._group_boxes(d, by):
-            x0, y0 = min(b.x for b in members) - 10, min(b.y for b in members) - 11
+            x0, y0 = min(b.x for b in members) - 10, min(b.y for b in members) - 11 - lift
             x1, y1 = max(b.x + b.w for b in members) + 10, max(b.y + b.h for b in members) + 9
             others = [b for b in boxes if b not in members and b.y < y1 and b.y + b.h > y0]
             lo = max([6] + [b.x + b.w + 4 for b in others if b.x + b.w <= x0])
@@ -416,11 +466,14 @@ class Elements:
         if w < 100:
             w, step = 100, (room - 100) / max(skips - 1, 1)
         groups = d.get("groups") or {}
+        # A group's label sits on its dashed top, over its first card. The card is let down far enough for
+        # the set's touch on it to keep two rows clear of the label, and the label keeps its place.
+        lift = max(0, self.crown(night, w, 28, len(order)) - 4) if any(d["boxes"][k].get("in") for k in order) else 0
         gaps = {}
         prev = None
         for key in order:
             g = d["boxes"][key].get("in")
-            gaps[key] = 10 if g and g != prev else 0
+            gaps[key] = 10 + lift if g and g != prev else 0
             prev = g
         ys, y = {}, top
         for key in order:
@@ -438,7 +491,7 @@ class Elements:
             members = [key for key in order if d["boxes"][key].get("in") == gk]
             if not members:
                 continue
-            gy0, gy1 = min(ys[m] for m in members) - 12, max(ys[m] for m in members) + 36
+            gy0, gy1 = min(ys[m] for m in members) - 12 - lift, max(ys[m] for m in members) + 36
             p.dashed(6, gy0, NARROW - 6, gy1, self.dashes(night), 3)
         channel = 0
         cx = x0 + 30
@@ -459,7 +512,7 @@ class Elements:
             members = [key for key in order if d["boxes"][key].get("in") == gk]
             if not members:
                 continue
-            gy0 = min(ys[m] for m in members) - 12
+            gy0 = min(ys[m] for m in members) - 12 - lift
             label = clip(fold(str(label), "35"), NARROW - 24, "35")
             lw = measure(label, "35")
             p.rect(NARROW // 2 - lw // 2 - 2, gy0 - 1, lw + 4, 8, self.bg_at(p, night, gy0))
