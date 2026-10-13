@@ -121,7 +121,7 @@ def pixel_sets() -> tuple[list[str], list[str]]:
     sets = [builder.holidays.NAMES[k] for k in builder.holidays.KEYS if k in builder.holidays.SETS]
     medieval = builder.collections.COLLECTIONS['medieval']
     return sets, [f'{builder.collections.MONTHS[i]}: {builder.collections.name_of(k)}'
-                  for i, k in enumerate(medieval.keys)]
+                  + (", the profile's" if k == builder.PROFILE_LOOK else '') for i, k in enumerate(medieval.keys)]
 
 
 class TheGame(unittest.TestCase):
@@ -158,7 +158,7 @@ class TheGame(unittest.TestCase):
         self.assertTrue(all(it['label'].startswith('Board') for it in items))
         self.assertTrue(all('sday' in it and 'sdark' in it for it in items), 'each with its still pair')
         self.assertEqual([it['label'] for it in sections['phones']['items']],
-                         ['Board, standard', "Board, blackprint, the profile's"])
+                         ['Board, standard', "Board, blackprint"])
 
     def test_every_drawing_the_entry_names_is_beside_the_page(self) -> None:
         for name in drawings_of(self.entry) + list(self.entry['thumb'].values()):
@@ -242,7 +242,7 @@ class TheGamesBesideChess(unittest.TestCase):
                 self.assertEqual([it['label'].split(', ')[1] for it in items], tones)
                 self.assertTrue(all('sday' in it and 'sdark' in it for it in items), 'each with its still pair')
                 self.assertEqual([it['label'] for it in sections['phones']['items']],
-                                 ['Board, standard', "Board, blackprint, the profile's"])
+                                 ['Board, standard', "Board, blackprint"])
                 self.assertTrue(all(it['w'] == 360 for it in sections['phones']['items']))
                 for name in drawings_of(entry) + list(entry['thumb'].values()):
                     self.assertTrue((self.out / name).is_file(), name)
@@ -314,10 +314,10 @@ class TheHallOfFame(unittest.TestCase):
         self.assertTrue(all(it['label'].startswith('Hall of Fame') for it in items))
         self.assertTrue(all('sday' in it and 'sdark' in it for it in items), 'each with its still pair')
         self.assertEqual([it['label'] for it in sections['phones']['items']],
-                         ['Hall of Fame, standard', "Hall of Fame, blackprint, the profile's"])
+                         ['Hall of Fame, standard', "Hall of Fame, blackprint"])
         self.assertTrue(all(it['w'] == 360 for it in sections['phones']['items']))
         self.assertEqual([r['label'] for r in sections['badges']['rows']],
-                         ['In standard', "In blackprint, the profile's"] + [f'In {n}' for n in sets + months])
+                         ['In standard', "In blackprint"] + [f'In {n}' for n in sets + months])
         self.assertEqual({len(r['chips']) for r in sections['badges']['rows']}, {5}, 'a badge for each winner')
 
     def test_every_drawing_the_entry_names_is_beside_the_page(self) -> None:

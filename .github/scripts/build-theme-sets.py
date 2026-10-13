@@ -66,8 +66,10 @@ GAMES = ("chess", "checkers", "pentago", "tictac")
 TITLES = {"tictac": "Tic-Tac", "pentago": "Pentago", "checkers": "Checkers", "chess": "Chess"}
 # The Hall of Fame of all four, one entry after them, drawn from its own sample: tests/fixtures/hall-of-fame.yaml.
 HALL = "hall-of-fame"
-# The game is drawn on one page, @tannergolden's profile, in the standard theme or a print; there, in blackprint.
-PROFILE, PROFILE_TONE = f"https://github.com/{chess.OWNER}", "blackprint"
+# The games are drawn on one page, @tannergolden's profile, in whatever theme it wears: there, the medieval
+# collection's Chessmen, all year. Beside the standard theme the sheets feature one print, blackprint, in their
+# thumbnails and their phone files.
+PROFILE, PROFILE_LOOK, FEATURED = f"https://github.com/{chess.OWNER}", "medieval-chessmen", "blackprint"
 # The page says it drew this folder, so a rebuild may empty it and a wrong path never loses anything.
 MARK = '<meta name="generator" content="markdown-kit theme-sets">'
 
@@ -113,8 +115,7 @@ NOTES = {
     "hall": "The series between the house and GitHub in all four games, each game on its own row under the four "
             "together, each named by its two pieces; then the podium of the three leading winners across them and "
             "two more beside it, each with their wins by game and named as their GitHub profile names them.",
-    "game phones": "The 360-pixel files a README shows on a small screen, in the standard theme and in the profile's "
-                   "own print.",
+    "game phones": "The 360-pixel files a README shows on a small screen, in the standard theme and in blackprint.",
     "game sets": "While a holiday's set is up it draws the games in its own pixels, each as a whole, every file of "
                  "it: its paper and frame, its lettering, a board built of its own stuff in a frame of its own, and "
                  "the Hall's podium cut from it; the pieces are the same ivory and ebony in every set. Motion: Still "
@@ -429,17 +430,13 @@ DRAWN_IN = (" It is drawn in whatever theme the page is in: the standard theme's
             "with the other three boards.")
 
 
-def labelled(tone: str) -> str:
-    return f"{tone}, the profile's" if tone == PROFILE_TONE else tone
-
-
 def pixel_sets() -> list[tuple[str, str, str]]:
     """Every pixel set a game is drawn in, (key, holiday, label): each holiday's set, then each design of every
     collection with all twelve drawn, as its month's design."""
     sets = [(key, key, holidays.NAMES[key]) for key in holidays.KEYS if key in holidays.SETS]
     for c in (collections.COLLECTIONS[k] for k in collections.themes()):
-        sets += [(k, months_design(k), f"{collections.MONTHS[i]}: {collections.name_of(k)}")
-                 for i, k in enumerate(c.keys)]
+        sets += [(k, months_design(k), f"{collections.MONTHS[i]}: {collections.name_of(k)}"
+                  + (", the profile's" if k == PROFILE_LOOK else "")) for i, k in enumerate(c.keys)]
     return sets
 
 
@@ -488,7 +485,7 @@ def board_entry(d: Drawings, key: str) -> dict:
                     still=(files[name(key, still, "day")], files[name(key, still, "dark")]))
 
     title = TITLES[key]
-    phones = [sheet(tone, "narrow", f"Board, {labelled(tone)}") for tone in (prints.STANDARD, PROFILE_TONE)]
+    phones = [sheet(tone, "narrow", f"Board, {tone}") for tone in (prints.STANDARD, FEATURED)]
     sets = set_sections(d, key, "Board")
     return {"key": key, "name": title.lower(), "group": "game", "tag": f"@{chess.OWNER} only",
             "kicker": f"Game, exclusive to @{chess.OWNER}'s profile",
@@ -501,11 +498,11 @@ def board_entry(d: Drawings, key: str) -> dict:
             "swatches_title": "Drawn in every tone",
             "swatches": [{"role": prints.STANDARD, "hex": hexof(pieces.ACCENT)}]
             + [{"role": tone, "hex": hexof(prints.PRINTS[tone]["line"])} for tone in prints.PRINTS],
-            "thumb": {"day": f"{key}/{key}-wide-{PROFILE_TONE}-still-day.svg",
-                      "dark": f"{key}/{key}-wide-{PROFILE_TONE}-still-dark.svg"},
+            "thumb": {"day": f"{key}/{key}-wide-{FEATURED}-still-day.svg",
+                      "dark": f"{key}/{key}-wide-{FEATURED}-still-dark.svg"},
             "sections": [
                 {"key": "board", "title": "The board", "note": NOTES[f"{key} board"],
-                 "items": [sheet(tone, "wide", f"Board, {labelled(tone)}") for tone in tones]},
+                 "items": [sheet(tone, "wide", f"Board, {tone}") for tone in tones]},
                 *sets,
                 {"key": "phones", "title": "On a phone", "note": NOTES["game phones"], "items": phones}]}
 
@@ -525,7 +522,7 @@ def hall_entry(d: Drawings) -> dict:
                     files[name(key, variant, "dark")], BUDGET[elements_draw.KINDS[key][2]],
                     still=(files[name(key, still, "day")], files[name(key, still, "dark")]))
 
-    shown = (prints.STANDARD, PROFILE_TONE)
+    shown = (prints.STANDARD, FEATURED)
     winners = hall.state(game[key])["people"]
     rows = []
     for tone in shown:
@@ -533,7 +530,7 @@ def hall_entry(d: Drawings) -> dict:
                       drawn[tone][elements_data.file_name(key, f"badge-{i}", "day")],
                       drawn[tone][elements_data.file_name(key, f"badge-{i}", "dark")])
                  for i in range(1, len(winners) + 1)]
-        rows.append({"label": f"In {labelled(tone)}", "chips": chips})
+        rows.append({"label": f"In {tone}", "chips": chips})
     for k, holiday, label in pixel_sets():
         files = in_set(key, holiday)
         rows.append({"label": f"In {label}", "chips": [
@@ -555,14 +552,14 @@ def hall_entry(d: Drawings) -> dict:
             "swatches_title": "Drawn in every tone",
             "swatches": [{"role": prints.STANDARD, "hex": hexof(pieces.ACCENT)}]
             + [{"role": tone, "hex": hexof(prints.PRINTS[tone]["line"])} for tone in prints.PRINTS],
-            "thumb": {"day": f"{key}/{key}-wide-{PROFILE_TONE}-still-day.svg",
-                      "dark": f"{key}/{key}-wide-{PROFILE_TONE}-still-dark.svg"},
+            "thumb": {"day": f"{key}/{key}-wide-{FEATURED}-still-day.svg",
+                      "dark": f"{key}/{key}-wide-{FEATURED}-still-dark.svg"},
             "sections": [
                 {"key": "hall", "title": "The Hall of Fame", "note": NOTES["hall"],
-                 "items": [sheet(tone, "wide", f"Hall of Fame, {labelled(tone)}") for tone in tones]},
+                 "items": [sheet(tone, "wide", f"Hall of Fame, {tone}") for tone in tones]},
                 *set_sections(d, key, "Hall of Fame"),
                 {"key": "phones", "title": "On a phone", "note": NOTES["game phones"],
-                 "items": [sheet(tone, "narrow", f"Hall of Fame, {labelled(tone)}") for tone in shown]},
+                 "items": [sheet(tone, "narrow", f"Hall of Fame, {tone}") for tone in shown]},
                 {"key": "badges", "title": "Winners' badges", "note": NOTES["game badges"], "rows": rows}]}
 
 def theme_entry(d: Drawings, key: str) -> dict:
