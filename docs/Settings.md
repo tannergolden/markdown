@@ -303,10 +303,11 @@ badges away, as every run takes away whatever the kit drew and draws no longer.
 | A holiday or a month | The set's pixels, as it draws every part of the page: its paper, frame and lettering, a board built of its own world's stuff in a frame of its own and the Hall's podium cut from it, the same hand-drawn ivory and ebony pieces in every set, and a collection's words in its hand's two inks. A set draws a game whole, every file of it, or leaves it in the page's own look. |
 
 Round the pictures the README carries each game's words, since an image cannot
-be clicked square by square: each game folded under its name, open for Chess and
-shut for the other three, its board in the fold and under it every legal move
-with a link that opens its ready-made issue, folded shut again and signed with
-what the side to move plays (♔ or ♚, ⛀ or ⛂, ⚪ or ⚫, ❌ or ⭕); and under the
+be clicked square by square: Chess's board never folded, always in view, and
+each of the other three folded shut under its name; under each board every legal
+move with a link that opens its ready-made issue, folded shut and signed with
+what the side to move plays (♔ or ♚, ⛀ or ⛂, ⚪ or ⚫, ❌ or ⭕), and past ten
+moves sorted into groups, each folded shut under its own line; and under the
 Hall, the winners' badges and the leaderboard. No banner stands over a game: its
 sheet says whose turn it is and by when, and how a finished game ended, so the
 README says nothing twice. The
@@ -475,10 +476,11 @@ one the position is on), the `last` move with its words and who played it when,
 any `check` (the square of the king to move), the day the move is `due` by, how
 many `players` have moved for GitHub, what each side has `taken`, and the score
 sheet's latest rows as `history`. Its README block wraps the picture in the
-game's words, since an image cannot be clicked square by square: the game folded
-open under its name, the picture and under it every legal move in `moves`, each
-with an emoji, a title of its own, its notation, the move in plain words and a
-link to its ready-made issue, folded shut, then a `note`. No banner goes over
+game's words, since an image cannot be clicked square by square: the picture,
+never folded, and under it every legal move in `moves`, each with an emoji, a
+title of its own, its notation, the move in plain words and a link to its
+ready-made issue, folded shut, and past ten grouped by piece, each group folded
+shut too, then a `note`. No banner goes over
 the board, whose sheet says whose turn it is, so a `prompt` is turned away. The
 `note` is one line of text, with links at most: nothing that would open a block
 of its own in the README, such as a heading, a list, a rule or a fence, and no

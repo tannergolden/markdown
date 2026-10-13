@@ -410,9 +410,11 @@ of, and the score sheet), and the same motion as each file opens:
 Each sheet comes as a **day** file and a **dark** file, wide and on a phone,
 moving as it opens and still for reduced motion, like a header. Round the
 pictures the README carries each game's words, since an image cannot be
-clicked square by square: the turn's banner, and every legal move with a link
-that opens its ready-made issue, folded shut under one line saying whose turn
-it is, signed with what that side plays: ♔ or ♚, ⛀ or ⛂, ⚪ or ⚫, ❌ or ⭕.
+clicked square by square: every legal move with a link that opens its
+ready-made issue, folded shut under one line saying whose turn it is, signed
+with what that side plays (♔ or ♚, ⛀ or ⛂, ⚪ or ⚫, ❌ or ⭕), and past ten
+moves sorted into groups, each folded shut too. Chess's board is never folded,
+and each of the other three games is folded shut under its name.
 
 <table>
   <tr>
