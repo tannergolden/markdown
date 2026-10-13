@@ -388,6 +388,36 @@ class TheirMarks(unittest.TestCase):
                     held.game(kind, GAMES[kind], E.THEMES["day"], "wide")
                 self.assertEqual(len(framed), 1, (key, kind))
 
+    def test_every_boards_ranks_stand_clear_of_its_frame_as_chesss_do(self):
+        # Pentago's ranks once stood against its plates, and the frame laid round its box hid half of each: every
+        # framed board's ranks end a unit left of the frame, wide and on a phone.
+        framed: list = []
+        said: list = []
+        frame, say = B.framed, G.Games.say
+
+        def recorded(h, p, *a, **k):
+            framed.append((a, k))
+            return frame(h, p, *a, **k)
+
+        def heard(hand, p, x, y, s, *a, **k):
+            said.append((x, y, str(s), k.get("anchor", "start")))
+            return say(hand, p, x, y, s, *a, **k)
+        for key in TWO:
+            held = pixelsets.drawn_by(key)
+            for kind in ("chess", "tictac", "pentago"):
+                for variant in ("wide", "narrow"):
+                    framed.clear()
+                    said.clear()
+                    with mock.patch.object(B, "framed", recorded), mock.patch.object(G.Games, "say", heard):
+                        held.game(kind, GAMES[kind], E.THEMES["day"], variant)
+                    (x0, y0, w, ht, _night, *small), k = framed[0]
+                    t = B.FRAME[small[0] if small else k.get("small", False)]
+                    ranks = [x for x, y, s, anchor in said
+                             if s.isdigit() and anchor == "end" and x < x0 + w and y0 <= y < y0 + ht]
+                    self.assertTrue(ranks, (key, kind, variant))
+                    for x in ranks:
+                        self.assertLessEqual(x, x0 - t - 1, (key, kind, variant))
+
     def test_the_houses_x_is_as_heavy_as_githubs_o_and_its_ivory_bevelled(self):
         # Ivory's light tones alone lost the X on a set's light squares: it reaches as far as the O and is as heavy,
         # and its bars are lit along one flank and shaded along the other, at every size a sheet sets it.

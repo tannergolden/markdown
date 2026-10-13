@@ -1063,9 +1063,9 @@ class Pentago(Game):
         for f in PG.FILES:
             cx, _ = self.centre(g, f"{f}1")
             h.say(p, round(cx) + 1, ly, f, k["muted"], "57", anchor="middle")
-        for row in range(1, 7):
+        for row in range(1, 7):     # left of the frame, as chess's ranks are
             _, cy = self.centre(g, f"a{row}")
-            h.say(p, g["x"] - t - 2, round(cy) - 2, str(row), k["muted"], anchor="end")
+            h.say(p, x0 - t - 2, round(cy) - 2, str(row), k["muted"], anchor="end")
 
     @staticmethod
     def face(p, stuff: MT.Stuff, g: dict, X: int, Y: int, L: str) -> None:
