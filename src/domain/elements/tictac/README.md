@@ -63,8 +63,9 @@ wins its board strikes the board's three, and the board's own mark is drawn
 across it as large as the board; a mark that wins the game strikes the three
 boards. A finished game's board stays up for two days with a countdown to the
 next game in place of the count, and the README's words under the sheet
-([`readme.py`](readme.py)) are every square the side to move can take as a
-move, each named for where its mark goes, never for what it does.
+([`readme.py`](readme.py)) are every square the side to move can take as a move,
+each named as players name it, a Centre Move, a Corner Move or an Edge Move, and
+never for what it does.
 
 ---
 

@@ -60,10 +60,11 @@ As the file opens ([`motion.py`](motion.py)) the last marble is set in its hole,
 which is ringed, with a ripple; then its quarter turns its quarter turn from
 where it stood, and an arrow round the quarter's outer corner is drawn the way
 it went. A won game's five are ringed one after another and joined. A finished
-game's board stays up for two days with a countdown to the next game in place
-of the count, and the README's words under the sheet ([`readme.py`](readme.py))
-are every empty hole as a move, each named for where it is and never for what it
-does, with its eight turns after it, each a link of its own.
+game's board stays up for two days with a countdown to the next game in place of
+the count, and the README's words under the sheet ([`readme.py`](readme.py)) are
+every empty hole as a move, each named as players name it, a Centre Move, a
+Corner Move or an Edge Move, and never for what it does, with its eight turns
+after it, each a link of its own.
 
 ---
 

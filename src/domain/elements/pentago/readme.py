@@ -4,12 +4,13 @@
 note.
 
 A Pentago move is two choices, a hole for the marble and then a quarter to turn and which way, so the list is one row
-for each empty hole, named for where it is and never for what it does ("Take the Centre of the Upper Left Quarter!"),
-with its eight turns after it, each a link that opens its own ready-made issue: ↻ for a quarter turned clockwise and
-↺ anticlockwise, and the quarter's initials. Under the Ghost Rule a ghost's hole is one choice, and its row one link.
-The engine writes the names; this draws what goes under the sheet, as chess's does (`games.readme`). A turn with more
-than ten holes is grouped by quarter, the board as it is read, as chess groups its moves by piece. The side to move is
-signed with its marbles, ⚪ for the house's White and ⚫ for GitHub's Black, whichever side the Arbiter drew.
+for each empty hole, named as players name it, for the kind of hole it is in its quarter and never for what it does
+("Centre Move", "Corner Move", "Edge Move"), with its eight turns after it, each a link that opens its own ready-made
+issue: ↻ for a quarter turned clockwise and ↺ anticlockwise, and the quarter's initials. Under the Ghost Rule a ghost's
+hole is one choice, and its row one link. The engine writes the names; this draws what goes under the sheet, as chess's
+does (`games.readme`). A turn with more than ten holes is grouped by quarter, the board as it is read, as chess groups
+its moves by piece. The side to move is signed with its marbles, ⚪ for the house's White and ⚫ for GitHub's Black,
+whichever side the Arbiter drew.
 """
 from __future__ import annotations
 

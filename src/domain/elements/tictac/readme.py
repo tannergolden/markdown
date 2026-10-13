@@ -3,13 +3,13 @@
 """What the README carries under the Tic-Tac sheet: every square the side to move can take as a move, folded, then
 the note.
 
-Each move is named for what it is, never for what it does: the square its mark takes and the board it stands in, in
-plain words ("Take the Upper Right Corner of the Centre Board!"), and under the Ghost Rule the square a ghost would
-lock ("Lock the Centre of the Centre Board!"), so a mark that wins and a quiet one read alike and no `+` or `#` marks
-one out. The engine writes the names; this draws what goes under the sheet, as chess's does (`games.readme`). A turn
-with more than ten moves, any open board's or a ghost's, is grouped by board, the board as it is read, top row first,
-as chess groups its moves by piece. The side to move is signed with the mark it plays, ❌ for the house's X and ⭕ for
-GitHub's O, whichever side the Arbiter drew.
+Each move is named as players name it, for the kind of square its mark takes in its board and never for what it does
+("Centre Move", "Corner Move", "Edge Move"), and under the Ghost Rule for the kind of square a ghost would lock ("Centre
+Ghost"), so a mark that wins and a quiet one read alike and no `+` or `#` marks one out; its words say where it goes.
+The engine writes the names; this draws what goes under the sheet, as chess's does (`games.readme`). A turn with more
+than ten moves, any open board's or a ghost's, is grouped by board, the board as it is read, top row first, as chess
+groups its moves by piece. The side to move is signed with the mark it plays, ❌ for the house's X and ⭕ for GitHub's O,
+whichever side the Arbiter drew.
 """
 from __future__ import annotations
 
