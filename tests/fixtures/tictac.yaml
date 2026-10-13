@@ -34,8 +34,8 @@ elements:
       - [14, "", "", ""]
     note: "Under the Ghost Rule each side locked one square with a ghost, and the Arbiter drew GitHub to make the first mark. The first move to arrive is the one played."
     moves:
-      - ["📏", "Take the Top Edge of the Upper Left Board!", Ob9, O takes the top edge of the upper left board, "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictac%3A%20b9%20%C2%B7%20game%209%20%C2%B7%20move%2029"]
-      - ["📏", "Take the Left Edge of the Upper Left Board!", Oa8, O takes the left edge of the upper left board, "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictac%3A%20a8%20%C2%B7%20game%209%20%C2%B7%20move%2029"]
-      - ["📏", "Take the Right Edge of the Upper Left Board!", Oc8, O takes the right edge of the upper left board, "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictac%3A%20c8%20%C2%B7%20game%209%20%C2%B7%20move%2029"]
-      - ["📐", "Take the Lower Left Corner of the Upper Left Board!", Oa7, O takes the lower left corner of the upper left board, "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictac%3A%20a7%20%C2%B7%20game%209%20%C2%B7%20move%2029"]
-      - ["📏", "Take the Bottom Edge of the Upper Left Board!", Ob7, O takes the bottom edge of the upper left board, "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictac%3A%20b7%20%C2%B7%20game%209%20%C2%B7%20move%2029"]
+      - ["📏", "Edge Move", Ob9, O takes the top edge of the upper left board, "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictac%3A%20b9%20%C2%B7%20game%209%20%C2%B7%20move%2029"]
+      - ["📏", "Edge Move", Oa8, O takes the left edge of the upper left board, "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictac%3A%20a8%20%C2%B7%20game%209%20%C2%B7%20move%2029"]
+      - ["📏", "Edge Move", Oc8, O takes the right edge of the upper left board, "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictac%3A%20c8%20%C2%B7%20game%209%20%C2%B7%20move%2029"]
+      - ["📐", "Corner Move", Oa7, O takes the lower left corner of the upper left board, "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictac%3A%20a7%20%C2%B7%20game%209%20%C2%B7%20move%2029"]
+      - ["📏", "Edge Move", Ob7, O takes the bottom edge of the upper left board, "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictac%3A%20b7%20%C2%B7%20game%209%20%C2%B7%20move%2029"]

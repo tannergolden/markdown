@@ -30,4 +30,4 @@ elements:
       - [11, "", "", ""]
     note: "GitHub opens every game with the Black men, as American checkers has it. A jump must be taken when there is one, and the first move to arrive is the one played."
     moves:
-      - ["⚔️", "Jump the Man on 11!", 8x15, "Man from 8 jumps 11, landing on 15", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=checkers%3A%208x15%20%C2%B7%20game%206%20%C2%B7%20move%2021"]
+      - ["⚔️", "Single Jump", 8x15, "Man from 8 jumps 11, landing on 15", "https://github.com/tannergolden/play/issues/new?template=move.yml&title=checkers%3A%208x15%20%C2%B7%20game%206%20%C2%B7%20move%2021"]

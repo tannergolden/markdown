@@ -141,11 +141,11 @@ TT_FRESH = {
     "board": "........./........./........./........./........./........./........./........./.........",
     "due": "20 Oct", "alert": "place a ghost",
     "history": [["G", "", "", ""]],
-    "moves": [row("tictac", "👻", "Lock the Upper Left Corner of the Upper Left Board!",
+    "moves": [row("tictac", "👻", "Corner Ghost",
                   "a9", "A ghost locks the upper left corner of the upper left board", 11, 1),
-              row("tictac", "👻", "Lock the Top Edge of the Upper Left Board!",
+              row("tictac", "👻", "Edge Ghost",
                   "b9", "A ghost locks the top edge of the upper left board", 11, 1),
-              row("tictac", "👻", "Lock the Upper Right Corner of the Upper Left Board!",
+              row("tictac", "👻", "Corner Ghost",
                   "c9", "A ghost locks the upper right corner of the upper left board", 11, 1)],
     "note": f"{TT_OPENING} {ANYONE} The ghost is due by 20 Oct, 07:21 EST, or the Arbiter places one at random."}
 # GitHub's ghost locks d6, and it is the house's turn to lock a square of its own.
@@ -156,11 +156,11 @@ TT_GHOST = {
     "history": [["G", "d6", "", "@hollyfenwick"]],
     "last": {"move": "d6", "words": "A ghost locks the upper left corner of the centre board", "by": "@hollyfenwick",
              "when": "14 Oct"},
-    "moves": [row("tictac", "👻", "Lock the Upper Left Corner of the Upper Left Board!",
+    "moves": [row("tictac", "👻", "Corner Ghost",
                   "a9", "A ghost locks the upper left corner of the upper left board", 11, 2),
-              row("tictac", "👻", "Lock the Top Edge of the Upper Left Board!",
+              row("tictac", "👻", "Edge Ghost",
                   "b9", "A ghost locks the top edge of the upper left board", 11, 2),
-              row("tictac", "👻", "Lock the Upper Right Corner of the Upper Left Board!",
+              row("tictac", "👻", "Corner Ghost",
                   "c9", "A ghost locks the upper right corner of the upper left board", 11, 2)],
     "note": f"{TT_OPENING} {ONLY} The ghost is due by 21 Oct, 02:21 EST, or the Arbiter places one at random."}
 # Both ghosts down, and the Arbiter drew the house to make the first mark, in any board.
@@ -171,11 +171,11 @@ TT_GHOSTS = {
     "history": [["G", "d6", "h8", "@hollyfenwick"], [1, "", "", ""]],
     "last": {"move": "h8", "words": "A ghost locks the centre of the upper right board", "by": "@tannergolden",
              "when": "14 Oct"},
-    "moves": [row("tictac", "📐", "Take the Upper Left Corner of the Upper Left Board!",
+    "moves": [row("tictac", "📐", "Corner Move",
                   "Xa9", "X takes the upper left corner of the upper left board", 11, 3),
-              row("tictac", "📏", "Take the Top Edge of the Upper Left Board!",
+              row("tictac", "📏", "Edge Move",
                   "Xb9", "X takes the top edge of the upper left board", 11, 3),
-              row("tictac", "📐", "Take the Upper Right Corner of the Upper Left Board!",
+              row("tictac", "📐", "Corner Move",
                   "Xc9", "X takes the upper right corner of the upper left board", 11, 3)],
     "note": f"{TT_OPENING} {ONLY} The move is due by 21 Oct, 14:21 EST, or the Arbiter plays a random legal move."}
 # Game 12 the other way round: the house was drawn to place first and GitHub to make the first mark.
@@ -186,11 +186,11 @@ TT_GHOSTS_GITHUB = {
     "history": [["G", "h7", "a6", "@hollyfenwick"], [1, "", "", ""]],
     "last": {"move": "a6", "words": "A ghost locks the upper left corner of the left board", "by": "@hollyfenwick",
              "when": "14 Oct"},
-    "moves": [row("tictac", "📐", "Take the Upper Left Corner of the Upper Left Board!",
+    "moves": [row("tictac", "📐", "Corner Move",
                   "Oa9", "O takes the upper left corner of the upper left board", 12, 3),
-              row("tictac", "📏", "Take the Top Edge of the Upper Left Board!",
+              row("tictac", "📏", "Edge Move",
                   "Ob9", "O takes the top edge of the upper left board", 12, 3),
-              row("tictac", "📐", "Take the Upper Right Corner of the Upper Left Board!",
+              row("tictac", "📐", "Corner Move",
                   "Oc9", "O takes the upper right corner of the upper left board", 12, 3)],
     "note": f"{TT_OPENING} {ANYONE} The move is due by 21 Oct, 22:02 EST, or the Arbiter plays a random legal move."}
 # The house's Xi7 sends GitHub to the lower right board, where h3, g2 and h2 each win the game.
@@ -201,13 +201,13 @@ TT_GITHUB = {
     "history": [[23, "Of9", "Xh9", "@hollyfenwick"], [24, "Od8", "Xi7", "@hollyfenwick"], [25, "", "", ""]],
     "last": {"move": "Xi7", "words": "X takes the lower right corner of the upper right board", "by": "@tannergolden",
              "when": "15 Nov"},
-    "moves": [row("tictac", "📏", "Take the Top Edge of the Lower Right Board!",
+    "moves": [row("tictac", "📏", "Edge Move",
                   "Oh3", "O takes the top edge of the lower right board", 9, 51),
-              row("tictac", "📏", "Take the Left Edge of the Lower Right Board!",
+              row("tictac", "📏", "Edge Move",
                   "Og2", "O takes the left edge of the lower right board", 9, 51),
-              row("tictac", "🔳", "Take the Centre of the Lower Right Board!",
+              row("tictac", "🔳", "Centre Move",
                   "Oh2", "O takes the centre of the lower right board", 9, 51),
-              row("tictac", "📏", "Take the Bottom Edge of the Lower Right Board!",
+              row("tictac", "📏", "Edge Move",
                   "Oh1", "O takes the bottom edge of the lower right board", 9, 51)],
     "note": f"{ANYONE} The move is due by 22 Nov, 04:07 EST, or the Arbiter plays a random legal move. {TT_RULES}"}
 # GitHub's Od1 sends the house to the lower left board, which the house has won, so it may play any open board: d3 and
@@ -219,11 +219,11 @@ TT_HOUSE = {
     "history": [[21, "Xc5", "Og6", "@hollyfenwick"], [22, "Xc7", "Od1", "@imvale"], [23, "", "", ""]],
     "last": {"move": "Od1", "words": "O takes the lower left corner of the bottom board", "by": "@imvale",
              "when": "11 Nov"},
-    "moves": [row("tictac", "📐", "Take the Upper Left Corner of the Upper Left Board!",
+    "moves": [row("tictac", "📐", "Corner Move",
                   "Xa9", "X takes the upper left corner of the upper left board", 10, 47),
-              row("tictac", "📏", "Take the Top Edge of the Upper Left Board!",
+              row("tictac", "📏", "Edge Move",
                   "Xb9", "X takes the top edge of the upper left board", 10, 47),
-              row("tictac", "📐", "Take the Upper Right Corner of the Upper Left Board!",
+              row("tictac", "📐", "Corner Move",
                   "Xc9", "X takes the upper right corner of the upper left board", 10, 47)],
     "note": f"{ONLY} The move is due by 18 Nov, 01:00 EST, or the Arbiter plays a random legal move."}
 # Every square the house could take on that turn, as the engine listed them.
@@ -263,11 +263,11 @@ PG_FRESH = {
     "board": "....../....../....../....../....../......",
     "due": "20 Oct", "alert": "set a ghost",
     "history": [["G", "", "", ""]],
-    "moves": [row("pentago", "👻", "Ghost the Upper Left Corner of the Upper Left Quarter!",
+    "moves": [row("pentago", "👻", "Corner Ghost",
                   "a6", "A ghost on a6, the upper left corner of the upper left quarter", 5, 1),
-              row("pentago", "👻", "Ghost the Top Edge of the Upper Left Quarter!",
+              row("pentago", "👻", "Edge Ghost",
                   "b6", "A ghost on b6, the top edge of the upper left quarter", 5, 1),
-              row("pentago", "👻", "Ghost the Upper Right Corner of the Upper Left Quarter!",
+              row("pentago", "👻", "Corner Ghost",
                   "c6", "A ghost on c6, the upper right corner of the upper left quarter", 5, 1)],
     "note": f"{PG_OPENING} {ONLY} The ghost is due by 20 Oct, 07:07 EST, or the Arbiter sets one at random."}
 # A week passed without the house's ghost, so the Arbiter set it on e1, and it is GitHub's turn to set its own.
@@ -278,11 +278,11 @@ PG_GHOST = {
     "history": [["G", "e1", "", ""]],
     "last": {"move": "e1", "words": "A ghost on e1, the bottom edge of the lower right quarter", "by": "the Arbiter",
              "when": "20 Oct"},
-    "moves": [row("pentago", "👻", "Ghost the Upper Left Corner of the Upper Left Quarter!",
+    "moves": [row("pentago", "👻", "Corner Ghost",
                   "a6", "A ghost on a6, the upper left corner of the upper left quarter", 5, 2),
-              row("pentago", "👻", "Ghost the Top Edge of the Upper Left Quarter!",
+              row("pentago", "👻", "Edge Ghost",
                   "b6", "A ghost on b6, the top edge of the upper left quarter", 5, 2),
-              row("pentago", "👻", "Ghost the Upper Right Corner of the Upper Left Quarter!",
+              row("pentago", "👻", "Corner Ghost",
                   "c6", "A ghost on c6, the upper right corner of the upper left quarter", 5, 2)],
     "note": f"{PG_OPENING} {ANYONE} The ghost is due by 27 Oct, 07:08 EST, or the Arbiter sets one at random."}
 # Game 6: both ghosts down, the house's on f3 and GitHub's on b1, and the Arbiter drew GitHub to set the first marble.
@@ -293,11 +293,11 @@ PG_GHOSTS = {
     "history": [["G", "f3", "b1", "@devonaraki"], [1, "", "", ""]],
     "last": {"move": "b1", "words": "A ghost on b1, the bottom edge of the lower left quarter", "by": "@devonaraki",
              "when": "14 Oct"},
-    "moves": [hole("⚫", "Take the Upper Left Corner of the Upper Left Quarter!",
+    "moves": [hole("⚫", "Corner Move",
                    "a6", "A black marble on a6, then a quarter turns", 6, 3),
-              hole("⚫", "Take the Top Edge of the Upper Left Quarter!",
+              hole("⚫", "Edge Move",
                    "b6", "A black marble on b6, then a quarter turns", 6, 3),
-              hole("⚫", "Take the Upper Right Corner of the Upper Left Quarter!",
+              hole("⚫", "Corner Move",
                    "c6", "A black marble on c6, then a quarter turns", 6, 3)],
     "note": f"{PG_OPENING} {ANYONE} The move is due by 21 Oct, 10:52 EST, or the Arbiter plays a random legal move."}
 # Game 3 the other way round: GitHub set the first ghost, on b5, a quarter's centre, which no turn moves, and the
@@ -309,11 +309,11 @@ PG_GHOSTS_HOUSE = {
     "history": [["G", "b5", "f1", "@imvale"], [1, "", "", ""]],
     "last": {"move": "f1", "words": "A ghost on f1, the lower right corner of the lower right quarter",
              "by": "@tannergolden", "when": "15 Oct"},
-    "moves": [hole("⚪", "Take the Upper Left Corner of the Upper Left Quarter!",
+    "moves": [hole("⚪", "Corner Move",
                    "a6", "A white marble on a6, then a quarter turns", 3, 3),
-              hole("⚪", "Take the Top Edge of the Upper Left Quarter!",
+              hole("⚪", "Edge Move",
                    "b6", "A white marble on b6, then a quarter turns", 3, 3),
-              hole("⚪", "Take the Upper Right Corner of the Upper Left Quarter!",
+              hole("⚪", "Corner Move",
                    "c6", "A white marble on c6, then a quarter turns", 3, 3)],
     "note": f"{PG_OPENING} {ONLY} The move is due by 22 Oct, 06:16 EST, or the Arbiter plays a random legal move."}
 # Game 4, GitHub's turn: e5 makes five on its own, and a clockwise turn of the upper right quarter after any other
@@ -326,11 +326,11 @@ PG_GITHUB = {
                 [13, "b5-lr-acw", "", ""]],
     "last": {"move": "b5-lr-acw", "words": "A white marble on b5, then the lower right quarter turns anticlockwise",
              "by": "@tannergolden", "when": "3 Nov"},
-    "moves": [hole("⚫", "Take the Upper Left Corner of the Upper Left Quarter!",
+    "moves": [hole("⚫", "Corner Move",
                    "a6", "A black marble on a6, then a quarter turns", 4, 28),
-              hole("⚫", "Take the Top Edge of the Upper Left Quarter!",
+              hole("⚫", "Edge Move",
                    "b6", "A black marble on b6, then a quarter turns", 4, 28),
-              hole("⚫", "Take the Left Edge of the Upper Left Quarter!",
+              hole("⚫", "Edge Move",
                    "a5", "A black marble on a5, then a quarter turns", 4, 28)],
     "note": f"{ANYONE} The move is due by 10 Nov, 07:00 EST, or the Arbiter plays a random legal move. {PG_RULES}"}
 # Game 7, the house's turn: c1 and a clockwise turn of the lower right quarter make five, and a clockwise turn of the
@@ -343,11 +343,11 @@ PG_HOUSE = {
                 [13, "", "", ""]],
     "last": {"move": "a3-lr-cw", "words": "A black marble on a3, then the lower right quarter turns clockwise",
              "by": "@devonaraki", "when": "27 Oct"},
-    "moves": [hole("⚪", "Take the Upper Right Corner of the Upper Left Quarter!",
+    "moves": [hole("⚪", "Corner Move",
                    "c6", "A white marble on c6, then a quarter turns", 7, 27),
-              hole("⚪", "Take the Top Edge of the Upper Right Quarter!",
+              hole("⚪", "Edge Move",
                    "e6", "A white marble on e6, then a quarter turns", 7, 27),
-              hole("⚪", "Take the Left Edge of the Upper Right Quarter!",
+              hole("⚪", "Edge Move",
                    "d5", "A white marble on d5, then a quarter turns", 7, 27)],
     "note": f"{ONLY} The move is due by 3 Nov, 13:28 EST, or the Arbiter plays a random legal move. {PG_RULES}"}
 # Game 3: the house set a5 and turned the lower right quarter, making five up file f.
@@ -407,8 +407,8 @@ CK_OPENING = {
     "kind": "checkers", "fen": "B:W21,22,23,24,25,26,27,28,29,30,31,32:B1,2,3,4,5,6,7,8,9,10,11,12",
     "game": 6, "move": 1, "players": 0, "due": "21 Oct", "history": [[1, "", "", ""]],
     "kings": {"house": 0, "github": 0},
-    "moves": [row("checkers", "👣", "Push the Man From 9 to 13!", "9-13", "Man from 9 to 13", 6, 1),
-              row("checkers", "👣", "Push the Man From 9 to 14!", "9-14", "Man from 9 to 14", 6, 1)],
+    "moves": [row("checkers", "👣", "Man Move", "9-13", "Man from 9 to 13", 6, 1),
+              row("checkers", "👣", "Man Move", "9-14", "Man from 9 to 14", 6, 1)],
     "note": "A jump must be taken when there is one. " + NOTE}
 # The house has just jumped back, and GitHub's Black must jump again.
 CK_GITHUB = {
@@ -418,7 +418,7 @@ CK_GITHUB = {
     "kings": {"house": 0, "github": 0},
     "last": {"move": "20x11", "words": "Man from 20 jumps 16, landing on 11", "by": "@tannergolden", "when": "12 Oct"},
     "alert": "must jump",
-    "moves": [row("checkers", "⚔️", "Jump the Man on 11!", "8x15", "Man from 8 jumps 11, landing on 15", 6, 21)],
+    "moves": [row("checkers", "⚔️", "Single Jump", "8x15", "Man from 8 jumps 11, landing on 15", 6, 21)],
     "note": "A jump must be taken when there is one."}
 # The house's double jump has crowned a White king on Black's back row, and it is GitHub's turn.
 CK_CROWNED = {
@@ -428,8 +428,8 @@ CK_CROWNED = {
     "kings": {"house": 1, "github": 0},
     "last": {"move": "19x10x1", "words": "Man from 19 jumps 15 and 6, landing on 1, crowned", "by": "@tannergolden",
              "when": "9 Oct", "crowned": True},
-    "moves": [row("checkers", "👣", "March the Man From 5 to 9!", "5-9", "Man from 5 to 9", 5, 37),
-              row("checkers", "👣", "March the Man From 8 to 11!", "8-11", "Man from 8 to 11", 5, 37)],
+    "moves": [row("checkers", "👣", "Man Move", "5-9", "Man from 5 to 9", 5, 37),
+              row("checkers", "👣", "Man Move", "8-11", "Man from 8 to 11", 5, 37)],
     "note": "A jump must be taken when there is one."}
 # The house's White man took GitHub's last: Black has no move left, and the house wins.
 CK_WON = {
@@ -946,7 +946,7 @@ class TicTac(unittest.TestCase):
         # a call to block, and a move offered with the mark that says it wins: each turned away, with a word on why
         self.assertIn("alert 'must block' is not what this game's turn can say",
                       reasons(TT, {**TT_GITHUB, "alert": "must block"}))
-        won = row("tictac", "🔳", "Take the Centre of the Lower Right Board!", "Oh2#",
+        won = row("tictac", "🔳", "Centre Move", "Oh2#",
                   "O takes the centre of the lower right board", 9, 51)
         self.assertIn("'Oh2#' says what the move would do", reasons(TT, {**TT_GITHUB, "moves": [won]}))
         self.assertIn("+ is gone", reasons(TT, {**TT_GITHUB, "last": {**TT_GITHUB["last"], "move": "Xi7+"}}))
@@ -1304,7 +1304,7 @@ class Readme(unittest.TestCase):
                                         "</b></summary>\n\n<picture>"))
         self.assertIn("</picture>\n\n<details>\n<summary>⭕ <b>GitHub's Turn</b> · 4 open squares · open to choose one"
                       "</summary>\n\n|  | Move | In words | Play |\n| :-: | :--- | :--- | :-: |\n", text)
-        self.assertIn("| 🔳 | **Take the Centre of the Lower Right Board!** `Oh2` | O takes the centre of the lower"
+        self.assertIn("| 🔳 | **Centre Move** `Oh2` | O takes the centre of the lower"
                       f" right board | [Play ↗]({link('tictac', 'h2', 9, 51)}) |", text)
         self.assertTrue(text.endswith(f"</details>\n\n{TT_GITHUB['note']}\n\n</details>\n"
                                       "<!-- markdown:element:tictac:end -->"))
@@ -1321,9 +1321,9 @@ class Readme(unittest.TestCase):
         # own move's issue; a ghost's hole is one choice, and its row one link
         turns = " ".join(f"[{'↻' if w == 'cw' else '↺'}&#8202;{q.upper()}]({link('pentago', f'a6-{q}-{w}', 4, 28)})"
                          for q, w in TURNS)
-        self.assertIn("| ⚫ | **Take the Upper Left Corner of the Upper Left Quarter!** `a6` | A black marble on a6,"
+        self.assertIn("| ⚫ | **Corner Move** `a6` | A black marble on a6,"
                       f" then a quarter turns | {turns} |\n", ED.block("pentago", PG_GITHUB, "assets/elements"))
-        self.assertIn("| 👻 | **Ghost the Upper Left Corner of the Upper Left Quarter!** `a6` | A ghost on a6, the"
+        self.assertIn("| 👻 | **Corner Ghost** `a6` | A ghost on a6, the"
                       f" upper left corner of the upper left quarter | [Play ↗]({link('pentago', 'a6', 5, 1)}) |\n",
                       ED.block("pentago", PG_FRESH, "assets/elements"))
         # and neither is linked the other's way: a marble's hole with one link would play no turn, and a ghost's
@@ -1365,7 +1365,7 @@ class Readme(unittest.TestCase):
         white_turn = dict(CK_CROWNED, fen="W:WK1,20,21,24,28,30:B5,9,12,17,18", move=19, history=[
             [18, "10x17", "19x10x1", "@tokafor"], [19, "5-9", "", "@imvale"]],
             last={"move": "5-9", "words": "Man from 5 to 9", "by": "@imvale", "when": "10 Oct"},
-            moves=[row("checkers", "⚔️", "Jump the Man on 17!", "21x14", "Man from 21 jumps 17, landing on 14", 5, 38)],
+            moves=[row("checkers", "⚔️", "Single Jump", "21x14", "Man from 21 jumps 17, landing on 14", 5, 38)],
             alert="must jump")
         self.assertEqual(CK.check(white_turn), [])
         self.assertIn("<summary>⛀ <b>@tannergolden's Turn</b> · 1 legal move · only @tannergolden can play these"
