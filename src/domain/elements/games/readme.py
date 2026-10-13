@@ -20,10 +20,12 @@ from .sides import GITHUB
 
 
 def move_list(d: dict, st: dict, sign: dict, unit: tuple[str, str],
-              groups: Callable[[list], list[tuple[str, list]]] | None = None) -> str:
+              groups: Callable[[list], list[tuple[str, list]]] | None = None,
+              table: Callable[[list], str] = table) -> str:
     """Every legal move, folded shut under the line that says whose turn it is and how many it has: `sign` is each
     side's mark, `unit` what a move is called, one and many ("open cell", "open cells"). Past ten, `groups` sorts
-    the moves into named groups, each folded open under its own line, as chess sorts its moves by piece."""
+    the moves into named groups, each folded open under its own line, as chess sorts its moves by piece. A game
+    whose move is two choices sets its own `table`, its second choices linked in each row."""
     moves = d.get("moves") or []
     if not moves or st["result"]:
         return ""
@@ -44,7 +46,8 @@ def move_list(d: dict, st: dict, sign: dict, unit: tuple[str, str],
 
 
 def text(d: dict, st: dict, sign: dict, unit: tuple[str, str],
-         groups: Callable[[list], list[tuple[str, list]]] | None = None) -> str:
+         groups: Callable[[list], list[tuple[str, list]]] | None = None,
+         table: Callable[[list], str] = table) -> str:
     """What the README carries under the sheet's picture: every legal move and the note, or once the game is over
     the note alone."""
-    return "\n\n".join(part for part in (move_list(d, st, sign, unit, groups), d.get("note") or "") if part)
+    return "\n\n".join(part for part in (move_list(d, st, sign, unit, groups, table), d.get("note") or "") if part)

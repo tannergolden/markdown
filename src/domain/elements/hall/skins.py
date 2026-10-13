@@ -119,8 +119,8 @@ class Standard(Pieces, ChessStandard):
                           fill=P.letters_on(tone), ground=tone, anchor="middle", what="place"))
 
     def build(self, cv, game: str, material: str, small: bool) -> str:
-        """A piece of Checkers, Connect Four or Tic-Tac-Toe in enamel, in its 45-unit box: its body filled and edged
-        outside its outline, the lamp's shade or sheen laid inside it, and its detail, a disc's groove, a man's
+        """A piece of Checkers, Pentago or Tic-Tac in enamel, in its 45-unit box: its body filled and edged
+        outside its outline, the lamp's shade or sheen laid inside it, and its detail, a marble's groove, a man's
         milling and the face's groove, with the glint of a dark one."""
         L = self.lights(cv)
         fill, edge, detail = self.PAINT[material]
@@ -128,17 +128,17 @@ class Standard(Pieces, ChessStandard):
         sw = 1.6 if not small else 2.3
         glow = f'url(#{L["wp" if light else "bp"]})'
         out = []
-        if game in ("tictactoe", "connectfour"):
-            body = K.BODY[K.MARKS[material]] if game == "tictactoe" else K.circle(22.5, K.CY, K.DISC)
+        if game in ("tictac", "pentago"):
+            body = K.BODY[K.MARKS[material]] if game == "tictac" else K.circle(22.5, K.CY, K.DISC)
             out.append(f'<path d="{body}" fill="{c(fill)}" stroke="{c(edge)}" stroke-width="{fx(2 * sw)}" '
                        f'stroke-linejoin="round"/><path d="{body}" fill="{c(fill)}"/>'
                        f'<rect width="45" height="45" clip-path="url(#{_clip(cv, body)})" fill="{glow}"/>')
-            if game == "connectfour":
+            if game == "pentago":
                 op = "1" if light else ".42"
                 out.append(f'<circle cx="22.5" cy="{K.CY}" r="{K.GROOVE}" fill="none" stroke="{c(detail)}" '
                            f'stroke-width="{fx(sw * .8)}" stroke-opacity="{op}"/>')
             if not light:
-                spec = K.O_SPEC if game == "tictactoe" else K.DISC_SPEC
+                spec = K.O_SPEC if game == "tictac" else K.DISC_SPEC
                 out.append(f'<path d="{spec}" fill="none" stroke="{c("white")}" stroke-opacity=".6" '
                            f'stroke-width="{fx(sw * .9)}" stroke-linecap="round"/>')
             return "".join(out)
@@ -226,24 +226,24 @@ class Print(Pieces, ChessPrint):
         cv.add(f'<path d="{ticks}" fill="none" {hair(col, .5)} stroke-width=".8"/>')
 
     def build(self, cv, game: str, material: str, small: bool) -> str:
-        """A piece of Checkers, Connect Four or Tic-Tac-Toe drawn as its board draws it, in its 45-unit box: a light
+        """A piece of Checkers, Pentago or Tic-Tac drawn as its board draws it, in its 45-unit box: a light
         one paper edged in ink and line-shaded toward its right, a dark one solid ink with a glint on its upper
-        left; a disc's groove, a man's milling and the groove round its face."""
+        left; a marble's groove, a man's milling and the groove round its face."""
         light = material == "light"
         fill, edge = self.sides["white" if light else "black"]
         detail = edge if light else "white"
         e = (1.5 if not small else 2.1) * (.7 if not light and self.dark else 1)
         glint = ".35" if self.dark else ".55"
         out = []
-        if game in ("tictactoe", "connectfour"):
-            body = K.BODY[K.MARKS[material]] if game == "tictactoe" else K.circle(22.5, K.CY, K.DISC)
+        if game in ("tictac", "pentago"):
+            body = K.BODY[K.MARKS[material]] if game == "tictac" else K.circle(22.5, K.CY, K.DISC)
             out.append(f'<path d="{body}" fill="{c(fill)}" stroke="{c(edge)}" stroke-width="{fx(2 * e)}" '
                        f'stroke-linejoin="round"/><path d="{body}" fill="{c(fill)}"/>')
             if light and not small:
-                half = K.RING + K.PEN / 2 if game == "tictactoe" else K.DISC
+                half = K.RING + K.PEN / 2 if game == "tictac" else K.DISC
                 out.append(f'<path d="{K.shade_lines(22.5, half, 4, 43)}" clip-path="url(#{_clip(cv, body)})" '
                            f'fill="none" stroke="{c(edge)}" stroke-width=".7" stroke-opacity=".55"/>')
-            if game == "connectfour":
+            if game == "pentago":
                 if light:
                     out.append(f'<circle cx="22.5" cy="{K.CY}" r="{K.GROOVE}" fill="{c(fill)}" stroke="{c(edge)}" '
                                f'stroke-width="{fx(e * .7)}"/>')
@@ -251,7 +251,7 @@ class Print(Pieces, ChessPrint):
                     out.append(f'<circle cx="22.5" cy="{K.CY}" r="{K.GROOVE}" fill="none" stroke="{c("white")}" '
                                f'stroke-opacity="{".3" if self.dark else ".42"}" stroke-width="{fx(e * .7)}"/>')
             if not light:
-                spec = K.O_SPEC if game == "tictactoe" else K.DISC_SPEC
+                spec = K.O_SPEC if game == "tictac" else K.DISC_SPEC
                 out.append(f'<path d="{spec}" fill="none" stroke="{c("white")}" stroke-opacity="{glint}" '
                            f'stroke-width="{fx(e * .9)}" stroke-linecap="round"/>')
             return "".join(out)

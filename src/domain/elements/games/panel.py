@@ -6,8 +6,9 @@ and the score sheet, with the game's own count between them (`sheet` places them
 Each section is chess's, drawn for any game: the sides are the house and GitHub, each in a medallion holding what
 that side plays with (`game.medallion`); the turn is chess's plate, and once the game is over the same plate says
 who won and how, with the day the fresh board comes across the row; the last move is written in the game's own
-notation, with a mark before it where the notation alone cannot say whose it is (`game.glyph`), and its words
-stand on a line or two of their own under it, as chess's do. Every name, login, number and line of words is
+notation, with a mark before it where the notation alone cannot say whose it is (`game.glyph`), or drawn by the
+game itself where its notation is more than letters can say, as a Pentago move's quarter turn is (`game.write`), and
+its words stand on a line or two of their own under it, as chess's do. Every name, login, number and line of words is
 fitted to the room it has, at the largest size that fits, down to a floor, then cut with an ellipsis, so nothing on
 a wide sheet or a phone's runs into anything else.
 """
@@ -64,12 +65,14 @@ def turn_row(cv, sk, st, x0, x1, y, *, small=False) -> float:
 # --------------------------------------------------------------------------- the last move
 def last_move(cv, sk, g, st, x0, x1, y, *, small=False) -> float:
     """The last move in notation, its words on a line or two of their own under it, and who played it when;
-    before a game's first move, who opens it."""
+    before a game's first move, who opens it, or what opens it where the game says (`g.opening`)."""
     last = st["last"]
     big = 22 if not small else 18
     room = x1 - x0
     if last:
         number, move, side, words = numbered(st), last["move"], last["side"], last["words"]
+    elif getattr(g, "opening", None):
+        number, move, side, words = g.opening(st)
     else:
         number, move, side, words = "1.", "?", st["opens"], f"{name(st['opens'])} opens game {st['game']}"
     cv.add(sk.key(cv, x0, y - 7, 7, "last"), sk.heading(cv, "last move" if last else "first move", x0 + 12, y))
@@ -77,11 +80,14 @@ def last_move(cv, sk, g, st, x0, x1, y, *, small=False) -> float:
     head = f"{number} "
     cv.add(sk.say(cv, head, x0, base, big, role="strong", what="move"))
     x = x0 + sk.width(head, "bold", big)
-    if g.glyph:
-        mark, w = g.glyph(cv, sk, st, side, x, base, big)
-        cv.add(mark)
-        x += w
-    cv.add(sk.said(cv, move, x, base, big, 14, x0 + room - x, role="strong")[0])
+    if getattr(g, "write", None) and last:
+        g.write(cv, sk, st, side, move, x, base, big, role="strong")
+    else:
+        if g.glyph:
+            mark, w = g.glyph(cv, sk, st, side, x, base, big)
+            cv.add(mark)
+            x += w
+        cv.add(sk.said(cv, move, x, base, big, 14, x0 + room - x, role="strong")[0])
     rows, size, lines = CL.flowed(sk, words, room, small=small)
     top = y + 12 + big + (14 if not small else 13)
     for i, line in enumerate(lines):
@@ -119,6 +125,8 @@ def history(cv, sk, g, st, x0, x1, y, rows=3, *, small=False) -> float:
     first, reply = st["opens"], other(st["opens"])
 
     def cell_w(text):
+        if getattr(g, "write", None):
+            return g.written(sk, text, 10)
         return sk.width(text, "bold", 10) + (g.glyph_width(10) if g.glyph else 0)
 
     nw = max(26.0, max(sk.width(f"{n}.", "caps", 8, .3) for n, *_ in shown) + 9)
@@ -138,6 +146,9 @@ def history(cv, sk, g, st, x0, x1, y, rows=3, *, small=False) -> float:
                 cv.add(label)
                 wx = max(wx if cx == bx else 0, cx + w + 12)
                 break
+            if getattr(g, "write", None):
+                g.write(cv, sk, st, side, text, cx, yy, 10)
+                continue
             if g.glyph:
                 mark, w = g.glyph(cv, sk, st, side, cx, yy, 10)
                 cv.add(mark)

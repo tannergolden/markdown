@@ -20,11 +20,13 @@ jump to take, and never a threat to block.
 from __future__ import annotations
 
 import re
+from typing import Callable
 
 from ..chess.game import (EMOJI, MOST, TITLE, WHO, WORDS, check_end, check_lines, is_day, is_number, is_text)
 from .sides import GITHUB, HOUSE
 
 NUMBER = r"[1-9][0-9]{0,8}"
+GHOSTS = "G"                # the number of the ghosts' row, under the Ghost Rule: the score sheet's first
 
 
 def link(kind: str, code: str) -> re.Pattern:
@@ -34,12 +36,16 @@ def link(kind: str, code: str) -> re.Pattern:
                       + rf"%3A%20{code}%20%C2%B7%20game%20{NUMBER}%20%C2%B7%20move%20{NUMBER}")
 
 
-def check(d: dict, kind: str, notation: re.Pattern, code: str, ends: dict[str, bool], moved: str,
-          alerts: tuple[str, ...], offered: re.Pattern) -> list[str]:
+def check(d: dict, kind: str, notation: re.Pattern, code: str, ends: dict[str, bool], moved: str | tuple[str, ...],
+          alerts: tuple[str, ...], offered: re.Pattern, *, ghost_row: bool = False,
+          links: Callable[[list], bool] | None = None) -> list[str]:
     """What the fields every game shares get wrong, said precisely: `notation` is the shape of the game's moves on
     the score sheet, `offered` of a move still to play, `code` how an issue's title names one, `ends` how the game
     can end and whether each end has a winner, `moved` the side that made the last move, the only one that can have
-    won, and `alerts` what its turn's plate can say, if anything."""
+    won, and `alerts` what its turn's plate can say, if anything. A game played under the Ghost Rule opens its score
+    sheet with the ghosts' row, numbered G (`ghost_row`); and a game whose move is two choices, a hole and then a
+    turn, links each of its moves' second choices in a list, which `links` checks, given the move, in place of the
+    one link."""
     errors = []
     for key, low in (("game", 1), ("move", 1), ("players", 0)):
         if key in d and not is_number(d[key], low, MOST):
@@ -67,12 +73,14 @@ def check(d: dict, kind: str, notation: re.Pattern, code: str, ends: dict[str, b
     history = d.get("history")
     if history is not None and not isinstance(history, list):
         errors.append("history is a list of the score sheet's rows")
-    for row in history if isinstance(history, list) else []:
-        if not (isinstance(row, list) and len(row) == 4 and is_number(row[0], 1, MOST)
+    for i, row in enumerate(history if isinstance(history, list) else []):
+        ghosts = ghost_row and i == 0 and isinstance(row, list) and row[:1] == [GHOSTS]
+        if not (isinstance(row, list) and len(row) == 4 and (ghosts or is_number(row[0], 1, MOST))
                 and all(cell == "" or is_text(cell, notation) for cell in row[1:3])
                 and (row[3] == "" or is_text(row[3], WHO))):
-            errors.append(f"history: {row!r} is not a row of a move's number up to {MOST:,}, the opening side's"
-                          " move, the reply and who chose it")
+            errors.append(f"history: {row!r} is not a row of a move's number up to {MOST:,}"
+                          + (f", or {GHOSTS} for the ghosts' row first," if ghost_row else ",")
+                          + " the opening side's move, the reply and who chose it")
         elif row[2] and not row[1]:
             errors.append(f"history: {row!r} has the reply without the move it answers")
     errors += check_lines(d) + plus_gone(d, notation)
@@ -82,8 +90,9 @@ def check(d: dict, kind: str, notation: re.Pattern, code: str, ends: dict[str, b
     shape = link(kind, code)
     for move in moves:
         whole = isinstance(move, list) and len(move) == 5
+        linked = whole and (links(move) if links is not None else is_text(move[4], shape))
         if not (whole and is_text(move[0], EMOJI) and is_text(move[1], TITLE) and is_text(move[2], notation)
-                and is_text(move[3], WORDS) and is_text(move[4], shape)):
+                and is_text(move[3], WORDS) and linked):
             errors.append(f"moves: {move!r} is not an emoji, a title, a move, its words and its link")
         elif not is_text(move[2], offered):
             errors.append(f"moves: {move[2]!r} says what the move would do: a move still to play is written without a"
@@ -126,7 +135,10 @@ def state(d: dict, *, to_move: str, opens: str) -> dict:
 
 
 def numbered(st: dict) -> str:
-    """The last move's number as a score sheet writes it: "3." for the opening side's move, "3..." for the reply."""
+    """The last move's number as a score sheet writes it: "3." for the opening side's move, "3..." for the reply; and
+    under the Ghost Rule "G." for the first ghost, "G..." for the second, as the ghosts' row has them."""
     last = st["last"]
     n = last.get("number") or st["move"]
+    if last.get("ghost"):
+        return f"{n}..." if last.get("second") else f"{n}."
     return f"{n}." if last["side"] == st["opens"] else f"{n}..."

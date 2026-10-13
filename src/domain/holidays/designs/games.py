@@ -23,14 +23,16 @@ lettering; its plates are the set's tags; and the board is built of the set's ow
                always ivory, GitHub's ebony, whoever moves first
   the marks    the last move's two squares framed in the set's accent, the square it landed on washed in the
                trophies' gold as a lamp would light it; what the rules make the side to move answer (a king in
-               check, a man that must jump) glowing in the set's red; either, where it would be lost on a square
-               of its colour, in the first of the set's inks that stands clear of both. Nothing more: no cell or
-               hole a side could win on next, and no call to block, so nothing helps a player choose
+               check, a man that must jump) glowing in the set's red, and the board the rules send a Tic-Tac mark
+               to bracketed in the accent; either, where it would be lost on a square of its colour, in the first
+               of the set's inks that stands clear of both. Nothing more: no square or hole a side could win on
+               next, and no call to block, so nothing helps a player choose
   the motion   the last move is played again as the file opens, in the engine's discrete steps: a chessman steps
-               from its square, a knight hopping; a man hops each man it takes; a disc drops down its column and
-               bounces; a mark is drawn in stroke by stroke. The square it lands on flashes, what must be answered
-               pulses, the panel appears a section at a time on chess's beats, the side to move's ring is drawn in,
-               and a glint crosses the turn's plate every eight seconds. A still file holds it all at rest
+               from its square, a knight hopping; a man hops each man it takes; a mark is drawn in stroke by stroke;
+               a marble is set and its quarter turns, a step at a time. The square it lands on flashes, what must
+               be answered pulses, the panel appears a section at a time on chess's beats, the side to move's ring
+               is drawn in, and a glint crosses the turn's plate every eight seconds. A still file holds it all at
+               rest
 
 The Hall of Fame is drawn on the same sheet (`hall`): the series of every game, each named by its two pieces, and
 the podium, the set's own avatars standing on blocks cut from what the set says its podium is made of and worked as
@@ -534,18 +536,24 @@ class Games:
         head = f"{number} "
         room = x1 - x0
         y += 9
-        scale = 2 if measure(fold(head + move, "57"), "57", 2) + (g.glyph_width(2) if g.glyph else 0) <= room else 1
+        written = getattr(g, "write", None) if last else None    # a move more than letters can say: the game's own
+        wide = (measure(fold(head, "57"), "57", 2) + 3 * 2 + g.written(move, 2) if written
+                else measure(fold(head + move, "57"), "57", 2) + (g.glyph_width(2) if g.glyph else 0))
+        scale = 2 if wide <= room else 1
         w = self.game_title(p, x0, y, fold(head, "57"), night, scale) + 3 * scale
         x = x0 + w
-        if g.glyph:
-            x += g.glyph(self, p, st, side, x, y, scale, night)
-        self.game_title(p, x, y, clip(fold(move, "57"), x1 - x, "57", scale), night, scale)
+        if written:
+            g.write(self, p, st, side, move, x, y, scale, night, title=True)
+        else:
+            if g.glyph:
+                x += g.glyph(self, p, st, side, x, y, scale, night)
+            self.game_title(p, x, y, clip(fold(move, "57"), x1 - x, "57", scale), night, scale)
         y += 7 * scale + 5
         lines = wrap(words, room, "57")
         if len(lines) == 2:
             lines = phrased(words, room, "57")
-        if len(lines) > 2:
-            lines = [lines[0], clip(" ".join(lines[1:]), room, "57")]
+        if len(lines) > 3:             # a move's words on three lines at the most, as a Pentago move's turn needs
+            lines = [*lines[:2], clip(" ".join(lines[2:]), room, "57")]
         for line in lines:
             p.text(x0, y, line, k["body"], "57")
             y += LEAD
@@ -570,11 +578,12 @@ class Games:
         shown = g.rows(st)[-rows:]
         latest = g.latest(st)
         nw = max(14, max(measure(f"{n}.", "35") for n, *_ in shown) + 6)
-        widths = [measure(fold(m, "57"), "57") + (g.glyph_width(1) if g.glyph else 0)
+        written = getattr(g, "write", None)
+        widths = [g.written(m, 1) if written else measure(fold(m, "57"), "57") + (g.glyph_width(1) if g.glyph else 0)
                   for _, a, b, _ in shown for m in (a, b) if m]
         col = max(34, (max(widths) if widths else 0) + 8)
-        if x0 + nw + 2 * col + 36 > x1:
-            col = max(28, (x1 - x0 - nw - 36) // 2)
+        if x0 + nw + 2 * col + 36 > x1:     # the moves give way, clipped; a move the game writes itself never is
+            col = max(max(widths, default=0) + 4 if written else 28, (x1 - x0 - nw - 36) // 2)
         ax, bx = x0 + nw, x0 + nw + col
         first, reply = g.sides_in_order(st)
         for n, a, b, who in shown:
@@ -587,6 +596,9 @@ class Games:
                     wdt = self.say(p, cx, y + 1, due.upper(), due_ink, room=x1 - cx - (40 if who else 0))
                     wx = max(wx if cx == bx else 0, cx + wdt + 6)
                     break
+                if written:
+                    g.write(self, p, st, side, text, cx, y, 1, night)
+                    continue
                 if g.glyph:
                     cx += g.glyph(self, p, st, side, cx, y, 1, night)
                 self.say(p, cx, y - 1 if any(ch in text for ch in "gjpqy") else y, text, k["body"], "57",
@@ -676,7 +688,7 @@ class Games:
         return p
 
     # ------------------------------------------------------------------------------------ the entry point
-    GAME_KINDS = ("chess", "checkers", "connectfour", "tictactoe", "hall-of-fame")
+    GAME_KINDS = ("chess", "checkers", "pentago", "tictac", "hall-of-fame")
 
     def game(self, kind: str, d: dict, theme: dict, variant: str) -> str | None:
         """One file of a game on @tannergolden's profile, or of the Hall of Fame of all four, in a kit variant (wide,

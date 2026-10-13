@@ -39,7 +39,7 @@ and only what they are made of changes. The pieces are one set of silhouettes
 for reduced motion. Round the pictures the README carries the game's words
 ([`readme.py`](readme.py)): every legal move named, a badge linking each
 winner's profile, and the leaderboard, @tannergolden's own row on top of
-GitHub's ten leading players. Tic-Tac-Toe, Connect Four and Checkers are drawn
+GitHub's ten leading players. Tic-Tac, Pentago and Checkers are drawn
 by the same hand, on this sheet, in these two materials and to this motion
 ([`games/`](../games/README.md)). While a holiday's set or a collection's design
 is up, it draws the board in its own pixels instead

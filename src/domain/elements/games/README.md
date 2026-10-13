@@ -22,8 +22,8 @@ _Chess's sheet, around each game's own board._
 ## 💡 What This Folder Is For
 
 What the games beside chess on @tannergolden's profile share with it and with
-one another, so Tic-Tac-Toe ([`tictactoe/`](../tictactoe/README.md)), Connect
-Four ([`connectfour/`](../connectfour/README.md)), Checkers
+one another, so Tic-Tac ([`tictac/`](../tictac/README.md)), Pentago
+([`pentago/`](../pentago/README.md)), Checkers
 ([`checkers/`](../checkers/README.md)) and Chess
 ([`chess/`](../chess/README.md)) read as one family drawn by one hand.
 

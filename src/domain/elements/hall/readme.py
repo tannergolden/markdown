@@ -17,15 +17,16 @@ from html import escape
 from .record import ORDER, OWNER, state
 
 # Each game's two side signs, as every README line of the games writes them, the house's first: the white king and
-# the black, the white man and the black, the white disc and the black, X and O. Together they head the game's column
-# of wins.
-SIGNS = {"chess": "♔♚", "checkers": "⛀⛂", "connectfour": "⚪⚫", "tictactoe": "❌⭕"}
+# the black, the white man and the black, the white marble and the black, X and O. Together they head the game's
+# column of wins.
+SIGNS = {"chess": "♔♚", "checkers": "⛀⛂", "pentago": "⚪⚫", "tictac": "❌⭕"}
 HOUSE = "🏠"  # the house's own row, on top of everyone
 MEDALS = ("🥇", "🥈", "🥉")
 # How a win counts, under the leaderboard.
 RULE = ("A win counts only for the player who makes the winning move: the checkmate in Chess, the move that leaves the"
-        " other side no move in Checkers, the fourth disc in a row in Connect Four and the third mark in a row in"
-        " Tic-Tac-Toe. A move the Arbiter plays, for either side, counts for nobody, and a draw is nobody's win.")
+        " other side no move in Checkers, the move that makes five in a row for its side in Pentago and the mark that"
+        " wins a third board in a row in Tic-Tac. A move the Arbiter plays, for either side, counts for nobody, and a"
+        " draw is nobody's win.")
 
 
 def badges(eid: str, d: dict, rel: str) -> str:

@@ -22,13 +22,13 @@ _Four games, one podium._
 ## 💡 What This Folder Is For
 
 The Hall of Fame of the four games played on @tannergolden's profile, and only
-there: Chess, Checkers, Connect Four and Tic-Tac-Toe, in that order wherever a
-reader meets them. One element, `hall-of-fame`, draws the series of every game
+there: Chess, Checkers, Pentago and Tic-Tac, in that order wherever a reader
+meets them. One element, `hall-of-fame`, draws the series of every game
 and of all four together, the podium of the five leading winners across them
 with each one's wins in every game, and a badge for each winner. The profile's
 own engines write what it draws into the page's settings after every move
 ([`record.py`](record.py) checks every field of it), each player's wins one
-count to a game in tier order, Tic-Tac-Toe first, as they always have.
+count to a game in tier order, Tic-Tac first, as they always have.
 
 It is chess-hall grown to four games, drawn in chess-hall's own materials
 ([`skins.py`](skins.py), chess's two skins with every game's pieces added): the
@@ -46,10 +46,10 @@ winner as the set draws a person.
 
 Each game is named by its own mark ([`marks.py`](marks.py)): its two pieces, the
 house's first, on the left. The white king then the black, the white man then
-the black, the white disc then the black, X then O. Each player's side is fixed:
-the house plays White in Chess, Checkers and Connect Four and X in Tic-Tac-Toe,
-GitHub Black and O. Only who moves first can change, where the Arbiter opens
-Connect Four and Tic-Tac-Toe for a side drawn at random. The same mark heads the
+the black, the white marble then the black, X then O. Each player's side is
+fixed: the house plays White in Chess, Checkers and Pentago and X in Tic-Tac,
+GitHub Black and O. Only who moves first can change, where the Arbiter draws it
+in Pentago and Tic-Tac once both ghosts are down. The same mark heads the
 game's row of the series and stands beside every winner's wins in that game.
 
 Round the picture the README carries ([`readme.py`](readme.py)) a badge linking
@@ -76,7 +76,7 @@ under them moving up into the places the page has.
 
 | Entry                        | Purpose                                                                                                              |
 | :--------------------------- | :------------------------------------------------------------------------------------------------------------------- |
-| [`__init__.py`](__init__.py) | The Hall of Fame of all four games on @tannergolden's profile: Chess, Checkers, Connect Four and Tic-Tac-Toe.        |
+| [`__init__.py`](__init__.py) | The Hall of Fame of all four games on @tannergolden's profile: Chess, Checkers, Pentago and Tic-Tac.                 |
 | [`layout.py`](layout.py)     | The Hall of Fame's one layout, which every theme draws: the series of all four games, and the podium.                |
 | [`marks.py`](marks.py)       | Each game's pieces, as the Hall draws them, shared by every theme: one set of outlines in chess's 45-unit box.       |
 | [`README.md`](README.md)     | This file.                                                                                                           |

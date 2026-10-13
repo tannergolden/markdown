@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 """What every game on @tannergolden's profile shares, so the four sheets read as one family drawn by one hand.
 
-Chess came first, and the games beside it (Tic-Tac-Toe, Connect Four and Checkers) are drawn the way it is: the
+Chess came first, and the games beside it (Tic-Tac, Pentago and Checkers) are drawn the way it is: the
 same card or drafting sheet and its band, the same two materials (the standard theme's enamel and a print's
 drawing), the same lettering, and the same panel beside the board, a section at a time: the two sides with the
 turn ringed, the turn's plate and when the move is due, the last move in notation and in words, what the game

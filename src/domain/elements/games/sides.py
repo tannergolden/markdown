@@ -3,10 +3,10 @@
 """The two sides of every game on the profile: the house, @tannergolden, and GitHub, everyone else.
 
 Each side's colour is fixed in every game, and only who moves first changes. The house always plays White in Chess,
-Checkers and Connect Four, and X in Tic-Tac-Toe; GitHub always plays Black, or O. Which side moves first is the
-game's own: the house opens Chess, GitHub opens Checkers, since Black moves first there, and the Arbiter opens
-Tic-Tac-Toe and Connect Four for a side drawn at random. Every pair of sides is said the house's first, and the house
-stands on the left of the panel, as chess's White does.
+Checkers and Pentago, and X in Tic-Tac; GitHub always plays Black, or O. Which side moves first is the game's own:
+the house opens Chess, GitHub opens Checkers, since Black moves first there, and under the Ghost Rule the Arbiter
+draws who opens Tic-Tac and Pentago once each side has set its ghost. Every pair of sides is said the house's first,
+and the house stands on the left of the panel, as chess's White does.
 """
 from __future__ import annotations
 

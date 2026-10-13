@@ -291,7 +291,8 @@ def plate_row(cv, sk, x0, x1, y, label, message, icon, right, notes, *, small=Fa
             break
         size -= .25
     if keep_note:
-        for note, floor in ((notes[0], size - 1.5), (notes[-1], 7.0)):
+        # as far as 6.5 to say it short: the house's win by three boards in a row, Tic-Tac's longest, on a phone
+        for note, floor in ((notes[0], size - 1.5), (notes[-1], 6.5)):
             fits = size
             while fits > floor and beside(note, fits) > x1 - x0:
                 fits -= .25

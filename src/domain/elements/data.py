@@ -31,25 +31,26 @@ REQUIRED = {
     "schematic": ("boxes", "wires"), "instruments": ("histogram", "dial", "materials", "counters"),
     "milestones": ("events",), "roster": ("people",), "certificate": ("checks", "ring_top", "ring_bottom", "name"),
     "placard": ("owner", "name", "desc", "cells"),
-    "tictactoe": ("board", "opens"), "connectfour": ("board", "opens"), "checkers": ("fen",),
+    "tictac": ("board", "places"), "pentago": ("board", "places"), "checkers": ("fen",),
     "chess": ("fen",), "chess-hall": (), "hall-of-fame": (),
 }
 # Each game's name on @tannergolden's profile, where its block folds the game under it, and whether the fold opens with
 # the page: Chess open, the one board in view, and the other three shut, a click away. No banner stands over a fold: the
 # board's own sheet says whose turn it is.
-FOLDS = {"chess": ("♟️ Chess", True), "checkers": ("🏁 Checkers", False), "connectfour": ("⚫ Connect Four", False),
-         "tictactoe": ("❌ Tic-Tac-Toe", False)}
+FOLDS = {"chess": ("♟️ Chess", True), "checkers": ("🏁 Checkers", False), "pentago": ("🌀 Pentago", False),
+         "tictac": ("❌ Tic-Tac", False)}
 # The games on @tannergolden's profile and their Hall of Fame: drawn in the standard theme and every print by their
 # own packages, and by a holiday's set or a collection's design in its pixels (`holidays.designs.games`), every file
 # of one in the set or none, so a board is never half in one look and half in another.
-GAMES = frozenset({"tictactoe", "connectfour", "checkers", "chess", "hall-of-fame"})
+GAMES = frozenset({"tictac", "pentago", "checkers", "chess", "hall-of-fame"})
 # Kinds that draw themselves in the standard theme and every print, by their own packages, rather than as the
 # standard theme's or a set's six elements are drawn: the games, which a set draws by its own path instead (`GAMES`),
 # and chess's own Hall of Fame, which no set draws, so it keeps the page's own theme whatever set is up.
 OWN_THEMES = frozenset({"chess-hall"} | GAMES)
 # Kinds the elements kit once drew, and the release that retired each, so settings that still name one
-# are told what happened rather than that the kind is unknown.
-RETIRED = {"plan": "1.3.0", "seal": "1.4.0"}
+# are told what happened rather than that the kind is unknown; and the kind that took the place of each that has one.
+RETIRED = {"plan": "1.3.0", "seal": "1.4.0", "tictactoe": "1.14.0", "connectfour": "1.14.0"}
+SUCCEEDED = {"tictactoe": "tictac", "connectfour": "pentago"}
 _ID = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 
 
@@ -94,7 +95,9 @@ def validate(section: dict, measured: dict, *, subject: str = "") -> list[str]:
     for eid, d in merged(section, measured).items():
         kind = d.get("kind")
         if kind in RETIRED:
-            errors.append(f"{eid}: the {kind} element was retired in banners v{RETIRED[kind]}; take it out of the settings")
+            after = f", and {SUCCEEDED[kind]} took its place" if kind in SUCCEEDED else ""
+            errors.append(f"{eid}: the {kind} element was retired in banners v{RETIRED[kind]}{after}; take it out of"
+                          " the settings")
             continue
         if kind not in E.KINDS:
             errors.append(f"{eid}: unknown kind {kind!r} (one of {', '.join(E.KINDS)})")

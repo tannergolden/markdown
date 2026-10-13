@@ -965,25 +965,25 @@ def chess_hall(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
 
 
 def game_of(kind: str):
-    """The package that draws one of the games beside chess on @tannergolden's profile: Tic-Tac-Toe, Connect Four or
-    Checkers, each drawn as chess is. Imported when asked for: each imports this module's pieces of a sheet itself."""
-    if kind == "tictactoe":
-        from . import tictactoe as game
-    elif kind == "connectfour":
-        from . import connectfour as game
+    """The package that draws one of the games beside chess on @tannergolden's profile: Tic-Tac, Pentago or Checkers,
+    each drawn as chess is. Imported when asked for: each imports this module's pieces of a sheet itself."""
+    if kind == "tictac":
+        from . import tictac as game
+    elif kind == "pentago":
+        from . import pentago as game
     else:
         from . import checkers as game
     return game
 
 
-def tictactoe(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
-    """Tic-Tac-Toe on @tannergolden's profile, drawn by elements/tictactoe in the page's theme, as chess is."""
-    return game_of("tictactoe").draw("tictactoe", d, tone, "dark" if th["dark"] else "day", variant)
+def tictac(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
+    """Tic-Tac on @tannergolden's profile, drawn by elements/tictac in the page's theme, as chess is."""
+    return game_of("tictac").draw("tictac", d, tone, "dark" if th["dark"] else "day", variant)
 
 
-def connectfour(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
-    """Connect Four on @tannergolden's profile, drawn by elements/connectfour in the page's theme, as chess is."""
-    return game_of("connectfour").draw("connectfour", d, tone, "dark" if th["dark"] else "day", variant)
+def pentago(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
+    """Pentago on @tannergolden's profile, drawn by elements/pentago in the page's theme, as chess is."""
+    return game_of("pentago").draw("pentago", d, tone, "dark" if th["dark"] else "day", variant)
 
 
 def checkers(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
@@ -992,7 +992,7 @@ def checkers(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
 
 
 # The games beside chess on @tannergolden's profile, in their tiers' order, each its own kind.
-GAMES = ("tictactoe", "connectfour", "checkers")
+GAMES = ("tictac", "pentago", "checkers")
 
 
 def hall_of_fame(d: dict, tone: str, th: dict, variant: str = "wide") -> str:
@@ -1009,8 +1009,8 @@ KINDS = {
     "roster": (roster, ("wide", "narrow"), "sheet"),
     "certificate": (certificate, ("wide", "narrow"), "sheet"),
     "placard": (placard, ("wide",), "card"),
-    "tictactoe": (tictactoe, ("wide", "narrow", "still", "narrow-still"), "board"),
-    "connectfour": (connectfour, ("wide", "narrow", "still", "narrow-still"), "board"),
+    "tictac": (tictac, ("wide", "narrow", "still", "narrow-still"), "board"),
+    "pentago": (pentago, ("wide", "narrow", "still", "narrow-still"), "board"),
     "checkers": (checkers, ("wide", "narrow", "still", "narrow-still"), "board"),
     "chess": (chess, ("wide", "narrow", "still", "narrow-still"), "board"),
     "chess-hall": (chess_hall, ("wide", "narrow", "still", "narrow-still"), "sheet"),

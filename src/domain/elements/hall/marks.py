@@ -4,10 +4,10 @@
 
 The Hall names every game by what it is played with, its two pieces, the house's first, on the left: chess's own
 kings, the white and then the black; a white man and then a black one, standing as a checkers man stands on its
-square; a white disc and then a black one, as Connect Four's frame holds them; and an X and then an O, as a pen draws
-them. Each player's side is fixed, whoever moves first: the house plays White in Chess, Checkers and Connect Four and
-X in Tic-Tac-Toe, GitHub Black and O, so the house's piece is always the light one. Each piece is drawn as its game's
-board draws it, at the Hall's size: the X and the O as pen strokes with a body, a disc as a coin with a groove round
+square; a white marble and then a black one, as Pentago's quarters hold them; and an X and then an O, as a pen draws
+them. Each player's side is fixed, whoever moves first: the house plays White in Chess, Checkers and Pentago and X
+in Tic-Tac, GitHub Black and O, so the house's piece is always the light one. Each piece is drawn as its game's
+board draws it, at the Hall's size: the X and the O as pen strokes with a body, a marble as a coin with a groove round
 its face, a man as a short milled cylinder seen from a little above, its foot where a chessman's is. A skin decides
 what they are made of: lit enamel in the standard theme, ink and line shading on a print.
 """
@@ -23,9 +23,9 @@ HOUSE, GITHUB = "light", "dark"
 # The pen's two marks: the house's X, drawn light, and GitHub's O, drawn dark.
 MARKS = {HOUSE: "X", GITHUB: "O"}
 STEP = .58                 # how far a game's second piece stands to the right of its first, as a share of one
-CY = 23.5                  # the middle of a flat piece, an X, an O or a disc, in the box
+CY = 23.5                  # the middle of a flat piece, an X, an O or a marble, in the box
 PEN, RING = 5.6, 11.2      # an X's and an O's stroke, and the O's radius
-DISC, GROOVE = 14.2, 8.9   # a disc's radius and its groove's
+DISC, GROOVE = 14.2, 8.9   # a marble's radius and its groove's
 # A man, as Checkers draws one: the centre of its faces, their radii, its thickness and its foot, where a chessman's is.
 CX, RX, RY, T, FOOT = 22.5, 16.6, 8.0, 7.2, 38.6
 BASE = FOOT - RY           # the centre of a man's foot
@@ -64,7 +64,7 @@ BODY = {"X": stroke(11.4, 12.4, 33.6, 34.6, PEN) + stroke(33.6, 12.4, 11.4, 34.6
 O_SPEC = (f"M{f1(22.5 + RING * math.cos(math.radians(-160)))} {f1(CY + RING * math.sin(math.radians(-160)))}"
           f"A{RING} {RING} 0 0 1 {f1(22.5 + RING * math.cos(math.radians(-112)))} "
           f"{f1(CY + RING * math.sin(math.radians(-112)))}")
-# A disc's glint: a short arc on its upper left, between its rim and its groove.
+# A marble's glint: a short arc on its upper left, between its rim and its groove.
 _G = (DISC + GROOVE) / 2 + 1.1
 DISC_SPEC = (f"M{f1(22.5 + _G * math.cos(math.radians(-165)))} {f1(CY + _G * math.sin(math.radians(-165)))}"
              f"A{f1(_G)} {f1(_G)} 0 0 1 {f1(22.5 + _G * math.cos(math.radians(-112)))} "

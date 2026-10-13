@@ -100,8 +100,8 @@ def slid(markup: str, dx: float, begin: float, dur: float = .55) -> str:
 
 def emblem(cv, sk, game: str, x: float, y: float, size: float, *, small: bool = False, begin: float | None = None):
     """A game's own mark: its two pieces, the house's on the left in front of GitHub's, a piece `size` square, the
-    house's top-left at (x, y). The white king and then the black, the white man and then the black, the white disc
-    and then the black, X and then O: each side's own, whoever moved first. Given `begin`, the two meet from either
+    house's top-left at (x, y). The white king and then the black, the white man and then the black, the white
+    marble and then the black, X and then O: each side's own, whoever moved first. Given `begin`, the two meet from either
     side as their row arrives."""
     behind = sk.piece(cv, game, GITHUB, x + size * STEP, y, size, small=small)
     front = sk.piece(cv, game, HOUSE, x, y, size, small=small)

@@ -15,17 +15,20 @@ plays its last move again as the file opens, in the engine's discrete steps:
                 the last man hops each man it takes, which is gone as it passes, its path dotted behind it, and is
                 crowned as it lands on the far row; a man that must jump glows. The panel counts the men each side
                 has taken and the kings each has made
-  Connect Four  a frame of the set's dark colour on two legs, seven columns of holes, the discs behind it; the last
-                disc is held over its column and drops down it, glimpsed through each hole, bouncing as it lands;
-                a won four are ringed and joined. The panel counts each side's discs left on a rack of twenty-one
-  Tic-Tac-Toe   three cells a side, the bars between them the board's dark colour, all eight lines a game is won on
-                dotted faint while it goes on, whatever stands on them; the last mark draws itself stroke by stroke;
-                a won line is struck through. The panel counts each side's marks left, a rack of five for the side
-                that moved first and four for the other
+  Pentago       four quarter plates of the set's dark stuff, three holes a side, the marbles seen through them;
+                the last marble is set in its hole, which is ringed, and its quarter turns its quarter turn a step
+                at a time, everything on it turning with it, a ghost too, an arrow round its outer corner the way it
+                went; a won five are ringed and joined. A ghost is a marble of the dark stuff ringed in dashes of the
+                light. The panel counts each side's marbles left on a rack of seventeen, and where the ghosts stand
+  Tic-Tac       nine boards of nine squares, the bars between them the board's dark stuff, each board's face a tone
+                up; the last mark draws itself stroke by stroke; a board closed is washed back, a won one under its
+                winner's mark drawn as large as the board, a drawn one lined; the board the next mark is sent to is
+                bracketed in the accent; three boards in a row are struck through. A ghost's square is the bars' stuff
+                ringed in dashes of the light. The panel counts the boards each side has won
 
-Nothing on a board helps a player choose a move, as on every look's: no hole or cell a side could win on next, no
+Nothing on a board helps a player choose a move, as on every look's: no hole or square a side could win on next, no
 call to block, no word of what perfect play makes of a game. A king in check and a man that must jump glow in the
-set's red, since those are the rules, not hints.
+set's red, and the board a Tic-Tac mark is sent to is bracketed, since those are the rules, not hints.
 """
 from __future__ import annotations
 
@@ -34,10 +37,10 @@ import math
 from ...elements.checkers import game as CK
 from ...elements.chess import game as CG
 from ...elements.chess.layout import castled, finished, outcome, passed
-from ...elements.connectfour import game as C4
 from ...elements.games import data as GD
 from ...elements.games.sides import GITHUB, HOUSE, name, other, playing
-from ...elements.tictactoe import game as TT
+from ...elements.pentago import game as PG
+from ...elements.tictac import game as TC
 from ..pixel import GLYPHS, fold, measure
 from . import materials as MT
 from . import pieces as PC
@@ -47,8 +50,8 @@ from .games import LAND, _nothing, appear, brief, gone, pulse, steps
 MARKS = {
     "chess": ["..#..", ".###.", ".###.", "..#..", ".###.", ".###.", "#####"],
     "checkers": ["#.#.#", "#####", ".....", "#####", "#...#", "#####", "....."],
-    "connectfour": ["#######", "#.#.#.#", "#######", "#.#.#.#", "#######", ".#...#.", ".#...#."],
-    "tictactoe": ["#.#.###", ".#..#.#", "#.#.###", ".......", "###.#.#", "#.#..#.", "###.#.#"],
+    "pentago": ["###.###", "#.#.#.#", "###.###", ".......", "###.###", "#.#.###", "###.###"],
+    "tictac": ["#.#.###", ".#..#.#", "#.#.###", ".......", "###.#.#", "#.#..#.", "###.#.#"],
 }
 
 
@@ -86,6 +89,15 @@ def glow(h, p, x: int, y: int, w: int, ht: int, night: bool, L: str, colour: str
             d = max(abs(xx + .5 - cx) / (w / 2), abs(yy + .5 - cy) / (ht / 2))
             p.px(xx, yy, f"{c}:{(.18, .32, .46)[min(2, int((1 - d) * 3))]}", L)
     p.box(x + 1, y + 1, w - 2, ht - 2, c, L)
+
+
+def edged(p, cells, colour: str, edge: str, L: str) -> None:
+    """`cells` in `colour`, edged a pixel all round in `edge`, so a mark reads on any stuff it crosses."""
+    cells = set(cells)
+    for (x, y) in {(x + dx, y + dy) for (x, y) in cells for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))} - cells:
+        p.px(x, y, edge, L)
+    for (x, y) in cells:
+        p.px(x, y, colour, L)
 
 
 def dotted(p, cells, colour: str, L: str) -> None:
@@ -519,281 +531,186 @@ class Checkers(Game):
         return y - 3
 
 
-# =========================================================================== connect four
-class ConnectFour(Game):
-    KIND, LABEL = "connectfour", "connect four"
+# =========================================================================== tic-tac
+class TicTac(Game):
+    KIND, LABEL = "tictac", "tic-tac"
 
     def state(self, d: dict) -> dict:
-        return C4.state(d)
+        return TC.state(d)
 
     def side_name(self, side: str) -> str:
-        return C4.COLOUR[side]
+        return TC.mark_of(side)
 
     def first(self, st: dict) -> str:
-        return f"{C4.COLOUR[st['opens']]} drops first"
+        return "drawn by the Arbiter"
 
-    def glyph(self, h, p, st, side, x, y, scale, night) -> int:
-        """The disc a move is dropped with, set before its column's number."""
-        r = 3.5 if scale > 1 else 2.5
-        d = PC.disc(C4.material_of(side), r)
-        put(p, d, ("c4", "glyph", r, side), x, y + (7 * scale - d[2]) // 2)
-        return d[1] + 2
-
-    def glyph_width(self, scale: int) -> int:
-        return (9 if scale > 1 else 7) + 2
+    def notation(self, st: dict) -> tuple:
+        if st["last"]:
+            return super().notation(st)
+        return f"{TC.GHOST}.", "?", st["places"], f"{name(st['places'])} places the first ghost"
 
     def medallion(self, h, p, st, cx, cy, r, side, night) -> None:
-        d = PC.disc(C4.material_of(side), r * .66)
-        put(p, d, ("c4", "medal", r, side), cx - d[1] // 2, cy - d[2] // 2)
-
-    @staticmethod
-    def geometry(box: tuple, small: bool) -> dict:
-        x0, y0, n = box
-        pitch = 19 if small else 23
-        m = 4 if small else 5
-        w, ht = C4.COLS * pitch + 2 * m, C4.ROWS * pitch + 2 * m
-        top = 16 if small else 20
-        fx0, fy0 = x0 + (n - w) // 2, y0 + top
-        legs = 6 if small else 8
-        return {"p": pitch, "m": m, "x": fx0, "y": fy0, "w": w, "h": ht, "top": top, "legs": legs,
-                "ground": fy0 + ht + legs, "r": pitch * .37}
-
-    def height(self, n: int, small: bool = False) -> int:
-        g = self.geometry((0, 0, n), small)
-        return g["ground"] + 8
-
-    @staticmethod
-    def centre(g: dict, col: int, row: int) -> tuple:
-        return (g["x"] + g["m"] + (col - .5) * g["p"], g["y"] + g["m"] + (C4.ROWS - row + .5) * g["p"])
-
-    def board(self, h, p, st, box, night, moving, small) -> None:
-        g = self.geometry(box, small)
-        b = h.game_board(night)
-        marks = h.game_marks(night)
-        k = h.ink(night)
-        last = st["last"]
-        # the legs and the ground they stand on, behind the frame
-        ly = g["y"] + g["h"]
-        lw = g["m"] + 4
-        for lx in (g["x"] + 2, g["x"] + g["w"] - 2 - lw):
-            for i in range(g["legs"]):
-                p.hline(lx - i // 3, lx + lw + i // 3, ly + i, b["edge"])
-            p.vline(lx - g["legs"] // 3, ly, ly + g["legs"], b["dark"])
-        p.hline(g["x"] - 6, g["x"] + g["w"] + 6, g["ground"], b["shade"])
-        # the discs, behind the plate
-        holes = {(col, row): self.centre(g, col, row) for col in range(1, C4.COLS + 1) for row in range(1, C4.ROWS + 1)}
-        rd = g["r"] - .2
-        for (col, row), v in sorted(st["board"].items()):
-            cx, cy = holes[(col, row)]
-            mat = "light" if v == "L" else "dark"
-            d = PC.disc(mat, rd)
-            x, y = round(cx - d[1] / 2), round(cy - d[2] / 2)
-            if last and moving and (col, row) == (last["column"], last["row"]):
-                hold = g["y"] - g["top"] // 2 - d[2] // 2 - 1
-                drop = y - hold
-                offsets, times = [(0, -drop), (0, -drop)], [0, .5]
-                n = max(2, round(drop / g["p"] * 1.5))
-                for i in range(1, n + 1):
-                    f = (i / n) ** 2
-                    offsets.append((0, round(-drop * (1 - f))))
-                    times.append(.5 + .45 * i / n)
-                land = times[-1]
-                offsets += [(0, -3), (0, 0), (0, -1), (0, 0)]
-                times += [land + .08, land + .16, land + .22, land + .28]
-                L = p.once("mover", steps(offsets, times, land + .33) + appear(.2), z=.3)
-                put(p, d, ("c4", "disc", rd, mat), x, y, L)
-                continue
-            put(p, d, ("c4", "disc", rd, mat), x, y, p.layer("discs", z=.2))
-        # the plate: the frame's face in the dark stuff, every hole cut through it, its wall shaded where it faces
-        # away from the lamp and lit where it faces it, the plate lit along its top and left
-        plate = p.layer("plate", z=.5)
-        r = g["r"]
-        self.face(p, b["dark_stuff"], g, plate)
-        p.hline(g["x"], g["x"] + g["w"], g["y"], b["dark_stuff"].tone(1), plate)
-        p.vline(g["x"], g["y"], g["y"] + g["h"], b["dark_stuff"].tone(1), plate)
-        p.hline(g["x"], g["x"] + g["w"], g["y"] + g["h"] - 1, b["shade"], plate)
-        p.vline(g["x"] + g["w"] - 1, g["y"], g["y"] + g["h"], b["shade"], plate)
-        p.box(g["x"] - 1, g["y"] - 1, g["w"] + 2, g["h"] + 2, b["shade"], plate)
-        if last:
-            cx, cy = holes[(last["column"], last["row"])]
-            for (x, y) in ring_cells(cx, cy, r + 1.2):
-                p.px(x, y, marks["last"], p.once("lastring", appear(1.3), z=.55) if moving else plate)
-        if st["line"]:
-            pts = [holes[(col, row)] for col, row in st["line"]]
-            L = p.once("four", appear(1.7), z=.56) if moving else plate
-            for (cx, cy) in pts:
-                for (x, y) in ring_cells(cx, cy, r + 1.2):
-                    p.px(x, y, marks["last"], L)
-            (ax, ay), (bx, by) = pts[0], pts[-1]
-            n = int(max(abs(bx - ax), abs(by - ay)))
-            for i in range(n + 1):
-                x, y = ax + (bx - ax) * i / n, ay + (by - ay) * i / n
-                p.rect(round(x) - 1, round(y) - 1, 2, 2, marks["last"], L)
-        under = g["ground"] + 3
-        for col in range(1, C4.COLS + 1):
-            cx = round(holes[(col, 1)][0])
-            if last and col == last["column"]:
-                w = measure(str(col), "35") + 6
-                L = p.once("colmark", appear(.2), z=.55) if moving else "base"
-                with p.onto(L) if L != "base" else _nothing():
-                    h.tag(p, cx - w // 2, under - 2, w, 9, night)
-                p.text(cx - w // 2 + 3, under, str(col), k["tag_ink"], "35", L=L)
-                p.sprite(cx - 1, g["y"] - 5, ["###", ".#."], {"#": marks["last"]}, L=L)
-                continue
-            h.say(p, cx, under, str(col), k["muted"], anchor="middle")
-        for row in range(1, C4.ROWS + 1):
-            h.say(p, g["x"] - 6, round(holes[(1, row)][1]) - 2, str(row), k["muted"], anchor="middle")
-
-    @staticmethod
-    def face(p, stuff: MT.Stuff, g: dict, L: str) -> None:
-        """The frame's face: a cell of the stuff round each hole, drawn once in each of three variants and set at
-        every hole, and the margins round them laid in the stuff."""
-        P, m, r = g["p"], g["m"], g["r"]
-        for v in range(3):
-            key = ("c4cell", stuff.key, P, v)
-            if key in p.syms:
-                continue
-            cells = {}
-            c0 = P / 2
-            for (x, y), col in MT.surface(stuff, P, P, v).items():
-                d = math.hypot(x + .5 - c0, y + .5 - c0)
-                if d < r:
-                    continue
-                if d < r + 1.2:
-                    away = (x + .5 - c0) * -.7 + (y + .5 - c0) * -.7 > 0
-                    col = stuff.tone(-3) if away else stuff.tone(1)
-                cells[(x, y)] = col
-            p.symbol(key, cells)
-        for col in range(C4.COLS):
-            for row in range(C4.ROWS):
-                p.use(("c4cell", stuff.key, P, (col * 2 + row) % 3), g["x"] + m + col * P, g["y"] + m + row * P, L)
-        x0, y0, w, ht = g["x"], g["y"], g["w"], g["h"]
-        for (x, y, ww, hh, turned) in ((x0, y0, w, m, False), (x0, y0 + ht - m, w, m, False),
-                                       (x0, y0 + m, m, ht - 2 * m, True), (x0 + w - m, y0 + m, m, ht - 2 * m, True)):
-            MT.lay(p, stuff, x, y, ww, hh, turned=turned and stuff.grain == "wood", L=L)
-
-    def count(self, h, p, st, x0, x1, y, night, small) -> int:
-        """Each side's discs left, a rack of twenty-one emptying as the frame fills, the house's White first."""
-        k = h.ink(night)
-        h.heading(p, x0, y, "discs left", night)
-        y += 9
-        b = h.game_board(night)
-        label_w = max(measure(f"{C4.COLOUR[s]} · {'house' if s == HOUSE else 'github'}".upper(), "35")
-                      for s in (HOUSE, GITHUB)) + 6
-        for side in (HOUSE, GITHUB):
-            mat = C4.material_of(side)
-            h.say(p, x0, y + 4, f"{C4.COLOUR[side]} · {'house' if side == HOUSE else 'github'}".upper(), k["muted"])
-            px_ = x0 + label_w
-            left = st["left"][side]
-            chip = measure(str(left), "35") + 8
-            room = x1 - px_ - chip - 6
-            pitch = max(3, min(6, (room - 4) // C4.EACH))
-            h.tray(p, px_ - 2, y - 1, C4.EACH * pitch + 4, 13, night)
-            d = PC.disc(mat, 2.5 if pitch >= 6 else 2)
-            for i in range(C4.EACH):
-                cx = px_ + i * pitch
-                if i < left:
-                    put(p, d, ("c4", "rack", pitch, mat), cx, y + 5 - d[2] // 2 + 1)
-                else:
-                    p.px(cx + d[1] // 2, y + 5, b["edge"])
-            h.chip(p, px_ + C4.EACH * pitch + 6, y + 1, str(left), night)
-            y += 15
-        return y - 3
-
-
-# =========================================================================== tic-tac-toe
-class TicTacToe(Game):
-    KIND, LABEL = "tictactoe", "tic-tac-toe"
-
-    def state(self, d: dict) -> dict:
-        return TT.state(d)
-
-    def side_name(self, side: str) -> str:
-        return TT.mark_of(side)
-
-    def first(self, st: dict) -> str:
-        return f"{TT.mark_of(st['opens'])} moves first"
-
-    def medallion(self, h, p, st, cx, cy, r, side, night) -> None:
-        mark = TT.mark_of(side)
+        mark = TC.mark_of(side)
         size = 2 * r - 6
         d = PC.pen(mark, "light" if mark == "X" else "dark", size)
         put(p, d, ("ttt", "medal", size, mark), cx - d[1] // 2, cy - d[2] // 2)
 
     @staticmethod
     def geometry(n: int, small: bool) -> tuple:
-        bar = 4 if small else 5
-        c = (n - 2 * bar) // 3
-        return c, bar
+        """The board's measures in pixels, `n` wide: a square's width, the gutter between a board's squares, the bar
+        between the boards, a board's width, and the margin round them all inside the frame."""
+        gut, bar = 1, 3 if small else 4
+        q = (n - 2 * bar - 6 * gut) // 9
+        s = 3 * q + 2 * gut
+        return q, gut, bar, s, (n - 3 * s - 2 * bar) // 2
 
     def board(self, h, p, st, box, night, moving, small) -> None:
         x0, y0, n = box
-        c, bar = self.geometry(n, small)
+        q, gut, bar, s, off = self.geometry(n, small)
         b = h.game_board(night)
         marks = h.game_marks(night)
         framed(h, p, x0, y0, n, n, night, small)
         dark, light = b["dark_stuff"], b["light_stuff"]
-        for i in (1, 2):         # the bars, in the dark stuff, the uprights' grain turned
-            MT.lay(p, dark, x0 + i * c + (i - 1) * bar, y0, bar, n, turned=True)
-            MT.lay(p, dark, x0, y0 + i * c + (i - 1) * bar, n, bar)
 
-        def cell(name: str) -> tuple:
-            i, j = TT.FILES.index(name[0]), 3 - int(name[1])
-            return x0 + i * (c + bar), y0 + j * (c + bar)
+        def board_at(bx: int, by: int) -> tuple:
+            return x0 + off + bx * (s + bar), y0 + off + (2 - by) * (s + bar)
 
-        for row in (1, 2, 3):
-            for f in TT.FILES:
-                x, y = cell(f"{f}{row}")
-                MT.lay(p, light, x, y, c, c, L="cells", z=-.9)
+        def cell(name_: str) -> tuple:
+            fx, fy = TC.xy(name_)
+            X, Y = board_at(fx // 3, fy // 3)
+            return X + (fx % 3) * (q + gut), Y + (2 - fy % 3) * (q + gut)
+
+        # the bars between the boards and the margin round them in the board's dark stuff, its grain run along each,
+        # laid only where it shows; each board's face a tone up from it, seen only in the gutters between its squares
+        inner = n - 2 * off
+        strips = [(x0, y0, n, off, False), (x0, y0 + n - off, n, off, False), (x0, y0 + off, off, inner, True),
+                  (x0 + n - off, y0 + off, off, inner, True)] if off else []
+        for i in (1, 2):
+            strips += [(x0 + off + i * s + (i - 1) * bar, y0 + off, bar, inner, True),
+                       (x0 + off, y0 + off + i * s + (i - 1) * bar, inner, bar, False)]
+        for (x, y, w, ht, turned) in strips:
+            MT.lay(p, dark, x, y, w, ht, turned=turned and dark.grain == "wood")
+        face = dark.tone(1)
+        for bx in range(3):
+            for by in range(3):
+                p.rect(*board_at(bx, by), s, s, face, p.layer("faces", z=-.95))
+        for name_ in (f"{f}{r}" for r in range(9, 0, -1) for f in TC.FILES):
+            x, y = cell(name_)
+            fx, fy = TC.xy(name_)
+            MT.lay(p, light, x, y, q, q, variant=(fx * 7 + fy * 3) % 3, L="cells", z=-.9)
         last = st["last"]
+        for name_ in st["ghosts"]:
+            # a ghost's square: the bars' own stuff, a part of the board nobody can use, ringed in dashes of light
+            x, y = cell(name_)
+            now = moving and last and last["ghost"] and last["cell"] == name_
+            fill = p.once(f"ghost{name_}", appear(.45), z=.4) if now else p.layer("ghosts", z=.4)
+            dash = p.once(f"ghostd{name_}", appear(.45), z=.45) if now else p.layer("ghostd", z=.45)
+            MT.lay(p, dark, x, y, q, q, L=fill, z=.4)
+            for i in range(2, q - 2):
+                for (gx, gy) in ((x + i, y + 2), (x + i, y + q - 3), (x + 2, y + i), (x + q - 3, y + i)):
+                    if (gx + gy) % 3 != 0:
+                        p.px(gx, gy, b["light"], dash)
         if last:
             x, y = cell(last["cell"])
-            for yy in range(y, y + c):
-                for xx in range(x, x + c):
+            for yy in range(y, y + q):
+                for xx in range(x, x + q):
                     p.px(xx, yy, f"{marks['glow']}:0.45")
-            p.box(x + 1, y + 1, c - 2, c - 2, marks["last"])
-        if not st["result"]:
-            # the eight lines a game is won on, dotted faint as a drawing draws its centre lines: all eight, whatever
-            # stands on them, so the board never singles out a line a side could still win on, or one no side can
-            for line in TT.LINES:
-                (ax, ay), (bx, by) = [(cell(q)[0] + c / 2, cell(q)[1] + c / 2) for q in (line[0], line[-1])]
-                steps_ = int(max(abs(bx - ax), abs(by - ay)))
-                for i in range(-int(c * .4), steps_ + int(c * .4), 4):
-                    p.px(ax + (bx - ax) * i / steps_, ay + (by - ay) * i / steps_, f"{b['edge']}:0.5")
-        size = c - 12
+            p.box(x + 1, y + 1, q - 2, q - 2, marks["last"])
+        size = q - 6
         men = p.layer("men", z=.7)
-        for name_, mark in st["board"].items():
+        for name_, mark in st["cells"].items():
             x, y = cell(name_)
             d = PC.pen(mark, "light" if mark == "X" else "dark", size)
-            px_, py_ = x + (c - d[1]) // 2, y + (c - d[2]) // 2
+            px_, py_ = x + (q - d[1]) // 2, y + (q - d[2]) // 2
             if last and moving and name_ == last["cell"]:
                 self.drawn_in(p, d, mark, px_, py_)
                 continue
             put(p, d, ("ttt", mark, size), px_, py_, men)
+        # the boards that are closed: washed back under the light stuff, a won one under its winner's mark drawn as
+        # large as the board, a drawn one lined across
+        claimed = last["claimed"] if last and not last["ghost"] else None
+        for (bx, by), who in st["boards"].items():
+            if not who:
+                continue
+            X, Y = board_at(bx, by)
+            now = bool(claimed and last["board"] == (bx, by))
+            L = p.once(f"closed{bx}{by}", appear(1.75), z=.85) if now and moving else p.layer("closed", z=.85)
+            for yy in range(Y, Y + s):
+                for xx in range(X, X + s):
+                    p.px(xx, yy, f"{b['light']}:0.6", L)
+            if now:
+                lx, ly = cell(last["cell"])           # the move that closed it stays clear of the wash
+                for yy in range(ly, ly + q):
+                    for xx in range(lx, lx + q):
+                        p.px(xx, yy, marks["glow"], L)
+                p.box(lx + 1, ly + 1, q - 2, q - 2, marks["last"], L)
+                d = PC.pen(last["mark"], "light" if last["mark"] == "X" else "dark", size)
+                put(p, d, ("ttt", last["mark"], size), lx + (q - d[1]) // 2, ly + (q - d[2]) // 2, L)
+            if who == "draw":
+                for k in range(-s, s, 5):
+                    for i in range(s):
+                        xx, yy = X + k + i, Y + s - 1 - i
+                        if X + 2 <= xx < X + s - 2 and Y + 2 <= yy < Y + s - 2:
+                            p.px(xx, yy, b["edge"], L)
+                continue
+            big = s - 8
+            d = PC.pen(who, "light" if who == "X" else "dark", big)
+            bL = p.once(f"claim{bx}{by}", appear(2.05), z=.9) if now and moving else p.layer("claims", z=.9)
+            put(p, d, ("ttt", "board", who, big), X + (s - d[1]) // 2, Y + (s - d[2]) // 2, bL)
+        if last and not last["ghost"] and last["small_line"]:
+            pts = [(cell(c)[0] + q / 2, cell(c)[1] + q / 2) for c in last["small_line"]]
+            self.struck(p, b, marks, pts, q * .3, 1, p.once("strike3", appear(1.5), z=.88) if moving
+                        else p.layer("strike3", z=.88))
+        if not st["result"] and st["target"] is not None:
+            X, Y = board_at(*st["target"])
+            at = 2.6 if claimed else 1.3
+            L = p.once("sent", appear(at), z=.95) if moving and last else p.layer("sent", z=.95)
+            arm = s // 3
+            corners = set()
+            for (cx, cy, sx, sy) in ((X - 2, Y - 2, 1, 1), (X + s + 1, Y - 2, -1, 1), (X - 2, Y + s + 1, 1, -1),
+                                     (X + s + 1, Y + s + 1, -1, -1)):
+                for i in range(arm):
+                    for t in (0, 1):
+                        corners |= {(cx + sx * i, cy + sy * t), (cx + sx * t, cy + sy * i)}
+            edged(p, corners, marks["last"], b["shade"], L)
         if st["line"]:
-            (ax, ay), (bx, by) = [(cell(q)[0] + c / 2, cell(q)[1] + c / 2) for q in (st["line"][0], st["line"][-1])]
-            ext = c * .3
-            span = max(abs(bx - ax), abs(by - ay))
-            ux, uy = (bx - ax) / span, (by - ay) / span
-            ax, ay, bx, by = ax - ux * ext, ay - uy * ext, bx + ux * ext, by + uy * ext
-            n = int(max(abs(bx - ax), abs(by - ay)))
-            w = 2 if small else 3
-            cells = {}
-            for i in range(n + 1):
-                x, y = round(ax + (bx - ax) * i / n), round(ay + (by - ay) * i / n)
-                for dx in range(-w, w):
-                    for dy in range(-w, w):
-                        cells[(x + dx, y + dy)] = marks["last"]
-            edge = {(x + dx, y + dy) for (x, y) in cells for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))} - set(cells)
-            L = p.once("strike", appear(1.6), z=.9) if moving else p.layer("strike", z=.9)
-            for (x, y) in edge:
-                p.px(x, y, b["shade"], L)
-            for (x, y), col in cells.items():
-                p.px(x, y, col, L)
+            pts = [(board_at(bx, by)[0] + s / 2, board_at(bx, by)[1] + s / 2) for bx, by in st["line"]]
+            self.struck(p, b, marks, pts, s * .3, 2 if small else 3,
+                        p.once("strike", appear(3.0), z=.97) if moving else p.layer("strike", z=.97))
         if last and moving:
             x, y = cell(last["cell"])
-            landing(h, p, x + c / 2, y + c / 2, c, (x0, y0, x0 + n, y0 + n), night)
-        self.labels(h, p, x0, y0, c + bar, c, TT.FILES, 3, night, small)
+            landing(h, p, x + q / 2, y + q / 2, q, (x0, y0, x0 + n, y0 + n), night)
+        k = h.ink(night)
+        t = FRAME[small]
+        foot = y0 + n
+        ly = min(foot + t + 2, h._trophy_room(p).y1 - 10)
+        for i, f in enumerate(TC.FILES):
+            x, _ = cell(f"{f}1")
+            h.say(p, x + q // 2 + 1, ly, f, k["muted"], "57", anchor="middle")
+        for r in range(1, 10):
+            _, y = cell(f"a{r}")
+            h.say(p, x0 - t - 2, y + q // 2 - 2, str(r), k["muted"], anchor="end")
+
+    @staticmethod
+    def struck(p, b, marks, pts, ext, w, L) -> None:
+        """A line struck through the centres of `pts`, run on by `ext` past each end, `w` either side of its middle,
+        edged in the board's shade."""
+        (ax, ay), (bx, by) = pts[0], pts[-1]
+        span = max(abs(bx - ax), abs(by - ay))
+        ux, uy = (bx - ax) / span, (by - ay) / span
+        ax, ay, bx, by = ax - ux * ext, ay - uy * ext, bx + ux * ext, by + uy * ext
+        n = int(max(abs(bx - ax), abs(by - ay)))
+        cells = set()
+        for i in range(n + 1):
+            x, y = round(ax + (bx - ax) * i / n), round(ay + (by - ay) * i / n)
+            for dx in range(-w, w):
+                for dy in range(-w, w):
+                    cells.add((x + dx, y + dy))
+        edge = {(x + dx, y + dy) for (x, y) in cells for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))} - cells
+        for (x, y) in edge:
+            p.px(x, y, b["shade"], L)
+        for (x, y) in cells:
+            p.px(x, y, marks["last"], L)
 
     @staticmethod
     def drawn_in(p, d: tuple, mark: str, x: int, y: int) -> None:
@@ -819,33 +736,333 @@ class TicTacToe(Game):
                     p.px(x + cx, y + cy, col, L)
 
     def count(self, h, p, st, x0, x1, y, night, small) -> int:
-        """Each side's marks left, where chess counts what each side took: a rack of five for the side that moved
-        first and four for the other, emptying as the board fills, a used place keeping an empty cell's dot, the
-        house's X on top. It counts and says nothing more: no cell a side could win on next, and no word of what
-        perfect play makes of the game."""
+        """The boards each side has won, where chess counts what each side took: each won board's mark on its side's
+        tray, both trays as long, the house's X on top; and across the heading where the ghosts stand and how many
+        boards were drawn. It counts and says nothing more."""
         k = h.ink(night)
-        h.heading(p, x0, y, "marks left", night)
+        h.heading(p, x0, y, "boards won", night)
+        said = ([f"ghost{'s' if len(st['ghosts']) > 1 else ''} " + " · ".join(st["ghosts"])] if st["ghosts"] else [])
+        said += [f"{st['drawn']} drawn"] if st["drawn"] else []
+        if said:
+            h.say(p, x1, y, "  ·  ".join(said).upper(), k["muted"], anchor="end", room=(x1 - x0) // 2)
         y += 9
         b = h.game_board(night)
-        label_w = max(measure(f"{TT.mark_of(s)} · {'house' if s == HOUSE else 'github'}".upper(), "35")
+        label_w = max(measure(f"{TC.mark_of(s)} · {'house' if s == HOUSE else 'github'}".upper(), "35")
                       for s in (HOUSE, GITHUB)) + 6
-        most, pitch = max(st["each"].values()), 12
+        most, pitch = max(1, *st["won"].values()), 12
         for side in (HOUSE, GITHUB):
-            mark = TT.mark_of(side)
+            mark = TC.mark_of(side)
             h.say(p, x0, y + 4, f"{mark} · {'house' if side == HOUSE else 'github'}".upper(), k["muted"])
             px_ = x0 + label_w
-            left = st["left"][side]
-            h.tray(p, px_ - 2, y - 1, st["each"][side] * pitch + 2, 13, night)
+            won = st["won"][side]
+            h.tray(p, px_ - 2, y - 1, most * pitch + 2, 13, night)
             d = PC.pen(mark, "light" if mark == "X" else "dark", 9)
-            for i in range(st["each"][side]):
+            for i in range(most):
                 cx = px_ + i * pitch
-                if i < left:
+                if i < won:
                     put(p, d, ("ttt", "mini", mark), cx, y + 1)
                 else:
                     p.px(cx + d[1] // 2, y + 5, b["edge"])
-            h.chip(p, px_ + most * pitch + 6, y + 1, str(left), night)
+            h.chip(p, px_ + most * pitch + 6, y + 1, str(won), night)
             y += 15
         return y - 3
 
 
-GAMES = {"chess": Chess(), "checkers": Checkers(), "connectfour": ConnectFour(), "tictactoe": TicTacToe()}
+# =========================================================================== pentago
+# A quarter turn written small, seven pixels high: a circular arrow, its head the way the quarter went.
+TURNS = {"cw": ["..###..", ".#...#.", "#...###", "#....#.", "#......", ".#...#.", "..###.."],
+         "acw": ["..###..", ".#...#.", "###...#", ".#....#", "......#", ".#...#.", "..###.."]}
+
+
+def turning(cx: float, cy: float, way: str, at: float, steps_: int = 6) -> str:
+    """A quarter turning its quarter turn about (cx, cy) in discrete steps from `at` seconds, from where it stood when
+    its marble went in to where it rests, which is where it stands without SMIL and in the still file."""
+    back = -90 if way == "cw" else 90
+    angles = [back] + [round(back * (1 - i / steps_)) for i in range(steps_ + 1)]
+    times = [0] + [at + .075 * i for i in range(steps_ + 1)]
+    dur = times[-1] + .05
+    values = ";".join(f"{a} {_n(cx)} {_n(cy)}" for a in angles)
+    keys = ";".join(_n(round(t / dur, 3)) for t in times)
+    return (f'<animateTransform attributeName="transform" type="rotate" values="{values}" keyTimes="{keys}" '
+            f'dur="{_n(round(dur, 3))}s" calcMode="discrete" fill="freeze"/>')
+
+
+def _n(v: float) -> str:
+    return f"{v:g}"
+
+
+class Pentago(Game):
+    KIND, LABEL = "pentago", "pentago"
+
+    def state(self, d: dict) -> dict:
+        return PG.state(d)
+
+    def side_name(self, side: str) -> str:
+        return PG.COLOUR[side]
+
+    def first(self, st: dict) -> str:
+        return "drawn by the Arbiter"
+
+    def notation(self, st: dict) -> tuple:
+        if st["last"]:
+            return super().notation(st)
+        return f"{PG.GHOST}.", "?", st["places"], f"{name(st['places'])} sets the first ghost"
+
+    def medallion(self, h, p, st, cx, cy, r, side, night) -> None:
+        d = PC.disc(PG.material_of(side), r * .66)
+        put(p, d, ("pg", "medal", r, side), cx - d[1] // 2, cy - d[2] // 2)
+
+    @staticmethod
+    def geometry(box: tuple, small: bool) -> dict:
+        x0, y0, n = box
+        gap = 5 if small else 6
+        pitch = 20 if small else 25
+        m = 6 if small else 7
+        q = 3 * pitch + 2 * m
+        off = (n - 2 * q - gap) // 2
+        return {"p": pitch, "m": m, "q": q, "gap": gap, "x": x0 + off, "y": y0 + off, "r": pitch * .37}
+
+    @staticmethod
+    def quarter_at(g: dict, qk: str) -> tuple:
+        qx, qy = PG.QUARTERS[qk]
+        return g["x"] + (0 if qx == 0 else g["q"] + g["gap"]), g["y"] + (0 if qy == 3 else g["q"] + g["gap"])
+
+    def centre(self, g: dict, cell: str) -> tuple:
+        x, y = PG.xy(cell)
+        qk = PG.quarter_of(cell)
+        qx, qy = PG.QUARTERS[qk]
+        X, Y = self.quarter_at(g, qk)
+        return X + g["m"] + (x - qx + .5) * g["p"], Y + g["m"] + (2 - (y - qy) + .5) * g["p"]
+
+    def ghost(self, p, b, r: float, key: str) -> tuple:
+        """A ghost marble of radius `r`, nobody's: the board's dark stuff lit as a coin is, its rim rolling off into
+        shade, a ring of dashes of the light stuff round its face, outlined in the board's shade. Drawn once in the
+        file. Its key and size."""
+        n = math.ceil(2 * r)
+        k = ("pgghost", key, n)
+        if k not in p.syms:
+            dark = b["dark_stuff"]
+            c = n / 2
+            body = {}
+            for y in range(n):
+                for x in range(n):
+                    dx, dy = (x + .5 - c) / r, (y + .5 - c) / r
+                    d = math.hypot(dx, dy)
+                    if d > 1:
+                        continue
+                    lit = -(dx + dy) * .7
+                    tone = (dark.tone(-2) if d > .86 and lit < 0 else dark.tone(1) if d > .86
+                            else dark.tone(1) if lit > .35 else dark.base)
+                    if abs(d - .62) < .1 and (x + y) % 3 != 0:
+                        tone = b["light"]
+                    body[(x + 1, y + 1)] = tone
+            rim = {(x + dx, y + dy) for (x, y) in body for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))} - set(body)
+            p.symbol(k, {**{xy: b["shade"] for xy in rim}, **body})
+        return k, n + 2
+
+    def board(self, h, p, st, box, night, moving, small) -> None:
+        g = self.geometry(box, small)
+        b = h.game_board(night)
+        marks = h.game_marks(night)
+        q, P, m, r = g["q"], g["p"], g["m"], g["r"]
+        last = st["last"]
+        played = bool(last and not last["ghost"])
+        tq = last["quarter"] if played and last["turned"] else None
+        rd = r - .2
+        gk, gn = self.ghost(p, b, rd, f"{b['dark']}{b['light']}")
+        for qk in PG.QUARTERS:
+            X, Y = self.quarter_at(g, qk)
+            turn = turning(X + q / 2, Y + q / 2, last["way"], 1.05) if qk == tq and moving else ""
+
+            def L(name_: str, z: float, also: str = "") -> str:
+                if turn or also:
+                    return p.once(f"{name_}{qk}", also + turn, z=z)
+                return p.layer(f"{name_}", z=z)
+            # its shadow, cast down and to the right, holding still while the quarter turns over it
+            for yy in range(Y + 2, Y + q + 3):
+                for xx in range(X + 2, X + q + 3):
+                    if xx >= X + q or yy >= Y + q:
+                        p.px(xx, yy, f"{b['shade']}:{'0.5' if night else '0.3'}")
+            MT.lay(p, b["light_stuff"], X + 1, Y + 1, q - 2, q - 2, L=L("under", -.95), z=-.95)
+            for cell in PG.quarter_cells(qk):
+                v = st["cells"].get(cell)
+                if not v:
+                    continue
+                cx, cy = self.centre(g, cell)
+                new = moving and last and cell == last["landed"]
+                layer = L("new", .25, appear(.45)) if new else L("marbles", .2)
+                if v == PG.GHOST:
+                    p.use(gk, round(cx - gn / 2), round(cy - gn / 2), layer)
+                    continue
+                d = PC.disc("light" if v == "W" else "dark", rd)
+                put(p, d, ("pg", "marble", rd, v), round(cx - d[1] / 2), round(cy - d[2] / 2), layer)
+            self.face(p, b["dark_stuff"], g, X, Y, L("plate", .5))
+            plate = L("edge", .52)             # its edge over its face: lit along its top and left, shaded below
+            p.hline(X, X + q, Y, b["dark_stuff"].tone(1), plate)
+            p.vline(X, Y, Y + q, b["dark_stuff"].tone(1), plate)
+            p.hline(X, X + q, Y + q - 1, b["shade"], plate)
+            p.vline(X + q - 1, Y, Y + q, b["shade"], plate)
+            p.box(X - 1, Y - 1, q + 2, q + 2, b["shade"], plate)
+            if last and PG.quarter_of(last["landed"]) == qk:
+                cx, cy = self.centre(g, last["landed"])
+                ring = L("ring", .55, appear(.75)) if moving else L("ring", .55)
+                edged(p, ring_cells(cx, cy, r + 1.2) + ring_cells(cx, cy, r + 2.2), marks["last"], b["shade"], ring)
+        if tq:
+            X, Y = self.quarter_at(g, tq)
+            self.arrow(p, marks["last"], b["shade"], X, Y, q, tq, last["way"], m,
+                       p.once("turned", appear(1.05), z=.6) if moving else p.layer("turned", z=.6))
+        if st["line"]:
+            pts = [self.centre(g, c) for c in st["line"]]
+            at = 1.6 if tq else 1.2
+            Lf = p.once("five", appear(at), z=.56) if moving else p.layer("five", z=.56)
+            joined = set()
+            for (cx, cy) in pts:
+                joined |= set(ring_cells(cx, cy, r + 1.2) + ring_cells(cx, cy, r + 2.2))
+            (ax, ay), (bx, by) = pts[0], pts[-1]
+            n = int(max(abs(bx - ax), abs(by - ay)))
+            for i in range(n + 1):
+                x, y = round(ax + (bx - ax) * i / n), round(ay + (by - ay) * i / n)
+                joined |= {(x - 1, y - 1), (x, y - 1), (x - 1, y), (x, y)}
+            edged(p, joined, marks["last"], b["shade"], Lf)
+        k = h.ink(night)
+        t = FRAME[small]
+        ly = min(g["y"] + 2 * q + g["gap"] + t + 2, h._trophy_room(p).y1 - 10)
+        for f in PG.FILES:
+            cx, _ = self.centre(g, f"{f}1")
+            h.say(p, round(cx) + 1, ly, f, k["muted"], "57", anchor="middle")
+        for row in range(1, 7):
+            _, cy = self.centre(g, f"a{row}")
+            h.say(p, g["x"] - t - 2, round(cy) - 2, str(row), k["muted"], anchor="end")
+
+    @staticmethod
+    def face(p, stuff: MT.Stuff, g: dict, X: int, Y: int, L: str) -> None:
+        """A quarter's face: a cell of the stuff round each hole, drawn once in each of three variants and set at
+        every hole, and the margins round them laid in the stuff."""
+        P, m, r = g["p"], g["m"], g["r"]
+        for v in range(3):
+            key = ("pgcell", stuff.key, P, v)
+            if key in p.syms:
+                continue
+            cells = {}
+            c0 = P / 2
+            for (x, y), col in MT.surface(stuff, P, P, v).items():
+                d = math.hypot(x + .5 - c0, y + .5 - c0)
+                if d < r:
+                    continue
+                if d < r + 1.2:
+                    away = (x + .5 - c0) * -.7 + (y + .5 - c0) * -.7 > 0
+                    col = stuff.tone(-3) if away else stuff.tone(1)
+                cells[(x, y)] = col
+            p.symbol(key, cells)
+        for i in range(3):
+            for j in range(3):
+                p.use(("pgcell", stuff.key, P, (i * 2 + j) % 3), X + m + i * P, Y + m + j * P, L)
+        q = g["q"]
+        for (x, y, ww, hh, turned) in ((X, Y, q, m, False), (X, Y + q - m, q, m, False),
+                                       (X, Y + m, m, q - 2 * m, True), (X + q - m, Y + m, m, q - 2 * m, True)):
+            MT.lay(p, stuff, x, y, ww, hh, turned=turned and stuff.grain == "wood", L=L)
+
+    @staticmethod
+    def arrow(p, colour: str, edge: str, X: int, Y: int, q: int, qk: str, way: str, m: int, L: str) -> None:
+        """The way the last quarter turned: an arrow two pixels wide round its outer corner, inside the plate's
+        margin, from the middle of one outer edge round the corner to the middle of the other, its head the way the
+        quarter went."""
+        inset = max(2, m // 2 - 1)
+        sx = 1 if qk in ("ul", "ll") else -1
+        sy = 1 if qk in ("ul", "ur") else -1
+        cx = X + inset if sx > 0 else X + q - 2 - inset
+        cy = Y + inset if sy > 0 else Y + q - 2 - inset
+        half = q // 2 - inset
+        down = [(cx, cy + sy * i) for i in range(half)]          # along the outer side edge
+        across = [(cx + sx * i, cy) for i in range(half)]        # along the outer top or bottom edge
+        path = (down[::-1] + across[1:]) if (qk in ("ul", "lr")) == (way == "cw") else (across[::-1] + down[1:])
+        cells = {(x + dx, y + dy) for (x, y) in path[:-3] for dx in (0, 1) for dy in (0, 1)}
+        (ex, ey), (fx_, fy_) = path[-1], path[-2]
+        ux, uy = ex - fx_, ey - fy_
+        for i in range(4):                       # the head, widest at its back, its tip at the path's end
+            bx, by = ex - ux * (3 - i), ey - uy * (3 - i)
+            w = 3 - i
+            for s_ in range(-w, w + 2):          # across the shaft's two pixels, and as far again either side
+                cells.add((bx + (s_ if uy else 0), by + (s_ if ux else 0)))
+        edged(p, cells, colour, edge, L)
+
+    def glyph(self, h, p, st, side, x, y, scale, night) -> int:
+        """The marble a move is set with, set before its hole."""
+        r = 3.5 if scale > 1 else 2.5
+        d = PC.disc(PG.material_of(side), r)
+        put(p, d, ("pg", "glyph", r, side), x, y + (7 * scale - d[2]) // 2)
+        return d[1] + 2
+
+    def glyph_width(self, scale: int) -> int:
+        return (9 if scale > 1 else 7) + 2
+
+    def write(self, h, p, st, side, move, x, y, scale, night, title=False) -> int:
+        """A move as the sheet writes it: the marble's colour, its hole, and the quarter turn after it, a circular
+        arrow and the quarter's initials; a ghost's, the ghost and its hole."""
+        k = h.ink(night)
+        x0 = x
+        mv = PG.parse(move)
+        if mv["quarter"] is None and not mv["won"]:
+            b = h.game_board(night)
+            rr = 3.5 if scale > 1 else 2.5
+            gk, gn = self.ghost(p, b, rr, f"{b['dark']}{b['light']}")
+            p.use(gk, x, y + (7 * scale - gn) // 2)
+            x += gn + 2
+        else:
+            x += self.glyph(h, p, st, side, x, y, scale, night)
+
+        def letters(s: str, at: int) -> int:
+            if title:
+                return h.game_title(p, at, y, fold(s, "57"), night, scale)
+            return h.say(p, at, y, s, k["body"], "57")
+        x += letters(mv["cell"] + ("#" if mv["won"] and not mv["quarter"] else ""), x)
+        if mv["quarter"]:
+            x += 2 * scale
+            p.sprite(x, y, TURNS[mv["way"]], {"#": k["title"] if title else k["body"]}, s=scale)
+            x += 7 * scale + 1 * scale
+            x += letters(mv["quarter"].upper() + ("#" if mv["won"] else ""), x)
+        return x - x0
+
+    def written(self, move: str, scale: int) -> int:
+        mv = PG.parse(move)
+        w = self.glyph_width(scale) + measure(fold(mv["cell"] + ("#" if mv["won"] and not mv["quarter"] else ""),
+                                                   "57"), "57", scale)
+        if mv["quarter"]:
+            w += 2 * scale + 8 * scale + measure(fold(mv["quarter"].upper() + ("#" if mv["won"] else ""), "57"),
+                                                 "57", scale)
+        return w
+
+    def count(self, h, p, st, x0, x1, y, night, small) -> int:
+        """Each side's marbles left, a rack of seventeen emptying as the board fills, the house's White first; and
+        across the heading where the ghosts stand now."""
+        k = h.ink(night)
+        h.heading(p, x0, y, "marbles left", night)
+        if st["ghosts"]:
+            said = f"ghost{'s' if len(st['ghosts']) > 1 else ''} " + " · ".join(st["ghosts"])
+            h.say(p, x1, y, said.upper(), k["muted"], anchor="end", room=(x1 - x0) // 2)
+        y += 9
+        b = h.game_board(night)
+        label_w = max(measure(f"{PG.COLOUR[s]} · {'house' if s == HOUSE else 'github'}".upper(), "35")
+                      for s in (HOUSE, GITHUB)) + 6
+        for side in (HOUSE, GITHUB):
+            mat = PG.material_of(side)
+            h.say(p, x0, y + 4, f"{PG.COLOUR[side]} · {'house' if side == HOUSE else 'github'}".upper(), k["muted"])
+            px_ = x0 + label_w
+            left = st["left"][side]
+            chip = measure(str(left), "35") + 8
+            room = x1 - px_ - chip - 6
+            pitch = max(3, min(7, (room - 4) // PG.EACH))
+            h.tray(p, px_ - 2, y - 1, PG.EACH * pitch + 4, 13, night)
+            d = PC.disc(mat, 2.5 if pitch >= 6 else 2)
+            for i in range(PG.EACH):
+                cx = px_ + i * pitch
+                if i < left:
+                    put(p, d, ("pg", "rack", pitch, mat), cx, y + 5 - d[2] // 2 + 1)
+                else:
+                    p.px(cx + d[1] // 2, y + 5, b["edge"])
+            h.chip(p, px_ + PG.EACH * pitch + 6, y + 1, str(left), night)
+            y += 15
+        return y - 3
+
+
+GAMES = {"chess": Chess(), "checkers": Checkers(), "pentago": Pentago(), "tictac": TicTac()}

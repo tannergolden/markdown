@@ -2,13 +2,13 @@
 # SPDX-License-Identifier: MIT
 """What the Hall of Fame of all four games is drawn from: the record the profile's engines hand over, checked and read.
 
-Every game on @tannergolden's profile, Chess, Checkers, Connect Four and Tic-Tac-Toe, writes the same element into
+Every game on @tannergolden's profile, Chess, Checkers, Pentago and Tic-Tac, writes the same element into
 the page's settings after each move: `hall-of-fame`, recomputed from all four games' state. It carries the series of
 each game, the leading winners across all four, and the leaderboard, and every field is checked before it is drawn,
 since a login ends up in the README. A field YAML reads as something else, a number for a login or a list for a
 count, is turned away like any other mistake, and every number has a ceiling the sheets have room to letter.
 
-The data lists a player's wins one count to a game in tier order, Tic-Tac-Toe first (`GAMES`), as the engines have
+The data lists a player's wins one count to a game in tier order, Tic-Tac first (`GAMES`), as the engines have
 always written them; everything a reader sees lists the games Chess first (`ORDER`), each count read by its game.
 
 Its rows read as chess-hall's do, a list of wins in place of one count. A row may carry its player's account ID as
@@ -23,13 +23,13 @@ import re
 from ..chess.game import (ACCOUNT, DATE, DAYS, DEPTH, ID, LEADERS, LOGIN, MOST, OWNER, PEOPLE, TALLY, account,
                           initials, named, shown)
 
-# The four games in tier order, from a game a child solves to one nobody has: the order the data lists a player's
-# wins in, one count to a game.
-GAMES = ("tictactoe", "connectfour", "checkers", "chess")
+# The four games in tier order, from the lightest to the deepest: the order the data lists a player's wins in, one
+# count to a game.
+GAMES = ("tictac", "pentago", "checkers", "chess")
 # The same four in the order a reader meets them, everywhere the Hall lists them: its series, the wins by each winner,
 # the leaderboard's columns and the words for anyone who cannot see it.
-ORDER = ("chess", "checkers", "connectfour", "tictactoe")
-TITLES = {"tictactoe": "Tic-Tac-Toe", "connectfour": "Connect Four", "checkers": "Checkers", "chess": "Chess"}
+ORDER = ("chess", "checkers", "pentago", "tictac")
+TITLES = {"tictac": "Tic-Tac", "pentago": "Pentago", "checkers": "Checkers", "chess": "Chess"}
 SERIES = ("games", "house", "github", "draws")  # a game's series: the games finished, each side's wins, the draws
 
 
@@ -166,7 +166,7 @@ def listed(words: list[str], last: str = "and") -> str:
 
 def in_games(by: dict) -> str:
     """A winner's wins in words, game by game in the order a reader meets them, the games they have won in alone:
-    5 in Chess and 4 in Tic-Tac-Toe."""
+    5 in Chess and 4 in Tic-Tac."""
     return listed([f"{by[game]} in {TITLES[game]}" for game in ORDER if by[game]])
 
 

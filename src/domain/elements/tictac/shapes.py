@@ -5,7 +5,8 @@
 A mark is its pen strokes, in the order a hand draws them: the X's falling stroke and then its rising one, the O
 from the top round to the left and back, a little past where it began, so the last mark drawing itself is drawn as
 anyone would draw it. A skin decides what the strokes are made of: the house's X is drawn in outline and shaded, as
-chess's white pieces are, GitHub's O in solid ink, as its black ones.
+chess's white pieces are, GitHub's O in solid ink, as its black ones. The same strokes draw a square's mark and,
+as large as the board, the mark of a board won.
 """
 from __future__ import annotations
 

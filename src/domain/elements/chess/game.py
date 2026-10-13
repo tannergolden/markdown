@@ -58,7 +58,7 @@ LINE = re.compile(r"[^<>|\n\r]{1,400}")
 # list's item, a link's definition, or a rule, a block that could run on over the fold's end and the marker under it.
 BLOCK = re.compile(r"\s|```|~~~|#{1,6}(?:\s|$)|>|[-*+](?:\s|$)|[0-9]+[.)](?:\s|$)|\[[^\]]*\]:|[-=*_\s]+$")
 # A move's title, set in bold in the README, which a space at either end would leave as plain asterisks: up to 100
-# letters, room for Tic-Tac-Toe to name every move apart from every other in plain words.
+# letters, room for Tic-Tac to name every move apart from every other in plain words.
 TITLE = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9 ,.'!-]{0,98}[A-Za-z0-9,.'!-])?")
 WORDS = re.compile(r"[A-Za-z][A-Za-z0-9 ,.'-]{0,79}")
 EMOJI = re.compile("[←-⯿\U0001f000-\U0001faff‍️]{1,8}")
@@ -177,9 +177,10 @@ def check_lines(d: dict) -> list[str]:
     return errors
 
 
-def check_end(d: dict, moved: str, ends: dict[str, bool], offered: int) -> list[str]:
+def check_end(d: dict, moved: str | tuple[str, ...], ends: dict[str, bool], offered: int) -> list[str]:
     """What a board's `result` and `next` get wrong. How a game ended is one of `ends`, each with a winner or
-    drawn, and only the side that made the last move (`moved`) can have won it; the day the fresh board comes is a
+    drawn, and only the side that made the last move (`moved`) can have won it, or in a game whose last move can win
+    it for either side, as a Pentago turn can, either of the sides `moved` names; the day the fresh board comes is a
     finished board's alone; and a finished board offers nothing to play, where its data lists `offered` moves."""
     errors = []
     result = d.get("result")
@@ -192,7 +193,7 @@ def check_end(d: dict, moved: str, ends: dict[str, bool], offered: int) -> list[
             errors.append(f"result: a game ended by {result['how']} has a winner")
         elif not ends[result["how"]] and result["winner"] is not None:
             errors.append(f"result: a game ended by {result['how']} is drawn, its winner null")
-        elif result["winner"] not in (None, moved):
+        elif result["winner"] not in (None, *((moved,) if isinstance(moved, str) else moved)):
             errors.append(f"result: the winner is the side that made the last move, {moved}")
         if offered:
             errors.append("moves: a finished board offers no move, since nothing is played while it is up")

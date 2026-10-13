@@ -99,13 +99,13 @@ def count(h, p, x: int, mid: int, s: str, size: tuple, night: bool, anchor: str 
 
 # --------------------------------------------------------------------------- a game's mark
 def piece(p, game: str, material: str, x: int, y: int, L: str = "base") -> tuple:
-    """One of a game's pieces at the Hall's size, its foot on row `y + 11`: a king, a man, a disc or a pen's
+    """One of a game's pieces at the Hall's size, its foot on row `y + 11`: a king, a man, a marble or a pen's
     mark. Returns its drawing's width."""
     if game == "chess":
         d = PC.chessman("king", "mini", material)
     elif game == "checkers":
         d = PC.man(material, 4, 2, 2)
-    elif game == "connectfour":
+    elif game == "pentago":
         d = PC.disc(material, 3.5)
     else:
         mark = "X" if material == "light" else "O"

@@ -13,8 +13,8 @@ sprite, and an ebony piece catches the lamp along its lit edge, so it holds on a
              as a column lit from the left; the knight's head the same way, its eye cut dark
   men        a checkers man seen from a little above: its face an ellipse, its milled side a band under it, a
              groove round its face; a king two men stacked with a crown on its face
-  discs      Connect Four's discs face on, a groove round each face, lit as a coin is
-  marks      Tic-Tac-Toe's X and O as the pen draws them, strokes with a body, lit as a rope is
+  discs      Pentago's marbles face on, as its holes show them, a groove round each face, lit as a coin is
+  marks      Tic-Tac's X and O as the pen draws them, strokes with a body, lit as a rope is
 
 Every drawing here is a map of (x, y) to a colour, its top-left at (0, 0), made once for each size and material
 and kept: a sheet stamps it wherever it stands. Nothing here belongs to one set.
@@ -426,8 +426,8 @@ def man(material: str, rx: int, ry: int, t: int, king: bool = False) -> tuple:
 # --------------------------------------------------------------------------- the discs
 @lru_cache(maxsize=None)
 def disc(material: str, r: float) -> tuple:
-    """A Connect Four disc of radius `r` face on, in `material`: lit as a coin, brighter toward the lamp, its rim
-    rolling off into shade, a groove round its face. Its cells, width and height, outlined."""
+    """A Pentago marble of radius `r` face on, as its hole shows it, in `material`: lit as a coin, brighter toward
+    the lamp, its rim rolling off into shade, a groove round its face. Its cells, width and height, outlined."""
     ramp = RAMPS[material]
     dark = material == "dark"
     n = math.ceil(2 * r)

@@ -52,6 +52,12 @@ def measure(sk, W: float, title: str, desc: str):
     return cv
 
 
+def stage(st: dict) -> str:
+    """Where the game stands, as its band says it: the move it is on, or a stage before its first move, such as the
+    ghosts a game under the Ghost Rule opens with."""
+    return st.get("stage") or f"move {st['move']}"
+
+
 def board_sheet(sk, g, st: dict, title: str, desc: str, variant: str = "wide") -> str:
     still = "" if M.MOTION else " still"
     if variant == "wide":
@@ -61,7 +67,7 @@ def board_sheet(sk, g, st: dict, title: str, desc: str, variant: str = "wide") -
         end = P.panel(measure(sk, W, title, desc), sk, g, st, px0, px1, y0 + 1)
         H = max(y0 + n + 22, end + 8) + PAD
         cv = sk.new(W, H, title, desc, f"elements {g.KIND} wide", still)
-        sk.frame(cv, W, H, g.LABEL, g.band_mark, f"game {st['game']}  ·  move {st['move']}", f"@{OWNER} vs. github",
+        sk.frame(cv, W, H, g.LABEL, g.band_mark, f"game {st['game']}  ·  {stage(st)}", f"@{OWNER} vs. github",
                  plain=[g.room(x0, y0, n)])
         g.board(cv, sk, st, x0, y0, n)
         cv.add(sk.vrule(px0 - 16, y0, y0 + n))
@@ -74,7 +80,7 @@ def board_sheet(sk, g, st: dict, title: str, desc: str, variant: str = "wide") -
     end = P.panel(measure(sk, W, title, desc), sk, g, st, px0, px1, top, small=True)
     H = end + 8 + PAD
     cv = sk.new(W, H, title, desc, f"elements {g.KIND} narrow", still)
-    sk.frame(cv, W, H, g.LABEL, g.band_mark, f"move {st['move']}", plain=[g.room(x0, y0, n)])
+    sk.frame(cv, W, H, g.LABEL, g.band_mark, stage(st), plain=[g.room(x0, y0, n)])
     g.board(cv, sk, st, x0, y0, n, small=True)
     P.panel(cv, sk, g, st, px0, px1, top, small=True)
     return cv.svg()
