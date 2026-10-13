@@ -224,11 +224,15 @@ class Settings(unittest.TestCase):
             with self.assertRaisesRegex(ED.ElementsError, words):
                 ED.check(bad)
 
-    def test_a_retired_kind_is_named_precisely(self):
-        for eid, kind, release in (("layout", "plan", "1.3.0"), ("stamp", "seal", "1.4.0")):
+    def test_a_retired_kind_is_named_precisely_and_so_is_the_kind_that_took_its_place(self):
+        # Tic-Tac-Toe and Connect Four left the profile in 1.14.0, for Tic-Tac and Pentago under the Ghost Rule
+        for eid, kind, release, after in (("layout", "plan", "1.3.0", ""), ("stamp", "seal", "1.4.0", ""),
+                                          ("tictactoe", "tictactoe", "1.14.0", ", and tictac took its place"),
+                                          ("four", "connectfour", "1.14.0", ", and pentago took its place")):
             errors = ED.validate({eid: {"kind": kind, "measure": {}}}, {})
-            self.assertEqual(len(errors), 1, kind)
-            self.assertIn(f"{kind} element was retired in banners v{release}", errors[0])
+            self.assertEqual(errors, [f"{eid}: the {kind} element was retired in banners v{release}{after}; take it"
+                                      " out of the settings"], kind)
+            self.assertNotIn(kind, E.KINDS)
 
     def test_bad_data_is_named_precisely(self):
         broken = dict(SECTION)

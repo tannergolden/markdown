@@ -571,8 +571,8 @@ class Badges(unittest.TestCase):
 class Games(unittest.TestCase):
     def test_a_games_sheet_is_laid_of_clear_planks_with_no_knot_on_a_word_or_in_a_hole(self):
         # A knot sat on the due date in a game's panel and showed through an empty hole of Connect Four's board
-        # like a disc; a header's planks keep theirs.
-        for kind in ("connectfour", "hall-of-fame"):
+        # like a disc, as it would through a Pentago quarter's like a marble; a header's planks keep theirs.
+        for kind in ("pentago", "hall-of-fame"):
             for theme, knot in (("day", OAK[2]), ("dark", X["knot_night"])):
                 svg = HELD.game(kind, GAMES[kind], E.THEMES[theme], "still")
                 planks = re.search(r'<pattern id="gsa".*?</pattern>', svg).group(0)

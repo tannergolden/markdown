@@ -9,9 +9,9 @@ block; and nothing leaves the card or the border. Each winner on the podium stan
 line of a place after it ends short of its wins in each game and of its badge, and a name that fitted is drawn as it
 was. The still files are the moving ones at rest: every run stands where the motion leaves it.
 
-The games stand Chess first, then Checkers, Connect Four and Tic-Tac-Toe, in the series and beside every winner's
-wins, each count its own game's though the data lists them in tier order. Every game is named by its own mark, its
-two pieces, the house's first: the white king, the white man and the white disc before the black, X before O. Where
+The games stand Chess first, then Checkers, Pentago and Tic-Tac, in the series and beside every winner's wins,
+each count its own game's though the data lists them in tier order. Every game is named by its own mark, its two
+pieces, the house's first: the white king, the white man and the white marble before the black, X before O. Where
 the room is short, a mark gives way before its count does.
 
 The data reaches the contract's limits: logins of 39 letters and names of 40, every count at 999,999, so each total
@@ -69,13 +69,13 @@ HALLS = {
                         ["tokafor", [0, 0, 0, 2], "4 Sep", 6], ["jhalloran", [1, 0, 0, 0], "8 Oct", 3]],
                        {"christopher-alexander-montgomer": "Christopher Alexander Montgomery",
                         "imvale": "Maximilian Wolfgang Wellington-Smythe"},
-                       {"tictactoe": [9, 4, 2, 3], "connectfour": [3, 1, 2, 0], "checkers": [5, 2, 2, 1],
+                       {"tictac": [9, 4, 2, 3], "pentago": [3, 1, 2, 0], "checkers": [5, 2, 2, 1],
                         "chess": [12, 5, 6, 1]}),
 }
 PEOPLE = hall([["tannergolden", [4, 1, 2, 5], "2 Oct", 29], ["imvale", [1, 1, 0, 2], "19 Sep", 7],
                ["tokafor", [0, 1, 1, 1], "27 Sep", 9], ["wrencastellan", [1, 0, 1, 0], "4 Sep", 6],
                ["jhalloran", [0, 0, 0, 1], "8 Oct", 3]], {"imvale": "Imogen Vale", "tokafor": "Tomas Okafor"},
-              {"tictactoe": [9, 4, 2, 3], "connectfour": [3, 1, 2, 0], "checkers": [5, 2, 2, 1],
+              {"tictac": [9, 4, 2, 3], "pentago": [3, 1, 2, 0], "checkers": [5, 2, 2, 1],
                "chess": [12, 5, 6, 1]})
 EMPTY = hall([], series={g: [0, 0, 0, 0] for g in H.GAMES})
 
@@ -270,12 +270,12 @@ class Series(unittest.TestCase):
                     for title in [H.TITLES[g] for g in H.ORDER] + (["all four games"] if variant == "wide" else []):
                         self.assertEqual(len([r for r in runs if r.s.upper() == title.upper()]), 1, title)
                     tops = [one(runs, H.TITLES[g]).top for g in H.ORDER]
-                    self.assertEqual(tops, sorted(tops), "Chess, Checkers, Connect Four, Tic-Tac-Toe, top to bottom")
+                    self.assertEqual(tops, sorted(tops), "Chess, Checkers, Pentago, Tic-Tac, top to bottom")
 
     def test_a_series_that_fits_is_set_as_it_was(self):
         runs = drawn(PEOPLE, STANDARD).runs
         self.assertEqual([r.size for r in runs if r.s == "12"], [26, 26, 20], "the totals, big, and the house's wins")
-        self.assertEqual(one(runs, "tic-tac-toe").size, 10)
+        self.assertEqual(one(runs, "tic-tac").size, 10)
         self.assertEqual(one(runs, "9 games  ·  3 drawn").size, 6.5)
         phone = drawn(PEOPLE, STANDARD, "narrow").runs
         self.assertEqual([r.size for r in phone if r.s == "12"][:2], [24, 24])
@@ -321,7 +321,7 @@ class Podium(unittest.TestCase):
         # An empty Hall is the first one the profile shows, so every word on it is whole, a phone's narrow places
         # setting a line on two rather than cutting it short.
         first = hall([["tannergolden", [1, 0, 0, 0], "12 Oct", 1]],
-                     series={**EMPTY["series"], "tictactoe": [1, 1, 0, 0]})
+                     series={**EMPTY["series"], "tictac": [1, 1, 0, 0]})
         for d in (EMPTY, first):
             for tone in TONES:
                 for variant in SHEETS:
@@ -385,7 +385,7 @@ class Places(unittest.TestCase):
 
 class Marks(unittest.TestCase):
     """Every game is named by its own mark, its two pieces, the house's on the left in front of GitHub's: the white
-    king, the white man and the white disc before the black, X before O, each side's own whoever moved first. The
+    king, the white man and the white marble before the black, X before O, each side's own whoever moved first. The
     same mark heads its row of the series and stands beside every winner's wins in that game, Chess first, each count
     its own game's. Where the room is short the mark gives way before its count does."""
 

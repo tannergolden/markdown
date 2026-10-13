@@ -756,6 +756,15 @@ class Finished(unittest.TestCase):
                     "the winner is the side that made the last move, house")
         turned_away({**FOOL, "result": {"winner": "house", "how": "checkmate"}},
                     "the winner is the side that made the last move, github")
+        # every game's end is checked as chess's is: a game whose last move can win it for either side, as a Pentago
+        # turn can, names both sides, and either may have won it; a chess move wins it for its own side alone
+        given = {**SCHOLAR, "result": {"winner": "github", "how": "checkmate"}}
+        self.assertEqual(C.game.check_end(given, ("house", "github"), C.game.ENDS, 0), [])
+        self.assertEqual(C.game.check_end(given, "house", C.game.ENDS, 0),
+                         ["result: the winner is the side that made the last move, house"])
+        self.assertEqual(C.game.check_end({**SCHOLAR, "result": {"winner": None, "how": "checkmate"}},
+                                          ("house", "github"), C.game.ENDS, 0),
+                         ["result: a game ended by checkmate has a winner"])
         turned_away({**SCHOLAR, "moves": GAME["moves"]}, "a finished board offers no move")
         self.assertEqual(C.check({**SCHOLAR, "moves": []}), [])
         for day in ("32 Oct", "14 Octo", 14, True):

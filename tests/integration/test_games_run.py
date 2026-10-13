@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: MIT
 """The games on @tannergolden's profile, redrawn through the command line run after run as its clock redraws them,
 leave exactly the files the README shows, so nothing an old board drew is ever left behind. A board's files are named
-for the board, never for its position, so a move, a finished game and a fresh board each redraw the same files in
-place. The Hall of Fame draws a badge for each winner it shows, so a Hall that shows fewer winners takes their badges
-away. A game taken off the page takes its files and its block with it, and a file someone put there by hand is never
-touched."""
+for the board, never for its position, so a move, a finished game, a fresh board and a ghost going down each redraw
+the same files in place. The Hall of Fame draws a badge for each winner it shows, so a Hall that shows fewer winners
+takes their badges away. A game taken off the page takes its files and its block with it, and a file someone put
+there by hand is never touched."""
 from __future__ import annotations
 
 import json
@@ -22,7 +22,7 @@ from tests.unit import test_elements_hall as H
 
 from infra import files
 
-IDS = ("chess", "checkers", "connectfour", "tictactoe", "hall-of-fame")
+IDS = ("chess", "checkers", "pentago", "tictac", "hall-of-fame")
 
 
 def written(elements: dict[str, dict]) -> str:
@@ -46,8 +46,8 @@ class Clock(unittest.TestCase):
         self.readme.write_text("# tannergolden\n\n" + "\n\n".join(
             f"<!-- markdown:element:{eid}:start -->\n<!-- markdown:element:{eid}:end -->" for eid in IDS) + "\n",
             encoding="utf-8")
-        self.games = {"chess": CH.GAME, "checkers": G.CK_GITHUB, "connectfour": G.C4_GITHUB,
-                      "tictactoe": G.TTT_GITHUB, "hall-of-fame": H.HALL}
+        self.games = {"chess": CH.GAME, "checkers": G.CK_GITHUB, "pentago": G.PG_GITHUB, "tictac": G.TT_GITHUB,
+                      "hall-of-fame": H.HALL}
 
     def tearDown(self):
         self.tmp.cleanup()
@@ -65,15 +65,14 @@ class Clock(unittest.TestCase):
         self.assertEqual(R.kit("check", "--root", str(self.root))[0], 0)
         return drawn
 
-    def test_a_move_a_finished_game_and_a_fresh_board_redraw_the_same_files_in_place(self):
+    def test_a_move_a_finished_game_a_fresh_board_and_a_ghost_redraw_the_same_files_in_place(self):
         before = self.draw()
         boards = sorted(name for name in before if not name.startswith("hall-of-fame"))
         self.assertEqual(len(boards), 4 * 8, "four games, each wide and a phone's, moving and still, day and dark")
-        for step in ({"chess": CH.HOUSE, "checkers": G.CK_CROWNED, "connectfour": G.C4_HOUSE,
-                      "tictactoe": G.TTT_HOUSE},
-                     {"chess": CH.SCHOLAR, "checkers": G.CK_WON, "connectfour": G.C4_WON, "tictactoe": G.TTT_WON},
-                     {"chess": CH.OPENING, "checkers": G.CK_OPENING, "connectfour": G.C4_FRESH,
-                      "tictactoe": G.TTT_FRESH}):
+        for step in ({"chess": CH.HOUSE, "checkers": G.CK_CROWNED, "pentago": G.PG_HOUSE, "tictac": G.TT_HOUSE},
+                     {"chess": CH.SCHOLAR, "checkers": G.CK_WON, "pentago": G.PG_WON, "tictac": G.TT_WON},
+                     {"chess": CH.OPENING, "checkers": G.CK_OPENING, "pentago": G.PG_FRESH, "tictac": G.TT_FRESH},
+                     {"chess": CH.GAME, "checkers": G.CK_GITHUB, "pentago": G.PG_GHOST, "tictac": G.TT_GHOST}):
             after = self.draw(**step)
             self.assertEqual(sorted(name for name in after if not name.startswith("hall-of-fame")), boards)
             for name in boards:
@@ -86,8 +85,8 @@ class Clock(unittest.TestCase):
         text = self.readme.read_text(encoding="utf-8")
         for eid, fold in (("chess", "<details open>\n<summary><b>♟️ Chess</b></summary>"),
                           ("checkers", "<details>\n<summary><b>🏁 Checkers</b></summary>"),
-                          ("connectfour", "<details>\n<summary><b>⚫ Connect Four</b></summary>"),
-                          ("tictactoe", "<details>\n<summary><b>❌ Tic-Tac-Toe</b></summary>")):
+                          ("pentago", "<details>\n<summary><b>🌀 Pentago</b></summary>"),
+                          ("tictac", "<details>\n<summary><b>❌ Tic-Tac</b></summary>")):
             with self.subTest(game=eid):
                 block = re.search(rf"element:{eid}:start -->\n(.*?)\n<!-- markdown:element:{eid}:end", text,
                                   re.S).group(1)

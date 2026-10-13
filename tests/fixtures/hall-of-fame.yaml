@@ -3,7 +3,7 @@
 elements:
   hall-of-fame:
     kind: hall-of-fame
-    series: {tictactoe: [9, 4, 2, 3], connectfour: [3, 1, 2, 0], checkers: [5, 2, 2, 1], chess: [12, 5, 6, 1]}
+    series: {tictac: [9, 4, 2, 3], pentago: [3, 1, 2, 0], checkers: [5, 2, 2, 1], chess: [12, 5, 6, 1]}
     people:
       - [tannergolden, [4, 1, 2, 5], 2 Oct, 29]
       - [imvale, [1, 1, 0, 2], 19 Sep, 7]

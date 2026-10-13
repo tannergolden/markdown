@@ -10,8 +10,9 @@ count inside the panel. Nothing meets anything else, and nothing leaves the card
 
 The data reaches the contract's limits: a game, a move, the players and the score sheet's rows at nine digits,
 logins of 39 letters set in W and M, the widest capitals there are, a move's words of 80, the longest moves (a jump
-of twelve men), a full board, the most kings, each side's full rack, and each finished plate's longest way of
-ending, both ways round."""
+of twelve men, and a Pentago move turned anticlockwise that won), every stage of the Ghost Rule with its ghosts' row,
+the most boards a side can win in Tic-Tac, six, each side's full rack of marbles and its empty one, the most kings,
+and each finished plate's longest way of ending, both ways round."""
 from __future__ import annotations
 
 import re
@@ -40,12 +41,15 @@ JUMP = "1x10x19x28x19x10x1x10x19x28x19x10x1"          # twelve men taken, the mo
 
 
 def limits(d: dict, **more) -> dict:
-    """`d` with every field the sheet letters at its widest: the numbers, the logins and the last move's words."""
+    """`d` with every field the sheet letters at its widest: the numbers, the logins and the last move's words. The
+    ghosts' row keeps its G."""
     rows = d["history"]
-    history = [[MOST - (len(rows) - 1 - i), a, b, ("@" + (W39 if i % 2 else M39)) if (a and b) or who else who]
-               for i, (_, a, b, who) in enumerate(rows)]
-    out = dict(d, game=MOST, move=MOST, players=MOST, history=history,
-               last=dict(d["last"], words=WORDS80, by="@" + W39, when="28 May"))
+    history = [[n if n == "G" else MOST - (len(rows) - 1 - i), a, b,
+                ("@" + (W39 if i % 2 else M39)) if (a and b) or who else who]
+               for i, (n, a, b, who) in enumerate(rows)]
+    out = dict(d, game=MOST, move=MOST, players=MOST, history=history)
+    if d.get("last"):
+        out["last"] = dict(d["last"], words=WORDS80, by="@" + W39, when="28 May")
     if not d.get("result"):
         out["due"] = "28 May"
     else:
@@ -53,11 +57,26 @@ def limits(d: dict, **more) -> dict:
     return {**out, **more}
 
 
+# Game 13 of Tic-Tac: GitHub won its sixth board, and three in a row, the most boards a side can win.
+TT_SIX = {
+    "kind": "tictac", "places": "github", "opens": "house", "game": 13, "move": 29, "players": 3,
+    "board": "...XOOOX./.X.OXO.O./OOOXXOX.O/XXXXOOXOO/GXXOOXOOX/.G.OXOXO./X....OXX./OX..XOOXX/O.XX.O.X.",
+    "next": "20 Nov", "result": {"winner": "github", "how": "three boards in a row"}, "line": ["a3", "b3", "c3"],
+    "history": [[27, "Xe8", "Of6", "@devonaraki"], [28, "Xh1", "Of7#", "@hollyfenwick"], [29, "", "", ""]],
+    "last": {"move": "Of7#", "words": "O takes the lower right corner of the top board", "by": "@hollyfenwick",
+             "when": "18 Nov"},
+    "note": G.over("tictac", 13, "20 Nov", "17:52")}
+# The widest moves a Pentago score sheet writes: each turned anticlockwise, the last of them the move that won.
+WIDEST = [[MOST - 2, "e5-ur-acw", "d4-lr-acw", "@" + W39], [MOST - 1, "e5-ul-acw", "b2-ll-acw", "@" + M39],
+          [MOST, "e5-ur-acw#", "", "@" + W39]]
+
 BOARDS = {
-    "tictactoe": [limits(G.TTT_GITHUB), limits(G.TTT_HOUSE), limits(G.TTT_FRESH), limits(G.TTT_FRESH_HOUSE),
-                  limits(G.TTT_WON), limits(G.TTT_DRAWN)],
-    "connectfour": [limits(G.C4_GITHUB), limits(G.C4_HOUSE), limits(G.C4_FRESH_HOUSE), limits(G.C4_WON),
-                    limits(G.C4_WON, line=[[5, 1], [4, 2], [3, 3], [2, 4]])],
+    # each turn's plate (sent to a board, any board, a ghost to place), the ghosts' row, and the fullest racks
+    "tictac": [limits(G.TT_GITHUB), limits(G.TT_HOUSE), limits(G.TT_FRESH), limits(G.TT_GHOSTS), limits(G.TT_WON),
+               limits(G.TT_DRAWN), limits(TT_SIX)],
+    # each side's turn, a ghost the Arbiter set, the widest moves, a marble that won unturned, the empty racks
+    "pentago": [limits(G.PG_GITHUB), limits(G.PG_HOUSE), limits(G.PG_FRESH), limits(G.PG_GHOST),
+                limits(G.PG_WON, history=WIDEST), limits(G.PG_WON_GITHUB), limits(G.PG_FULL)],
     "checkers": [limits(G.CK_GITHUB, history=[[MOST - 2, JUMP, JUMP, "@" + W39], [MOST - 1, "11x18", JUMP, "@" + M39],
                                               [MOST, "", "", ""]]),
                  # the most kings and the most men taken: twelve Black kings, and White down to one
@@ -69,11 +88,10 @@ BOARDS = {
                              history=[[1, "9-13", "", ""]], moves=[])),
                  limits(G.CK_WON), limits(G.CK_DRAWN)],
 }
-# Every finished plate's longest way of ending, each winner and a draw, at the limits.
+# Every finished plate's longest way of ending, each winner and each draw, at the limits.
 ENDED = {
-    "tictactoe": [limits(G.TTT_WON), limits(G.TTT_DRAWN)],
-    "connectfour": [limits(G.C4_WON),
-                    limits(G.C4_WON, result={"winner": None, "how": "a full frame"}, line=[])],
+    "tictac": [limits(G.TT_WON), limits(G.TT_WON_GITHUB), limits(G.TT_DRAWN)],
+    "pentago": [limits(G.PG_WON), limits(G.PG_GIVEN), limits(G.PG_FULL), limits(G.PG_BOTH)],
     "checkers": [limits(G.CK_WON), limits(G.CK_DRAWN),
                  limits(G.CK_DRAWN, result={"winner": None, "how": "repetition"})],
 }
@@ -202,9 +220,10 @@ class Words(unittest.TestCase):
     """The last move's words stand on a line or two of their own under the move, inside the panel, as chess's do: an
     engine's sentence keeps its size and every word, and only words two lines cannot hold end in an ellipsis."""
 
-    SAID = ("A Black disc down column 2 connects four on the diagonal",
-            "King from 19 jumps 15, 6, 10 and 14, landing on 23, crowned and safe")
-    BOARDS = {"tictactoe": G.TTT_GITHUB, "connectfour": G.C4_GITHUB, "checkers": G.CK_GITHUB}
+    SAID = ("A white marble on e4, then the upper right quarter turns anticlockwise",
+            "King from 19 jumps 15, 6, 10 and 14, landing on 23, crowned and safe",
+            "A ghost locks the upper right corner of the upper right board")
+    BOARDS = {"tictac": G.TT_GITHUB, "pentago": G.PG_GITHUB, "checkers": G.CK_GITHUB}
 
     def lines(self, kind: str, d: dict, tone: str, variant: str):
         """The file, the runs that say the last move's words, and the panel: the words stand at the panel's left

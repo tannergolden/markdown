@@ -2,12 +2,13 @@
 # SPDX-License-Identifier: MIT
 """The Hall of Fame of all four games on @tannergolden's profile, in every theme, and nowhere else.
 
-The Hall is the series after 29 games: twelve of Chess, five of Checkers, three of Connect Four and nine of
-Tic-Tac-Toe, five winners ranked across all four, and six players on the leaderboard. An empty one has had no game
-finish yet, and a known one is the same Hall with each row's account ID, by which a run reads the login every player
-has now. The element the profile's engines write, word for word as the build's contract gives it, is read by the
-kit's own YAML reader and checked as a run checks it. Its data lists each player's wins in tier order, Tic-Tac-Toe
-first; everything a reader sees lists the games Chess first."""
+The Hall is the series after 29 games: twelve of Chess, five of Checkers, three of Pentago and nine of Tic-Tac,
+five winners ranked across all four, and six players on the leaderboard. An empty one has had no game finish yet, and
+a known one is the same Hall with each row's account ID, by which a run reads the login every player has now. The
+element the profile's engines write, word for word as the build's contract gives it, is read by the kit's own YAML
+reader and checked as a run checks it, and a Hall written before Tic-Tac and Pentago took the places of Tic-Tac-Toe
+and Connect Four is turned away. Its data lists each player's wins in tier order, Tic-Tac first; everything a reader
+sees lists the games Chess first."""
 from __future__ import annotations
 
 import re
@@ -32,7 +33,7 @@ from domain.prints import PRINTS, STANDARD
 
 support.install()
 DASHES = ("–", "—", "―")
-SERIES = {"tictactoe": [9, 4, 2, 3], "connectfour": [3, 1, 2, 0], "checkers": [5, 2, 2, 1], "chess": [12, 5, 6, 1]}
+SERIES = {"tictac": [9, 4, 2, 3], "pentago": [3, 1, 2, 0], "checkers": [5, 2, 2, 1], "chess": [12, 5, 6, 1]}
 HALL = {"kind": "hall-of-fame", "series": SERIES,
         "people": [["tannergolden", [4, 1, 2, 5], "2 Oct", 29], ["imvale", [1, 1, 0, 2], "19 Sep", 7],
                    ["tokafor", [0, 1, 1, 1], "27 Sep", 9], ["wrencastellan", [1, 0, 1, 0], "4 Sep", 6],
@@ -52,7 +53,7 @@ KNOWN = dict(HALL, people=[[*row, IDS[row[0]]] for row in HALL["people"]],
 WRITTEN = """elements:
   hall-of-fame:
     kind: "hall-of-fame"
-    series: {"tictactoe": [9, 4, 2, 3], "connectfour": [3, 1, 2, 0], "checkers": [5, 2, 2, 1], "chess": [12, 5, 6, 1]}
+    series: {"tictac": [9, 4, 2, 3], "pentago": [3, 1, 2, 0], "checkers": [5, 2, 2, 1], "chess": [12, 5, 6, 1]}
     people:
       - ["tannergolden", [4, 1, 2, 5], "2 Oct", 29, 24684994]
       - ["imvale", [0, 1, 0, 2], "19 Sep", 7, 1001]
@@ -112,7 +113,7 @@ class EveryFile(unittest.TestCase):
                     self.assertIn("<animate", svg)
 
     def test_a_hall_before_its_first_winner_and_with_its_first_are_drawn(self):
-        first = dict(EMPTY, series=dict(NONE, tictactoe=[1, 1, 0, 0]),
+        first = dict(EMPTY, series=dict(NONE, tictac=[1, 1, 0, 0]),
                      people=[["tannergolden", [1, 0, 0, 0], "12 Oct", 1]],
                      leaders=[["tannergolden", 3, 1, [1, 0, 0, 0]], ["octocat", 2, 1, [0, 0, 0, 0]]])
         for d in (EMPTY, first, {"kind": "hall-of-fame"}):
@@ -128,24 +129,25 @@ class Hall(unittest.TestCase):
     def test_it_says_the_series_of_every_game_and_ranks_the_winners_with_their_wins_in_each_chess_first(self):
         alt = E.alt("hall-of-fame", HALL)
         self.assertTrue(alt.startswith("Hall of Fame: four games. 29 games of @tannergolden against GitHub, across "
-                                       "Chess, Checkers, Connect Four and Tic-Tac-Toe: @tannergolden won 12, GitHub "
-                                       "12, and 5 were drawn."), alt)
+                                       "Chess, Checkers, Pentago and Tic-Tac: @tannergolden won 12, GitHub 12, and 5 "
+                                       "were drawn."), alt)
         self.assertIn(" Chess: 12 games, @tannergolden 5, GitHub 6, 1 drawn. Checkers: 5 games, @tannergolden 2,"
-                      " GitHub 2, 1 drawn. Connect Four: 3 games, @tannergolden 1, GitHub 2, 0 drawn. Tic-Tac-Toe: 9"
-                      " games, @tannergolden 4, GitHub 2, 3 drawn.", alt)
-        self.assertIn("Ranked by wins: @tannergolden with 12 wins (5 in Chess, 2 in Checkers, 1 in Connect Four and 4"
-                      " in Tic-Tac-Toe), @imvale with 4 wins (2 in Chess, 1 in Connect Four and 1 in Tic-Tac-Toe),",
-                      alt)
+                      " GitHub 2, 1 drawn. Pentago: 3 games, @tannergolden 1, GitHub 2, 0 drawn. Tic-Tac: 9 games,"
+                      " @tannergolden 4, GitHub 2, 3 drawn.", alt)
+        self.assertIn("Ranked by wins: @tannergolden with 12 wins (5 in Chess, 2 in Checkers, 1 in Pentago and 4 in"
+                      " Tic-Tac), @imvale with 4 wins (2 in Chess, 1 in Pentago and 1 in Tic-Tac),", alt)
         self.assertTrue(alt.endswith("@jhalloran with 1 win (1 in Chess)."), alt)
         self.assertEqual(E.alt("hall-of-fame", EMPTY), "Hall of Fame: four games. No game of @tannergolden against"
-                         " GitHub has finished yet, in Chess, Checkers, Connect Four or Tic-Tac-Toe, so the podium"
-                         " waits for its first winner.")
-        one = E.alt("hall-of-fame", dict(EMPTY, series=dict(NONE, tictactoe=[1, 0, 1, 0])))
+                         " GitHub has finished yet, in Chess, Checkers, Pentago or Tic-Tac, so the podium waits for its"
+                         " first winner.")
+        one = E.alt("hall-of-fame", dict(EMPTY, series=dict(NONE, tictac=[1, 0, 1, 0])))
         self.assertIn("1 game of @tannergolden against GitHub", one)
-        self.assertIn("none were drawn. Chess: none finished yet. Checkers: none finished yet. Connect Four: none"
-                      " finished yet. Tic-Tac-Toe: 1 game, @tannergolden 0, GitHub 1, 0 drawn.", one)
-        self.assertEqual(H.ORDER, ("chess", "checkers", "connectfour", "tictactoe"))
-        self.assertEqual(H.GAMES, ("tictactoe", "connectfour", "checkers", "chess"), "the data keeps tier order")
+        self.assertIn("none were drawn. Chess: none finished yet. Checkers: none finished yet. Pentago: none finished"
+                      " yet. Tic-Tac: 1 game, @tannergolden 0, GitHub 1, 0 drawn.", one)
+        self.assertEqual(H.ORDER, ("chess", "checkers", "pentago", "tictac"))
+        self.assertEqual(H.GAMES, ("tictac", "pentago", "checkers", "chess"), "the data keeps tier order")
+        self.assertEqual(H.TITLES, {"tictac": "Tic-Tac", "pentago": "Pentago", "checkers": "Checkers",
+                                    "chess": "Chess"})
 
     def test_the_series_counts_each_game_and_all_four_together(self):
         h = H.state(HALL)
@@ -161,12 +163,12 @@ class Hall(unittest.TestCase):
                           ("TOMAS OKAFOR", "TO", False, 3), ("@WRENCASTELLAN", "WR", False, 2)])
         self.assertEqual([p["handle"] for p in people[:4]],
                          ["the house", "@imvale", "@tokafor", "github  ·  challenger"])
-        self.assertEqual(people[1]["by_game"], {"tictactoe": 1, "connectfour": 1, "checkers": 0, "chess": 2},
+        self.assertEqual(people[1]["by_game"], {"tictac": 1, "pentago": 1, "checkers": 0, "chess": 2},
                          "the wins in each game, read from the data's tier order")
         leaders = H.state(HALL)["leaders"]
         self.assertEqual([(r["login"], r["moves"], r["games"], r["wins"], r["house"]) for r in leaders[:2]],
                          [("tannergolden", 1240, 29, 12, True), ("imvale", 40, 7, 4, False)])
-        self.assertEqual(leaders[0]["by_game"], {"tictactoe": 4, "connectfour": 1, "checkers": 2, "chess": 5})
+        self.assertEqual(leaders[0]["by_game"], {"tictac": 4, "pentago": 1, "checkers": 2, "chess": 5})
 
     def test_a_player_is_shown_by_the_login_their_account_has_now_and_one_whose_account_is_gone_not_at_all(self):
         # @imvale renamed to @imogen-vale; @tokafor deleted their account, and a stranger may hold that login now;
@@ -299,18 +301,22 @@ class Settings(unittest.TestCase):
                          "every field may wait for the engines")
 
     def test_the_series_is_every_game_its_wins_and_draws_adding_up(self):
-        for series in ({"chess": [12, 5, 6, 1]}, {**SERIES, "go": [1, 1, 0, 0]}, [9, 4, 2, 3], "tictactoe", {}, 5,
-                       {**{g: v for g, v in SERIES.items() if g != "checkers"}, "Checkers": [5, 2, 2, 1]}):
+        # a Hall written before 1.14.0 counts Tic-Tac-Toe and Connect Four, whose places Tic-Tac and Pentago took
+        before = {"tictactoe": [9, 4, 2, 3], "connectfour": [3, 1, 2, 0], "checkers": [5, 2, 2, 1],
+                  "chess": [12, 5, 6, 1]}
+        for series in ({"chess": [12, 5, 6, 1]}, {**SERIES, "go": [1, 1, 0, 0]}, [9, 4, 2, 3], "tictac", {}, 5,
+                       {**{g: v for g, v in SERIES.items() if g != "checkers"}, "Checkers": [5, 2, 2, 1]}, before,
+                       {**SERIES, "tictactoe": [1, 1, 0, 0]}):
             with self.subTest(series=series):
-                self.assertTurnedAway({**HALL, "series": series}, "series gives each of the four games, tictactoe,"
-                                                                  " connectfour, checkers and chess, its games")
+                self.assertTurnedAway({**HALL, "series": series}, "series gives each of the four games, tictac,"
+                                                                  " pentago, checkers and chess, its games")
         for row in ([9, 4, 2], [9, 4, 2, 3, 0], [9, 4, "2", 3], [9, 4, True, 2], [9, 4, -1, 6], [9.0, 4, 2, 3],
                     [1_000_000, 1_000_000, 0, 0], None, "9 4 2 3", {"games": 9}):
             with self.subTest(row=row):
-                self.assertTurnedAway({**HALL, "series": {**SERIES, "connectfour": row}},
-                                      f"series: connectfour {row!r} is not the games finished")
-        self.assertTurnedAway({**HALL, "series": {**SERIES, "tictactoe": [9, 4, 2, 2]}},
-                              "series: tictactoe's wins and draws add up to 8 games, not the 9 finished")
+                self.assertTurnedAway({**HALL, "series": {**SERIES, "pentago": row}},
+                                      f"series: pentago {row!r} is not the games finished")
+        self.assertTurnedAway({**HALL, "series": {**SERIES, "tictac": [9, 4, 2, 2]}},
+                              "series: tictac's wins and draws add up to 8 games, not the 9 finished")
         self.assertEqual(H.check({**HALL, "series": {g: [999_999, 999_999, 0, 0] for g in H.GAMES}}), [],
                          "each game's counts up to 999,999")
         self.assertEqual(H.check({**HALL, "series": None}), [])
@@ -458,14 +464,15 @@ class Readme(unittest.TestCase):
                       "| 4 | [@jhalloran](https://github.com/jhalloran) | 1 | 0 | 0 | 0 | 12 | 1 |\n", text)
         self.assertTrue(text.endswith("| 5 | [@octocat](https://github.com/octocat) | 0 | 0 | 0 | 0 | 9 | 0 |\n\n"
                                       "A win counts only for the player who makes the winning move: the checkmate in"
-                                      " Chess, the move that leaves the other side no move in Checkers, the fourth"
-                                      " disc in a row in Connect Four and the third mark in a row in Tic-Tac-Toe. A"
-                                      " move the Arbiter plays, for either side, counts for nobody, and a draw is"
-                                      " nobody's win.\n\n</details>\n<!-- markdown:element:hall-of-fame:end -->"))
-        self.assertEqual(RM.SIGNS, {"chess": "\u2654\u265a", "checkers": "\u26c0\u26c2", "connectfour": "\u26aa\u26ab",
-                                    "tictactoe": "\u274c\u2b55"},
+                                      " Chess, the move that leaves the other side no move in Checkers, the move that"
+                                      " makes five in a row for its side in Pentago and the mark that wins a third"
+                                      " board in a row in Tic-Tac. A move the Arbiter plays, for either side, counts"
+                                      " for nobody, and a draw is nobody's win.\n\n</details>\n"
+                                      "<!-- markdown:element:hall-of-fame:end -->"))
+        self.assertEqual(RM.SIGNS, {"chess": "\u2654\u265a", "checkers": "\u26c0\u26c2", "pentago": "\u26aa\u26ab",
+                                    "tictac": "\u274c\u2b55"},
                          "each game's column headed by its two side signs, the house's first: the white king, the"
-                         " white man, the white disc and X")
+                         " white man, the white marble and X")
         self.assertEqual(list(RM.SIGNS), list(H.ORDER), "Chess first")
         alone = ED.block("hall-of-fame", EMPTY, "assets/elements")
         self.assertIn("</picture>\n\n<details>\n<summary>🏆 <b>Leaderboard</b> · @tannergolden · GitHub's players join"
@@ -480,7 +487,7 @@ class Readme(unittest.TestCase):
         self.assertNotIn("Games", text + big, "the games played are no column of it")
 
     def test_the_leaderboard_reads_each_players_wins_by_their_game_from_the_tier_order_of_the_data(self):
-        # The data lists the wins Tic-Tac-Toe, Connect Four, Checkers, Chess; the leaderboard Chess first.
+        # The data lists the wins Tic-Tac, Pentago, Checkers, Chess; the leaderboard Chess first.
         d = {**EMPTY, "leaders": [["tannergolden", 9_000, 5_000, [1, 20, 300, 4_000]],
                                   ["imvale", 80, 8, [0, 0, 0, 6]], ["octocat", 90, 9, [5, 0, 0, 0]]]}
         self.assertEqual(H.check(d), [])

@@ -1,0 +1,41 @@
+# SPDX-FileCopyrightText: 2026 Tanner Golden
+# SPDX-License-Identifier: MIT
+#
+# The sample game the theme-sets page draws the Tic-Tac sheets from: game 9 of
+# @tannergolden against GitHub, under the Ghost Rule. The Arbiter drew the house
+# to lock the first square, and it locked e5, the centre of the centre board;
+# GitHub locked b8, and the Arbiter drew GitHub to make the first mark, so O
+# moved first and the house plays X, as it always does. The house has just won
+# nothing yet and GitHub one board, the top one, and GitHub is sent to the upper
+# left board: the sheet brackets it, since the rules send the mark there, and
+# says nothing else. The game itself is drawn on @tannergolden's profile alone,
+# where every move is played live; its players here are driftmark's
+# contributors, and as fictional as they are.
+
+elements:
+  tictac:
+    kind: tictac
+    board: X.OO...../.G.O....X/..XO..X../O......X./X...G.O../XO....O../.X.X.O.../X....X..O/OOX.X..O.
+    places: house
+    opens: github
+    game: 9
+    move: 14
+    players: 4
+    due: 20 Oct
+    alert: upper left board
+    last:
+      move: Xd3
+      words: X takes the upper left corner of the bottom board
+      by: "@tannergolden"
+      when: 14 Oct
+    history:
+      - [12, Og4, Xc1, "@imvale"]
+      - [13, Oh1, Xd3, "@devonaraki"]
+      - [14, "", "", ""]
+    note: "Under the Ghost Rule each side locked one square with a ghost, and the Arbiter drew GitHub to make the first mark. The first move to arrive is the one played."
+    moves:
+      - ["📏", "Take the Top Edge of the Upper Left Board!", Ob9, O takes the top edge of the upper left board, "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictac%3A%20b9%20%C2%B7%20game%209%20%C2%B7%20move%2029"]
+      - ["📏", "Take the Left Edge of the Upper Left Board!", Oa8, O takes the left edge of the upper left board, "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictac%3A%20a8%20%C2%B7%20game%209%20%C2%B7%20move%2029"]
+      - ["📏", "Take the Right Edge of the Upper Left Board!", Oc8, O takes the right edge of the upper left board, "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictac%3A%20c8%20%C2%B7%20game%209%20%C2%B7%20move%2029"]
+      - ["📐", "Take the Lower Left Corner of the Upper Left Board!", Oa7, O takes the lower left corner of the upper left board, "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictac%3A%20a7%20%C2%B7%20game%209%20%C2%B7%20move%2029"]
+      - ["📏", "Take the Bottom Edge of the Upper Left Board!", Ob7, O takes the bottom edge of the upper left board, "https://github.com/tannergolden/play/issues/new?template=move.yml&title=tictac%3A%20b7%20%C2%B7%20game%209%20%C2%B7%20move%2029"]

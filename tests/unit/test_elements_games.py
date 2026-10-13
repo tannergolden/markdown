@@ -1,20 +1,28 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
-"""The games beside chess on @tannergolden's profile: Tic-Tac-Toe, Connect Four and Checkers, drawn as chess is, in
-the standard theme and every print, and nowhere but that profile.
+"""The games beside chess on @tannergolden's profile: Tic-Tac, Pentago and Checkers, drawn as chess is, in the
+standard theme and every print, and nowhere but that profile.
 
-Each side's colour is fixed: the house always plays X in Tic-Tac-Toe and White in Connect Four and Checkers, GitHub
-always O, or Black. The Arbiter opens Tic-Tac-Toe and Connect Four for a side drawn at random, so each is held to its
-boards both ways round: opened for the house, which moves first with X or a White disc, and opened for GitHub, which
-moves first with O or a Black disc. GitHub opens Checkers, since Black moves first. Each game has a board under way,
-the fresh board whose only move is the Arbiter's opening move (or, in Checkers, the board before Black's first
-move), and a finished board, kept up for two days with the result on its plate and nothing left to play. The samples
-are legal games, and no sheet says what a move would do: Tic-Tac-Toe's GitHub's turn comes with the house a mark from
-three in a row on c2, its house's turn with the house able to win on b3, and its finished board is the house's three
-in a row on the diagonal; Connect Four's GitHub's turn comes with the house a disc from four down column 7, its
-house's turn with the house able to connect four down column 5, and GitHub won game 3 on the diagonal; Checkers'
-GitHub's turn must jump after the house's jump back, which the rules make it do and its sheet says, and its crowned
-board is the house's double jump that crowns a White king on Black's back row."""
+Each side's colour is fixed: the house always plays X in Tic-Tac and White in Pentago and Checkers, GitHub always O,
+or Black. Tic-Tac and Pentago open under the Ghost Rule: the Arbiter draws the side that places the first ghost, each
+side locks a square, or sets a marble that is nobody's, and then the Arbiter draws the side that moves first. So each
+is held to its boards both ways round at every stage: a fresh board, one ghost down, both ghosts down with either side
+drawn to open, a turn of each side's, and its finished boards, kept up for two days with the result on the plate and
+nothing left to play. GitHub opens Checkers, since Black moves first.
+
+Every sample of Tic-Tac and Pentago is a board the profile's own engine set out, playing whole games, its list of
+moves cut to a few, and no sheet says what a move would do. In Tic-Tac's game 9 GitHub is sent to the lower right
+board, where three of its four squares win the game: the sheet brackets that board, since the rules send the mark
+there, and singles out no square in it; GitHub then won the game there. In game 10 the house may play any open board,
+two of its twenty-eight squares winning the game. The house won game 8 across the middle row of boards, and game 7
+was drawn with no line of three boards left for either side. In Pentago's game 4 GitHub can make five on e5 before any
+quarter turns, and any other marble followed by a clockwise turn of the upper right quarter makes five for the house
+alone; in game 7 the house can make five on c1 with a clockwise turn of the lower right quarter, and any marble
+followed by a clockwise turn of the upper right one hands GitHub five. The house won game 3 with a turn, GitHub won
+game 6 with a marble that made five on its own, the house's own turn made five for GitHub alone in game 2, and games 1
+and 8 were drawn, on a full board and with five for both. Checkers' GitHub's turn must jump after the house's jump
+back, which the rules make it do and its sheet says, and its crowned board is the house's double jump that crowns a
+White king on Black's back row."""
 from __future__ import annotations
 
 import re
@@ -26,10 +34,11 @@ from tests import support
 
 from domain.canvas import BUDGET, lint
 from domain.elements import checkers as CK
-from domain.elements import connectfour as C4
 from domain.elements import data as ED
 from domain.elements import draw as E
-from domain.elements import tictactoe as TTT
+from domain.elements import pentago as PG
+from domain.elements import tictac as TT
+from domain.elements.games import sheet as GS
 from domain.elements.games.skin import Print as GamePrint
 from domain.elements.games.skin import Standard as GameStandard
 from domain.lettering import Lettering
@@ -40,6 +49,21 @@ support.install()
 DASHES = ("–", "—", "―")
 TONES = (STANDARD, *sorted(PRINTS))
 NOTE = "The first move to arrive is the one played."
+# Every turn a Pentago hole is offered with, in the order the engine links them: each quarter, clockwise and then
+# anticlockwise.
+TURNS = [(q, w) for q in ("ul", "ur", "ll", "lr") for w in ("cw", "acw")]
+# The engine's notes under a board, a sentence at a time as it writes them: who may play the turn, and the rules.
+ANYONE = "Anyone but @tannergolden can play on this turn, and the first pick in is played."
+ONLY = "Only @tannergolden can play on this turn: a pick from anyone else is turned away with a comment on its issue."
+TT_OPENING = ("@tannergolden always plays X and GitHub O. Under the Ghost Rule each side first locks a square with a "
+              "ghost, and then the Arbiter draws who makes the first mark.")
+TT_RULES = ("Where a mark goes in its board sends the other side to the board in that place, three in a row wins a "
+            "board, and three boards in a row wins the game; once neither side can win three boards in a row, it is a "
+            "draw.")
+PG_OPENING = ("@tannergolden always plays White and GitHub Black. Under the Ghost Rule each side first sets a ghost, a "
+              "marble that is nobody's, and then the Arbiter draws who sets the first marble.")
+PG_RULES = ("A move sets a marble, then turns any quarter a quarter turn; five in a row wins, for the other side if "
+            "the turn makes five for it alone, and five for both or a full board is a draw.")
 
 
 def link(kind: str, code: str, game: int, ply: int) -> str:
@@ -52,95 +76,330 @@ def row(kind: str, emoji: str, title: str, move: str, words: str, game: int, ply
     return [emoji, title, move, words, link(kind, code or move.rstrip("+#").lstrip("XO"), game, ply)]
 
 
-# --------------------------------------------------------------------------- Tic-Tac-Toe
-# The Arbiter opened for the house, so X moved first: GitHub's turn as O, the house a mark from three in a row on c2.
-TTT_GITHUB = {
-    "kind": "tictactoe", "board": "O../XX./O.X", "opens": "house", "game": 9, "move": 3, "players": 4,
-    "due": "18 Oct",
-    "history": [[1, "Xb2", "Oa1", "@imvale"], [2, "Xc1", "Oa3", "@tokafor"], [3, "Xa2", "", ""]],
-    "last": {"move": "Xa2", "words": "X takes the left edge", "by": "@tannergolden", "when": "11 Oct"},
-    "moves": [row("tictactoe", "📏", "Mark the Head of the Board!", "Ob3", "O takes the head of the board", 9, 6),
-              row("tictactoe", "📏", "Mark the Right Edge!", "Oc2", "O takes the right edge", 9, 6)],
-    "note": NOTE}
-# The Arbiter opened for GitHub, so O moved first: the house's turn as X, b3 a cell it would win on.
-TTT_HOUSE = {
-    "kind": "tictactoe", "board": "X.X/.O./O.O", "opens": "github", "game": 10, "move": 3, "players": 3,
-    "due": "19 Oct",
-    "history": [[1, "Ob2", "Xa3", "the Arbiter"], [2, "Oa1", "Xc3", "@tokafor"], [3, "Oc1", "", "@wrencastellan"]],
-    "last": {"move": "Oc1", "words": "O takes the lower right corner", "by": "@wrencastellan", "when": "12 Oct"},
-    "moves": [row("tictactoe", "📏", "Mark the Head of the Board!", "Xb3", "X takes the head of the board", 10, 6),
-              row("tictactoe", "📏", "Mark the Foot of the Board!", "Xb1", "X takes the foot of the board", 10, 6)],
-    "note": NOTE}
-# A fresh board: the Arbiter opened game 11 for GitHub with O in the centre, and it is the house's turn as X.
-TTT_FRESH = {
-    "kind": "tictactoe", "board": ".../.O./...", "opens": "github", "game": 11, "move": 1, "players": 0,
-    "due": "21 Oct", "history": [[1, "Ob2", "", "the Arbiter"]],
-    "last": {"move": "Ob2", "words": "O takes the centre", "by": "the Arbiter", "when": "14 Oct"},
-    "moves": [row("tictactoe", "📐", "Mark the Upper Left Corner!", "Xa3", "X takes the upper left corner", 11, 2),
-              row("tictactoe", "📏", "Mark the Head of the Board!", "Xb3", "X takes the head of the board", 11, 2)],
-    "note": "The Arbiter opens every game for a side drawn at random, with a random first move."}
-# The same fresh board the other way round: opened for the house with X, and GitHub to reply as O.
-TTT_FRESH_HOUSE = dict(TTT_FRESH, board=".../.../X..", opens="house",
-                       last={"move": "Xa1", "words": "X takes the lower left corner", "by": "the Arbiter",
-                             "when": "14 Oct"}, history=[[1, "Xa1", "", ""]],
-                       moves=[row("tictactoe", "🔳", "Mark the Centre!", "Ob2", "O takes the centre", 11, 2)])
-TTT_WON = {
-    "kind": "tictactoe", "board": "X.O/OX./XOX", "opens": "house", "game": 8, "move": 4, "players": 6,
-    "history": [[2, "Xa1", "Oc3", "@tokafor"], [3, "Xc1", "Ob1", "@jhalloran"], [4, "Xa3#", "", ""]],
-    "last": {"move": "Xa3#", "words": "X takes the upper left corner", "by": "@tannergolden", "when": "10 Oct"},
-    "result": {"winner": "house", "how": "three in a row"}, "line": ["a3", "b2", "c1"], "next": "14 Oct",
-    "note": NOTE}
-# Opened for GitHub, so O moved first, and drawn on a full board after O's fifth mark.
-TTT_DRAWN = {
-    "kind": "tictactoe", "board": "OXO/OXX/XOO", "opens": "github", "game": 6, "move": 5, "players": 7,
-    "history": [[3, "Oc3", "Xc2", "@imvale"], [4, "Ob1", "Xa1", "@tokafor"], [5, "Oa2", "", "@jhalloran"]],
-    "last": {"move": "Oa2", "words": "O takes the left edge", "by": "@jhalloran", "when": "5 Oct"},
-    "result": {"winner": None, "how": "a full board"}, "next": "14 Oct",
-    "note": NOTE}
+def hole(emoji: str, title: str, cell: str, words: str, game: int, ply: int) -> list:
+    """A Pentago hole as the engine lists it once both ghosts are down: its emoji, title, hole and words, and its
+    eight turns, each linked to its own move's ready-made issue."""
+    return [emoji, title, cell, words, [[q, w, link("pentago", f"{cell}-{q}-{w}", game, ply)] for q, w in TURNS]]
 
-# --------------------------------------------------------------------------- Connect Four
-# The Arbiter opened for GitHub, so a Black disc dropped first: GitHub's turn, the house a disc from four down column 7.
-C4_GITHUB = {
-    "kind": "connectfour", "board": "......./..D..../..LD.../..DD.../D.DLLL./L.DLDLL", "opens": "github",
-    "game": 4, "move": 9, "players": 7, "due": "18 Oct",
-    "history": [[7, "4", "6", "@devonaraki"], [8, "4", "5", "@hollyfenwick"], [9, "", "", ""]],
-    "last": {"move": "5", "words": "A White disc down column 5, to row 2", "by": "@tannergolden", "when": "12 Oct"},
-    "moves": [row("connectfour", "⬇️", "Drop Down Column 7!", "7", "A Black disc down column 7, to row 2", 4, 17),
-              row("connectfour", "⬇️", "Drop Down Column 2!", "2", "A Black disc down column 2, to row 1", 4, 17)],
-    "note": NOTE}
-# The Arbiter opened for the house, so a White disc dropped first: the house to move, able to win down column 5.
-C4_HOUSE = {
-    "kind": "connectfour", "board": "......./......./......./..DD.../.LLL.../DDLLDLD", "opens": "house",
-    "game": 5, "move": 7, "players": 5, "due": "19 Oct",
-    "history": [[5, "3", "3", "@imvale"], [6, "5", "7", "@octocat"], [7, "", "", ""]],
-    "last": {"move": "7", "words": "A Black disc down column 7, to row 1", "by": "@octocat", "when": "10 Oct"},
-    "moves": [row("connectfour", "⬇️", "Drop Down Column 5!", "5", "A White disc down column 5, to row 2", 5, 13)],
-    "note": NOTE}
-# A fresh board: the Arbiter opened game 6 for GitHub down the centre column, and it is the house's turn as White.
-C4_FRESH = {
-    "kind": "connectfour", "board": "......./......./......./......./......./...D...", "opens": "github",
-    "game": 6, "move": 1, "players": 0, "due": "21 Oct",
-    "history": [[1, "4", "", "the Arbiter"]],
-    "last": {"move": "4", "words": "A Black disc down column 4, to row 1", "by": "the Arbiter", "when": "14 Oct"},
-    "moves": [row("connectfour", "⬇️", "Drop Down Column 4!", "4", "A White disc down column 4, to row 2", 6, 2),
-              row("connectfour", "⬇️", "Drop Down Column 1!", "1", "A White disc down column 1, to row 1", 6, 2)],
-    "note": "The Arbiter opens every game for a side drawn at random, with a random first move."}
-# The same fresh board the other way round: opened for the house with a White disc, and GitHub to reply as Black.
-C4_FRESH_HOUSE = dict(C4_FRESH, board="......./......./......./......./......./..L....", opens="house",
-                      history=[[1, "3", "", ""]],
-                      last={"move": "3", "words": "A White disc down column 3, to row 1", "by": "the Arbiter",
-                            "when": "14 Oct"},
-                      moves=[row("connectfour", "⬇️", "Drop Down Column 3!", "3", "A Black disc down column 3, to row"
-                                 " 2", 6, 2),
-                             row("connectfour", "⬇️", "Drop Down Column 1!", "1", "A Black disc down column 1, to row"
-                                 " 1", 6, 2)])
-C4_WON = {
-    "kind": "connectfour", "board": "....D../....D../.D..L../.LDLD../.LDDDL./DLLLDL.", "opens": "github",
-    "game": 3, "move": 10, "players": 9,
-    "history": [[8, "3", "6", "@tokafor"], [9, "3", "2", "@wrencastellan"], [10, "2#", "", "@jhalloran"]],
-    "last": {"move": "2#", "words": "A Black disc down column 2, to row 4", "by": "@jhalloran", "when": "10 Oct"},
-    "result": {"winner": "github", "how": "four in a row"}, "line": [[2, 4], [3, 3], [4, 2], [5, 1]],
-    "next": "14 Oct", "note": NOTE}
+
+def over(kind: str, game: int, day: str, at: str, why: str = "") -> str:
+    """A finished board's note, as the engine writes it: when the next game opens, and where every game is kept."""
+    return (f"Game {game} is over, and its final board stays up for two days: game {game + 1} opens {day}, {at} EST, "
+            f"and nothing can be played until then. {why}{' ' if why else ''}Every finished game is kept as a "
+            f"[record](https://github.com/tannergolden/tannergolden/tree/HEAD/.github/{kind}/games).")
+
+
+# --------------------------------------------------------------------------- the engine's long lists
+SPOT = TT.game.SQUARE           # where a square stands in its board, or a hole in its quarter: the same nine names
+EVERY_SQUARE = " ".join(f"{f}{r}" for r in range(9, 0, -1) for f in "abcdefghi")
+EVERY_HOLE = " ".join(f"{f}{r}" for r in range(6, 0, -1) for f in "abcdef")
+
+
+def titled(verb: str, spot: str, where: str) -> str:
+    """A move's title as the engine writes it, every word capitalized but `the` and `of`."""
+    words = f"{verb} the {spot} of the {where}".split()
+    return " ".join(w if w in ("the", "of") else w[0].upper() + w[1:] for w in words) + "!"
+
+
+def squares(mark: str, cells: str, game: int, ply: int) -> list:
+    """Every square of `cells` as the engine lists it, for a mark, X or O, or for a ghost where `mark` is empty: its
+    emoji, title and words say where it is, never what it does."""
+    out = []
+    for cell in cells.split():
+        spot, board = SPOT[TT.game.spot_of(cell)], f"{TT.game.PLACE[TT.game.board_of(cell)]} board"
+        if not mark:
+            out.append(row("tictac", "👻", titled("lock", spot, board), cell,
+                           f"A ghost locks the {spot} of the {board}", game, ply))
+            continue
+        emoji = "🔳" if spot == "centre" else "📐" if spot.endswith("corner") else "📏"
+        out.append(row("tictac", emoji, titled("take", spot, board), mark + cell,
+                       f"{mark} takes the {spot} of the {board}", game, ply))
+    return out
+
+
+def holes(colour: str, cells: str, game: int, ply: int) -> list:
+    """Every hole of `cells` as the engine lists it, for a marble, white or black, with its eight turns, or for a ghost
+    where `colour` is empty, with its one link."""
+    out = []
+    for cell in cells.split():
+        q = PG.game.quarter_of(cell)
+        (x, y), (qx, qy) = PG.game.xy(cell), PG.game.QUARTERS[q]
+        spot, quarter = SPOT[(x - qx, y - qy)], f"{PG.game.QNAME[q]} quarter"
+        if not colour:
+            out.append(row("pentago", "👻", titled("ghost", spot, quarter), cell,
+                           f"A ghost on {cell}, the {spot} of the {quarter}", game, ply))
+            continue
+        out.append(hole("⚪" if colour == "white" else "⚫", titled("take", spot, quarter), cell,
+                        f"A {colour} marble on {cell}, then a quarter turns", game, ply))
+    return out
+
+
+# --------------------------------------------------------------------------- Tic-Tac
+# Game 11, fresh: the Arbiter drew GitHub to place the first ghost, and anyone but the house may choose its square.
+TT_FRESH = {
+    "kind": "tictac", "places": "github", "game": 11, "move": 1, "players": 0,
+    "board": "........./........./........./........./........./........./........./........./.........",
+    "due": "20 Oct", "alert": "place a ghost",
+    "history": [["G", "", "", ""]],
+    "moves": [row("tictac", "👻", "Lock the Upper Left Corner of the Upper Left Board!",
+                  "a9", "A ghost locks the upper left corner of the upper left board", 11, 1),
+              row("tictac", "👻", "Lock the Top Edge of the Upper Left Board!",
+                  "b9", "A ghost locks the top edge of the upper left board", 11, 1),
+              row("tictac", "👻", "Lock the Upper Right Corner of the Upper Left Board!",
+                  "c9", "A ghost locks the upper right corner of the upper left board", 11, 1)],
+    "note": f"{TT_OPENING} {ANYONE} The ghost is due by 20 Oct, 07:21 EST, or the Arbiter places one at random."}
+# GitHub's ghost locks d6, and it is the house's turn to lock a square of its own.
+TT_GHOST = {
+    "kind": "tictac", "places": "github", "game": 11, "move": 1, "players": 1,
+    "board": "........./........./........./...G...../........./........./........./........./.........",
+    "due": "21 Oct", "alert": "place a ghost",
+    "history": [["G", "d6", "", "@hollyfenwick"]],
+    "last": {"move": "d6", "words": "A ghost locks the upper left corner of the centre board", "by": "@hollyfenwick",
+             "when": "14 Oct"},
+    "moves": [row("tictac", "👻", "Lock the Upper Left Corner of the Upper Left Board!",
+                  "a9", "A ghost locks the upper left corner of the upper left board", 11, 2),
+              row("tictac", "👻", "Lock the Top Edge of the Upper Left Board!",
+                  "b9", "A ghost locks the top edge of the upper left board", 11, 2),
+              row("tictac", "👻", "Lock the Upper Right Corner of the Upper Left Board!",
+                  "c9", "A ghost locks the upper right corner of the upper left board", 11, 2)],
+    "note": f"{TT_OPENING} {ONLY} The ghost is due by 21 Oct, 02:21 EST, or the Arbiter places one at random."}
+# Both ghosts down, and the Arbiter drew the house to make the first mark, in any board.
+TT_GHOSTS = {
+    "kind": "tictac", "places": "github", "opens": "house", "game": 11, "move": 1, "players": 1,
+    "board": "........./.......G./........./...G...../........./........./........./........./.........",
+    "due": "21 Oct", "alert": "any board",
+    "history": [["G", "d6", "h8", "@hollyfenwick"], [1, "", "", ""]],
+    "last": {"move": "h8", "words": "A ghost locks the centre of the upper right board", "by": "@tannergolden",
+             "when": "14 Oct"},
+    "moves": [row("tictac", "📐", "Take the Upper Left Corner of the Upper Left Board!",
+                  "Xa9", "X takes the upper left corner of the upper left board", 11, 3),
+              row("tictac", "📏", "Take the Top Edge of the Upper Left Board!",
+                  "Xb9", "X takes the top edge of the upper left board", 11, 3),
+              row("tictac", "📐", "Take the Upper Right Corner of the Upper Left Board!",
+                  "Xc9", "X takes the upper right corner of the upper left board", 11, 3)],
+    "note": f"{TT_OPENING} {ONLY} The move is due by 21 Oct, 14:21 EST, or the Arbiter plays a random legal move."}
+# Game 12 the other way round: the house was drawn to place first and GitHub to make the first mark.
+TT_GHOSTS_GITHUB = {
+    "kind": "tictac", "places": "house", "opens": "github", "game": 12, "move": 1, "players": 1,
+    "board": "........./........./.......G./G......../........./........./........./........./.........",
+    "due": "21 Oct", "alert": "any board",
+    "history": [["G", "h7", "a6", "@hollyfenwick"], [1, "", "", ""]],
+    "last": {"move": "a6", "words": "A ghost locks the upper left corner of the left board", "by": "@hollyfenwick",
+             "when": "14 Oct"},
+    "moves": [row("tictac", "📐", "Take the Upper Left Corner of the Upper Left Board!",
+                  "Oa9", "O takes the upper left corner of the upper left board", 12, 3),
+              row("tictac", "📏", "Take the Top Edge of the Upper Left Board!",
+                  "Ob9", "O takes the top edge of the upper left board", 12, 3),
+              row("tictac", "📐", "Take the Upper Right Corner of the Upper Left Board!",
+                  "Oc9", "O takes the upper right corner of the upper left board", 12, 3)],
+    "note": f"{TT_OPENING} {ANYONE} The move is due by 21 Oct, 22:02 EST, or the Arbiter plays a random legal move."}
+# The house's Xi7 sends GitHub to the lower right board, where h3, g2 and h2 each win the game.
+TT_GITHUB = {
+    "kind": "tictac", "places": "github", "opens": "github", "game": 9, "move": 25, "players": 3,
+    "board": "O..O.O.X./...O..XXG/XXXXX.O.X/XO..XXGO./.O.X..OOX/XO.OXXX.X/.XOO..O.O/.OOO.X..O/XXOOO.O.X",
+    "due": "22 Nov", "alert": "lower right board",
+    "history": [[23, "Of9", "Xh9", "@hollyfenwick"], [24, "Od8", "Xi7", "@hollyfenwick"], [25, "", "", ""]],
+    "last": {"move": "Xi7", "words": "X takes the lower right corner of the upper right board", "by": "@tannergolden",
+             "when": "15 Nov"},
+    "moves": [row("tictac", "📏", "Take the Top Edge of the Lower Right Board!",
+                  "Oh3", "O takes the top edge of the lower right board", 9, 51),
+              row("tictac", "📏", "Take the Left Edge of the Lower Right Board!",
+                  "Og2", "O takes the left edge of the lower right board", 9, 51),
+              row("tictac", "🔳", "Take the Centre of the Lower Right Board!",
+                  "Oh2", "O takes the centre of the lower right board", 9, 51),
+              row("tictac", "📏", "Take the Bottom Edge of the Lower Right Board!",
+                  "Oh1", "O takes the bottom edge of the lower right board", 9, 51)],
+    "note": f"{ANYONE} The move is due by 22 Nov, 04:07 EST, or the Arbiter plays a random legal move. {TT_RULES}"}
+# GitHub's Od1 sends the house to the lower left board, which the house has won, so it may play any open board: d3 and
+# f2 each win the game.
+TT_HOUSE = {
+    "kind": "tictac", "places": "github", "opens": "house", "game": 10, "move": 23, "players": 3,
+    "board": "....OG.OX/O..X.OO../O.XOOX..O/.XO.X.O../.XXOO.XX./X.OOGO.../.X...XXXX/..OOX..X./XXXOOXO.O",
+    "due": "18 Nov", "alert": "any board",
+    "history": [[21, "Xc5", "Og6", "@hollyfenwick"], [22, "Xc7", "Od1", "@imvale"], [23, "", "", ""]],
+    "last": {"move": "Od1", "words": "O takes the lower left corner of the bottom board", "by": "@imvale",
+             "when": "11 Nov"},
+    "moves": [row("tictac", "📐", "Take the Upper Left Corner of the Upper Left Board!",
+                  "Xa9", "X takes the upper left corner of the upper left board", 10, 47),
+              row("tictac", "📏", "Take the Top Edge of the Upper Left Board!",
+                  "Xb9", "X takes the top edge of the upper left board", 10, 47),
+              row("tictac", "📐", "Take the Upper Right Corner of the Upper Left Board!",
+                  "Xc9", "X takes the upper right corner of the upper left board", 10, 47)],
+    "note": f"{ONLY} The move is due by 18 Nov, 01:00 EST, or the Arbiter plays a random legal move."}
+# Every square the house could take on that turn, as the engine listed them.
+HOUSE_SQUARES = "a9 b9 c9 d9 g9 b8 c8 e8 h8 i8 b7 g7 h7 a6 d6 f6 h6 i6 a5 f5 i5 b4 g4 h4 i4 d3 e3 f2"
+# Game 8: the house's Xi4# won the right board, and with it the middle row of boards.
+TT_WON = {
+    "kind": "tictac", "places": "house", "opens": "github", "game": 8, "move": 28, "players": 3,
+    "board": ".OXO...XO/.OO.O.OOO/X.O.XO.../XXXXXX..X/OXOX..XOX/XOOO...OX/GXXOOX.XO/O..XOOXX./OGX.XXOO.",
+    "next": "17 Nov", "result": {"winner": "house", "how": "three boards in a row"}, "line": ["a2", "b2", "c2"],
+    "history": [[26, "Oh1", "Xe1", "@devonaraki"], [27, "Of2", "Xi4#", "@devonaraki"], [28, "", "", ""]],
+    "last": {"move": "Xi4#", "words": "X takes the lower right corner of the right board", "by": "@tannergolden",
+             "when": "15 Nov"},
+    "note": over("tictac", 8, "17 Nov", "04:10")}
+# Game 9 won by GitHub on h2, in the lower right board the house's Xi7 sent it to.
+TT_WON_GITHUB = {
+    "kind": "tictac", "places": "github", "opens": "github", "game": 9, "move": 25, "players": 3,
+    "board": "O..O.O.X./...O..XXG/XXXXX.O.X/XO..XXGO./.O.X..OOX/XO.OXXX.X/.XOO..O.O/.OOO.X.OO/XXOOO.O.X",
+    "next": "18 Nov", "result": {"winner": "github", "how": "three boards in a row"}, "line": ["a1", "b1", "c1"],
+    "history": [[23, "Of9", "Xh9", "@hollyfenwick"], [24, "Od8", "Xi7", "@hollyfenwick"],
+                [25, "Oh2#", "", "@hollyfenwick"]],
+    "last": {"move": "Oh2#", "words": "O takes the centre of the lower right board", "by": "@hollyfenwick",
+             "when": "16 Nov"},
+    "note": over("tictac", 9, "18 Nov", "08:07")}
+# Game 7, drawn: one board drawn and the rest won so that no line of three boards is left to either side.
+TT_DRAWN = {
+    "kind": "tictac", "places": "house", "opens": "github", "game": 7, "move": 27, "players": 3,
+    "board": "XOX...XOX/OO.X..OOX/.OOOOOXXO/XXX.OOOOO/OOX.XX..G/X..X...OO/.XO.XX.../OOXOXX.G./O..X.OXXX",
+    "next": "21 Nov", "result": {"winner": None, "how": "no line left"},
+    "history": [[25, "Og8", "Xc6", "@imvale"], [26, "Oh9", "Xf3", "@imvale"], [27, "Oh8", "", "@imvale"]],
+    "last": {"move": "Oh8", "words": "O takes the centre of the upper right board", "by": "@imvale", "when": "19 Nov"},
+    "note": over("tictac", 7, "21 Nov", "15:23")}
+
+# --------------------------------------------------------------------------- Pentago
+# Game 5, fresh: the Arbiter drew the house to set the first ghost, so only the house may choose its hole.
+PG_FRESH = {
+    "kind": "pentago", "places": "house", "game": 5, "move": 1, "players": 0,
+    "board": "....../....../....../....../....../......",
+    "due": "20 Oct", "alert": "set a ghost",
+    "history": [["G", "", "", ""]],
+    "moves": [row("pentago", "👻", "Ghost the Upper Left Corner of the Upper Left Quarter!",
+                  "a6", "A ghost on a6, the upper left corner of the upper left quarter", 5, 1),
+              row("pentago", "👻", "Ghost the Top Edge of the Upper Left Quarter!",
+                  "b6", "A ghost on b6, the top edge of the upper left quarter", 5, 1),
+              row("pentago", "👻", "Ghost the Upper Right Corner of the Upper Left Quarter!",
+                  "c6", "A ghost on c6, the upper right corner of the upper left quarter", 5, 1)],
+    "note": f"{PG_OPENING} {ONLY} The ghost is due by 20 Oct, 07:07 EST, or the Arbiter sets one at random."}
+# A week passed without the house's ghost, so the Arbiter set it on e1, and it is GitHub's turn to set its own.
+PG_GHOST = {
+    "kind": "pentago", "places": "house", "game": 5, "move": 1, "players": 0,
+    "board": "....../....../....../....../....../....G.",
+    "due": "27 Oct", "alert": "set a ghost",
+    "history": [["G", "e1", "", ""]],
+    "last": {"move": "e1", "words": "A ghost on e1, the bottom edge of the lower right quarter", "by": "the Arbiter",
+             "when": "20 Oct"},
+    "moves": [row("pentago", "👻", "Ghost the Upper Left Corner of the Upper Left Quarter!",
+                  "a6", "A ghost on a6, the upper left corner of the upper left quarter", 5, 2),
+              row("pentago", "👻", "Ghost the Top Edge of the Upper Left Quarter!",
+                  "b6", "A ghost on b6, the top edge of the upper left quarter", 5, 2),
+              row("pentago", "👻", "Ghost the Upper Right Corner of the Upper Left Quarter!",
+                  "c6", "A ghost on c6, the upper right corner of the upper left quarter", 5, 2)],
+    "note": f"{PG_OPENING} {ANYONE} The ghost is due by 27 Oct, 07:08 EST, or the Arbiter sets one at random."}
+# Game 6: both ghosts down, the house's on f3 and GitHub's on b1, and the Arbiter drew GitHub to set the first marble.
+PG_GHOSTS = {
+    "kind": "pentago", "places": "house", "opens": "github", "game": 6, "move": 1, "players": 1,
+    "board": "....../....../....../.....G/....../.G....",
+    "due": "21 Oct",
+    "history": [["G", "f3", "b1", "@devonaraki"], [1, "", "", ""]],
+    "last": {"move": "b1", "words": "A ghost on b1, the bottom edge of the lower left quarter", "by": "@devonaraki",
+             "when": "14 Oct"},
+    "moves": [hole("⚫", "Take the Upper Left Corner of the Upper Left Quarter!",
+                   "a6", "A black marble on a6, then a quarter turns", 6, 3),
+              hole("⚫", "Take the Top Edge of the Upper Left Quarter!",
+                   "b6", "A black marble on b6, then a quarter turns", 6, 3),
+              hole("⚫", "Take the Upper Right Corner of the Upper Left Quarter!",
+                   "c6", "A black marble on c6, then a quarter turns", 6, 3)],
+    "note": f"{PG_OPENING} {ANYONE} The move is due by 21 Oct, 10:52 EST, or the Arbiter plays a random legal move."}
+# Game 3 the other way round: GitHub set the first ghost, on b5, a quarter's centre, which no turn moves, and the
+# Arbiter drew the house to set the first marble.
+PG_GHOSTS_HOUSE = {
+    "kind": "pentago", "places": "github", "opens": "house", "game": 3, "move": 1, "players": 1,
+    "board": "....../.G..../....../....../....../.....G",
+    "due": "22 Oct",
+    "history": [["G", "b5", "f1", "@imvale"], [1, "", "", ""]],
+    "last": {"move": "f1", "words": "A ghost on f1, the lower right corner of the lower right quarter",
+             "by": "@tannergolden", "when": "15 Oct"},
+    "moves": [hole("⚪", "Take the Upper Left Corner of the Upper Left Quarter!",
+                   "a6", "A white marble on a6, then a quarter turns", 3, 3),
+              hole("⚪", "Take the Top Edge of the Upper Left Quarter!",
+                   "b6", "A white marble on b6, then a quarter turns", 3, 3),
+              hole("⚪", "Take the Upper Right Corner of the Upper Left Quarter!",
+                   "c6", "A white marble on c6, then a quarter turns", 3, 3)],
+    "note": f"{PG_OPENING} {ONLY} The move is due by 22 Oct, 06:16 EST, or the Arbiter plays a random legal move."}
+# Game 4, GitHub's turn: e5 makes five on its own, and a clockwise turn of the upper right quarter after any other
+# marble makes five for the house alone. Its ghosts, set on a2 and d2, have turned with their quarters to b1 and e1.
+PG_GITHUB = {
+    "kind": "pentago", "places": "house", "opens": "house", "game": 4, "move": 13, "players": 3,
+    "board": "..BWWW/.WB..B/.BWBW./BWBWWW/BB..BW/BGWWGB",
+    "due": "10 Nov",
+    "history": [[11, "c3-ur-cw", "a1-ll-cw", "@hollyfenwick"], [12, "f6-ul-cw", "d4-lr-acw", "@devonaraki"],
+                [13, "b5-lr-acw", "", ""]],
+    "last": {"move": "b5-lr-acw", "words": "A white marble on b5, then the lower right quarter turns anticlockwise",
+             "by": "@tannergolden", "when": "3 Nov"},
+    "moves": [hole("⚫", "Take the Upper Left Corner of the Upper Left Quarter!",
+                   "a6", "A black marble on a6, then a quarter turns", 4, 28),
+              hole("⚫", "Take the Top Edge of the Upper Left Quarter!",
+                   "b6", "A black marble on b6, then a quarter turns", 4, 28),
+              hole("⚫", "Take the Left Edge of the Upper Left Quarter!",
+                   "a5", "A black marble on a5, then a quarter turns", 4, 28)],
+    "note": f"{ANYONE} The move is due by 10 Nov, 07:00 EST, or the Arbiter plays a random legal move. {PG_RULES}"}
+# Game 7, the house's turn: c1 and a clockwise turn of the lower right quarter make five, and a clockwise turn of the
+# upper right quarter after any marble makes five for GitHub alone.
+PG_HOUSE = {
+    "kind": "pentago", "places": "github", "opens": "house", "game": 7, "move": 13, "players": 3,
+    "board": "WB.B.G/BBB.BW/.WB.B./BW.WW./WWG.BW/WW.BBW",
+    "due": "3 Nov",
+    "history": [[11, "b2-ur-cw", "b4-lr-acw", "@hollyfenwick"], [12, "a4-ul-cw", "a3-lr-cw", "@devonaraki"],
+                [13, "", "", ""]],
+    "last": {"move": "a3-lr-cw", "words": "A black marble on a3, then the lower right quarter turns clockwise",
+             "by": "@devonaraki", "when": "27 Oct"},
+    "moves": [hole("⚪", "Take the Upper Right Corner of the Upper Left Quarter!",
+                   "c6", "A white marble on c6, then a quarter turns", 7, 27),
+              hole("⚪", "Take the Top Edge of the Upper Right Quarter!",
+                   "e6", "A white marble on e6, then a quarter turns", 7, 27),
+              hole("⚪", "Take the Left Edge of the Upper Right Quarter!",
+                   "d5", "A white marble on d5, then a quarter turns", 7, 27)],
+    "note": f"{ONLY} The move is due by 3 Nov, 13:28 EST, or the Arbiter plays a random legal move. {PG_RULES}"}
+# Game 3: the house set a5 and turned the lower right quarter, making five up file f.
+PG_WON = {
+    "kind": "pentago", "places": "github", "opens": "house", "game": 3, "move": 10, "players": 3,
+    "board": ".W..BW/WG..BW/.BWBBW/W.B..W/BWB..W/..B..G",
+    "next": "28 Oct", "result": {"winner": "house", "how": "five in a row"}, "line": ["f2", "f3", "f4", "f5", "f6"],
+    "history": [[8, "b2-ur-cw", "e5-ur-acw", "@devonaraki"], [9, "c3-ur-cw", "b1-ll-acw", "@devonaraki"],
+                [10, "a5-lr-acw#", "", ""]],
+    "last": {"move": "a5-lr-acw#", "words": "A white marble on a5, then the lower right quarter turns anticlockwise",
+             "by": "@tannergolden", "when": "26 Oct"},
+    "note": over("pentago", 3, "28 Oct", "14:16")}
+# Game 6: GitHub's marble on d5 made five along rank 5 on its own, so no quarter turned.
+PG_WON_GITHUB = {
+    "kind": "pentago", "places": "house", "opens": "github", "game": 6, "move": 13, "players": 3,
+    "board": "W.B.WB/BBBBBW/WWBWB./.G..WW/BWWWB./.BB.WG",
+    "next": "2 Nov", "result": {"winner": "github", "how": "five in a row"}, "line": ["a5", "b5", "c5", "d5", "e5"],
+    "history": [[11, "e5-ll-acw", "f5-ll-cw", "@imvale"], [12, "a6-ul-cw", "d4-lr-cw", "@devonaraki"],
+                [13, "d5#", "", "@devonaraki"]],
+    "last": {"move": "d5#", "words": "A black marble on d5", "by": "@devonaraki", "when": "31 Oct"},
+    "note": over("pentago", 6, "2 Nov", "07:52")}
+# Game 2: the house's own turn of the lower left quarter carried its marble to c3 and made five for GitHub alone.
+PG_GIVEN = {
+    "kind": "pentago", "places": "house", "opens": "house", "game": 2, "move": 15, "players": 3,
+    "board": "WBBBWW/.BBWWW/BBWBWB/WBW..W/WB.WB./WBWBGG",
+    "next": "7 Nov", "result": {"winner": "github", "how": "five in a row"}, "line": ["b1", "b2", "b3", "b4", "b5"],
+    "history": [[13, "a1-lr-cw", "f6-ur-acw", "@devonaraki"], [14, "e5-lr-cw", "b5-ul-cw", "@hollyfenwick"],
+                [15, "a3-ll-cw#", "", ""]],
+    "last": {"move": "a3-ll-cw#", "words": "A white marble on a3, then the lower left quarter turns clockwise",
+             "by": "@tannergolden", "when": "5 Nov"},
+    "note": over("pentago", 2, "7 Nov", "00:03", "The move that won it was the other side's, its turn making five for "
+                 "the winner alone, so the win counts for nobody.")}
+# Game 1: every hole but the ghosts' filled, and five for neither side.
+PG_FULL = {
+    "kind": "pentago", "places": "house", "opens": "github", "game": 1, "move": 18, "players": 3,
+    "board": "WGBWWB/WWWGBB/BBBWWB/BBWBBB/WWBBWW/BWWBWW",
+    "next": "10 Nov", "result": {"winner": None, "how": "a full board"},
+    "history": [[16, "d6-ur-cw", "c2-lr-acw", "@imvale"], [17, "d1-ll-cw", "c5-ur-cw", "@hollyfenwick"],
+                [18, "", "", ""]],
+    "last": {"move": "c5-ur-cw", "words": "A white marble on c5, then the upper right quarter turns clockwise",
+             "by": "@tannergolden", "when": "8 Nov"},
+    "note": over("pentago", 1, "10 Nov", "00:07")}
+# Game 8: the house's turn of the lower right quarter made five for both sides at once.
+PG_BOTH = {
+    "kind": "pentago", "places": "github", "opens": "house", "game": 8, "move": 15, "players": 3,
+    "board": "WBW.GB/WBW.WB/BWWWBB/BBW.GB/W.BWBB/WW.WWB",
+    "next": "3 Nov", "result": {"winner": None, "how": "five for both"},
+    "history": [[13, "f1-ll-acw", "d6-ul-cw", "@hollyfenwick"], [14, "b1-ur-acw", "e3-ur-acw", "@devonaraki"],
+                [15, "f2-lr-cw", "", ""]],
+    "last": {"move": "f2-lr-cw", "words": "A white marble on f2, then the lower right quarter turns clockwise",
+             "by": "@tannergolden", "when": "1 Nov"},
+    "note": over("pentago", 8, "3 Nov", "03:35")}
 
 # --------------------------------------------------------------------------- Checkers
 # A fresh board: GitHub plays Black, which moves first, so the game opens on GitHub's turn, its clock running.
@@ -187,16 +446,21 @@ CK_DRAWN = {
     "result": {"winner": None, "how": "forty moves"}, "next": "14 Oct",
     "note": NOTE}
 
-GAMES = {"tictactoe": (TTT, (TTT_GITHUB, TTT_HOUSE, TTT_FRESH, TTT_FRESH_HOUSE, TTT_WON, TTT_DRAWN)),
-         "connectfour": (C4, (C4_GITHUB, C4_HOUSE, C4_FRESH, C4_FRESH_HOUSE, C4_WON)),
+GAMES = {"tictac": (TT, (TT_FRESH, TT_GHOST, TT_GHOSTS, TT_GHOSTS_GITHUB, TT_GITHUB, TT_HOUSE, TT_WON, TT_WON_GITHUB,
+                         TT_DRAWN)),
+         "pentago": (PG, (PG_FRESH, PG_GHOST, PG_GHOSTS, PG_GHOSTS_HOUSE, PG_GITHUB, PG_HOUSE, PG_WON, PG_WON_GITHUB,
+                          PG_GIVEN, PG_FULL, PG_BOTH)),
          "checkers": (CK, (CK_OPENING, CK_GITHUB, CK_CROWNED, CK_WON, CK_DRAWN))}
-# A board under way, a fresh one and a finished one of each game, drawn in every tone.
-EVERY_TONE = (TTT_GITHUB, TTT_FRESH, TTT_WON, C4_HOUSE, C4_FRESH, C4_WON, CK_GITHUB, CK_OPENING, CK_WON)
+# A board under way, one while its ghosts go down or a fresh one, and a finished one of each game, drawn in every tone.
+EVERY_TONE = (TT_GITHUB, TT_GHOST, TT_WON, PG_HOUSE, PG_GHOSTS, PG_GIVEN, CK_GITHUB, CK_OPENING, CK_WON)
 BOARDS = [d for _, boards in GAMES.values() for d in boards]
+# Where a sheet stands its board, as chess's sheet does: its top left corner and its width, wide and on a phone.
+AT = {False: (GS.PAD + 18, GS.BAND + 22, GS.BOARD["wide"]), True: (GS.PAD + 14, GS.BAND + 18, GS.BOARD["narrow"])}
 
 
 def name(d: dict) -> str:
-    return f"{d['kind']} game {d['game']} move {d['move']}{' finished' if d.get('result') else ''}"
+    last = (d.get("last") or {}).get("move", "nothing")
+    return f"{d['kind']} game {d['game']} move {d['move']} after {last}{' finished' if d.get('result') else ''}"
 
 
 def said(block: str) -> str:
@@ -214,6 +478,11 @@ def lettered(d: dict, tone: str, variant: str = "still") -> list[str]:
     with mock.patch.object(Lettering, "text", record):
         E.draw(d["kind"], d, tone, "day", variant)
     return runs
+
+
+def reasons(pkg, d: dict) -> str:
+    """Everything a game's check finds in `d`, as one line to look for a reason in."""
+    return " ".join(pkg.check(d))
 
 
 class EveryFile(unittest.TestCase):
@@ -245,30 +514,66 @@ class EveryFile(unittest.TestCase):
                         with self.subTest(board=name(d), tone=tone, variant=variant, theme=theme):
                             self.assertEqual(lint(svg, budget=BUDGET["board"]), [])
                             self.assertEqual(svg.count("<svg"), 1)
+                            for ch in DASHES:
+                                self.assertNotIn(ch, svg)
 
-    def test_no_sheet_of_tic_tac_toe_or_connect_four_singles_out_a_cell_a_column_or_a_line(self):
-        # nothing the rules make the side to move answer, so nothing clouded or glowing; and the board's faint lines
-        # are all eight while a game goes on, whatever stands on them, never only the ones a side could still win on
-        lines = []
-
-        def faint(skin, d):
-            lines.append(d.count("M"))
-            return ""
+    def test_no_sheet_of_tic_tac_or_pentago_singles_out_a_square_a_hole_or_a_turn(self):
+        # Nothing is clouded or glowing, since nothing the rules make the side to move answer is there. Tic-Tac boxes
+        # the last move's square alone and brackets only the board the rules send the next mark to, never a square or
+        # a board a side could win on; Pentago rings the last marble's hole and a won game's five alone, and draws the
+        # turn of the last move's quarter alone, never a hole or a turn that would make five.
+        seen: dict[str, list] = {"brackets": [], "boxed": [], "rings": [], "turns": []}
 
         def clouded(*_, **__):
-            raise AssertionError("a cell or a hole singled out")
+            raise AssertionError("a square or a hole singled out")
 
-        with mock.patch.object(GameStandard, "clouded", clouded), mock.patch.object(GamePrint, "clouded", clouded), \
-                mock.patch.object(TTT.Standard, "open_lines", faint), mock.patch.object(TTT.Print, "open_lines", faint):
-            for d in GAMES["tictactoe"][1] + GAMES["connectfour"][1]:
-                for tone in TONES:
-                    for variant in E.variants(d["kind"], d):
-                        for theme in ("day", "dark"):
-                            lines.clear()
-                            E.draw(d["kind"], d, tone, theme, variant)
-                            with self.subTest(board=name(d), tone=tone, variant=variant, theme=theme):
-                                want = [] if d["kind"] == "connectfour" or d.get("result") else [8]
-                                self.assertEqual(lines, want)
+        def recording(key, original, at):
+            def record(self, *a, **k):
+                seen[key].append(at(*a))
+                return original(self, *a, **k)
+            return record
+
+        def corner(x, y, *_):
+            return round(x, 1), round(y, 1)
+
+        patches = [mock.patch.object(skin, "clouded", clouded) for skin in (GameStandard, GamePrint)]
+        for skin in (TT.Standard, TT.Print):
+            patches += [mock.patch.object(skin, "brackets", recording("brackets", skin.brackets, corner)),
+                        mock.patch.object(skin, "cell_mark", recording("boxed", skin.cell_mark,
+                                                                       lambda cv, x, y, *_: corner(x, y)))]
+        for skin in (PG.Standard, PG.Print):
+            patches += [mock.patch.object(skin, "hole_ring", recording("rings", skin.hole_ring,
+                                                                       lambda cv, x, y, *_: corner(x, y))),
+                        mock.patch.object(skin, "turn_mark", recording("turns", skin.turn_mark,
+                                                                       lambda X, Y, q, qk, way, *_: (qk, way)))]
+        for p in patches:
+            p.start()
+            self.addCleanup(p.stop)
+        for d in GAMES["tictac"][1] + GAMES["pentago"][1]:
+            game = E.game_of(d["kind"])
+            st = game.state(game.describe(d))
+            for tone in TONES:
+                for variant in E.variants(d["kind"], d):
+                    small = variant.startswith("narrow")
+                    x0, y0, n = AT[small]
+                    for got in seen.values():
+                        got.clear()
+                    E.draw(d["kind"], d, tone, "day", variant)
+                    with self.subTest(board=name(d), tone=tone, variant=variant):
+                        if d["kind"] == "tictac":
+                            sent = [] if st["result"] or st["target"] is None else [st["target"]]
+                            self.assertEqual(seen["brackets"],
+                                             [corner(*TT.layout.board_box(b, x0, y0, n, small)) for b in sent])
+                            boxed = [st["last"]["cell"]] if st["last"] else []
+                            self.assertEqual(seen["boxed"],
+                                             [corner(*TT.layout.cell_box(c, x0, y0, n, small)) for c in boxed])
+                        else:
+                            ringed = ([st["last"]["landed"]] if st["last"] else []) + st["line"]
+                            self.assertEqual(sorted(seen["rings"]),
+                                             sorted(corner(*PG.layout.centre(c, x0, y0, n, small)) for c in ringed))
+                            turned = st["last"] and st["last"]["turned"]
+                            self.assertEqual(seen["turns"], [(st["last"]["quarter"], st["last"]["way"])] if turned
+                                             else [])
 
     def test_the_still_files_stand_still_and_the_rest_move(self):
         for d in BOARDS:
@@ -278,13 +583,18 @@ class EveryFile(unittest.TestCase):
                     with self.subTest(board=name(d), tone=tone, variant=variant):
                         (self.assertNotIn if variant.endswith("still") else self.assertIn)("<animate", svg)
 
-    def test_each_is_a_kind_of_its_own_drawn_as_chess_is(self):
-        for kind in ("tictactoe", "connectfour", "checkers"):
+    def test_each_is_a_kind_of_its_own_drawn_as_chess_is_and_takes_the_place_of_a_game_retired(self):
+        for kind in ("tictac", "pentago", "checkers"):
             fn, variants, klass = E.KINDS[kind]
             self.assertEqual((variants, klass), (("wide", "narrow", "still", "narrow-still"), "board"))
             self.assertIn(kind, ED.OWN_THEMES)
             self.assertIn(kind, ED.GAMES, "a holiday's set or a collection's design draws it in its pixels")
-        self.assertEqual(E.GAMES, ("tictactoe", "connectfour", "checkers"))
+        self.assertEqual(E.GAMES, ("tictac", "pentago", "checkers"))
+        for old, new in (("tictactoe", "tictac"), ("connectfour", "pentago")):
+            with self.subTest(retired=old):
+                self.assertNotIn(old, E.KINDS)
+                self.assertNotIn(old, ED.GAMES | ED.OWN_THEMES | set(ED.FOLDS))
+                self.assertEqual((ED.RETIRED[old], ED.SUCCEEDED[old]), ("1.14.0", new))
 
     def test_a_sheet_is_the_width_of_chesss_and_as_tall_in_every_theme(self):
         for d in EVERY_TONE:
@@ -320,7 +630,7 @@ class Standard_(unittest.TestCase):
                 self.assertIn('fill="url(#', standard)
 
     def test_a_holiday_or_collection_draws_every_file_of_each_game_in_its_pixels(self):
-        elements = ED.merged({d["kind"]: dict(d) for d in (TTT_GITHUB, C4_HOUSE, CK_GITHUB)}, {},
+        elements = ED.merged({d["kind"]: dict(d) for d in (TT_GITHUB, PG_HOUSE, CK_GITHUB)}, {},
                              subject="tannergolden")
         printed = ED.render(elements, "blackprint")
         drawn = ED.render(elements, "blackprint", "halloween")
@@ -329,13 +639,13 @@ class Standard_(unittest.TestCase):
             self.assertIn(f"halloween elements {name.split('-')[0]} ", svg, name)
         standard = ED.render(elements, STANDARD)
         self.assertEqual(sorted(standard), sorted(printed))
-        for key in ("tictactoe", "connectfour", "checkers"):
+        for key in ("tictac", "pentago", "checkers"):
             self.assertNotEqual(standard[f"{key}-day.svg"], printed[f"{key}-day.svg"])
 
 
 class Settings(unittest.TestCase):
     def test_each_is_drawn_on_tannergoldens_profile_alone(self):
-        section = {d["kind"]: dict(d) for d in (TTT_GITHUB, C4_GITHUB, CK_GITHUB)}
+        section = {d["kind"]: dict(d) for d in (TT_GITHUB, PG_GITHUB, CK_GITHUB)}
         self.assertEqual(ED.validate(section, {}, subject="tannergolden"), [])
         self.assertEqual(ED.validate(section, {}, subject="TannerGolden"), [])
         for elsewhere in ("octocat", "tannergolden/markdown", ""):
@@ -345,15 +655,31 @@ class Settings(unittest.TestCase):
                     self.assertIn(f"{kind}: the {kind} element is drawn on @tannergolden's profile alone", errors)
 
     def test_what_each_cannot_be_drawn_without_is_named(self):
-        for kind, needs in (("tictactoe", "board, opens"), ("connectfour", "board, opens"), ("checkers", "fen")):
+        for kind, needs in (("tictac", "board, places"), ("pentago", "board, places"), ("checkers", "fen")):
             with self.subTest(kind=kind):
                 errors = ED.validate({kind: {"kind": kind}}, {}, subject="tannergolden")
                 self.assertIn(f"{kind}: a {kind} needs {needs}", errors)
 
+    def test_a_board_of_a_game_retired_is_turned_away_with_the_game_that_took_its_place(self):
+        # The settings of a page from before 1.14.0 name Tic-Tac-Toe and Connect Four: each is told what happened
+        # and which game took its place, and an old board under a new game's name is turned away for its shape.
+        old = {"tictactoe": {"kind": "tictactoe", "board": "O../XX./O.X", "opens": "house"},
+               "connectfour": {"kind": "connectfour", "board": "......./......./......./......./......./...D...",
+                               "opens": "github"}}
+        self.assertEqual(ED.validate(old, {}, subject="tannergolden"),
+                         ["tictactoe: the tictactoe element was retired in banners v1.14.0, and tictac took its place;"
+                          " take it out of the settings",
+                          "connectfour: the connectfour element was retired in banners v1.14.0, and pentago took its"
+                          " place; take it out of the settings"])
+        self.assertIn("board 'O../XX./O.X' is not nine rows of nine X, O, G or dots, the top row first",
+                      reasons(TT, {**old["tictactoe"], "kind": "tictac"}))
+        self.assertIn("is not six rows of six W, B, G or dots, the top row first",
+                      reasons(PG, {**old["connectfour"], "kind": "pentago"}))
+
     def test_text_is_text_and_a_number_a_number_within_its_ceiling(self):
         # YAML reads `note: 1984` as a number, `true` as a bool and an all-digit login as an int: each is turned away
         # here rather than reaching the README, which would fail on it.
-        for pkg, d in ((TTT, TTT_GITHUB), (C4, C4_GITHUB), (CK, CK_GITHUB)):
+        for pkg, d in ((TT, TT_GITHUB), (PG, PG_GITHUB), (CK, CK_GITHUB)):
             texts = {"note": (1984, True, ["a note"]), "due": (18, "32 Oct"),
                      "last": ({**d["last"], "words": 1984}, {**d["last"], "by": None}, {**d["last"], "when": 11},
                               {**d["last"], "when": "30 Feb"}),
@@ -367,88 +693,112 @@ class Settings(unittest.TestCase):
             for key in ("game", "move", "players"):
                 for bad in ("13", True, -1, 1_000_000_000, 13.0):
                     with self.subTest(kind=d["kind"], key=key, bad=bad):
-                        self.assertIn(f"{key} {bad!r} is not a number from", " ".join(pkg.check({**d, key: bad})))
+                        self.assertIn(f"{key} {bad!r} is not a number from", reasons(pkg, {**d, key: bad}))
                 with self.subTest(kind=d["kind"], key=key, fine=999_999_999):
                     self.assertEqual(pkg.check({**d, key: 999_999_999}), [])
             for bad_row in ([True, "", "", ""], [0, "", "", ""], [1_000_000_000, "", "", ""], ["3", "", "", ""]):
                 with self.subTest(kind=d["kind"], row=bad_row):
-                    self.assertIn("is not a row of a move's number", " ".join(pkg.check({**d, "history": [bad_row]})))
+                    self.assertIn("is not a row of a move's number", reasons(pkg, {**d, "history": [bad_row]}))
+        # the ghosts' row, numbered G, opens the score sheet of a game under the Ghost Rule, and no other
+        for pkg, d in ((TT, TT_GHOSTS), (PG, PG_GHOSTS)):
+            with self.subTest(kind=d["kind"]):
+                self.assertIn("or G for the ghosts' row first",
+                              reasons(pkg, {**d, "history": [*d["history"][1:], d["history"][0]]}))
+        self.assertIn("is not a row of a move's number", reasons(CK, {**CK_GITHUB, "history": [["G", "", "", ""]]}))
 
     def test_a_line_of_the_readme_never_opens_a_block_or_shows_an_image(self):
-        for pkg, d in ((TTT, TTT_GITHUB), (C4, C4_GITHUB), (CK, CK_GITHUB)):
+        for pkg, d in ((TT, TT_GITHUB), (PG, PG_GITHUB), (CK, CK_GITHUB)):
             for bad in ("```", "# Heading", "- an item", "1. an item", "    code", "---", "[a]: https://x.io"):
                 with self.subTest(kind=d["kind"], bad=bad):
-                    errors = " ".join(pkg.check({**d, "note": bad}))
-                    self.assertIn(f"note {bad!r} would open a block of its own", errors)
-            self.assertIn("note shows an image", " ".join(pkg.check({**d, "note": "![x](https://x.io/x.png)"})))
-            self.assertIn("note is one line of text", " ".join(pkg.check({**d, "note": "a | b"})))
+                    self.assertIn(f"note {bad!r} would open a block of its own", reasons(pkg, {**d, "note": bad}))
+            self.assertIn("note shows an image", reasons(pkg, {**d, "note": "![x](https://x.io/x.png)"}))
+            self.assertIn("note is one line of text", reasons(pkg, {**d, "note": "a | b"}))
 
     def test_no_banner_goes_over_a_board_whose_sheet_says_whose_turn_it_is(self):
         for kind, (pkg, boards) in GAMES.items():
             for d in boards:
                 with self.subTest(board=name(d)):
-                    self.assertIn("prompt is gone", " ".join(pkg.check({**d, "prompt": "🟢 **GitHub's turn!**"})))
+                    self.assertIn("prompt is gone", reasons(pkg, {**d, "prompt": "🟢 **GitHub's turn!**"}))
                     self.assertNotIn("[!", ED.block(kind, d, "assets/elements"))
 
     def test_a_move_links_its_own_ready_made_issue_and_nothing_else(self):
-        for pkg, d in ((TTT, TTT_GITHUB), (C4, C4_GITHUB), (CK, CK_GITHUB)):
-            other = {"tictactoe": "connectfour", "connectfour": "checkers", "checkers": "tictactoe"}[d["kind"]]
+        for pkg, d in ((TT, TT_GITHUB), (TT, TT_FRESH), (PG, PG_FRESH), (CK, CK_GITHUB)):
+            other = {"tictac": "pentago", "pentago": "checkers", "checkers": "tictac"}[d["kind"]]
             for bad in ("https://example.com/x", d["moves"][0][4].replace(d["kind"], other),
                         d["moves"][0][4] + "&x=1", d["moves"][0][4].replace("move%20", "move%200")):
-                with self.subTest(kind=d["kind"], link=bad[-30:]):
+                with self.subTest(board=name(d), link=bad[-30:]):
                     self.assertTrue(pkg.check({**d, "moves": [[*d["moves"][0][:4], bad]]}))
-        self.assertTrue(TTT.check({**TTT_GITHUB, "moves": [row("tictactoe", "🎯", "Go", "Ob3", "O b3", 9, 6,
-                                                                 code="d4")]}), "a cell the game does not have")
+        self.assertTrue(TT.check({**TT_GITHUB, "moves": [row("tictac", "🎯", "Go", "Oh3", "O h3", 9, 51, code="j3")]}),
+                        "a square the game does not have")
+        self.assertTrue(PG.check({**PG_FRESH, "moves": [row("pentago", "👻", "Go", "a6", "A ghost", 5, 1, code="g6")]}),
+                        "a hole the game does not have")
 
     def test_nothing_the_settings_can_hold_makes_the_checks_raise(self):
         hostile = (None, True, False, 0, -1, 1984, 10 ** 30, 1.5, "", "x", "```", [], [1], [[]], {}, {"a": 1},
                    ["x", "y", "z", "w", "v"], [[1, 2], [3, 4], [5, 6], [7, 8]])
-        for pkg, d in ((TTT, TTT_GITHUB), (TTT, TTT_WON), (C4, C4_GITHUB), (C4, C4_WON), (CK, CK_GITHUB),
-                       (CK, CK_WON)):
-            keys = set(d) | {"x", "opens", "light", "dark", "threats", "line", "result", "next", "kings", "alert",
-                             "outlook", "board", "fen"}
+        for pkg, d in ((TT, TT_FRESH), (TT, TT_GITHUB), (TT, TT_WON), (PG, PG_FRESH), (PG, PG_GITHUB), (PG, PG_WON),
+                       (CK, CK_GITHUB), (CK, CK_WON)):
+            keys = set(d) | {"x", "places", "opens", "light", "dark", "threats", "line", "result", "next", "kings",
+                             "alert", "board", "fen"}
             for key in sorted(keys):
                 for bad in hostile:
-                    with self.subTest(kind=d["kind"], key=key, bad=bad):
+                    with self.subTest(board=name(d), key=key, bad=bad):
                         self.assertIsInstance(pkg.check({**d, key: bad}), list)
             for bad in hostile:
-                with self.subTest(kind=d["kind"], last=bad):
-                    self.assertIsInstance(pkg.check({**d, "last": {k: bad for k in d["last"]}}), list)
+                with self.subTest(board=name(d), last=bad):
+                    self.assertIsInstance(pkg.check({**d, "last": {k: bad for k in d.get("last") or {"move": 1}}}),
+                                          list)
                     self.assertIsInstance(pkg.check({**d, "result": {"winner": bad, "how": bad}}), list)
+                for move in (d.get("moves") or [])[:1]:
+                    with self.subTest(board=name(d), link=bad):
+                        for links in (bad, [bad] * 8, [[bad] * 3] * 8, [[q, w, bad] for q, w in TURNS]):
+                            self.assertIsInstance(pkg.check({**d, "moves": [[*move[:4], links]]}), list)
 
 
-class TicTacToe(unittest.TestCase):
-    def test_the_cells_are_named_as_chess_names_squares(self):
-        self.assertEqual(TTT.placement("O../XX./O.X"), {"a3": "O", "a2": "X", "b2": "X", "a1": "O", "c1": "X"})
+class TicTac(unittest.TestCase):
+    def test_the_squares_are_named_as_chess_names_squares_and_the_boards_as_tic_tac_toe_names_cells(self):
+        self.assertEqual(TT.placement(TT_GHOSTS["board"]), {"h8": "G", "d6": "G"})
+        on = TT.placement(TT_GITHUB["board"])
+        self.assertEqual([on[c] for c in ("a9", "h9", "i8", "g6", "i1")], ["O", "X", "G", "G", "X"])
+        self.assertEqual([TT.game.board_name(TT.game.board_of(c)) for c in ("a1", "e5", "i9", "c7", "g2")],
+                         ["a1", "b2", "c3", "a3", "c1"])
+        # where a mark stands in its board is the board it sends the other side to: i7, a board's lower right corner
+        self.assertEqual(TT.game.PLACE[TT.game.spot_of("i7")], "lower right")
 
-    def test_the_house_plays_x_and_github_o_whichever_side_the_arbiter_opened_for(self):
-        # opened for the house, X moves first; opened for GitHub, O does: the marks never change hands
-        self.assertEqual((TTT.game.mark_of("house"), TTT.game.mark_of("github")), ("X", "O"))
-        for d, opens, turn, said in ((TTT_GITHUB, "house", "github", "after 3. Xa2"),
-                                     (TTT_HOUSE, "github", "house", "after 3. Oc1"),
-                                     (TTT_FRESH, "github", "house", "after 1. Ob2, the Arbiter's move for GitHub"),
-                                     (TTT_FRESH_HOUSE, "house", "github",
-                                      "after 1. Xa1, the Arbiter's move for @tannergolden")):
-            st = TTT.state(d)
-            alt = E.alt("tictactoe", d)
-            with self.subTest(board=name(d), opens=opens):
-                self.assertEqual((st["opens"], st["to_move"]), (opens, turn))
-                self.assertIn("@tannergolden plays X and GitHub O", alt)
+    def test_the_house_plays_x_and_github_o_whoever_places_first_and_whoever_opens(self):
+        self.assertEqual((TT.game.mark_of("house"), TT.game.mark_of("github")), ("X", "O"))
+        for d, places, turn, said in ((TT_FRESH, "github", "github", "It is GitHub's turn to place a ghost"),
+                                      (TT_GHOST, "github", "house", "It is @tannergolden's turn to place a ghost"),
+                                      (TT_GHOSTS, "github", "house", "It is @tannergolden's turn as X"),
+                                      (TT_GHOSTS_GITHUB, "house", "github", "It is GitHub's turn as O"),
+                                      (TT_GITHUB, "github", "github", "It is GitHub's turn as O"),
+                                      (TT_HOUSE, "github", "house", "It is @tannergolden's turn as X")):
+            st = TT.state(d)
+            alt = E.alt("tictac", d)
+            with self.subTest(board=name(d)):
+                self.assertEqual((st["places"], st["to_move"]), (places, turn))
+                self.assertIn("@tannergolden plays X and GitHub O, under the Ghost Rule", alt)
                 self.assertIn(said, alt)
-                self.assertIn(f"turn as {'X' if turn == 'house' else 'O'}", alt)
-        self.assertIn("x is gone", " ".join(TTT.check({**TTT_GITHUB, "x": "house"})))
-        self.assertIn("opens None is the side the Arbiter opened for",
-                      " ".join(TTT.check({k: v for k, v in TTT_GITHUB.items() if k != "opens"})))
-        self.assertIn("opens 'white' is the side", " ".join(TTT.check({**TTT_GITHUB, "opens": "white"})))
-        # the opener's mark leads: O may have one more than X only in a game opened for GitHub
-        self.assertIn("O moved first, the Arbiter having opened for github, so O has as many marks as X or one more",
-                      " ".join(TTT.check({**TTT_GITHUB, "opens": "github"})))
-        self.assertIn("X moved first, the Arbiter having opened for house",
-                      " ".join(TTT.check({**TTT_HOUSE, "opens": "house"})))
+        self.assertIn("x is gone: the house always plays X and GitHub O, and places and opens name the sides the"
+                      " Arbiter drew", reasons(TT, {**TT_GITHUB, "x": "house"}))
+        # a board from before the Ghost Rule names the side the Arbiter opened for alone
+        self.assertIn("places None is the side the Arbiter drew to place the first ghost: house, which plays X, or"
+                      " github, which plays O", reasons(TT, {k: v for k, v in TT_GITHUB.items() if k != "places"}))
+        self.assertIn("places 'white' is the side", reasons(TT, {**TT_GITHUB, "places": "white"}))
+        self.assertIn("opens None is the side the Arbiter drew to make the first mark once both ghosts were down",
+                      reasons(TT, {k: v for k, v in TT_GHOSTS.items() if k != "opens"}))
+        self.assertIn("opens: the Arbiter draws the side that makes the first mark once both ghosts are down",
+                      reasons(TT, {**TT_GHOST, "opens": "house"}))
+        # the opener's mark leads: X may have one more than O only in a game the house was drawn to open
+        self.assertIn("board has 26 X and 27 O: X moved first, the Arbiter having drawn house to open, so X has as many"
+                      " marks as O or one more", reasons(TT, {**TT_DRAWN, "opens": "house"}))
+        one_more = {**TT_HOUSE, "board": "X" + TT_HOUSE["board"][1:], "opens": "github"}
+        self.assertIn("O moved first, the Arbiter having drawn github to open, so O has as many marks as X or one more",
+                      reasons(TT, one_more))
 
     def test_x_is_drawn_light_and_o_dark_whoever_plays_them(self):
-        # A game's colours never change, only who plays which side: every X the sheet draws (on the board, in the
-        # medallions and in the trays) is in the light material and every O in the dark, opened either way round.
+        # A game's colours never change, only who moves first: every X the sheet draws (on the board, as the mark of
+        # a board won, in the medallions and on the trays) is in the light material and every O in the dark.
         def drawn(d: dict, tone: str) -> list[tuple[str, str]]:
             seen = []
 
@@ -457,272 +807,408 @@ class TicTacToe(unittest.TestCase):
                     seen.append((mark, material))
                     return original(self, cv, mark, material, *a, **k)
                 return pen_mark
-            with mock.patch.object(TTT.Standard, "pen_mark", recording(TTT.Standard.pen_mark)), \
-                    mock.patch.object(TTT.Print, "pen_mark", recording(TTT.Print.pen_mark)):
+            with mock.patch.object(TT.Standard, "pen_mark", recording(TT.Standard.pen_mark)), \
+                    mock.patch.object(TT.Print, "pen_mark", recording(TT.Print.pen_mark)):
                 for variant in ("still", "narrow-still"):
-                    E.draw("tictactoe", d, tone, "day", variant)
+                    E.draw("tictac", d, tone, "day", variant)
             return seen
 
         for tone in (STANDARD, "blackprint"):
-            for d in (TTT_GITHUB, TTT_HOUSE, TTT_FRESH, TTT_FRESH_HOUSE, TTT_WON, TTT_DRAWN):
+            for d in GAMES["tictac"][1]:
                 marks = drawn(d, tone)
-                with self.subTest(board=name(d), opens=d["opens"], tone=tone):
+                with self.subTest(board=name(d), tone=tone):
                     self.assertEqual({mark for mark, _ in marks}, {"X", "O"}, "both sides' medallions at least")
                     self.assertEqual(sorted(set(marks)), [("O", "dark"), ("X", "light")])
-        # the matchup has the house as X on the left and GitHub as O, opened either way round
-        for d in (TTT_GITHUB, TTT_HOUSE, TTT_FRESH, TTT_FRESH_HOUSE):
+        # the matchup has the house as X on the left and GitHub as O, drawn either way round
+        for d in (TT_FRESH, TT_GHOST, TT_GHOSTS, TT_GHOSTS_GITHUB, TT_GITHUB, TT_HOUSE):
             for variant in ("still", "narrow-still"):
                 runs = lettered(d, STANDARD, variant)
-                with self.subTest(board=name(d), opens=d["opens"], variant=variant):
+                with self.subTest(board=name(d), variant=variant):
                     self.assertIn("X  ·  THE HOUSE", runs)
                     self.assertTrue([r for r in runs if r.startswith("O  ·  ") and "PLAYER" in r or
                                      r == "O  ·  EVERYONE ELSE"], "GitHub as O")
                     self.assertFalse([r for r in runs if r.startswith(("O  ·  THE HOUSE", "X  ·  EVERY"))])
 
-    def test_each_side_has_five_marks_if_it_moved_first_and_four_if_not_and_the_rack_counts_them_down(self):
-        st = TTT.state(TTT_GITHUB)
-        self.assertEqual((st["to_move"], st["alert"], st["last"]["number"]), ("github", "", 3))
-        self.assertEqual((st["each"], st["left"]), ({"house": 5, "github": 4}, {"house": 2, "github": 2}))
-        st = TTT.state(TTT_FRESH)
-        self.assertEqual((st["each"], st["left"]), ({"house": 4, "github": 5}, {"house": 4, "github": 4}))
-        st = TTT.state(TTT_DRAWN)
-        self.assertEqual(st["left"], {"house": 0, "github": 0}, "nine marks down, none left to either side")
+    def test_each_side_locks_a_square_with_a_ghost_before_the_first_mark_the_side_drawn_first(self):
+        st = TT.state(TT_FRESH)
+        self.assertEqual((st["ghosting"], st["ghosts"], st["to_move"], st["alert"], st["stage"], st["last"]),
+                         (True, [], "github", "place a ghost", "ghosts", None))
+        st = TT.state(TT_GHOST)
+        self.assertEqual((st["ghosts"], st["to_move"], st["last"]["side"], st["last"]["number"]),
+                         (["d6"], "house", "github", "G"))
+        st = TT.state(TT_GHOSTS)
+        self.assertEqual((st["ghosting"], st["ghosts"], st["first_mark"], st["to_move"], st["last"]["side"],
+                          st["stage"], st["cells"]), (False, ["h8", "d6"], "house", "house", "house", "", {}))
+        self.assertIn("Ghosts lock d6. After G. d6: a ghost locks the upper left corner of the centre board. It is"
+                      " @tannergolden's turn to place a ghost, due by 21 Oct.", E.alt("tictac", TT_GHOST))
+        self.assertIn("Ghosts lock h8 and d6. After G... h8: a ghost locks the centre of the upper right board. The"
+                      " Arbiter drew @tannergolden to make the first mark. It is @tannergolden's turn as X, in any"
+                      " open board, due by 21 Oct.", E.alt("tictac", TT_GHOSTS))
+        # the band says the ghosts are going down, and the panel which side places the first and who drew it
+        for d, band in ((TT_FRESH, "GAME 11  ·  GHOSTS"), (TT_GHOST, "GAME 11  ·  GHOSTS"),
+                        (TT_GHOSTS, "GAME 11  ·  MOVE 1")):
+            with self.subTest(board=name(d)):
+                self.assertIn(band, lettered(d, STANDARD))
+                self.assertIn(band.split("  ·  ")[1], lettered(d, "blackprint", "narrow-still"))
+        runs = lettered(TT_FRESH, STANDARD)
+        for said in ("PLACE A GHOST", "FIRST MOVE", "G. ", "GITHUB PLACES THE FIRST GHOST", "DRAWN BY THE ARBITER"):
+            self.assertIn(said, runs)
+        self.assertEqual(lettered(TT_GHOSTS, STANDARD)[-6:-1], ["G.", "D6", "H8", "@HOLLYFENWICK", "1."],
+                         "the ghosts' row first on the score sheet, in the order they went down")
+        # a ghost goes down only while the ghosts do, two of them, and no mark goes down before them
+        board = TT_GHOSTS["board"]
+        self.assertIn("board has 3 ghosts: the Ghost Rule locks two squares, one for each side",
+                      reasons(TT, {**TT_GHOSTS, "board": board[:-9] + "G........"}))
+        self.assertIn("board has 1 mark and 1 ghost: no mark goes down until both ghosts are",
+                      reasons(TT, {**TT_GHOST, "board": TT_GHOST["board"][:-9] + "X........"}))
+        self.assertIn("last: move 'i8' is a ghost's square, and the last move is a ghost's only before the first mark",
+                      reasons(TT, {**TT_GITHUB, "last": {**TT_GITHUB["last"], "move": "i8"}}))
+        self.assertIn("last: move 'e5' is a ghost's square, and the last move is a ghost's only before the first"
+                      " mark, on a square the board has a ghost on",
+                      reasons(TT, {**TT_GHOST, "last": {**TT_GHOST["last"], "move": "e5"}}))
+        self.assertIn("alert 'any board' is not where the side to move must play: place a ghost",
+                      reasons(TT, {**TT_GHOST, "alert": "any board"}))
+
+    def test_a_mark_sends_the_other_side_to_the_board_in_its_place_and_the_plate_says_where(self):
+        st = TT.state(TT_GITHUB)
+        self.assertEqual((st["last"]["cell"], st["target"], st["alert"]), ("i7", (2, 0), "lower right board"))
+        self.assertIn("It is GitHub's turn as O, in the lower right board, due by 22 Nov.", E.alt("tictac", TT_GITHUB))
+        # sent to a board already won, the side to move may play any open board
+        st = TT.state(TT_HOUSE)
+        self.assertEqual((st["last"]["cell"], st["boards"][(0, 0)], st["target"], st["alert"]),
+                         ("d1", "X", None, "any board"))
+        self.assertIn("It is @tannergolden's turn as X, in any open board, due by 18 Nov.", E.alt("tictac", TT_HOUSE))
+        for d, plate in ((TT_GITHUB, "LOWER RIGHT BOARD"), (TT_HOUSE, "ANY BOARD"), (TT_GHOST, "PLACE A GHOST")):
+            for tone in (STANDARD, "blackprint"):
+                with self.subTest(board=name(d), tone=tone):
+                    self.assertIn(plate, lettered(d, tone))
+        self.assertIn("alert 'upper left board' is not where the side to move must play: lower right board",
+                      reasons(TT, {**TT_GITHUB, "alert": "upper left board"}))
+        self.assertIn("alert 'lower left board' is not where the side to move must play: any board",
+                      reasons(TT, {**TT_HOUSE, "alert": "lower left board"}))
+        self.assertIn("alert: a game under way says where the side to move must play",
+                      reasons(TT, {k: v for k, v in TT_GITHUB.items() if k != "alert"}))
 
     def test_what_the_board_is_drawn_from_is_checked(self):
-        cases = {"board": ("XXX/.../...", "the sides take turns"),
-                 "line": (["a1", "b1", "c2"], "three cells in a row"),
-                 "last": ({**TTT_GITHUB["last"], "move": "Xc3"}, "not a mark the board has")}
-        for key, (bad, said) in cases.items():
-            with self.subTest(key=key):
-                self.assertIn(said, " ".join(TTT.check({**TTT_GITHUB, key: bad})))
-        self.assertIn("not the mark of the side that moved last",
-                      " ".join(TTT.check({**TTT_GITHUB, "last": {**TTT_GITHUB["last"], "move": "Oa1"}})))
+        self.assertIn("is not nine rows of nine X, O, G or dots", reasons(TT, {**TT_GITHUB, "board": "XXX/.../..."}))
+        self.assertIn("last: move 'Xf1' is not a mark the board has where it says",
+                      reasons(TT, {**TT_GITHUB, "last": {**TT_GITHUB["last"], "move": "Xf1"}}))
+        self.assertIn("last: move 'Oa9' is not the mark of the side that moved last",
+                      reasons(TT, {**TT_GITHUB, "last": {**TT_GITHUB["last"], "move": "Oa9"}}))
+        self.assertIn("last: a board with marks on it names the last of them",
+                      reasons(TT, {k: v for k, v in TT_GITHUB.items() if k != "last"}))
+        # a board closes once it is won, so it never holds three in a row for both marks
+        both = {"kind": "tictac", "places": "house", "opens": "house", "game": 3, "move": 4, "players": 1,
+                "board": "........./........./........./........./........./G.......G/OOO....../........./XXX......",
+                "due": "20 Oct", "alert": "upper right board", "history": [["G", "a4", "i4", ""]],
+                "last": {"move": "Oc3", "words": "O takes the upper right corner of the lower left board",
+                         "by": "@imvale", "when": "14 Oct"}}
+        self.assertEqual(TT.check(both), ["board a1 has three in a row for both marks: a board closes once it is won"])
 
     def test_nothing_that_would_help_a_player_choose_is_taken(self):
-        # where a side could win next, what perfect play makes of the game, a call to block, and a move offered with
-        # the mark that says it wins: each turned away, with a word on why
-        for key, bad, said in (("threats", {"house": ["c2"], "github": []}, "threats is gone: the board never shows"),
-                               ("outlook", "draw", "outlook is gone: the board never says what perfect play"),
-                               ("alert", "must block", "alert is gone: this game's turn calls nothing out")):
-            with self.subTest(key=key):
-                self.assertIn(said, " ".join(TTT.check({**TTT_GITHUB, key: bad})))
-        won = row("tictactoe", "📏", "Mark the Head of the Board!", "Xb3#", "X takes the head of the board", 10, 6)
-        self.assertIn("'Xb3#' says what the move would do", " ".join(TTT.check({**TTT_HOUSE, "moves": [won]})))
-        self.assertIn("+ is gone", " ".join(TTT.check({**TTT_GITHUB, "last": {**TTT_GITHUB["last"], "move": "Xa2+"}})))
-        self.assertIn("+ is gone", " ".join(TTT.check({**TTT_GITHUB, "history": [[1, "Xb2", "Oa1", "@imvale"],
-                                                                                  [2, "Xc1+", "Oa3", "@tokafor"],
-                                                                                  [3, "Xa2", "", ""]]})))
-        self.assertEqual(TTT.check(TTT_WON), [], "the score sheet still marks the move that won")
+        # a call to block, and a move offered with the mark that says it wins: each turned away, with a word on why
+        self.assertIn("alert 'must block' is not what this game's turn can say",
+                      reasons(TT, {**TT_GITHUB, "alert": "must block"}))
+        won = row("tictac", "🔳", "Take the Centre of the Lower Right Board!", "Oh2#",
+                  "O takes the centre of the lower right board", 9, 51)
+        self.assertIn("'Oh2#' says what the move would do", reasons(TT, {**TT_GITHUB, "moves": [won]}))
+        self.assertIn("+ is gone", reasons(TT, {**TT_GITHUB, "last": {**TT_GITHUB["last"], "move": "Xi7+"}}))
+        self.assertIn("+ is gone", reasons(TT, {**TT_GITHUB, "history": [[23, "Of9", "Xh9+", "@hollyfenwick"],
+                                                                         *TT_GITHUB["history"][1:]]}))
+        self.assertEqual(TT.check(TT_WON_GITHUB), [], "the score sheet still marks the move that won")
 
-    def test_a_won_game_names_its_line_and_only_a_won_game_has_one(self):
-        self.assertIn("a won game names its winning line", " ".join(TTT.check({**TTT_WON, "line": []})))
-        self.assertIn("only a won game has one", " ".join(TTT.check({**TTT_GITHUB, "line": ["a3", "b2", "c1"]})))
-        self.assertIn("the winner's three marks", " ".join(TTT.check({**TTT_WON, "line": ["a1", "a2", "a3"]})))
-        self.assertEqual(TTT.check({**TTT_WON, "line": ["c1", "b2", "a3"]}), [], "a line either way along")
-        won = TTT.state(TTT_WON)
-        self.assertEqual((won["result"]["winner"], won["line"], won["alert"]), ("house", ["a3", "b2", "c1"], ""))
+    def test_a_won_game_names_its_three_boards_and_only_a_won_game_has_one(self):
+        self.assertIn("line: a won game names its winning line, its three boards", reasons(TT, {**TT_WON, "line": []}))
+        self.assertIn("line ['a1', 'b1', 'c2'] is three boards in a row, each named as Tic-Tac-Toe names a cell",
+                      reasons(TT, {**TT_WON, "line": ["a1", "b1", "c2"]}))
+        self.assertIn("line: the winning line is three boards the winner has won, and only a won game has one",
+                      reasons(TT, {**TT_WON, "line": ["a1", "b1", "c1"]}))
+        self.assertIn("and only a won game has one", reasons(TT, {**TT_GITHUB, "line": ["a1", "b1", "c1"]}))
+        self.assertEqual(TT.check({**TT_WON, "line": ["c2", "b2", "a2"]}), [], "a line either way along")
+        won = TT.state(TT_WON)
+        self.assertEqual((won["result"]["winner"], won["line"], won["won"], won["alert"], won["target"]),
+                         ("house", [(0, 1), (1, 1), (2, 1)], {"house": 3, "github": 2}, "", None))
+        self.assertIn("After 27... Xi4#: X takes the lower right corner of the right board. @tannergolden won with"
+                      " three boards in a row. Game 9 opens 17 Nov. Boards won: X 3, O 2.", E.alt("tictac", TT_WON))
+        self.assertIn("After 25. Oh2#: O takes the centre of the lower right board. GitHub won with three boards in a"
+                      " row.", E.alt("tictac", TT_WON_GITHUB))
 
-    def test_a_drawn_game_is_drawn(self):
-        self.assertEqual(TTT.check(TTT_DRAWN), [])
-        self.assertIn("The game was drawn on a full board. Game 7 opens 14 Oct.", E.alt("tictactoe", TTT_DRAWN))
-        self.assertIn("a game ended by a full board is drawn",
-                      " ".join(TTT.check({**TTT_DRAWN, "result": {"winner": "github", "how": "a full board"}})))
+    def test_a_drawn_game_has_no_line_of_three_boards_left_for_either_side(self):
+        self.assertEqual(TT.check(TT_DRAWN), [])
+        st = TT.state(TT_DRAWN)
+        self.assertEqual((st["won"], st["drawn"], st["line"]), ({"house": 3, "github": 4}, 1, []))
+        self.assertIn("The game was drawn, with no line of three boards left for either side. Game 8 opens 21 Nov."
+                      " Boards won: X 3, O 4, 1 drawn.", E.alt("tictac", TT_DRAWN))
+        self.assertIn("a game ended by no line left is drawn, its winner null",
+                      reasons(TT, {**TT_DRAWN, "result": {"winner": "github", "how": "no line left"}}))
+
+    def test_the_panel_counts_the_boards_each_side_has_won_and_says_where_the_ghosts_stand(self):
+        for d, count in ((TT_GHOST, ["GHOST D6", "X · HOUSE", "0", "O · GITHUB", "0"]),
+                         (TT_GITHUB, ["GHOSTS I8 · G6", "X · HOUSE", "1", "O · GITHUB", "3"]),
+                         (TT_DRAWN, ["GHOSTS I5 · H2  ·  1 DRAWN", "X · HOUSE", "3", "O · GITHUB", "4"])):
+            for tone in (STANDARD, "blackprint"):
+                runs = lettered(d, tone)
+                at = runs.index("BOARDS WON")
+                with self.subTest(board=name(d), tone=tone):
+                    self.assertEqual(runs[at + 1:at + 6], count)
 
 
-class ConnectFour(unittest.TestCase):
-    def test_the_house_drops_white_and_github_black_whichever_side_the_arbiter_opened_for(self):
-        # a game opens with a White disc when it was opened for the house and a Black one when for GitHub
-        self.assertEqual((C4.game.material_of("house"), C4.game.material_of("github")), ("light", "dark"))
-        for d, opens, turn, said in ((C4_GITHUB, "github", "github", "after 8... 5"),
-                                     (C4_HOUSE, "house", "house", "after 6... 7"),
-                                     (C4_FRESH, "github", "house",
-                                      "after 1. 4, the Arbiter's move for GitHub: a Black"),
-                                     (C4_FRESH_HOUSE, "house", "github",
-                                      "after 1. 3, the Arbiter's move for @tannergolden: a White")):
-            st = C4.state(d)
-            alt = E.alt("connectfour", d)
-            with self.subTest(board=name(d), opens=opens):
-                self.assertEqual((st["opens"], st["to_move"]), (opens, turn))
-                self.assertIn("@tannergolden drops the White discs and GitHub the Black", alt)
+class Pentago(unittest.TestCase):
+    def test_the_holes_are_named_as_chess_names_squares_in_four_quarters_that_turn(self):
+        self.assertEqual(PG.placement(PG_GHOSTS["board"]), {"f3": "G", "b1": "G"})
+        self.assertEqual([PG.game.quarter_of(c) for c in ("a6", "f4", "c1", "d3")], ["ul", "ur", "ll", "lr"])
+        self.assertEqual(PG.game.quarter_cells("lr"), ["d3", "e3", "f3", "d2", "e2", "f2", "d1", "e1", "f1"])
+        # a quarter turned clockwise as the board is seen carries its upper left corner to its upper right, and
+        # anticlockwise to its lower left; its centre and every other quarter's holes stay where they are
+        self.assertEqual([PG.game.landed("d6", "ur", way) for way in ("cw", "acw")], ["f6", "d4"])
+        self.assertEqual([PG.game.landed(c, "ur", "cw") for c in ("e5", "a1")], ["e5", "a1"])
+        self.assertEqual(PG.game.turned({"d4": "G", "a1": "W"}, "ur", "cw"), {"d6": "G", "a1": "W"},
+                         "a ghost turns with its quarter")
+
+    def test_the_house_plays_white_and_github_black_whoever_sets_first_and_whoever_opens(self):
+        self.assertEqual((PG.game.material_of("house"), PG.game.material_of("github")), ("light", "dark"))
+        for d, places, turn, said in ((PG_FRESH, "house", "house", "It is @tannergolden's turn to set a ghost"),
+                                      (PG_GHOST, "house", "github", "It is GitHub's turn to set a ghost"),
+                                      (PG_GHOSTS, "house", "github", "It is GitHub's turn as Black"),
+                                      (PG_GHOSTS_HOUSE, "github", "house", "It is @tannergolden's turn as White"),
+                                      (PG_GITHUB, "house", "github", "It is GitHub's turn as Black"),
+                                      (PG_HOUSE, "github", "house", "It is @tannergolden's turn as White")):
+            st = PG.state(d)
+            alt = E.alt("pentago", d)
+            with self.subTest(board=name(d)):
+                self.assertEqual((st["places"], st["to_move"]), (places, turn))
+                self.assertIn("@tannergolden plays White and GitHub Black, under the Ghost Rule", alt)
                 self.assertIn(said, alt)
-                self.assertIn(f"turn as {'White' if turn == 'house' else 'Black'}", alt)
-                self.assertEqual(st["left"]["house"] + st["left"]["github"], 42 - len(st["board"]))
-        self.assertIn("light is gone", " ".join(C4.check({**C4_GITHUB, "light": "house"})))
-        unopened = {k: v for k, v in C4_FRESH.items() if k != "opens"}
-        self.assertIn("opens None is the side the Arbiter opened for", " ".join(C4.check(unopened)))
-        # the opener's colour leads: Black may have one more only in a game opened for GitHub
-        self.assertIn("White dropped first, the Arbiter having opened for house",
-                      " ".join(C4.check({**C4_FRESH, "opens": "house"})))
-        self.assertIn("Black dropped first, the Arbiter having opened for github",
-                      " ".join(C4.check({**C4_FRESH_HOUSE, "opens": "github"})))
+        self.assertIn("light is gone: the house always plays White and GitHub Black, and places and opens name the"
+                      " sides the Arbiter drew", reasons(PG, {**PG_GITHUB, "light": "house"}))
+        self.assertIn("places None is the side the Arbiter drew to set the first ghost: house, which plays White, or"
+                      " github, which plays Black", reasons(PG, {k: v for k, v in PG_GITHUB.items() if k != "places"}))
+        self.assertIn("opens None is the side the Arbiter drew to set the first marble once both ghosts were down",
+                      reasons(PG, {k: v for k, v in PG_GHOSTS.items() if k != "opens"}))
+        self.assertIn("opens: the Arbiter draws the side that sets the first marble once both ghosts are down",
+                      reasons(PG, {**PG_GHOST, "opens": "house"}))
+        # the opener's colour leads: White may have one more only in a game the house was drawn to open
+        self.assertIn("board has 12 White marbles and 13 Black: White set first, the Arbiter having drawn house to"
+                      " open, so it has as many as Black or one more", reasons(PG, {**PG_WON_GITHUB, "opens": "house"}))
 
     def test_every_word_says_white_and_black_the_houses_white_first(self):
-        for d in (C4_GITHUB, C4_HOUSE, C4_FRESH, C4_FRESH_HOUSE, C4_WON):
+        for d in GAMES["pentago"][1]:
             for variant in ("still", "narrow-still"):
                 runs = lettered(d, STANDARD, variant)
                 racks = [r for r in runs if r.startswith(("WHITE ·", "BLACK ·"))]
-                with self.subTest(board=name(d), opens=d["opens"], variant=variant):
+                with self.subTest(board=name(d), variant=variant):
                     self.assertEqual(racks, ["WHITE · HOUSE", "BLACK · GITHUB"], "the house's White on top")
                     self.assertIn("WHITE  ·  THE HOUSE", runs)
                     self.assertTrue([r for r in runs if r.startswith("BLACK  ·  ")], "GitHub as Black")
                     self.assertFalse([r for r in runs if re.search(r"\b(LIGHT|DARK)\b", r)])
             with self.subTest(board=name(d)):
-                self.assertNotRegex(E.alt("connectfour", d), r"\b([Ll]ight|[Dd]ark)\b")
-                self.assertNotRegex(said(ED.block("connectfour", d, "assets/elements")), r"\b([Ll]ight|[Dd]ark)\b")
+                self.assertNotRegex(E.alt("pentago", d), r"\b([Ll]ight|[Dd]ark)\b")
+                self.assertNotRegex(said(ED.block("pentago", d, "assets/elements")), r"\b([Ll]ight|[Dd]ark)\b")
 
-    def test_discs_fall_and_take_turns(self):
-        empty = "......./" * 5
-        self.assertIn("discs fall", " ".join(C4.check({**C4_FRESH, "board": "...L.../" + empty[8:] + "......."})))
-        self.assertIn("so it has as many as White or one more",
-                      " ".join(C4.check({**C4_FRESH, "board": empty + "DD....."})))
+    def test_each_side_sets_a_ghost_before_the_first_marble_and_a_ghost_turns_with_its_quarter(self):
+        st = PG.state(PG_FRESH)
+        self.assertEqual((st["ghosting"], st["ghosts"], st["to_move"], st["alert"], st["stage"], st["left"]),
+                         (True, [], "house", "set a ghost", "ghosts", {"house": 17, "github": 17}))
+        st = PG.state(PG_GHOST)
+        self.assertEqual((st["ghosts"], st["to_move"], st["last"]["side"], st["last"]["number"], st["last"]["by"]),
+                         (["e1"], "github", "house", "G", "the Arbiter"))
+        self.assertIn("After G. e1, the Arbiter's move for @tannergolden: a ghost on e1, the bottom edge of the lower"
+                      " right quarter. It is GitHub's turn to set a ghost, due by 27 Oct.", E.alt("pentago", PG_GHOST))
+        self.assertIn("After G... b1: a ghost on b1, the bottom edge of the lower left quarter. The Arbiter drew GitHub"
+                      " to set the first marble. It is GitHub's turn as Black, due by 21 Oct.",
+                      E.alt("pentago", PG_GHOSTS))
+        for d, band in ((PG_FRESH, "GAME 5  ·  GHOSTS"), (PG_GHOST, "GAME 5  ·  GHOSTS"),
+                        (PG_GHOSTS, "GAME 6  ·  MOVE 1")):
+            with self.subTest(board=name(d)):
+                self.assertIn(band, lettered(d, STANDARD))
+        runs = lettered(PG_FRESH, "blackprint")
+        for said in ("SET A GHOST", "FIRST MOVE", "G. ", "@TANNERGOLDEN SETS THE FIRST GHOST", "DRAWN BY THE ARBITER"):
+            self.assertIn(said, runs)
+        # game 4's ghosts went down on a2 and d2, and its quarters' turns have carried them to b1 and e1: the panel
+        # says where they stand now; game 3's on b5, a quarter's centre, stays put
+        self.assertEqual(PG.state(PG_GITHUB)["ghosts"], ["b1", "e1"])
+        self.assertIn("GHOSTS B1 · E1", lettered(PG_GITHUB, STANDARD))
+        self.assertEqual((PG_GHOSTS_HOUSE["history"][0][1], PG.state(PG_WON)["ghosts"]), ("b5", ["b5", "f1"]))
+        # two ghosts, both down before the first marble, the plate saying so while they go down and never after
+        board = PG_GHOSTS["board"]
+        self.assertIn("board has 3 ghosts: the Ghost Rule sets two, one for each side",
+                      reasons(PG, {**PG_GHOSTS, "board": "G" + board[1:]}))
+        self.assertIn("board has 1 marble and 1 ghost: no marble goes down until both ghosts are",
+                      reasons(PG, {**PG_GHOST, "board": "W" + PG_GHOST["board"][1:]}))
+        self.assertIn("last: move 'b1' is a ghost's hole, and the last move is a ghost's only before the first marble",
+                      reasons(PG, {**PG_GITHUB, "last": {**PG_GITHUB["last"], "move": "b1"}}))
+        self.assertIn("alert: while the ghosts go down, the plate says so: set a ghost",
+                      reasons(PG, {k: v for k, v in PG_GHOST.items() if k != "alert"}))
+        self.assertIn("alert: once both ghosts are down a turn calls nothing out",
+                      reasons(PG, {**PG_GHOSTS, "alert": "set a ghost"}))
 
-    def test_the_last_disc_lands_where_gravity_puts_it_and_a_win_joins_four(self):
-        st = C4.state(C4_GITHUB)
-        self.assertEqual((st["last"]["column"], st["last"]["row"], st["alert"]), (5, 2, ""))
-        self.assertEqual(st["left"], {"house": 13, "github": 13})
-        self.assertIn("not topped by a disc of the side that moved last",
-                      " ".join(C4.check({**C4_GITHUB, "last": {**C4_GITHUB["last"], "move": "3"}})))
-        won = C4.state(C4_WON)
-        self.assertEqual((won["result"]["winner"], len(won["line"])), ("github", 4))
-        for line, said in (([[2, 4], [3, 3], [4, 2], [6, 1]], "one after another"),
-                           ([[1, 1], [2, 1], [3, 1], [4, 1]], "the winner's four discs"),
-                           ([[2, 4], [3, 3], [4, 2]], "one after another")):
-            with self.subTest(line=line):
-                self.assertIn(said, " ".join(C4.check({**C4_WON, "line": line})))
-        self.assertEqual(C4.check({**C4_WON, "line": [[5, 1], [4, 2], [3, 3], [2, 4]]}), [])
+    def test_a_move_sets_a_marble_and_then_turns_a_quarter_everything_on_it_turning_with_it(self):
+        # The house set a3 and turned its own quarter clockwise, carrying the marble to c3: the sheet sets it in a3,
+        # rings the hole it lands in, and turns the quarter from where it stood before
+        st = PG.state(PG_GIVEN)
+        last = st["last"]
+        self.assertEqual((last["cell"], last["quarter"], last["way"], last["landed"], last["turned"], last["side"]),
+                         ("a3", "ll", "cw", "c3", True, "house"))
+        self.assertEqual((st["before"]["a3"], st["cells"]["c3"]), ("W", "W"))
+        self.assertEqual(PG.game.turned(st["before"], "ll", "cw"), st["cells"], "the board before the turn, turned")
+        self.assertIn("After 15. a3-ll-cw#: a white marble on a3, then the lower left quarter turns clockwise.",
+                      E.alt("pentago", PG_GIVEN))
+        self.assertIn("After 12... a3-lr-cw: a black marble on a3, then the lower right quarter turns clockwise.",
+                      E.alt("pentago", PG_HOUSE))
+        self.assertIn("last: move 'd3-lr-cw' does not leave a marble of the side that moved last where its marble"
+                      " lands", reasons(PG, {**PG_HOUSE, "last": {**PG_HOUSE["last"], "move": "d3-lr-cw"}}))
+        self.assertIn("last: a board with marbles on it names the last move",
+                      reasons(PG, {k: v for k, v in PG_HOUSE.items() if k != "last"}))
+
+    def test_a_move_is_written_as_the_sheet_draws_it_its_hole_then_its_quarters_turn(self):
+        # The last move and every move on the score sheet: the hole, then a circular arrow the way the quarter went
+        # and the quarter's initials, `b5 ↺ LR`; a marble that made five on its own, its hole alone, `d5#`.
+        for d in (PG_GITHUB, PG_GIVEN, PG_WON_GITHUB, PG_GHOST):
+            written = [d["last"]["move"]] + [m for _, a, b, _ in d["history"] for m in (a, b) if m]
+            moves = [PG.game.parse(m) for m in written]
+            ways = [m["way"] for m in moves if m["quarter"]]
+            for skin, tone in ((PG.Standard, STANDARD), (PG.Print, "blackprint")):
+                drawn: list[str] = []
+
+                def turn_glyph(self, x, cy, r, way, role="ink", original=skin.turn_glyph):
+                    drawn.append(way)
+                    return original(self, x, cy, r, way, role)
+                with mock.patch.object(skin, "turn_glyph", turn_glyph):
+                    runs = lettered(d, tone)
+                with self.subTest(board=name(d), tone=tone):
+                    # the panel is set once to measure it and once to draw it, each time every turn its arrow
+                    self.assertEqual(drawn, ways * (len(drawn) // len(ways)) if ways else [])
+                    self.assertTrue(drawn or not ways)
+                    for m in moves:
+                        self.assertIn((m["cell"] + ("#" if m["won"] and not m["quarter"] else "")).upper(), runs)
+                        if m["quarter"]:
+                            self.assertIn(m["quarter"].upper() + ("#" if m["won"] else ""), runs)
+
+    def test_each_hole_is_offered_with_its_eight_turns_each_linked_to_its_own_issue(self):
+        first = PG_GITHUB["moves"][0]
+        self.assertEqual([turn[:2] for turn in first[4]], [list(t) for t in TURNS])
+        for bad in (first[4][:7], [*first[4], first[4][0]], first[4][1:] + first[4][:1],
+                    [[q, w, url.replace("a6-", "b6-")] for q, w, url in first[4]],
+                    [[q, w, url + "&x=1"] for q, w, url in first[4]],
+                    [[q.upper(), w, url] for q, w, url in first[4]],
+                    [*first[4][:7], ["lr", "acw", first[4][6][2]]]):
+            with self.subTest(links=bad[-1][:2]):
+                self.assertIn("is not an emoji, a title, a move, its words and its link",
+                              reasons(PG, {**PG_GITHUB, "moves": [[*first[:4], bad]]}))
+        # a hole is offered as a hole: a move still to play never carries the # the score sheet gives a win
+        won = [*first[:2], "e5#", first[3], [[q, w, link("pentago", f"e5-{q}-{w}", 4, 28)] for q, w in TURNS]]
+        self.assertIn("'e5#' says what the move would do", reasons(PG, {**PG_GITHUB, "moves": [won]}))
+
+    def test_either_side_can_win_on_a_move_its_own_five_or_the_other_sides_alone(self):
+        # The house's own turn made five for GitHub alone, so GitHub won game 2 on the house's move
+        self.assertEqual(PG.check(PG_GIVEN), [])
+        st = PG.state(PG_GIVEN)
+        self.assertEqual((st["last"]["side"], st["result"]["winner"], st["line"]),
+                         ("house", "github", ["b1", "b2", "b3", "b4", "b5"]))
+        self.assertIn("GitHub won with five in a row, from b1 to b5. Game 3 opens 7 Nov.", E.alt("pentago", PG_GIVEN))
+        # a marble that makes five on its own wins before any quarter turns, written as its hole alone
+        st = PG.state(PG_WON_GITHUB)
+        self.assertEqual((st["last"]["cell"], st["last"]["quarter"], st["last"]["turned"], st["last"]["landed"]),
+                         ("d5", None, False, "d5"))
+        self.assertIn("After 13. d5#: a black marble on d5. GitHub won with five in a row, from a5 to e5.",
+                      E.alt("pentago", PG_WON_GITHUB))
+        self.assertIn("@tannergolden won with five in a row, from f2 to f6.", E.alt("pentago", PG_WON))
+        # once the marbles go down either side may have won: only the line says which
+        flipped = PG.check({**PG_WON, "result": {"winner": "github", "how": "five in a row"}})
+        self.assertEqual(flipped, ["line: the winning line is the winner's five marbles, and only a won game has one"])
+
+    def test_a_won_game_names_its_five_and_only_a_won_game_has_one(self):
+        self.assertIn("line: a won game names its winning line, its five holes", reasons(PG, {**PG_WON, "line": []}))
+        self.assertIn("line ['a1', 'b2', 'c3', 'd4', 'f6'] is five holes in a row",
+                      reasons(PG, {**PG_WON, "line": ["a1", "b2", "c3", "d4", "f6"]}))
+        self.assertIn("line: the winning line is the winner's five marbles",
+                      reasons(PG, {**PG_WON, "line": ["f1", "f2", "f3", "f4", "f5"]}))
+        self.assertIn("and only a won game has one", reasons(PG, {**PG_GITHUB, "line": ["f2", "f3", "f4", "f5", "f6"]}))
+        self.assertEqual(PG.check({**PG_WON, "line": ["f6", "f5", "f4", "f3", "f2"]}), [], "a line either way along")
+
+    def test_a_drawn_game_is_a_full_board_or_a_turn_that_makes_five_for_both(self):
+        for d, said in ((PG_FULL, "The game was drawn on a full board. Game 2 opens 10 Nov."),
+                        (PG_BOTH, "The game was drawn, a turn making five for both sides. Game 9 opens 3 Nov.")):
+            with self.subTest(board=name(d)):
+                self.assertEqual(PG.check(d), [])
+                self.assertIn(said, E.alt("pentago", d))
+        self.assertEqual(PG.state(PG_FULL)["left"], {"house": 0, "github": 0}, "seventeen marbles each, all set")
+        self.assertIn("a game ended by five for both is drawn, its winner null",
+                      reasons(PG, {**PG_BOTH, "result": {"winner": "house", "how": "five for both"}}))
+
+    def test_the_panel_counts_each_sides_marbles_left_and_says_where_the_ghosts_stand_now(self):
+        for d, count in ((PG_FRESH, ["WHITE · HOUSE", "17", "BLACK · GITHUB", "17"]),
+                         (PG_GITHUB, ["GHOSTS B1 · E1", "WHITE · HOUSE", "4", "BLACK · GITHUB", "5"]),
+                         (PG_FULL, ["GHOSTS B6 · D5", "WHITE · HOUSE", "0", "BLACK · GITHUB", "0"])):
+            for tone in (STANDARD, "blackprint"):
+                runs = lettered(d, tone)
+                at = runs.index("MARBLES LEFT")
+                with self.subTest(board=name(d), tone=tone):
+                    self.assertEqual(runs[at + 1:at + 1 + len(count)], count)
 
     def test_nothing_that_would_help_a_player_choose_is_taken(self):
-        # the columns a side could connect four down next, a call to block, and a move offered with the mark that
-        # says it wins: each turned away, with a word on why
-        self.assertIn("threats is gone: the frame never shows a column",
-                      " ".join(C4.check({**C4_GITHUB, "threats": {"house": [7], "github": []}})))
-        self.assertIn("alert is gone", " ".join(C4.check({**C4_GITHUB, "alert": "must block"})))
-        won = row("connectfour", "⬇️", "Drop Down Column 5!", "5#", "A White disc down column 5, to row 2", 5, 13)
-        self.assertIn("'5#' says what the move would do", " ".join(C4.check({**C4_HOUSE, "moves": [won]})))
-        self.assertIn("+ is gone", " ".join(C4.check({**C4_GITHUB, "last": {**C4_GITHUB["last"], "move": "5+"}})))
-        self.assertEqual(C4.check(C4_WON), [], "the score sheet still marks the drop that won")
-
-
-class Checkers(unittest.TestCase):
-    def test_the_board_is_drawn_from_the_houses_side_as_american_checkers_prints_it(self):
-        # White, the house's, at the foot as chess draws White: Black's squares 1 to 4 at the head, square 1 second
-        # along, and White's 29 to 32 along the foot, square 32 seventh along
-        self.assertEqual([CK.game.rc(n) for n in (1, 4, 5, 29, 32)], [(0, 1), (0, 7), (1, 0), (7, 0), (7, 6)])
-        st = CK.state(CK_OPENING)
-        x0, y0, s = 38, 62, 46
-        corners = {n: CK.layout.xy(st, n, x0, y0, s) for n in (1, 4, 29, 32)}
-        self.assertEqual(corners, {1: (x0 + s, y0), 4: (x0 + 7 * s, y0), 29: (x0, y0 + 7 * s),
-                                   32: (x0 + 6 * s, y0 + 7 * s)})
-        rows = {side: {CK.layout.xy(st, n, x0, y0, s)[1] for n, p in st["pieces"].items() if p == letter}
-                for side, letter in (("house", "l"), ("github", "d"))}
-        self.assertEqual(rows["house"], {y0 + 5 * s, y0 + 6 * s, y0 + 7 * s}, "the house's White men at the foot")
-        self.assertEqual(rows["github"], {y0, y0 + s, y0 + 2 * s}, "GitHub's Black men at the head")
-        # the numbers read as the diagram prints them: 1 at the head, 32 at the foot
-        sheet = E.draw("checkers", CK_OPENING, STANDARD, "day", "still")
-        self.assertEqual(sheet, E.draw("checkers", CK_OPENING, STANDARD, "day", "still"))
-
-    def test_github_plays_black_and_opens_on_a_clock_and_the_house_plays_white(self):
-        st = CK.state(CK_OPENING)
-        self.assertEqual((st["to_move"], st["opens"], st["due"]), ("github", "github", "21 Oct"),
-                         "Black moves first, as American checkers has it, and its first move is due")
-        for variant in ("still", "narrow-still"):
-            runs = lettered(CK_OPENING, STANDARD, variant)
-            with self.subTest(variant=variant):
-                self.assertIn("GITHUB'S TURN", runs)
-                self.assertTrue({"DUE BY 21 OCT", "BY 21 OCT"} & set(runs), "a clock from the first move")
-                self.assertFalse([r for r in runs if "NO CLOCK" in r])
-                self.assertIn("WHITE  ·  THE HOUSE", runs)
-                self.assertIn("BLACK  ·  EVERYONE ELSE", runs)
-                self.assertIn("BLACK MOVES FIRST", runs)
-                self.assertEqual([r for r in runs if r.endswith(" TOOK")], ["WHITE TOOK", "BLACK TOOK"])
-        for d in (CK_OPENING, CK_GITHUB, CK_CROWNED, CK_WON, CK_DRAWN):
-            runs = lettered(d, STANDARD)
-            with self.subTest(board=name(d)):
-                self.assertFalse([r for r in runs if re.search(r"\b(LIGHT|DARK)\b", r)])
-                self.assertNotRegex(E.alt("checkers", d), r"\b([Ll]ight|[Dd]ark)\b")
-                self.assertNotRegex(said(ED.block("checkers", d, "assets/elements")), r"\b([Ll]ight|[Dd]ark)\b")
-        self.assertIn("It is GitHub's turn as Black, due by 21 Oct. @tannergolden, White: men on 21, 22",
-                      E.alt("checkers", CK_OPENING))
-        self.assertIn("due: a game under way says the day its move is due by",
-                      " ".join(CK.check({k: v for k, v in CK_OPENING.items() if k != "due"})))
-
-    def test_a_jump_names_the_men_it_takes_and_a_crowned_man_is_a_king(self):
-        st = CK.state(CK_CROWNED)
-        self.assertEqual((st["last"]["path"], st["last"]["jumped"], st["last"]["crowned"]),
-                         ([19, 10, 1], [15, 6], True))
-        self.assertEqual(st["pieces"][1], "L")
-        st = CK.state(CK_GITHUB)
-        self.assertEqual((st["alert"], st["jumpers"], st["to_move"]), ("must jump", [8], "github"))
-        self.assertEqual(st["last"]["number"], 10, "White's reply in the tenth move, Black having opened it")
-
-    def test_what_the_board_is_drawn_from_is_checked(self):
-        cases = {"fen": ("B:W1:B5", "a man on its far row"), "dark": ("house", "dark is gone"),
-                 "last": ({**CK_CROWNED["last"], "move": "19x10x2"}, "does not end on a piece"),
-                 "kings": ({"house": -1}, "kings gives")}
-        for key, (bad, said) in cases.items():
-            with self.subTest(key=key):
-                self.assertIn(said, " ".join(CK.check({**CK_CROWNED, key: bad})))
-        self.assertIn("names a square twice", " ".join(CK.check({**CK_OPENING, "fen": "B:W21,21:B1"})))
-        self.assertIn("more than 12 Black pieces", " ".join(CK.check({**CK_OPENING, "fen": "B:W21:B" + ",".join(
-            map(str, range(1, 14)))})))
-        self.assertIn("ends on a piece of the side to move",
-                      " ".join(CK.check({**CK_GITHUB, "last": {**CK_GITHUB["last"], "move": "14-18"}})))
-        self.assertIn("crowned its man, which stands as a king",
-                      " ".join(CK.check({**CK_GITHUB, "last": {**CK_GITHUB["last"], "crowned": True}})))
-        self.assertIn("crowned is true or false",
-                      " ".join(CK.check({**CK_CROWNED, "last": {**CK_CROWNED["last"], "crowned": "yes"}})))
-        self.assertIn("alert 'must block' is not what this game's turn can say",
-                      " ".join(CK.check({**CK_GITHUB, "alert": "must block"})))
-        long_jump = "1x10x19x28x19x10x1x10x19x28x19x10x1"
-        self.assertTrue(CK.game.MOVE.fullmatch(long_jump), "twelve jumps, as many as a side has men to take")
-        self.assertFalse(CK.game.MOVE.fullmatch(long_jump + "x10"))
+        # once the ghosts are down a turn calls nothing out, a call to block least of all
+        self.assertIn("alert: once both ghosts are down a turn calls nothing out, since a call to block would tell"
+                      " the side to move where to go", reasons(PG, {**PG_GITHUB, "alert": "must block"}))
+        self.assertIn("+ is gone", reasons(PG, {**PG_GITHUB, "last": {**PG_GITHUB["last"], "move": "b5-lr-acw+"}}))
+        self.assertEqual(PG.check(PG_WON), [], "the score sheet still marks the move that won")
 
 
 class Finished(unittest.TestCase):
     """A finished game keeps its final board up for two days: the result on the turn's plate, the winning line
     where the game has one, the day the fresh board comes, and nothing left to play."""
 
-    BOARDS = (TTT_WON, TTT_DRAWN, C4_WON, CK_WON, CK_DRAWN)
+    BOARDS = (TT_WON, TT_WON_GITHUB, TT_DRAWN, PG_WON, PG_WON_GITHUB, PG_GIVEN, PG_FULL, PG_BOTH, CK_WON, CK_DRAWN)
 
     def test_a_finished_board_offers_no_move_and_only_it_has_a_next_day(self):
-        moves = {"tictactoe": TTT_GITHUB, "connectfour": C4_GITHUB, "checkers": CK_GITHUB}
+        moves = {"tictac": TT_GITHUB, "pentago": PG_GITHUB, "checkers": CK_GITHUB}
         for d in self.BOARDS:
             pkg = GAMES[d["kind"]][0]
             with self.subTest(board=name(d)):
-                self.assertIn("a finished board offers no move", " ".join(pkg.check({**d, "moves":
-                                                                                    moves[d["kind"]]["moves"]})))
-                self.assertIn("next '32 Oct' is not a day", " ".join(pkg.check({**d, "next": "32 Oct"})))
-        for d in (TTT_GITHUB, C4_GITHUB, CK_GITHUB):
+                self.assertIn("a finished board offers no move",
+                              reasons(pkg, {**d, "moves": moves[d["kind"]]["moves"]}))
+                self.assertIn("next '32 Oct' is not a day", reasons(pkg, {**d, "next": "32 Oct"}))
+        for d in moves.values():
             with self.subTest(board=name(d)):
-                self.assertIn("a game under way has none", " ".join(GAMES[d["kind"]][0].check({**d, "next": "14 Oct"})))
+                self.assertIn("a game under way has none", reasons(GAMES[d["kind"]][0], {**d, "next": "14 Oct"}))
 
-    def test_only_the_side_that_moved_last_can_have_won_and_each_end_is_won_or_drawn(self):
+    def test_only_the_side_that_moved_last_can_have_won_save_in_pentago_and_each_end_is_won_or_drawn(self):
         self.assertIn("the winner is the side that made the last move, house",
-                      " ".join(TTT.check({**TTT_WON, "result": {"winner": "github", "how": "three in a row"}})))
-        self.assertIn("a game ended by four in a row has a winner",
-                      " ".join(C4.check({**C4_WON, "result": {"winner": None, "how": "four in a row"}})))
-        self.assertIn("result is how the game ended", " ".join(CK.check({**CK_WON, "result": {"winner": "house"}})))
+                      reasons(TT, {**TT_WON, "result": {"winner": "github", "how": "three boards in a row"}}))
+        self.assertIn("the winner is the side that made the last move, github",
+                      reasons(TT, {**TT_WON_GITHUB, "result": {"winner": "house", "how": "three boards in a row"}}))
+        self.assertIn("a game ended by three boards in a row has a winner",
+                      reasons(TT, {**TT_WON, "result": {"winner": None, "how": "three boards in a row"}}))
+        self.assertIn("three boards in a row, no line left",
+                      reasons(TT, {**TT_WON, "result": {"winner": "house", "how": "three in a row"}}))
+        self.assertNotIn("the winner is the side that made the last move",
+                         reasons(PG, {**PG_GIVEN, "result": {"winner": "house", "how": "five in a row"}}))
+        self.assertIn("a game ended by five in a row has a winner",
+                      reasons(PG, {**PG_WON, "result": {"winner": None, "how": "five in a row"}}))
+        self.assertIn("five in a row, five for both, a full board",
+                      reasons(PG, {**PG_WON, "result": {"winner": "house", "how": "four in a row"}}))
+        self.assertIn("result is how the game ended", reasons(CK, {**CK_WON, "result": {"winner": "house"}}))
         self.assertIn("no move left, repetition, forty moves",
-                      " ".join(CK.check({**CK_WON, "result": {"winner": "house", "how": "checkmate"}})))
-        self.assertIn("a finished board has nothing left to block", " ".join(CK.check({**CK_WON,
-                                                                                        "alert": "must jump"})))
+                      reasons(CK, {**CK_WON, "result": {"winner": "house", "how": "checkmate"}}))
+        self.assertIn("a finished board has nothing left to block", reasons(CK, {**CK_WON, "alert": "must jump"}))
+        self.assertIn("a finished board has nothing left to block", reasons(TT, {**TT_WON, "alert": "any board"}))
 
     def test_its_plate_says_who_won_and_how_and_when_the_fresh_board_comes(self):
-        for d, label in ((TTT_WON, "@tannergolden wins"), (TTT_DRAWN, "drawn"), (C4_WON, "GitHub wins"),
-                         (CK_WON, "@tannergolden wins"), (CK_DRAWN, "drawn")):
+        for d, label in ((TT_WON, "@tannergolden wins"), (TT_WON_GITHUB, "GitHub wins"), (TT_DRAWN, "drawn"),
+                         (PG_WON, "@tannergolden wins"), (PG_WON_GITHUB, "GitHub wins"), (PG_GIVEN, "GitHub wins"),
+                         (PG_FULL, "drawn"), (PG_BOTH, "drawn"), (CK_WON, "@tannergolden wins"), (CK_DRAWN, "drawn")):
             st = GAMES[d["kind"]][0].state(d)
-            self.assertEqual((st["result"]["how"], st["next"], st["alert"]), (d["result"]["how"], "14 Oct", ""))
+            self.assertEqual((st["result"]["how"], st["next"], st["alert"]), (d["result"]["how"], d["next"], ""))
+            day = d["next"].upper()
             for tone in (STANDARD, "blackprint"):
                 for variant in ("still", "narrow-still"):
                     runs = lettered(d, tone, variant)
                     with self.subTest(board=name(d), tone=tone, variant=variant):
                         self.assertIn(label.upper(), runs, "the plate's label")
                         self.assertIn(d["result"]["how"].upper(), runs, "and how, in its second panel")
-                        self.assertIn("NEXT GAME 14 OCT", runs, "the day the fresh board comes, said in full")
-                        self.assertFalse([r for r in runs if r.endswith("'S TURN")], "nobody's turn")
-        self.assertIn("@tannergolden won with three in a row, from a3 to c1. Game 9 opens 14 Oct.",
-                      E.alt("tictactoe", TTT_WON))
-        self.assertIn("GitHub won with four in a row. Game 4 opens 14 Oct.", E.alt("connectfour", C4_WON))
+                        self.assertTrue({f"NEXT GAME {day}", f"NEXT {day}"} & set(runs), "the day the next comes")
+                        self.assertFalse([r for r in runs if r.endswith("'S TURN") or r.endswith("…")],
+                                         "nobody's turn, and nothing cut")
         self.assertIn("@tannergolden won: GitHub had no move left. Game 5 opens 14 Oct.", E.alt("checkers", CK_WON))
         self.assertIn("The game was drawn by the forty-move rule.", E.alt("checkers", CK_DRAWN))
 
@@ -730,30 +1216,69 @@ class Finished(unittest.TestCase):
 class Readme(unittest.TestCase):
     def test_each_board_is_folded_under_its_name_and_every_move_folded_under_it(self):
         # no banner stands over the fold: the board's own sheet says whose turn it is
-        text = ED.block("tictactoe", TTT_GITHUB, "assets/elements")
-        self.assertTrue(text.startswith("<!-- markdown:element:tictactoe:start -->\n<details>\n<summary><b>❌ "
-                                        "Tic-Tac-Toe</b></summary>\n\n<picture>"))
-        self.assertIn("</picture>\n\n<details>\n<summary>⭕ <b>GitHub's Turn</b> · 2 open cells · open to choose one"
+        text = ED.block("tictac", TT_GITHUB, "assets/elements")
+        self.assertTrue(text.startswith("<!-- markdown:element:tictac:start -->\n<details>\n<summary><b>❌ Tic-Tac"
+                                        "</b></summary>\n\n<picture>"))
+        self.assertIn("</picture>\n\n<details>\n<summary>⭕ <b>GitHub's Turn</b> · 4 open squares · open to choose one"
                       "</summary>\n\n|  | Move | In words | Play |\n| :-: | :--- | :--- | :-: |\n", text)
-        self.assertIn("| 📏 | **Mark the Head of the Board!** `Ob3` | O takes the head of the board |", text)
-        self.assertTrue(text.endswith(f"</details>\n\n{NOTE}\n\n</details>\n<!-- markdown:element:tictactoe:end -->"))
+        self.assertIn("| 🔳 | **Take the Centre of the Lower Right Board!** `Oh2` | O takes the centre of the lower"
+                      f" right board | [Play ↗]({link('tictac', 'h2', 9, 51)}) |", text)
+        self.assertTrue(text.endswith(f"</details>\n\n{TT_GITHUB['note']}\n\n</details>\n"
+                                      "<!-- markdown:element:tictac:end -->"))
+        text = ED.block("pentago", PG_GITHUB, "assets/elements")
+        self.assertTrue(text.startswith("<!-- markdown:element:pentago:start -->\n<details>\n<summary><b>🌀 Pentago"
+                                        "</b></summary>\n\n<picture>"))
+        self.assertIn("</picture>\n\n<details>\n<summary>⚫ <b>GitHub's Turn</b> · 3 empty holes · open to choose one"
+                      "</summary>\n\n|  | Hole | In words | Then turn |\n| :-: | :--- | :--- | :--- |\n", text)
         text = ED.block("checkers", CK_OPENING, "assets/elements")
         self.assertIn("<summary>⛂ <b>GitHub's Turn</b> · 2 legal moves · open to choose one</summary>", text)
 
+    def test_pentagos_list_links_every_turn_of_every_hole_and_a_ghosts_hole_once(self):
+        # ↻ for a quarter turned clockwise and ↺ anticlockwise, each with the quarter's initials, and every one its
+        # own move's issue; a ghost's hole is one choice, and its row one link
+        turns = " ".join(f"[{'↻' if w == 'cw' else '↺'}&#8202;{q.upper()}]({link('pentago', f'a6-{q}-{w}', 4, 28)})"
+                         for q, w in TURNS)
+        self.assertIn("| ⚫ | **Take the Upper Left Corner of the Upper Left Quarter!** `a6` | A black marble on a6,"
+                      f" then a quarter turns | {turns} |\n", ED.block("pentago", PG_GITHUB, "assets/elements"))
+        self.assertIn("| 👻 | **Ghost the Upper Left Corner of the Upper Left Quarter!** `a6` | A ghost on a6, the"
+                      f" upper left corner of the upper left quarter | [Play ↗]({link('pentago', 'a6', 5, 1)}) |\n",
+                      ED.block("pentago", PG_FRESH, "assets/elements"))
+        # and neither is linked the other's way: a marble's hole with one link would play no turn, and a ghost's
+        # with eight would offer turns the ghosts never take
+        marble, ghost = PG_GITHUB["moves"][0], PG_FRESH["moves"][0]
+        one = {**PG_GITHUB, "moves": [[*marble[:4], link("pentago", marble[2], 4, 28)], *PG_GITHUB["moves"][1:]]}
+        eight = {**PG_FRESH, "moves": [[*ghost[:4], marble[4]], *PG_FRESH["moves"][1:]]}
+        for d in (one, eight):
+            with self.subTest(board=name(d)):
+                self.assertIn("is not an emoji, a title, a move, its words and its link", reasons(PG, d))
+        self.assertEqual((PG.check(PG_GITHUB), PG.check(PG_FRESH)), ([], []))
+
     def test_the_side_to_move_is_signed_with_what_it_plays_both_ways_round(self):
-        # the house's sign is ❌, ⚪ or ⛀ and GitHub's ⭕, ⚫ or ⛂, whichever side opened
-        for d, said in ((TTT_GITHUB, "⭕ <b>GitHub's Turn</b> · 2 open cells"),
-                        (TTT_HOUSE, "❌ <b>@tannergolden's Turn</b> · 2 open cells"),
-                        (TTT_FRESH, "❌ <b>@tannergolden's Turn</b> · 2 open cells"),
-                        (TTT_FRESH_HOUSE, "⭕ <b>GitHub's Turn</b> · 1 open cell ·"),
-                        (C4_GITHUB, "⚫ <b>GitHub's Turn</b> · 2 open columns"),
-                        (C4_HOUSE, "⚪ <b>@tannergolden's Turn</b> · 1 open column ·"),
-                        (C4_FRESH, "⚪ <b>@tannergolden's Turn</b> · 2 open columns"),
-                        (C4_FRESH_HOUSE, "⚫ <b>GitHub's Turn</b> · 2 open columns"),
+        # the house's sign is ❌, ⚪ or ⛀ and GitHub's ⭕, ⚫ or ⛂, whichever side placed first or opened
+        for d, said in ((TT_FRESH, "⭕ <b>GitHub's Turn</b> · 3 squares to lock ·"),
+                        (TT_GHOST, "❌ <b>@tannergolden's Turn</b> · 3 squares to lock ·"),
+                        (TT_GHOSTS, "❌ <b>@tannergolden's Turn</b> · 3 open squares ·"),
+                        (TT_GHOSTS_GITHUB, "⭕ <b>GitHub's Turn</b> · 3 open squares ·"),
+                        (TT_GITHUB, "⭕ <b>GitHub's Turn</b> · 4 open squares ·"),
+                        (TT_HOUSE, "❌ <b>@tannergolden's Turn</b> · 3 open squares ·"),
+                        (dict(TT_GITHUB, moves=TT_GITHUB["moves"][:1]), "⭕ <b>GitHub's Turn</b> · 1 open square ·"),
+                        (dict(TT_FRESH, moves=TT_FRESH["moves"][:1]), "⭕ <b>GitHub's Turn</b> · 1 square to lock ·"),
+                        (PG_FRESH, "⚪ <b>@tannergolden's Turn</b> · 3 holes for a ghost ·"),
+                        (PG_GHOST, "⚫ <b>GitHub's Turn</b> · 3 holes for a ghost ·"),
+                        (PG_GHOSTS, "⚫ <b>GitHub's Turn</b> · 3 empty holes ·"),
+                        (PG_GHOSTS_HOUSE, "⚪ <b>@tannergolden's Turn</b> · 3 empty holes ·"),
+                        (PG_GITHUB, "⚫ <b>GitHub's Turn</b> · 3 empty holes ·"),
+                        (PG_HOUSE, "⚪ <b>@tannergolden's Turn</b> · 3 empty holes ·"),
+                        (dict(PG_HOUSE, moves=PG_HOUSE["moves"][:1]),
+                         "⚪ <b>@tannergolden's Turn</b> · 1 empty hole ·"),
+                        (dict(PG_GHOST, moves=PG_GHOST["moves"][:1]), "⚫ <b>GitHub's Turn</b> · 1 hole for a ghost ·"),
                         (CK_GITHUB, "⛂ <b>GitHub's Turn</b> · 1 legal move ·"),
                         (CK_OPENING, "⛂ <b>GitHub's Turn</b> · 2 legal moves ·")):
-            with self.subTest(board=name(d)):
+            with self.subTest(board=name(d), moves=len(d["moves"])):
                 self.assertIn(f"<summary>{said}", ED.block(d["kind"], d, "assets/elements"))
+        for d in (TT_GHOST, TT_GHOSTS, TT_HOUSE, PG_FRESH, PG_GHOSTS_HOUSE, PG_HOUSE):
+            with self.subTest(board=name(d)):
+                self.assertIn("only @tannergolden can play these</summary>", ED.block(d["kind"], d, "assets/elements"))
         white_turn = dict(CK_CROWNED, fen="W:WK1,20,21,24,28,30:B5,9,12,17,18", move=19, history=[
             [18, "10x17", "19x10x1", "@tokafor"], [19, "5-9", "", "@imvale"]],
             last={"move": "5-9", "words": "Man from 5 to 9", "by": "@imvale", "when": "10 Oct"},
@@ -763,26 +1288,51 @@ class Readme(unittest.TestCase):
         self.assertIn("<summary>⛀ <b>@tannergolden's Turn</b> · 1 legal move · only @tannergolden can play these"
                       "</summary>", ED.block("checkers", white_turn, "assets/elements"))
 
-    def test_a_fresh_board_names_the_arbiters_opening_move_and_who_it_opened_for(self):
-        for d in (TTT_FRESH, C4_FRESH):
-            alt = E.alt(d["kind"], d)
-            with self.subTest(kind=d["kind"]):
-                self.assertIn("the Arbiter's move for GitHub", alt)
-                self.assertIn("It is @tannergolden's turn", alt)
-                self.assertIn("The Arbiter opens every game for a side drawn at random",
-                              ED.block(d["kind"], d, "assets/elements"))
-        self.assertIn("@tannergolden plays X and GitHub O, after 1. Ob2, the Arbiter's move for GitHub: O takes the"
-                      " centre. It is @tannergolden's turn as X, due by 21 Oct.", E.alt("tictactoe", TTT_FRESH))
-        self.assertIn("@tannergolden drops the White discs and GitHub the Black, after 1. 3, the Arbiter's move for"
-                      " @tannergolden: a White disc down column 3, to row 1. It is GitHub's turn as Black",
-                      E.alt("connectfour", C4_FRESH_HOUSE))
+    def test_a_long_turn_is_grouped_by_board_or_by_quarter_as_chess_groups_its_moves_by_piece(self):
+        # Past ten moves the list is grouped, the boards or the quarters as the board is read, top row first, each
+        # with the moves the engine listed in it; a board that is closed, or a quarter with no empty hole, has none.
+        for d, unit, groups in (
+                (dict(TT_HOUSE, moves=squares("X", HOUSE_SQUARES, 10, 47)), "28 open squares",
+                 [("❌", "Upper Left Board", 6), ("❌", "Top Board", 2), ("❌", "Upper Right Board", 5),
+                  ("❌", "Left Board", 3), ("❌", "Centre Board", 3), ("❌", "Right Board", 6),
+                  ("❌", "Bottom Board", 3)]),
+                (dict(TT_FRESH, moves=squares("", EVERY_SQUARE, 11, 1)), "81 squares to lock",
+                 [("⭕", f"{place.title()} Board", 9) for place in TT.game.PLACE.values()]),
+                (dict(PG_GHOSTS, moves=holes("black", " ".join(c for c in EVERY_HOLE.split() if c not in ("f3", "b1")),
+                                             6, 3)), "34 empty holes",
+                 [("⚫", "Upper Left Quarter", 9), ("⚫", "Upper Right Quarter", 9), ("⚫", "Lower Left Quarter", 8),
+                  ("⚫", "Lower Right Quarter", 8)]),
+                (dict(PG_FRESH, moves=holes("", EVERY_HOLE, 5, 1)), "36 holes for a ghost",
+                 [("⚪", f"{quarter.title()} Quarter", 9) for quarter in PG.game.QNAME.values()])):
+            with self.subTest(board=name(d)):
+                self.assertEqual(E.game_of(d["kind"]).check(d), [])
+                text = ED.block(d["kind"], d, "assets/elements")
+                self.assertIn(f"· {unit} ·", text)
+                self.assertEqual(re.findall(r"<details open>\n<summary>(.*?)</summary>", text),
+                                 [f"{sign} {title} · {n} moves" for sign, title, n in groups])
+
+    def test_a_board_before_its_first_mark_or_marble_says_who_the_arbiter_drew(self):
+        self.assertEqual(E.alt("tictac", TT_FRESH), "Tic-Tac: game 11, the ghosts. Game 11 of @tannergolden against"
+                         " GitHub, @tannergolden plays X and GitHub O, under the Ghost Rule. It is GitHub's turn to"
+                         " place a ghost, due by 20 Oct. Boards won: X 0, O 0.")
+        self.assertEqual(E.alt("pentago", PG_FRESH), "Pentago: game 5, the ghosts. Game 5 of @tannergolden against"
+                         " GitHub, @tannergolden plays White and GitHub Black, under the Ghost Rule. It is"
+                         " @tannergolden's turn to set a ghost, due by 20 Oct. The board is empty.")
+        for d, drew in ((TT_GHOSTS, "The Arbiter drew @tannergolden to make the first mark."),
+                        (TT_GHOSTS_GITHUB, "The Arbiter drew GitHub to make the first mark."),
+                        (PG_GHOSTS, "The Arbiter drew GitHub to set the first marble."),
+                        (PG_GHOSTS_HOUSE, "The Arbiter drew @tannergolden to set the first marble.")):
+            with self.subTest(board=name(d)):
+                self.assertIn(drew, E.alt(d["kind"], d))
+                self.assertIn("Under the Ghost Rule each side first", ED.block(d["kind"], d, "assets/elements"))
+        self.assertNotIn("The Arbiter drew", E.alt("tictac", TT_GITHUB), "said once, before the first mark alone")
 
     def test_the_sides_are_named_the_houses_first_both_ways_round(self):
-        # X, White and White first, whichever side the Arbiter opened for: the house's colour never changes
-        for d, said in ((TTT_FRESH, "@tannergolden plays X and GitHub O"),
-                        (TTT_FRESH_HOUSE, "@tannergolden plays X and GitHub O"),
-                        (C4_FRESH, "@tannergolden drops the White discs and GitHub the Black"),
-                        (C4_FRESH_HOUSE, "@tannergolden drops the White discs and GitHub the Black"),
+        # X, White and White first, whoever placed first or opened: the house's colour never changes
+        for d, said in ((TT_GHOSTS, "@tannergolden plays X and GitHub O"),
+                        (TT_GHOSTS_GITHUB, "@tannergolden plays X and GitHub O"),
+                        (PG_GHOSTS, "@tannergolden plays White and GitHub Black"),
+                        (PG_GHOSTS_HOUSE, "@tannergolden plays White and GitHub Black"),
                         (CK_OPENING, "@tannergolden, White: men on 21"),
                         (CK_GITHUB, "@tannergolden, White: men on 11")):
             with self.subTest(board=name(d)):
@@ -790,10 +1340,10 @@ class Readme(unittest.TestCase):
 
     def test_a_finished_game_is_its_board_and_its_note_with_nothing_to_play(self):
         # what the picture cannot say, as the engine writes it on a finished board: a link in it is a link
-        over = ("Game 1 is over, and its final board stays up for two days: game 2 opens 15 Oct, 16:00 EST, and "
-                "nothing can be played until then. Every finished game is kept as a "
-                "[PDN](https://github.com/tannergolden/tannergolden/tree/HEAD/.github/checkers/games).")
-        for d in (*Finished.BOARDS, *(dict(b, note=over) for b in Finished.BOARDS)):
+        over_ = ("Game 1 is over, and its final board stays up for two days: game 2 opens 15 Oct, 16:00 EST, and "
+                 "nothing can be played until then. Every finished game is kept as a "
+                 "[PDN](https://github.com/tannergolden/tannergolden/tree/HEAD/.github/checkers/games).")
+        for d in (*Finished.BOARDS, *(dict(b, note=over_) for b in Finished.BOARDS)):
             text = ED.block(d["kind"], d, "assets/elements")
             with self.subTest(board=name(d), note=d["note"][:20]):
                 self.assertEqual(E.game_of(d["kind"]).check(d), [])

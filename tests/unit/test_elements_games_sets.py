@@ -10,8 +10,9 @@ the room the set's frame leaves, meeting no other word and no piece, at the limi
 cannot letter, or draw within its budget, is drawn whole in the page's own look, and chess's own Hall keeps it
 always. Every board is built, and every podium cut, of stuffs the set names in its own palette, no two sets of a year
 stand their winners on the same podium, and every tag on a game's sheet is the set's own, never a certificate's
-ribbon. Nothing on a set's board helps a player choose, Tic-Tac-Toe counts each side's marks left, and a move's
-words run to a second line after their comma."""
+ribbon. Nothing on a set's board helps a player choose, Tic-Tac counts the boards each side has won and Pentago each
+side's marbles left, a move's words run to a second line after their comma, and a Pentago move's, with its turn, to a
+third, every word whole."""
 from __future__ import annotations
 
 import re
@@ -43,7 +44,7 @@ TWO = ("halloween", "medieval-chessmen:2026-02-01")
 def fixtures() -> dict:
     """The elements of the profile's fixtures, each game's and both Halls, by id, as a run merges them."""
     out = {}
-    for kind in ("chess", "checkers", "connectfour", "tictactoe", "hall-of-fame"):
+    for kind in ("chess", "checkers", "pentago", "tictac", "hall-of-fame"):
         spec = loads((support.ROOT / "tests" / "fixtures" / f"{kind}.yaml").read_text(encoding="utf-8"))
         out.update(ED.merged(ED.check(spec["elements"]), {}, subject="tannergolden", today="2026-09-25"))
     return out
@@ -151,9 +152,9 @@ class EverySet(unittest.TestCase):
                     if t == theme and not variant.startswith("badge-"):
                         self.assertLessEqual(inks, own | labels, (key, kind, variant, theme))
 
-    def test_a_set_draws_nothing_that_helps_a_choice_and_tic_tac_toe_counts_its_marks_left(self):
-        # As in every look: no cell or hole to block and no word of perfect play, and where chess counts what each side
-        # took, Tic-Tac-Toe counts each side's marks left, as Connect Four counts its discs.
+    def test_a_set_draws_nothing_that_helps_a_choice_and_counts_the_boards_won_and_the_marbles_left(self):
+        # As in every look: no square or hole to block and no word of perfect play, and where chess counts what each
+        # side took, Tic-Tac counts the boards each side has won and Pentago each side's marbles left.
         said: list = []
         text = Pix.text
 
@@ -162,7 +163,7 @@ class EverySet(unittest.TestCase):
             return text(self, x, y, s, c, *a, **k)
         for key in TWO:
             held = pixelsets.drawn_by(key)
-            for kind in ("tictactoe", "connectfour"):
+            for kind in ("tictac", "pentago"):
                 for variant in ("wide", "narrow"):
                     said.clear()
                     with mock.patch.object(Pix, "text", recorded):
@@ -170,11 +171,11 @@ class EverySet(unittest.TestCase):
                     words = " ".join(said).upper()
                     for hint in ("BLOCK", "PERFECT PLAY", "WINS NEXT", "FROM HERE", "BEST PLAY"):
                         self.assertNotIn(hint, words, (key, kind, variant))
-                    self.assertIn("MARKS LEFT" if kind == "tictactoe" else "DISCS LEFT", words, (key, kind, variant))
+                    self.assertIn("BOARDS WON" if kind == "tictac" else "MARBLES LEFT", words, (key, kind, variant))
 
     def test_a_moves_words_run_to_a_second_line_after_their_comma_leaving_no_number_alone(self):
-        # Connect Four's words take two lines on every sheet and checkers' on a phone: "to row 2" stays whole on the
-        # second where `wrap` would leave the 2 alone, and where no comma lets both lines fit they come out even.
+        # Checkers' words take two lines on a phone: "landing on 11" stays whole on the second where `wrap` would
+        # leave the 11 alone, and where no comma lets both lines fit they come out even.
         said: list = []
         text = Pix.text
 
@@ -183,16 +184,38 @@ class EverySet(unittest.TestCase):
             return text(self, x, y, s, c, *a, **k)
         for key in TWO:
             held = pixelsets.drawn_by(key)
-            for kind, variant in (("connectfour", "wide"), ("connectfour", "narrow"), ("checkers", "narrow")):
+            for kind, variant in (("checkers", "narrow"),):
                 said.clear()
                 with mock.patch.object(Pix, "text", recorded):
                     held.game(kind, GAMES[kind], E.THEMES["day"], variant)
                 head, tail = GAMES[kind]["last"]["words"].split(", ")
                 self.assertIn(head + ",", said, (key, kind, variant))
                 self.assertIn(tail, said, (key, kind, variant))
-        self.assertEqual(G.wrap("A white disc down column 5, to row 2", 186, "57")[1], "2")
-        self.assertEqual(G.phrased("A white disc down column 5, to row 2", 120),
-                         ["A white disc down", "column 5, to row 2"])
+        self.assertEqual(G.wrap("Man from 20 jumps 16, landing on 11", 172, "57")[1], "11")
+        self.assertEqual(G.phrased("Man from 20 jumps 16, landing on 11", 172),
+                         ["Man from 20 jumps 16,", "landing on 11"])
+
+    def test_a_pentago_moves_words_run_to_a_third_line_with_its_turn_every_word_whole(self):
+        # A marble and its quarter's turn take three lines on every sheet, the longest the engine writes too, and
+        # none is cut short: a move's words reach a third line before they are clipped.
+        said: list = []
+        text = Pix.text
+
+        def recorded(self, x, y, s, c, *a, **k):
+            said.append(str(s))
+            return text(self, x, y, s, c, *a, **k)
+        for key in TWO:
+            held = pixelsets.drawn_by(key)
+            for words in (GAMES["pentago"]["last"]["words"],
+                          "A white marble on e4, then the upper right quarter turns anticlockwise"):
+                d = dict(GAMES["pentago"], last=dict(GAMES["pentago"]["last"], words=words))
+                for variant in ("wide", "narrow"):
+                    said.clear()
+                    with mock.patch.object(Pix, "text", recorded):
+                        held.game("pentago", d, E.THEMES["day"], variant)
+                    # the words as the sheet letters them, one line after another under the move
+                    at = said.index(next(s for s in said if len(s) > 2 and words.startswith(s)))
+                    self.assertEqual(" ".join(said[at:at + 3]), words, (key, words[:24], variant))
 
     def test_a_collections_design_letters_its_games_in_its_hands_two_inks(self):
         for key in collections.COLLECTIONS["medieval"].keys:
@@ -355,15 +378,15 @@ class TheKit(unittest.TestCase):
 
     def test_a_file_too_heavy_is_drawn_lighter_and_one_that_cannot_be_is_the_pages(self):
         held = pixelsets.drawn_by("christmas")
-        d = GAMES["connectfour"]
-        full = held.game("connectfour", d, E.THEMES["dark"], "wide")
+        d = GAMES["pentago"]
+        full = held.game("pentago", d, E.THEMES["dark"], "wide")
         with mock.patch.dict(BUDGET, {"board": len(full.encode("utf-8")) - 1}):
-            lighter = held.game("connectfour", d, E.THEMES["dark"], "wide")
+            lighter = held.game("pentago", d, E.THEMES["dark"], "wide")
             self.assertLess(len(lighter), len(full))
-            self.assertIn("christmas elements connectfour wide dark-->", lighter)
+            self.assertIn("christmas elements pentago wide dark-->", lighter)
         self.assertFalse(held._lite, "the set is left drawing lighter")
         with mock.patch.dict(BUDGET, {"board": 1000}):
-            self.assertIsNone(ED.held_game(held, "connectfour", "connectfour", ELEMENTS["connectfour"]))
+            self.assertIsNone(ED.held_game(held, "pentago", "pentago", ELEMENTS["pentago"]))
 
 
 if __name__ == "__main__":
