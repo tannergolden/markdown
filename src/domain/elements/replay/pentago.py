@@ -112,7 +112,7 @@ class Pentago(GameReplay):
                 qk, way = pp["quarter"], pp["way"]
                 X, Y, _ = PL.quarter_box(qk, X0, Y0, N, False)
                 shown = clk.anim("opacity", [(0, 0), (t0, 0), (t0 + .2 * k, 1), (nxt[i], 1), (nxt[i], 0)])
-                turns.append(f'<g opacity="0">{shown}' + sk.turn_mark(X, Y, q, qk, way, m * .55) + "</g>")
+                turns.append(f'<g opacity="0">{shown}' + sk.turn_mark(X, Y, q, qk, way, m * .75) + "</g>")
                 inside = {cell: mb for cell, mb in board.items() if quarter_of(cell) == qk}
                 for cell in inside:
                     del board[cell]

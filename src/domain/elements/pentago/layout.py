@@ -11,10 +11,12 @@ The last move plays as it was made: its marble is set in its hole, which is ring
 turns its quarter turn from where it stood when the marble went in, everything on it turning with it, a ghost too,
 and an arrow round the quarter's outer corner is drawn the way it went. A won game's five are ringed one after
 another and joined. A move is written as the sheet draws it: the marble's colour, its hole, and the turn, a small
-circular arrow and the quarter's initials, `e4 ↻ UR`; a ghost's, the ghost and its hole. In place of chess's taken
-pieces the panel counts each side's marbles left, a rack of seventeen, and says across its heading where the ghosts
-stand now. Nothing on the sheet helps a player choose: no hole or turn that would make five, and no call to block.
-The house always plays White and GitHub Black, and every word on the sheet says so, the house's White first.
+circular arrow and the quarter's initials, `e4 ↻ UR`; a ghost's, the ghost and its hole, and before the first ghost
+the move to come is written with a ghost too, whoever sets it. Each marble casts its shadow on the floor of its
+hole. In place of chess's taken pieces the panel counts each side's marbles left, a rack of seventeen, and says
+across its heading where the ghosts stand now. Nothing on the sheet helps a player choose: no hole or turn that
+would make five, and no call to block. The house always plays White and GitHub Black, and every word on the sheet
+says so, the house's White first.
 """
 from __future__ import annotations
 
@@ -62,7 +64,7 @@ def centre(cell, x0, y0, n, small) -> tuple[float, float]:
 def band_mark(x, y, size, paper, block="") -> str:
     """The band's mark: the board's four quarters, one holding a marble."""
     return (f'<g transform="translate({f1(x)} {f1(y)}) scale({fx(size / 20, 4)})" fill="none" stroke="{paper}" '
-            f'stroke-width="1.8"><rect x="1.5" y="1.5" width="7.6" height="7.6" rx="1.4"/>'
+            f'stroke-width="2.3"><rect x="1.5" y="1.5" width="7.6" height="7.6" rx="1.4"/>'
             f'<rect x="10.9" y="1.5" width="7.6" height="7.6" rx="1.4"/><rect x="1.5" y="10.9" width="7.6" '
             f'height="7.6" rx="1.4"/><rect x="10.9" y="10.9" width="7.6" height="7.6" rx="1.4"/>'
             f'<circle cx="14.7" cy="5.3" r="1.9" fill="{paper}" stroke="none"/></g>')
@@ -99,7 +101,15 @@ def medallion(cv, sk, st, cx, cy, r, side) -> str:
 def glyph(cv, sk, st, side, x, base, size) -> tuple[str, float]:
     """The marble a move is set with, before its hole. Returns it and the room it takes."""
     r = size * .3
-    return sk.disc(cv, material_of(side), x + r + .5, base - sk.cap(size) / 2, 0, r=r), glyph_width(size)
+    cx, cy, mat = x + r + .5, base - sk.cap(size) / 2, material_of(side)
+    return sk.disc(cv, mat, cx, cy, 0, r=r, bare=True), glyph_width(size)
+
+
+def opening_glyph(cv, sk, st, side, x, base, size) -> tuple[str, float]:
+    """Before the first ghost, the move to come is a ghost, whoever sets it: a ghost before its hole, as the move
+    will be written once it is set."""
+    r = size * .3
+    return sk.ghost_marble(cv, x + r + .5, base - sk.cap(size) / 2, r), glyph_width(size)
 
 
 def glyph_width(size) -> float:
@@ -168,7 +178,7 @@ def board(cv, sk, st, x0, y0, n, *, small=False) -> None:
                 continue
             cx, cy = centre(cell, x0, y0, n, small)
             drawn = (sk.ghost_marble(cv, cx, cy, DISC * p) if v == GHOST
-                     else sk.disc(cv, "light" if v == "W" else "dark", cx, cy, p))
+                     else sk.cast(cv, cx, cy, DISC * p) + sk.disc(cv, "light" if v == "W" else "dark", cx, cy, p))
             if moving and cell == set_in:
                 drawn = f"<g>{M.appear(M.DROP, .2)}{drawn}</g>"     # set in as the move begins
             marbles.append(drawn)
@@ -194,7 +204,7 @@ def board(cv, sk, st, x0, y0, n, *, small=False) -> None:
             cv.add(drawn_q)
     if tq:
         X, Y, _ = quarter_box(tq, x0, y0, n, small)
-        cv.add(sk.turn_mark(X, Y, q, tq, last["way"], m * .55, M.appear(M.TWIST_AT, .2) if moving else ""))
+        cv.add(sk.turn_mark(X, Y, q, tq, last["way"], m * .75, M.appear(M.TWIST_AT, .2) if moving else ""))
     if st["line"]:
         land = M.TWIST_AT + M.TWIST if tq else M.LAND
         pts = [centre(cl, x0, y0, n, small) for cl in st["line"]]

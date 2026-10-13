@@ -6,14 +6,18 @@ sheets are (`games.skin`), with the quarters' and the marbles' own materials.
   standard  four quarter plates in the theme's cobalt enamel, the colour of chess's dark squares, lit from the upper
             left as chess's board is, every hole cut clean through and its wall in shade on the side the lamp
             misses; the marbles enamel, White's lit white edged in black and Black's black with the lamp's
-            highlight, as chess's pieces are; a ghost a marble of the plate's own enamel ringed inside in a dashed
-            line of light; the last marble's hole ringed amber and its quarter's turn marked by an amber arrow, a won
-            line joined in amber
+            highlight, as chess's pieces are, each casting a soft shadow on the floor of its hole; a ghost a marble
+            of the plate's own enamel ringed inside in a dashed line of light; the last marble's hole ringed amber
+            and its quarter's turn marked by an amber arrow, a won line joined in amber
   print     each quarter drawn in plan, as a part is: its face in section lining, as chess lines its dark squares,
             every hole cut through it with a centre mark while it is empty and a shade line on the side the lamp
             misses, the whole casting its shadow down and to the right; a White marble paper edged in ink and
-            line-shaded, a Black one solid ink with a glint; a ghost lined as the plate is and ringed in phantom
-            lines, long and short dashes; the last quarter turn an arrow round the quarter's outer corner
+            line-shaded, a Black one solid ink with a glint, each casting its shadow in section lining; a ghost
+            lined as the plate is and ringed in phantom lines, long and short dashes; the last quarter turn an
+            arrow round the quarter's outer corner
+
+Black written small on the bare sheet after dark, as a move's mark is, is a dark stone in either: edged light, as
+it is on a tray, it would read as a ring, the sign a reader takes for White.
 """
 from __future__ import annotations
 
@@ -59,7 +63,7 @@ def turn_arrow(X: float, Y: float, q: float, qk: str, way: str, inset: float) ->
     side = (cx, cy + sy * (q / 2 - inset))           # the middle of the outer side edge
     end_ = (cx + sx * (q / 2 - inset), cy)           # the middle of the outer top or bottom edge
     start, end = (side, end_) if (qk in ("ul", "lr")) == (way == "cw") else (end_, side)
-    r = q * .12
+    r = q * .24
 
     def toward(pt, k):
         dx, dy = pt[0] - cx, pt[1] - cy
@@ -71,7 +75,7 @@ def turn_arrow(X: float, Y: float, q: float, qk: str, way: str, inset: float) ->
     ux, uy = end[0] - b[0], end[1] - b[1]
     n = math.hypot(ux, uy)
     ux, uy = ux / n, uy / n
-    h = 8.5
+    h = 10.5
     head = (f"M{f1(end[0] + ux * h * .55)} {f1(end[1] + uy * h * .55)}L{f1(end[0] - ux * h * .45 - uy * h * .48)} "
             f"{f1(end[1] - uy * h * .45 + ux * h * .48)}L{f1(end[0] - ux * h * .45 + uy * h * .48)} "
             f"{f1(end[1] - uy * h * .45 - ux * h * .48)}Z")
@@ -98,9 +102,11 @@ def turn_icon(x: float, cy: float, r: float, way: str) -> tuple[str, str, str, f
 class Print(GamePrint):
     """A print's Pentago: the quarters in plan, the marbles seen through their holes."""
 
-    def disc_def(self, cv, material: str, r: float) -> str:
+    def disc_def(self, cv, material: str, r: float, bare: bool = False) -> str:
         """The id of a marble of radius `r`, drawn once in the file's defs about its own centre: its face edged,
-        its groove, and its shading or glint; a small one plain, its face and its groove alone."""
+        its groove, and its shading or glint; a small one plain, its face and its groove alone, and a small dark one
+        after dark a dot of ink edged faint, since edged in the night's line it would read as a ring, White's sign.
+        A print draws a marble the same wherever it stands, so `bare` changes nothing here."""
         key = (material, f1(r))
         cv.__dict__.setdefault("_discs", {})
         if key not in cv._discs:
@@ -109,7 +115,9 @@ class Print(GamePrint):
             g = GROOVE / DISC * r
             small = r < 7
             ew = (".9" if material == "dark" and self.dark else "1.3") if not small else ".8"
-            out = [f'<g id="{pid}"><circle r="{f1(r)}" fill="{c(fill)}" stroke="{c(edge)}" stroke-width="{ew}"/>']
+            dot = small and material == "dark" and self.dark
+            rim = ' stroke-opacity=".38"' if dot else ""
+            out = [f'<g id="{pid}"><circle r="{f1(r)}" fill="{c(fill)}" stroke="{c(edge)}" stroke-width="{ew}"{rim}/>']
             if material == "light":
                 if not small:
                     cid = cv.uid("s")
@@ -119,7 +127,7 @@ class Print(GamePrint):
                                f'stroke-width=".7" stroke-opacity=".5"/>')
                 out.append(f'<circle r="{f1(g)}" fill="{c(fill)}" stroke="{c(edge)}" '
                            f'stroke-width="{".9" if not small else ".6"}"/>')
-            else:
+            elif not dot:
                 out.append(f'<circle r="{f1(g)}" fill="none" stroke="{c("white")}" '
                            f'stroke-opacity="{".3" if self.dark else ".42"}" '
                            f'stroke-width="{".9" if not small else ".6"}"/>')
@@ -134,10 +142,18 @@ class Print(GamePrint):
             cv._discs[key] = pid
         return cv._discs[key]
 
-    def disc(self, cv, material: str, cx: float, cy: float, pitch: float, *, r: float | None = None) -> str:
-        """A marble seen face on, centred at (cx, cy), `r` its radius (a hole's marble unless given)."""
+    def disc(self, cv, material: str, cx: float, cy: float, pitch: float, *, r: float | None = None,
+             bare: bool = False) -> str:
+        """A marble seen face on, centred at (cx, cy), `r` its radius (a hole's marble unless given); `bare` when it
+        stands on the bare sheet, as a move's mark does, rather than in a hole or on a tray."""
         r = r if r is not None else DISC * pitch
-        return f'<use href="#{self.disc_def(cv, material, r)}" x="{f1(cx)}" y="{f1(cy)}"/>'
+        return f'<use href="#{self.disc_def(cv, material, r, bare)}" x="{f1(cx)}" y="{f1(cy)}"/>'
+
+    def cast(self, cv, cx, cy, r) -> str:
+        """A marble's shadow on the floor of its hole, down and to the right, away from the lamp, in section lining
+        as every shadow on a print is: the hole's wall hides all of it but a crescent."""
+        return (f'<circle cx="{f1(cx + 1.3)}" cy="{f1(cy + 1.7)}" r="{f1(r)}" '
+                f'fill="url(#{self.hatch(cv, "shadow")})"/>')
 
     def frame_shadow(self, cv, x, y, w, h) -> None:
         """A quarter's shadow, cast down and to the right in section lining, as chess's board casts its own."""
@@ -199,9 +215,9 @@ class Print(GamePrint):
         across the plate, then the stroke in the print's mark."""
         shaft, head = turn_arrow(X, Y, q, qk, way, inset)
         paper, ink = c(self.col["paper"]), c(self.mark)
-        return (f'<g>{appear}<path d="{shaft}" fill="none" stroke="{paper}" stroke-width="6" stroke-linecap="round" '
-                f'stroke-linejoin="round"/><path d="{head}" fill="{paper}" stroke="{paper}" stroke-width="3" '
-                f'stroke-linejoin="round"/><path d="{shaft}" fill="none" stroke="{ink}" stroke-width="2.4" '
+        return (f'<g>{appear}<path d="{shaft}" fill="none" stroke="{paper}" stroke-width="7" stroke-linecap="round" '
+                f'stroke-linejoin="round"/><path d="{head}" fill="{paper}" stroke="{paper}" stroke-width="3.5" '
+                f'stroke-linejoin="round"/><path d="{shaft}" fill="none" stroke="{ink}" stroke-width="3" '
                 f'stroke-linecap="round" stroke-linejoin="round"/><path d="{head}" fill="{ink}"/></g>')
 
     def turn_glyph(self, x, cy, r, way, role="ink") -> tuple[str, float]:
@@ -215,10 +231,12 @@ class Print(GamePrint):
 class Standard(GameStandard):
     """The standard theme's Pentago: quarters of the accent's enamel, marbles of enamel lit as chess's pieces."""
 
-    def disc_def(self, cv, material: str, r: float) -> str:
+    def disc_def(self, cv, material: str, r: float, bare: bool = False) -> str:
         """The id of a marble of radius `r`, drawn once in the file's defs about its own centre: its enamel face
-        edged in black, the lamp across it, its groove, and on a dark one the lamp's highlight; a small one plainer."""
-        key = (material, f1(r))
+        edged in black, the lamp across it, its groove, and on a dark one the lamp's highlight; a small one plainer.
+        A small dark one on the bare card after dark, as a move's mark is, is a slate stone edged in gray: black
+        enamel edged light would read as a ring, White's sign, there."""
+        key = (material, f1(r), bare)
         cv.__dict__.setdefault("_discs", {})
         if key not in cv._discs:
             L = self.lights(cv)
@@ -226,15 +244,16 @@ class Standard(GameStandard):
             fill, edge, _ = self.paint(material)
             g = GROOVE / DISC * r
             small = r < 7
-            # a small dark marble may stand on the bare card, as a move's mark does: after dark it is edged light
-            rim = "ash" if small and material == "dark" and self.dark else edge
-            out = [f'<g id="{pid}"><circle r="{f1(r)}" fill="{c(fill)}" stroke="{c(rim)}" '
+            stone = small and material == "dark" and self.dark and bare
+            if stone:
+                fill, edge = "slate", "gray"
+            out = [f'<g id="{pid}"><circle r="{f1(r)}" fill="{c(fill)}" stroke="{c(edge)}" '
                    f'stroke-width="{"1.3" if not small else ".8"}"/>'
                    f'<circle r="{f1(r)}" fill="url(#{L["wp" if material == "light" else "bp"]})"/>']
             if material == "light":
                 out.append(f'<circle r="{f1(g)}" fill="none" stroke="{c(edge)}" stroke-opacity=".7" '
                            f'stroke-width="{".9" if not small else ".6"}"/>')
-            else:
+            elif not stone:
                 out.append(f'<circle r="{f1(g)}" fill="none" stroke="{c("white")}" stroke-opacity=".32" '
                            f'stroke-width="{".9" if not small else ".6"}"/>')
                 if not small:
@@ -248,6 +267,12 @@ class Standard(GameStandard):
         return cv._discs[key]
 
     disc = Print.disc
+
+    def cast(self, cv, cx, cy, r) -> str:
+        """A marble's soft shadow on the floor of its hole, down and to the right, away from the lamp, as a chess
+        piece's falls at its foot."""
+        return (f'<circle cx="{f1(cx + 1.3)}" cy="{f1(cy + 1.7)}" r="{f1(r)}" fill="{c("black")}" '
+                f'fill-opacity="{".5" if self.dark else ".3"}"/>')
 
     def frame_shadow(self, cv, x, y, w, h) -> None:
         """A quarter set on the card under the lamp, as chess's board is: a soft shadow by day, the accent's glow by

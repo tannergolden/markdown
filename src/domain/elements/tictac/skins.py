@@ -7,15 +7,19 @@ sheets are (`games.skin`), with the marks' own materials.
             each board's face a shade of them and its nine squares the light squares, sunk in the card under the
             same lamp; the marks pen strokes in enamel, X lit white edged in black and O black with the lamp's
             highlight on it, as chess's pieces are, whoever plays them; the last mark's square amber, the board the
-            next mark is sent to bracketed in amber, a won line struck in amber; a ghost a square of the bars'
-            enamel with a dashed square of light inside it
-  print     a plan view drawn as chess's board is: its shadow in section lining, the bars lined as chess lines its
-            dark squares, a fine edge round every square, and its edge drawn in; X paper edged in ink and
-            line-shaded, O solid ink with a glint, as a print draws chess's pieces; a ghost's square lined as the
-            bars are and edged in phantom lines, long and short dashes, as a drawing shows a part not there to use
+            next mark is sent to filmed in amber and bracketed in it, a won line struck in amber; a ghost a square
+            of the bars' enamel with a dashed square of light inside it, framed in amber when it is the last move;
+            after dark a closed board washed under the band's charcoal and its big mark, if it is O, edged in ash
+  print     a plan view drawn as chess's board is: its shadow in section lining, the bars and each board's face
+            lined as chess lines its dark squares, the squares laid on them in paper, each edged, and its edge
+            drawn in; X paper edged in ink as heavily as chess's white pieces and line-shaded, O solid ink with a
+            glint, as a print draws chess's pieces; the board the next mark is sent to toned in the print's mark
+            and bracketed in it; a ghost's square lined as the bars are and edged in phantom lines, long and short
+            dashes, as a drawing shows a part not there to use, boxed heavy when it is the last move
 
 Either way each mark has its soft shadow down and to the right, away from the lamp, and a board closed is washed
-back: a won one under its winner's mark drawn as large as the board, a drawn one lined across.
+back: a won one under its winner's mark drawn as large as the board, a drawn one lined across. The move that closed
+it stays clear of the wash, its three struck over it, and the brackets are drawn last of all, over the board's edge.
 """
 from __future__ import annotations
 
@@ -86,7 +90,7 @@ def bars(x0: float, y0: float, n: float, small: bool) -> str:
 def corners(X: float, Y: float, s: float, small: bool) -> str:
     """A board's four corners, marked as a drawing marks a detail to look at, as path data."""
     o = 3.2 if not small else 2.6
-    L = s * .2
+    L = s * .26
     x0, y0, x1, y1 = X - o, Y - o, X + s + o, Y + s + o
     return (f"M{f1(x0)} {f1(y0 + L)}V{f1(y0)}H{f1(x0 + L)}M{f1(x1 - L)} {f1(y0)}H{f1(x1)}V{f1(y0 + L)}"
             f"M{f1(x1)} {f1(y1 - L)}V{f1(y1)}H{f1(x1 - L)}M{f1(x0 + L)} {f1(y1)}H{f1(x0)}V{f1(y1 - L)}")
@@ -97,14 +101,15 @@ class Marks:
     a board of eighty-one squares sets the same few marks again and again."""
 
     def pen_mark(self, cv, mark: str, material: str, x: float, y: float, size: float, *, shadow: bool = True,
-                 edge: float = 1.5) -> str:
-        """A mark filling a box `size` wide with its top-left at (x, y)."""
-        key = (mark, material, f1(size), f1(edge), shadow)
+                 edge: float = 1.5, big: bool = False) -> str:
+        """A mark filling a box `size` wide with its top-left at (x, y); `big` for a won board's own mark, drawn
+        across the board on its wash."""
+        key = (mark, material, f1(size), f1(edge), shadow, big)
         cv.__dict__.setdefault("_pens", {})
         if key not in cv._pens:
             pid = cv.uid("pm")
-            cv.defs.append(f'<g id="{pid}">' + self.pen_body(cv, mark, material, size, shadow=shadow, edge=edge)
-                           + "</g>")
+            cv.defs.append(f'<g id="{pid}">' + self.pen_body(cv, mark, material, size, shadow=shadow, edge=edge,
+                                                             big=big) + "</g>")
             cv._pens[key] = pid
         return f'<use href="#{cv._pens[key]}" x="{f1(x)}" y="{f1(y)}"/>'
 
@@ -113,10 +118,17 @@ class Print(Marks, GamePrint):
     """A print's Tic-Tac: the board drawn in plan, the marks as pen strokes with a body."""
 
     def board_base(self, cv, x0, y0, n, small) -> None:
-        """The board's shadow, the lined bars between its boards, and every square's fine edge."""
+        """The board's shadow; the bars between its boards and each board's face lined as chess lines its dark
+        squares, so the board reads as a solid in every ink, as chess's does; and its eighty-one squares laid on
+        them in paper, each edged, as firmly as chess lines a light print's darkness."""
         self.sink(cv, x0, y0, n)
-        cv.add(f'<path d="{bars(x0, y0, n, small)}" fill="url(#{self.hatch(cv, "square")})"/>')
-        cv.add(f'<path d="{faces(x0, y0, n, small)}" fill="none" {hair(self.col, .5)} stroke-width=".7"/>')
+        bar, _, s, _ = geometry(n, small)
+        boards = "".join(f"M{f1(x0 + bx * (s + bar))} {f1(y0 + by * (s + bar))}h{f1(s)}v{f1(s)}h{f1(-s)}Z"
+                         for bx in range(3) for by in range(3))
+        cv.add(f'<path d="{bars(x0, y0, n, small)}{boards}" fill="url(#{self.hatch(cv, "square")})"/>')
+        d = faces(x0, y0, n, small)
+        cv.add(f'<path d="{d}" fill="{c(self.col["paper"])}"/>')
+        cv.add(f'<path d="{d}" fill="none" {hair(self.col, min(1, .62 * self.firm))} stroke-width=".8"/>')
 
     def ghost(self, cv, x, y, q, appear: str = "") -> str:
         """A ghost's square: lined as the bars are, and edged inside in phantom lines, long and short dashes, as a
@@ -132,10 +144,16 @@ class Print(Marks, GamePrint):
     def brackets(self, X, Y, s, small, appear: str = "") -> str:
         """The board the next mark is sent to, marked at its four corners as a drawing marks a detail: a band of
         paper first, so the marks read across the bars, then the stroke in the print's mark."""
-        d, w = corners(X, Y, s, small), 2.6 if not small else 2.2
+        d, w = corners(X, Y, s, small), 3.4 if not small else 3
         return (f'<g>{appear}<path d="{d}" fill="none" stroke="{c(self.col["paper"])}" stroke-width="{fx(w + 3, 1)}" '
                 f'stroke-linecap="square"/><path d="{d}" fill="none" stroke="{c(self.mark)}" '
                 f'stroke-width="{fx(w, 1)}" stroke-linecap="square"/></g>')
+
+    def target(self, X, Y, s) -> str:
+        """The board the next mark is sent to, lifted: a light tone of the print's mark laid over its squares, as a
+        drawing tones the detail it calls out."""
+        return (f'<rect x="{f1(X)}" y="{f1(Y)}" width="{f1(s)}" height="{f1(s)}" fill="{c(self.mark)}" '
+                f'fill-opacity="{".12" if self.dark else ".08"}"/>')
 
     def wash(self, X, Y, s) -> str:
         """A closed board washed back, as a drawing ghosts what is done with: paper laid over it."""
@@ -157,6 +175,12 @@ class Print(Marks, GamePrint):
         cv.add(f'<g>{appear}<rect x="{f1(x + 2.4)}" y="{f1(y + 2.4)}" width="{f1(w - 4.8)}" height="{f1(h - 4.8)}" '
                f'fill="none" stroke="{c(self.mark)}" stroke-width="2.2"/></g>')
 
+    def ghost_mark(self, x, y, q, appear: str = "") -> str:
+        """The last move's square when the move was a ghost: boxed heavy over the ghost's lining, as every last
+        move's square is, at its very edge so the phantom lines inside it stay clear."""
+        return (f'<g>{appear}<rect x="{f1(x + 1.2)}" y="{f1(y + 1.2)}" width="{f1(q - 2.4)}" height="{f1(q - 2.4)}" '
+                f'fill="none" stroke="{c(self.mark)}" stroke-width="2.2"/></g>')
+
     def centre_mark(self, cx, cy, size) -> str:
         """An open square's centre mark, as a drawing marks the centre of a hole: two fine crossing lines."""
         h = size / 2
@@ -172,12 +196,14 @@ class Print(Marks, GamePrint):
             cv._markclips[mark] = cid
         return cv._markclips[mark]
 
-    def pen_body(self, cv, mark: str, material: str, size: float, *, shadow: bool = True, edge: float = 1.5) -> str:
+    def pen_body(self, cv, mark: str, material: str, size: float, *, shadow: bool = True, edge: float = 1.5,
+                 big: bool = False) -> str:
         """A mark filling a box `size` wide from the origin: its shadow, its body edged, and its shading or glint.
-        `edge` is the edge's width on the sheet, whatever the mark's size."""
+        `edge` is the edge's width on the sheet, whatever the mark's size; a light mark's is drawn heavier, as
+        heavy as chess's white pieces are edged, so an X holds beside a solid O. A big mark is drawn as any other."""
         k = size / 100
         fill, line, detail = self.paint(material)
-        e = edge / k * (.7 if material == "dark" and self.dark else 1)
+        e = edge / k * (.7 if material == "dark" and self.dark else 1.3 if material == "light" else 1)
         body = BODY[mark]
         out = [f'<g transform="scale({fx(k, 4)})">']
         if shadow:
@@ -242,10 +268,18 @@ class Standard(Marks, GameStandard):
                 f'stroke-linecap="square"/><path d="{d}" fill="none" stroke="{c("amber")}" '
                 f'stroke-width="{fx(w, 1)}" stroke-linecap="square"/></g>')
 
+    def target(self, X, Y, s) -> str:
+        """The board the next mark is sent to, lifted: a film of amber, the colour its brackets are, over its
+        squares."""
+        return (f'<rect x="{f1(X)}" y="{f1(Y)}" width="{f1(s)}" height="{f1(s)}" fill="{c("amber")}" '
+                f'fill-opacity="{".2" if self.dark else ".16"}"/>')
+
     def wash(self, X, Y, s) -> str:
-        """A closed board washed back under a film of the card."""
+        """A closed board washed back under a film of the card: by night a film of the band's charcoal, so a black
+        mark under it is pushed back as a white one is, not left at full strength under a film of black."""
+        film, op = ("charcoal", ".8") if self.dark else (self.std["paper"], ".7")
         return (f'<rect x="{f1(X - 1)}" y="{f1(Y - 1)}" width="{f1(s + 2)}" height="{f1(s + 2)}" '
-                f'fill="{c(self.std["paper"])}" fill-opacity="{".66" if self.dark else ".7"}"/>')
+                f'fill="{c(film)}" fill-opacity="{op}"/>')
 
     def drawn(self, cv, X, Y, s) -> str:
         """A drawn board lined across in the dark squares' enamel, faint: nobody's."""
@@ -265,6 +299,12 @@ class Standard(Marks, GameStandard):
         """The last move's square, amber, as chess marks the square a piece lands on."""
         cv.add(f'<g>{appear}' + P.rect(x, y, w, h, "white") + P.rect(x, y, w, h, "amber") + "</g>")
 
+    def ghost_mark(self, x, y, q, appear: str = "") -> str:
+        """The last move's square when the move was a ghost: an amber frame round the ghost's enamel, the colour the
+        last move is marked in."""
+        return (f'<g>{appear}<rect x="{f1(x + 1.2)}" y="{f1(y + 1.2)}" width="{f1(q - 2.4)}" height="{f1(q - 2.4)}" '
+                f'fill="none" stroke="{c("amber")}" stroke-width="2.4"/></g>')
+
     def centre_mark(self, cx, cy, size) -> str:
         """An open square's centre, marked with a small cross, faint."""
         h = size / 2
@@ -272,12 +312,16 @@ class Standard(Marks, GameStandard):
         return (f'<path d="M{f1(cx - h)} {f1(cy)}H{f1(cx + h)}M{f1(cx)} {f1(cy - h)}V{f1(cy + h)}" fill="none" '
                 f'stroke="{c(tone)}" stroke-opacity=".55" stroke-width=".9"/>')
 
-    def pen_body(self, cv, mark: str, material: str, size: float, *, shadow: bool = True, edge: float = 1.5) -> str:
+    def pen_body(self, cv, mark: str, material: str, size: float, *, shadow: bool = True, edge: float = 1.5,
+                 big: bool = False) -> str:
         """A mark filling a box `size` wide from the origin, in enamel: its shadow, its body edged in black, and the
-        lamp across it, a shade on the light enamel and a sheen and a highlight on the dark."""
+        lamp across it, a shade on the light enamel and a sheen and a highlight on the dark. A big dark mark after
+        dark, a won board's O on its charcoal wash, is edged in ash, so it stands above its own board."""
         k = size / 100
         L = self.lights(cv)
         fill, line, _ = self.paint(material)
+        if big and self.dark and material == "dark":
+            line = "ash"
         e = edge / k
         body = BODY[mark]
         out = [f'<g transform="scale({fx(k, 4)})">']

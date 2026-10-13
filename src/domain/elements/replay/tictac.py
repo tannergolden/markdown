@@ -129,11 +129,14 @@ class TicTac(GameReplay):
                 continue
             k = b.k
             X, Y, _ = TL.board_box(st["board"], X0, Y0, N, False)
+            three = ""
             if st["line"]:
                 d, length = TL.struck([TL.centre(cl, X0, Y0, N, False) for cl in st["line"]], X0, Y0, N, False,
                                       q * .3)
                 struck = sk.strike(d, 3.2, *cls.stroke(clk, length, b.start + STRUCK * k, STRIKE * k))
-                closing.append(f'<g>{clk.windows([(0, nxt[i])])}{struck}</g>' if i < len(plies) - 1 else struck)
+                # struck until the next turn, or on the turn that wins the game until its own line strikes through
+                until = nxt[i] if i < len(plies) - 1 else b.start + WON * k if f.get("line") else None
+                three = f'<g>{clk.windows([(0, until)])}{struck}</g>' if until is not None else struck
             lx, ly, lq = TL.cell_box(p["cell"], X0, Y0, N, False)
             lb = lq * .86
             keep = (f'<g visibility="hidden">{clk.windows([(b.start + WASHED * k, nxt[i])])}' + sk.kept(lx, ly, lq)
@@ -145,10 +148,11 @@ class TicTac(GameReplay):
                 continue
             B = s * .9
             big = sk.pen_mark(cv, st["claimed"], material(st["claimed"]), X + (s - B) / 2, Y + (s - B) / 2, B,
-                              edge=1.7)
-            closing.append(f"<g>{appear}{sk.wash(X, Y, s)}</g>{keep}"
+                              edge=1.7, big=True)
+            # as the board sheet draws it: the three struck over the wash, the closing square over the board's mark
+            closing.append(f"<g>{appear}{sk.wash(X, Y, s)}</g>{three}"
                            + cls.pen(cv, clk, big, st["claimed"], X + (s - B) / 2, Y + (s - B) / 2, B,
-                                     b.start + CLAIMED * k, DRAW * k))
+                                     b.start + CLAIMED * k, DRAW * k) + keep)
         cv.add(f"<g>{layer}" + "".join(closing) + "</g>")
         # where the next mark must go, the rules' call: bracketed once the last turn has done, until the next starts;
         # each board's brackets drawn once, shown on every turn that sends a mark there

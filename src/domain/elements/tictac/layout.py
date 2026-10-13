@@ -9,13 +9,15 @@ between. The files a to i run under it and the ranks 1 to 9 beside it, a1 at the
 itself stroke by stroke as the file opens and its square is boxed as the pen lifts. A board closed is washed back:
 a won one under its winner's mark, drawn as large as the board, and a drawn one lined across. A mark that wins its
 board strikes the board's three before the board's mark is drawn; a mark that wins the game strikes the three
-boards. The board the side to move is sent to is bracketed at its four corners, as a drawing marks a detail to look
-at, since the rules send it there; when it may play any open board, nothing is bracketed and its plate says so.
+boards. The board the side to move is sent to is toned and bracketed at its four corners, last of all, as a drawing
+marks a detail to look at, since the rules send it there; when it may play any open board, nothing is bracketed
+and its plate says so.
 
 Under the Ghost Rule a ghost's square is filled as the bars are and edged in phantom lines: nobody can take it, and
-no line runs through it. In place of chess's taken pieces the panel counts the boards each side has won, and says
-across its heading where the ghosts stand and how many boards were drawn. Nothing on the sheet helps a player
-choose: no square a side could win a board on next, and no board a side could win the game on.
+no line runs through it. A ghost just placed is boxed as any last move's square is. In place of chess's taken pieces
+the panel counts the boards each side has won, and says across its heading where the ghosts stand and how many
+boards were drawn. Nothing on the sheet helps a player choose: no square a side could win a board on next, and no
+board a side could win the game on.
 
 The house always plays X, drawn in the light material, and GitHub always O, drawn in the dark, in the standard theme
 and every print, as chess draws White and Black: the matchup has the house as X on the left. Only who places the
@@ -72,7 +74,7 @@ def centre(cell, x0, y0, n, small) -> tuple[float, float]:
 def band_mark(x, y, size, paper, block="") -> str:
     """The band's mark: an X and an O, the game's two marks, drawn as the pen draws them."""
     return (f'<g transform="translate({f1(x)} {f1(y)}) scale({fx(size / 20, 4)})" fill="none" stroke="{paper}" '
-            f'stroke-width="2.5" stroke-linecap="round"><path d="M1.8 6.6 8.6 13.4M8.6 6.6 1.8 13.4"/>'
+            f'stroke-width="3.1" stroke-linecap="round"><path d="M1.8 6.6 8.6 13.4M8.6 6.6 1.8 13.4"/>'
             f'<circle cx="14.6" cy="10" r="3.9"/></g>')
 
 
@@ -136,6 +138,9 @@ def board(cv, sk, st, x0, y0, n, *, small=False) -> None:
     box = q * .86                        # a mark's 100-unit box, on this board
     moving = M.moving()
     sk.board_base(cv, x0, y0, n, small)
+    if not st["result"] and st["target"] is not None:
+        TX, TY, _ = board_box(st["target"], x0, y0, n, small)
+        cv.add(sk.target(TX, TY, s))
     last = st["last"]
     if last:
         x, y, lq = cell_box(last["cell"], x0, y0, n, small)
@@ -162,6 +167,10 @@ def board(cv, sk, st, x0, y0, n, *, small=False) -> None:
             drawn = pen(cv, drawn, mark, cx - box / 2, cy - box / 2, box)
         marks.append(drawn)
     cv.add("".join(marks))
+    if last and last["ghost"]:
+        # a ghost is drawn over its square's box: the last move's box goes back on top of it
+        gx, gy, gq = cell_box(last["cell"], x0, y0, n, small)
+        cv.add(sk.ghost_mark(gx, gy, gq, M.appear(M.LIFT - .05, .2) if moving else ""))
     if last:
         # the pen lifts, or the ghost is down: a ring running out from it, as a chess piece's landing sends one out
         cx, cy = centre(last["cell"], x0, y0, n, small)
@@ -173,12 +182,15 @@ def board(cv, sk, st, x0, y0, n, *, small=False) -> None:
             continue
         X, Y, _ = board_box(b, x0, y0, n, small)
         now = bool(last and claimed_now and last["board"] == b)
-        if now and who != "draw" and last["small_line"]:
-            # the three that won it, struck through once the mark is down, as Tic-Tac-Toe strikes its line
+        three = ""
+        if now and who != "draw" and last["small_line"] and not st["line"]:
+            # the three that won it, struck through once the mark is down, as Tic-Tac-Toe strikes its line: over
+            # the wash, so the line that won the board stays crisp under the board's own mark; once the game is won,
+            # its own line says it, and the two would meet in a hook
             d, length = struck([centre(cell, x0, y0, n, small) for cell in last["small_line"]], x0, y0, n, small,
                                q * .3)
             extra, anim = M.stroke_in(length, M.STRIKE_AT, M.STRIKE) if moving else ("", "")
-            cv.add(sk.strike(d, 3.2 if not small else 2.8, extra, anim))
+            three = sk.strike(d, 3.2 if not small else 2.8, extra, anim)
         appear = M.appear(M.CLAIM_AT - .1, .25) if now and moving else ""
         keep = ""
         if now:
@@ -191,15 +203,12 @@ def board(cv, sk, st, x0, y0, n, *, small=False) -> None:
             cv.add(f"<g>{appear}{sk.wash(X, Y, s)}{sk.drawn(cv, X, Y, s)}{keep}</g>")
             continue
         B = s * .9
-        big = sk.pen_mark(cv, who, material(who), X + (s - B) / 2, Y + (s - B) / 2, B, edge=1.7 if not small else 1.5)
+        big = sk.pen_mark(cv, who, material(who), X + (s - B) / 2, Y + (s - B) / 2, B, edge=1.7 if not small else 1.5,
+                          big=True)
         if now and moving:
             big = pen(cv, big, who, X + (s - B) / 2, Y + (s - B) / 2, B, M.CLAIM_AT, M.DRAW)
-        cv.add(f"<g>{appear}{sk.wash(X, Y, s)}{keep}</g>" + big)
-    # where the side to move must play, the rules' call: bracketed once the last move has done
-    if not st["result"] and st["target"] is not None:
-        X, Y, _ = board_box(st["target"], x0, y0, n, small)
-        at = M.CLAIM_AT + M.DRAW if claimed_now else M.LIFT + .05
-        cv.add(sk.brackets(X, Y, s, small, M.appear(at, .25) if moving and last else ""))
+        # the move that closed the board on top of all: its square and mark whole, whatever the board's mark spans
+        cv.add(f"<g>{appear}{sk.wash(X, Y, s)}</g>" + three + big + (f"<g>{appear}{keep}</g>" if keep else ""))
     if st["line"]:
         pts = [(board_box(b, x0, y0, n, small)[0] + s / 2, board_box(b, x0, y0, n, small)[1] + s / 2)
                for b in st["line"]]
@@ -215,13 +224,19 @@ def board(cv, sk, st, x0, y0, n, *, small=False) -> None:
         cv.add(sk.say(cv, FILES[i], cx, y0 + n + 15, size, role="muted", anchor="middle"),
                sk.say(cv, str(9 - i), x0 - 11, cy + sk.cap(size) / 2, size, role="muted", anchor="middle"))
     sk.bevel(cv, x0, y0, n)
+    # where the side to move must play, the rules' call: bracketed once the last move has done, over the board's
+    # edge, so a board on the edge keeps all four corners
+    if not st["result"] and st["target"] is not None:
+        X, Y, _ = board_box(st["target"], x0, y0, n, small)
+        at = M.CLAIM_AT + M.DRAW if claimed_now else M.LIFT + .05
+        cv.add(sk.brackets(X, Y, s, small, M.appear(at, .25) if moving and last else ""))
 
 
 # --------------------------------------------------------------------------- the panel's count
 def count(cv, sk, st, x0, x1, y, *, small=False) -> float:
-    """The boards each side has won, where chess counts what each side took: each won board's mark on its side's
-    tray, the house's X on top, both trays as long, the number beside each; and across the heading where the ghosts
-    stand and how many boards were drawn. It counts and says nothing more."""
+    """The boards each side has won, where chess counts what each side took: each won board's mark on its side's tray,
+    the house's X on top, both trays as long, three places at the least, the number beside each; and across the
+    heading where the ghosts stand and how many boards were drawn. It counts and says nothing more."""
     cv.add(sk.heading(cv, "boards won", x0, y))
     said = ([f"ghost{'s' if len(st['ghosts']) > 1 else ''} " + " · ".join(st["ghosts"])] if st["ghosts"] else [])
     said += [f"{st['drawn']} drawn"] if st["drawn"] else []
@@ -230,7 +245,7 @@ def count(cv, sk, st, x0, x1, y, *, small=False) -> float:
     mini = 20 if not small else 18
     yy, px = y + 10, x0 + RACK
     pitch, b = mini * 1.2, mini * 1.04                  # a place on the rack, and the mark that fills it
-    places = max(1, *st["won"].values())               # both trays as long, the longer side's count
+    places = max(3, *st["won"].values())               # both trays as long: the three in a row that win, or more
     for side in (HOUSE, other(HOUSE)):
         mark = mark_of(side)
         cv.add(sk.capped(cv, f"{mark} · {'house' if side == HOUSE else 'github'}", x0, yy + mini / 2 + 3, 7.5, 6,

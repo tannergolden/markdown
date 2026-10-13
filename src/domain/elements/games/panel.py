@@ -83,8 +83,9 @@ def last_move(cv, sk, g, st, x0, x1, y, *, small=False) -> float:
     if getattr(g, "write", None) and last:
         g.write(cv, sk, st, side, move, x, base, big, role="strong")
     else:
-        if g.glyph:
-            mark, w = g.glyph(cv, sk, st, side, x, base, big)
+        glyph = g.glyph if last else getattr(g, "opening_glyph", None) or g.glyph   # before the first move, its own
+        if glyph:
+            mark, w = glyph(cv, sk, st, side, x, base, big)
             cv.add(mark)
             x += w
         cv.add(sk.said(cv, move, x, base, big, 14, x0 + room - x, role="strong")[0])
