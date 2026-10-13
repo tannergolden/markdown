@@ -14,7 +14,8 @@ sprite, and an ebony piece catches the lamp along its lit edge, so it holds on a
   men        a checkers man seen from a little above: its face an ellipse, its milled side a band under it, a
              groove round its face; a king two men stacked with a crown on its face
   discs      Pentago's marbles face on, as its holes show them, a groove round each face, lit as a coin is
-  marks      Tic-Tac's X and O as the pen draws them, strokes with a body, lit as a rope is
+  marks      Tic-Tac's X and O as the pen draws them, strokes with a body, lit as a rope is, an X as heavy as an O
+             and an ivory X's bars bevelled, so it holds on a set's light squares as the O does
 
 Every drawing here is a map of (x, y) to a colour, its top-left at (0, 0), made once for each size and material
 and kept: a sheet stamps it wherever it stands. Nothing here belongs to one set.
@@ -484,12 +485,18 @@ def _stroke_cells(segments, rad: float, size: int) -> dict:
 @lru_cache(maxsize=None)
 def pen(mark: str, material: str, size: int) -> tuple:
     """X or O, the pen's mark, filling a box `size` square, in `material`: a stroke with a body, lit as a rope is,
-    its outline the ramp's darkest. Its cells, width and height, outlined."""
+    its outline the ramp's darkest. Its cells, width and height, outlined.
+
+    An X is drawn as heavy as an O, its bars a little thicker and reaching as far as the O's ring, and an ivory X's
+    bars are bevelled: each lit along its upper flank and shaded along its lower, whichever way it runs, so the bar
+    that falls toward the lamp is not flat. Ivory's light tones alone would lose it on a set's light squares."""
     ramp = RAMPS[material]
     dark = material == "dark"
     rad = max(1.2, size * .105)
     m = size * .2 + rad * .4
     if mark == "X":
+        rad = max(1.35, size * .12)
+        m = size * .1 + rad * .5
         segs = [(m, m, size - m, size - m), (size - m, m, m, size - m)]
     else:
         R = size / 2 - m * .55 - rad * .35
@@ -502,6 +509,10 @@ def pen(mark: str, material: str, size: int) -> tuple:
         nz = math.sqrt(max(0.0, 1 - o * o))
         lam = max(0.0, (nx * o) * LX + (ny * o) * LY + nz * LZ)
         v = tone_at(1.8 + 3.6 * lam, x, y, 1 if not dark else 2, 5 if not dark else 5)
+        if mark == "X" and not dark:
+            # the lamp's fall across the bar, steepened toward the vertical, so both bars take a bevel
+            f = max(-1.0, min(1.0, o * (nx * LX * .45 + ny * LY * 1.3)))
+            v = tone_at(3.9 + 2.4 * f, x, y, 2, 6)
         if dark and o * (nx * LX + ny * LY) > .55:
             v = 5
         shaded[(x, y)] = ramp[v]

@@ -362,6 +362,11 @@ class Games:
         """Whether `s` fits `room`, set tighter if it must be."""
         return measure(fold(str(s), font), font, 1, 0) <= room
 
+    @staticmethod
+    def roomy(s: str, room: int, font: str = "35") -> bool:
+        """Whether `s` fits `room` as it is set, its letters apart."""
+        return measure(fold(str(s), font), font) <= room
+
     def heading(self, p: Pix, x: int, y: int, s: str, night: bool, key: str | None = None) -> None:
         """A section's heading in small capitals, quietly, after a swatch of the colour it keys when it has one."""
         k = self.ink(night)
@@ -438,11 +443,13 @@ class Games:
             for (x, y) in arc:
                 p.px(x, y, colour, name)
 
-    def tray(self, p: Pix, x: int, y: int, w: int, h: int, night: bool, L: str = "base") -> None:
+    def tray(self, p: Pix, x: int, y: int, w: int, h: int, night: bool, L: str = "base",
+             stuff: Stuff | None = None) -> None:
         """The strip a game's count stands on: the board's light square, in its grain, edged, so both sides' pieces
-        hold on it. Laid pixel by pixel, under whatever is set on it in the same layer."""
+        hold on it, or the `stuff` given, as the board's dark under the house's ivory. Laid pixel by pixel, under
+        whatever is set on it in the same layer."""
         b = self.game_board(night)
-        for (dx, dy), c in surface(b["light_stuff"], w, h).items():
+        for (dx, dy), c in surface(stuff or b["light_stuff"], w, h).items():
             p.px(x + dx, y + dy, c, L)
         p.box(x, y, w, h, b["edge"], L, notch=True)
 
@@ -483,7 +490,12 @@ class Games:
             tx = cx + r + 5 if left else cx - r - 5
             anchor = "start" if left else "end"
             self.say(p, tx, cy - 6, who, k["body"], room=room - (6 if not small else 0), anchor=anchor)
-            self.say(p, tx, cy + 2, g.role(side, st), k["muted"], room=room, anchor=anchor)
+            role = g.role(side, st)
+            if not self.roomy(role, room):     # closer round its dot, then without what the medallion shows
+                role = role.replace("  ·  ", " · ")
+                if not self.roomy(role, room):
+                    role = role.split(" · ", 1)[-1]
+            self.say(p, tx, cy + 2, role, k["muted"], room=room, anchor=anchor)
         if not small:      # between the two names, over the halfway line; a phone's row has no room for it
             self.say(p, (x0 + x1) // 2, cy - 6, "VS", k["muted"], anchor="middle")
         return y + 2 * r + 4
@@ -494,6 +506,9 @@ class Games:
         comes. A glint crosses the plate every eight seconds."""
         k = self.ink(night)
         label, message, icon, right, notes = g.plate(st)
+        winner = (st.get("result") or {}).get("winner")
+        if winner and self.plate_width(label, message, icon) > x1 - x0:
+            label = f"{g.side_name(winner)} wins"    # by what it plays, as its medallion shows, so how stays apart
         track = 1 if self.plate_width(label, message, icon) <= x1 - x0 else 0
         w = self.plate_width(label, message, icon, track)
         bx = x1 - w if right else x0
@@ -501,7 +516,7 @@ class Games:
         if moving:
             self.glint(p, lx, y, lw, TAG)
         room = x1 - x0 - w - GAP * 2
-        note = next((n for n in notes if n and self.fits(n.upper(), room)), "")
+        note = next((n for n in notes if n and self.roomy(n.upper(), room)), "")
         if note:
             self.say(p, x0 if right else x1, y + 2, note.upper(), k["muted"], anchor="start" if right else "end",
                      room=room)
@@ -545,8 +560,9 @@ class Games:
         if written:
             g.write(self, p, st, side, move, x, y, scale, night, title=True)
         else:
-            if g.glyph:
-                x += g.glyph(self, p, st, side, x, y, scale, night)
+            glyph = g.glyph if last else getattr(g, "opening_glyph", None) or g.glyph   # before the first move, its own
+            if glyph:
+                x += glyph(self, p, st, side, x, y, scale, night)
             self.game_title(p, x, y, clip(fold(move, "57"), x1 - x, "57", scale), night, scale)
         y += 7 * scale + 5
         lines = wrap(words, room, "57")
@@ -590,29 +606,38 @@ class Games:
             if n == latest:
                 p.rect(x0 - 2, y - 2, x1 - x0 + 2, 11, self.ink(night)["dim"])
             p.text(x0, y + 1, fold(f"{n}.", "35"), k["muted"], "35")
-            wx = bx + col
+            wx, end = bx + col, x0
             for text, side, cx in ((a, first, ax), (b, reply, bx)):
                 if not text:
-                    wdt = self.say(p, cx, y + 1, due.upper(), due_ink, room=x1 - cx - (40 if who else 0))
+                    said = due
+                    if who and not st.get("result") and not self.roomy(due.upper(), x1 - cx - 6 - measure(
+                            fold(who.upper(), "35"), "35")):
+                        said = f"{g.side_name(st['to_move'])}'s turn"   # by what it plays, where the name crowds
+                    wdt = self.say(p, cx, y + 1, said.upper(), due_ink, room=x1 - cx - (40 if who else 0))
                     wx = max(wx if cx == bx else 0, cx + wdt + 6)
+                    end = cx + wdt
                     break
                 if written:
-                    g.write(self, p, st, side, text, cx, y, 1, night)
+                    end = cx + g.write(self, p, st, side, text, cx, y, 1, night)
                     continue
                 if g.glyph:
                     cx += g.glyph(self, p, st, side, cx, y, 1, night)
-                self.say(p, cx, y - 1 if any(ch in text for ch in "gjpqy") else y, text, k["body"], "57",
-                         room=col - 6)
+                end = cx + self.say(p, cx, y - 1 if any(ch in text for ch in "gjpqy") else y, text, k["body"],
+                                    "57", room=col - 6)
             if who:
-                self.say(p, wx, y + 1, who.upper(), k["muted"], room=x1 - wx)
+                if self.roomy(who.upper(), x1 - wx):
+                    self.say(p, wx, y + 1, who.upper(), k["muted"])
+                else:                  # ending at the row's end, clear of the move before it, its letters apart
+                    self.say(p, x1, y + 1, who.upper(), k["muted"], anchor="end", room=x1 - end - 6)
             y += 11
         return y
 
     def countdown(self, p: Pix, st: dict, x0: int, x1: int, y: int, night: bool, small: bool, moving: bool) -> int:
         """The next game's countdown, where a board under way counts what it counts: a dial of the final board's two
         days, the time still to go an arc of the set's accent from the top, clockwise, drawn in an arc at a time as
-        the file opens; the moment the next game opens, lettered as the set letters its titles; and how long was left
-        as of the drawing under it. It leads with what is true whenever it is read."""
+        the file opens; the moment the next game opens, in the set's title ink, plain, since a title's dress is made
+        for a header and lost at this size; and how long was left as of the drawing under it, on two lines where one
+        would set its letters touching. It leads with what is true whenever it is read."""
         k = self.ink(night)
         cd = st["countdown"]
         self.heading(p, x0, y, "next game", night)
@@ -640,9 +665,14 @@ class Games:
                     p.px(xx, yy, accent, L)
         p.rect(round(cx) - 1, round(cy) - 1, 2, 2, accent)
         tx = cx + r + 6
-        self.game_title(p, tx, y + 1, clip(fold(f"OPENS {cd['opens'].upper()}", "57"), x1 - tx, "57"), night, 1)
-        self.say(p, tx, y + 12, f"IN {cd['in'].upper()}  ·  AS OF {cd['asof'].upper()}", k["muted"], room=x1 - tx)
-        return y + 2 * r + 3
+        self.say(p, tx, y + 1, f"OPENS {cd['opens'].upper()}", k["title"], "57", room=x1 - tx)
+        left = f"IN {cd['in'].upper()}  ·  AS OF {cd['asof'].upper()}"
+        if self.roomy(left, x1 - tx):
+            self.say(p, tx, y + 12, left, k["muted"])
+            return y + 2 * r + 3
+        self.say(p, tx, y + 11, f"IN {cd['in'].upper()}", k["muted"], room=x1 - tx)
+        self.say(p, tx, y + 18, f"AS OF {cd['asof'].upper()}", k["muted"], room=x1 - tx)
+        return y + 2 * r + 6
 
     # --------------------------------------------------------------------------- the sheet
     def head(self, p: Pix, night: bool, g, title: str, note: str | None) -> None:

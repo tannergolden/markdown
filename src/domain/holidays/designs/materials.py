@@ -137,7 +137,7 @@ def _wood(s, w, h, rnd, turned):
     return cells
 
 
-def _stone(s, w, h, rnd, variant):
+def _stone(s, w, h, rnd, variant, quiet=False):
     cells = {(x, y): s.base for y in range(h) for x in range(w)}
     for (x, y) in list(cells):
         r = rnd.random()
@@ -145,14 +145,14 @@ def _stone(s, w, h, rnd, variant):
             cells[(x, y)] = s.tone(-1)
         elif r < .11:
             cells[(x, y)] = s.tone(1)
-    if variant % 3 == 1 and min(w, h) >= 10:
+    if variant % 3 == 1 and min(w, h) >= 10 and not quiet:
         x, y = rnd.randint(2, w // 2), rnd.randint(2, h // 2)
         for _ in range(rnd.randint(4, 8)):
             cells[(x, y)] = s.tone(-2)
             x, y = x + rnd.choice((0, 1, 1)), y + rnd.choice((0, 1))
             if not (1 <= x < w - 1 and 1 <= y < h - 1):
                 break
-    elif variant % 3 == 2 and min(w, h) >= 6:
+    elif variant % 3 == 2 and min(w, h) >= 6 and not quiet:
         for _ in range(2):
             x, y = rnd.randint(2, w - 3), rnd.randint(2, h - 3)
             cells[(x, y)] = s.tone(-2)
@@ -225,10 +225,10 @@ def _stitch(s, w, h, rnd, variant):
     return cells
 
 
-def _ivory(s, w, h, rnd, variant):
+def _ivory(s, w, h, rnd, variant, quiet=False):
     cells = {(x, y): s.base for y in range(h) for x in range(w)}
     for x in range(1, w - 1):
-        if rnd.random() < .16:
+        if rnd.random() < .16 and not quiet:
             c = s.tone(1) if (x + variant) % 3 else s.tone(-1)
             y0 = rnd.randint(0, h // 2)
             for y in range(y0, min(h - 1, y0 + rnd.randint(h // 3, h))):
@@ -287,9 +287,9 @@ def _pane(s, w, h, rnd, variant, came):
     return cells
 
 
-def _vellum(s, w, h, rnd, variant):
+def _vellum(s, w, h, rnd, variant, quiet=False):
     cells = {(x, y): s.base for y in range(h) for x in range(w)}
-    for _ in range(max(2, w * h // 160)):
+    for _ in range(max(2, w * h // 160) if not quiet else 0):
         cx, cy, r = rnd.uniform(0, w), rnd.uniform(0, h), rnd.uniform(2.5, 5)
         for y in range(int(cy - r), int(cy + r) + 1):
             for x in range(int(cx - r), int(cx + r) + 1):
@@ -323,11 +323,11 @@ def _sand(s, w, h, rnd, variant):
     return cells
 
 
-def _snow(s, w, h, rnd, variant):
+def _snow(s, w, h, rnd, variant, quiet=False):
     cells = {(x, y): s.base for y in range(h) for x in range(w)}
     for _ in range(w * h // 40):
         cells[(rnd.randint(0, w - 1), rnd.randint(0, h - 1))] = s.tone(-1)
-    for _ in range((1 + variant % 2 + (w * h) // 300) if min(w, h) >= 8 else 0):
+    for _ in range((1 + variant % 2 + (w * h) // 300) if min(w, h) >= 8 and not quiet else 0):
         x, y = rnd.randint(2, w - 3), rnd.randint(2, h - 5)
         cells[(x, y)] = s.fleck or s.tone(2)
         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
@@ -395,9 +395,9 @@ def _velvet(s, w, h, rnd, variant):
     return cells
 
 
-def _lace(s, w, h, rnd, variant):
+def _lace(s, w, h, rnd, variant, quiet=False):
     cells = {(x, y): s.base for y in range(h) for x in range(w)}
-    for cy in range(2 + variant % 2, h, 6):
+    for cy in range(2 + variant % 2, h, 6) if not quiet else ():
         for cx in range(2 + (cy // 6 % 2) * 3, w, 6):
             for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
                 if 0 <= cx + dx < w and 0 <= cy + dy < h:
@@ -486,9 +486,15 @@ def _cells(s, w, h, rnd, variant):
     return cells
 
 
-def surface(s: Stuff, w: int, h: int, variant: int = 0, turned: bool = False) -> dict:
+# The grains whose figures, in a patch too small for them, read as marks rather than as grain: stone's cracks and
+# pits, ivory's streaks, vellum's mottles, snow's sparkles and lace's eyelets. A quiet patch leaves them out.
+QUIETED = frozenset({"stone", "ivory", "vellum", "snow", "lace"})
+
+
+def surface(s: Stuff, w: int, h: int, variant: int = 0, turned: bool = False, quiet: bool = False) -> dict:
     """A patch of the stuff `w` by `h`, {(x, y): colour} with its top-left at (0, 0), in one of a few variants so
-    neighbouring squares are not the same; the same for the same arguments every time."""
+    neighbouring squares are not the same; the same for the same arguments every time. A `quiet` patch keeps its
+    grain's speckle, bevel and gleam and leaves out the figures that would read as marks at its size."""
     rnd = random.Random(f"{s.grain}/{s.base}/{w}x{h}/{variant}/{turned}")
     g = s.grain
     if g == "flat" or len(s.ramp) < 2:
@@ -497,17 +503,18 @@ def surface(s: Stuff, w: int, h: int, variant: int = 0, turned: bool = False) ->
         return _wood(s, w, h, rnd, turned)
     if g in ("stone", "slate", "tile", "weave", "stitch", "ivory", "glass", "vellum", "wave", "sand", "snow",
              "needles", "flecks", "scales", "velvet", "lace", "veins", "satin", "metal", "cells", "laid"):
-        return globals()[f"_{g}"](s, w, h, rnd, variant)
+        grain = globals()[f"_{g}"]
+        return grain(s, w, h, rnd, variant, quiet=True) if quiet and g in QUIETED else grain(s, w, h, rnd, variant)
     raise ValueError(f"no such grain: {g}")
 
 
 def lay(p, s: Stuff, x: int, y: int, w: int, h: int, variant: int = 0, turned: bool = False, L: str = "squares",
-        z: float = -1) -> None:
+        z: float = -1, quiet: bool = False) -> None:
     """The stuff laid as a patch with its top-left at (x, y), drawn once in the file and placed wherever it is
-    needed: on its own layer under everything a board carries, unless `L` names another."""
-    key = ("stuff", s.key, w, h, variant, turned)
+    needed: on its own layer under everything a board carries, unless `L` names another; `quiet` as `surface`."""
+    key = ("stuff", s.key, w, h, variant, turned, quiet)
     if key not in p.syms:
-        p.symbol(key, surface(s, w, h, variant, turned))
+        p.symbol(key, surface(s, w, h, variant, turned, quiet))
     if L not in p.layers:
         p.layer(L, z=z)
     p.use(key, x, y, L)
