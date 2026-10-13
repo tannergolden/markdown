@@ -30,7 +30,8 @@ and the tests draw in every design. [`tictac.yaml`](tictac.yaml),
 [`chess.yaml`](chess.yaml) are a sample game of each of @tannergolden's four,
 and [`hall-of-fame.yaml`](hall-of-fame.yaml) a sample of their Hall of Fame,
 which the theme-sets page draws the games' sheets from in every tone, each
-checked as a run checks it.
+checked as a run checks it. [`replays/`](replays/) holds the facts of one won
+game of each, as the profile's engine writes them, which the replay tests draw.
 
 ---
 
@@ -42,6 +43,7 @@ checked as a run checks it.
 | :--------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`badges/`](badges/)                     | The golden file every badge style is checked against.                                                                                                                                                                |
 | [`driftmark/`](driftmark/README.md)      | The specimen: driftmark's page and settings, which `make lint` lints in every design and the tests draw from.                                                                                                        |
+| [`replays/`](replays/)                   | The facts each game's sample replay is drawn from, as the profile's engine wrote them: one won game of each.                                                                                                         |
 | [`sample/`](sample/)                     | The settings `make draw` draws its sample profile and repository pages from.                                                                                                                                         |
 | [`trophies/`](trophies/)                 | The golden file every trophy card and style is checked against.                                                                                                                                                      |
 | [`checkers.yaml`](checkers.yaml)         | The sample game the theme-sets page draws the Checkers sheets from: game 6 of @tannergolden against GitHub, played as American checkers, so GitHub's Black moved first and the house plays White, as it always does. |
