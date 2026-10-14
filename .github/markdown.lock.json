@@ -1,6 +1,6 @@
 {
  "drawn": {
-  "day": "2026-10-13",
+  "day": "2026-10-14",
   "holiday": null,
   "rainbow": null,
   "theme": "blueprint"
@@ -17,7 +17,7 @@
      "state": "green"
     },
     "release": {
-     "message": "v1.13.0",
+     "message": "v1.16.0",
      "state": "green"
     }
    }
@@ -43,20 +43,21 @@
      "owner": "tannergolden",
      "private": false,
      "pulls": 0,
-     "release": "v1.13.0",
-     "released": "2026-10-12",
+     "release": "v1.16.0",
+     "released": "2026-10-13",
      "releases": 2,
      "stars": 0,
      "topics": [],
-     "updated": "2026-10-12",
+     "updated": "2026-10-13",
      "watchers": 0,
      "workflows": 18
     },
     "subject": "tannergolden/markdown",
-    "today": "2026-10-13"
+    "today": "2026-10-14"
    }
   },
   "elements": {
+   "asof": "2026-10-14T03:17:00Z",
    "drawn": [
     "how-it-runs"
    ],
@@ -67,14 +68,16 @@
     "active": {
      "2026-10-07": 2,
      "2026-10-10": 1,
-     "2026-10-12": 3
+     "2026-10-12": 3,
+     "2026-10-14": 4
     },
     "commits": {
      "2026-10-07": 39,
      "2026-10-10": 4,
      "2026-10-11": 5,
      "2026-10-12": 21,
-     "2026-10-13": 88
+     "2026-10-13": 88,
+     "2026-10-14": 116
     },
     "contributors": {
      "2026-10-07": 1
@@ -107,7 +110,7 @@
      "big-name": 0,
      "big-week": 2,
      "birthday": 0,
-     "by-the-book": 88,
+     "by-the-book": 116,
      "changelog": 0,
      "clean-bill": 1,
      "cloned": null,
@@ -126,7 +129,7 @@
      "first-tag": 2,
      "first-watcher": 0,
      "follows-the-standards": 1,
-     "fork-magnet": null,
+     "fork-magnet": 0,
      "forked-far": 0,
      "form-filler": 1,
      "friday-deploy": 0,
@@ -138,7 +141,7 @@
      "gitmoji": 0,
      "golden-path": 1,
      "good-first-issues": 0,
-     "green-machine": 121,
+     "green-machine": 176,
      "green-wall": 0,
      "help-wanted": 0,
      "house-rules": 1,
@@ -161,7 +164,7 @@
      "outside-help": 0,
      "outside-merges": 0,
      "packager": 0,
-     "palindrome": 1,
+     "palindrome": 0,
      "paperwork": 1,
      "popular-opinion": 0,
      "poster": 0,
@@ -180,17 +183,17 @@
      "signed": 87,
      "small-steps": 0,
      "squeaky": 1,
-     "star-of-the-week": null,
+     "star-of-the-week": 0,
      "stargazer-streak": 0,
      "stranger-report": 4,
-     "streak": 3,
+     "streak": 4,
      "support-line": 1,
      "talkative": 9,
      "ten-strong": 1,
      "test-suite": 1,
      "the-answer": 0,
      "town-hall": 1,
-     "trending": null,
+     "trending": 0,
      "triage": 1,
      "used-by": null,
      "visited": null,
@@ -203,36 +206,36 @@
      "wired": 1
     },
     "delta": {
-     "active": 0,
-     "commits": 0,
+     "active": 2,
+     "commits": 77,
      "contributors": 0,
      "forks": 0,
      "merged": 0,
-     "releases": 0,
-     "resolved": 0,
+     "releases": 1,
+     "resolved": 3,
      "stars": 0
     },
     "extra": {
-     "commits30": 3,
+     "commits30": 4,
      "lastRelease": 1
     },
     "mode": "repository",
     "new": {
      "active": false,
-     "commits": false,
+     "commits": true,
      "contributors": false,
      "forks": false,
      "merged": false,
-     "releases": true,
+     "releases": false,
      "resolved": false,
      "stars": false
     },
     "owners": {},
     "subject": "tannergolden/markdown",
-    "today": "2026-10-13",
+    "today": "2026-10-14",
     "values": {
-     "active": 3,
-     "commits": 88,
+     "active": 4,
+     "commits": 116,
      "contributors": 1,
      "forks": 0,
      "merged": 0,
@@ -349,46 +352,48 @@
     "tannergolden/markdown": {
      "complete": true,
      "cursor": null,
-     "head": "458d56dc17ca85cabb48473da603101e4d0f2281",
+     "head": "860f70cdffd14f0a4c497f4e09543585a2aaf966",
      "stats": {
       "authors": {
-       "tannergolden": 88
+       "tannergolden": 116
       },
-      "coauthored": 87,
-      "conventional": 88,
+      "coauthored": 115,
+      "conventional": 116,
       "days": [
+       "2026-10-13",
        "2026-10-12",
        "2026-10-11",
        "2026-10-10"
       ],
-      "docs": 34,
+      "docs": 44,
       "early": 6,
       "emoji": 0,
-      "fix": 17,
-      "heavy": 14,
-      "lunch": 1,
+      "fix": 22,
+      "heavy": 18,
+      "lunch": 10,
       "max_files": 2793,
       "max_lines": 109054,
       "midnight": 0,
       "night": 17,
-      "onefile": 22,
-      "refresh": 3,
+      "onefile": 27,
+      "refresh": 4,
       "refresh_days": {
        "2026-10-10": 1,
        "2026-10-11": 1,
-       "2026-10-12": 1
+       "2026-10-12": 1,
+       "2026-10-13": 1
       },
       "revert": 0,
       "signed": 87,
-      "sweeping": 16,
-      "test": 14,
-      "total": 88
+      "sweeping": 20,
+      "test": 21,
+      "total": 116
      },
-     "total": 91
+     "total": 120
     }
    }
   }
  },
- "snapshot": "2026-10-07",
+ "snapshot": "2026-10-14",
  "version": 1
 }
