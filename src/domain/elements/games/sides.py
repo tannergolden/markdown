@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The two sides of every game on the profile: the house, @tannergolden, and GitHub, everyone else.
 
 Each side's colour is fixed in every game, and only who moves first changes. The house always plays White in Chess,

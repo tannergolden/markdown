@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """A replay's one timeline: every animated attribute in the file runs the whole loop and repeats forever.
 
 Each animation places its moments as keyTimes across the loop, holds its first value from the loop's start and its

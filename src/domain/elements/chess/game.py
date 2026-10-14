@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What the chess sheets are drawn from: the game as the profile's own engine hands it over, checked and read.
 
 The game is played by @tannergolden's profile repository, which writes two elements into the page's settings

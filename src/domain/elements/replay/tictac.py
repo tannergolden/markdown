@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """Tic-Tac's replay board: the profile's nine boards, every turn played with the README's own last-move motion.
 
 The two ghosts appear in their squares as the pen would touch down. Each mark draws itself stroke by stroke as the

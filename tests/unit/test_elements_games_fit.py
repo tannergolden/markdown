@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The three games' sheets fit whatever their data says into the room the layout gives it, at the limits the data
 may reach, as chess's sheets do (`test_elements_chess_fit`).
 

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The games beside chess on @tannergolden's profile: Tic-Tac, Pentago and Checkers, drawn as chess is, in the
 standard theme and every print, and nowhere but that profile.
 

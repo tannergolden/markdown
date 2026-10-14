@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The motion every theme shares: one choreography, so a board moves the same way in every skin.
 
 Every animated attribute holds its resting value, so a file is complete without SMIL. A file drawn inside

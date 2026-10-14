@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The Chessmen set's scenery and sprites, drawn on the shared pixel canvas.
 
 The polished walrus ivory every footer, element and badge is, with its grain, the craquelure of old ivory and its

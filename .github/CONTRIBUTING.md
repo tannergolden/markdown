@@ -110,7 +110,7 @@ This is a **mandated policy**, not a preference:
   git commit -s -m "feat(scope): 🎯 summary"
   ```
 
-  This appends `Signed-off-by: Your Name <you@example.com>` using your git identity. Contributions licensed inbound under the repository's [MIT License](../LICENSE).
+  This appends `Signed-off-by: Your Name <you@example.com>` using your git identity. Contributions to the kit are licensed inbound under the [MIT License](../LICENSE). The Game Materials, as [LICENSE-GAMES](../LICENSE-GAMES) defines them, are proprietary to Tanner Golden and take no outside contributions.
 
 ### 2. CI/CD Gating
 

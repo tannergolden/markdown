@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The quarters' and the marbles' shapes, shared by every theme, each in proportion to a quarter's pitch.
 
 Each quarter is a plate of three holes by three, drawn in plan as a part is, every hole a circle a marble is seen

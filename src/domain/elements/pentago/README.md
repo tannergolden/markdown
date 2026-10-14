@@ -98,6 +98,6 @@ about itself.
 
 <br />
 
-Built with ❤️ by the Engineering Team. Distributed under the MIT License.
+Built with ❤️ by the Engineering Team. Proprietary; all rights reserved under [LICENSE-GAMES](../../../../LICENSE-GAMES).
 
 </div>

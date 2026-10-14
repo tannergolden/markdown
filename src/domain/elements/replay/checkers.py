@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """Checkers' replay board: the profile's board, every move played with the README's own last-move motion.
 
 A step slides the man across, lifted a little; a jump hops it over each man it takes, each fading as it passes, the

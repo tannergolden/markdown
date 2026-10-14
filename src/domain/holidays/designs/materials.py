@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What a set's boards and its Hall's podium are made of: the grain of a square, a cell, a bar, a frame and a block,
 cut from the set's own tones.
 

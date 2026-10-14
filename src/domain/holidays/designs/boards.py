@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The four boards as a pixel set draws them: each game answers what the sheet every game shares asks of it.
 
 Each is a `Game`: its kind and name and the mark on its tag, what its state is read with (the game's own, the same

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The Hall of Fame's one layout, which every theme draws: the series of all four games, and the podium.
 
 Every coordinate, size and beat of motion here is the standard theme's, and none of it changes with the theme: a skin

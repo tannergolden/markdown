@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """A player as a replay draws them: their GitHub avatar as a print draws a portrait, a halftone of dots in its ink.
 
 No image goes into the file, only dots, so a replay keeps the kit's rule that a file fetches and embeds nothing.

@@ -131,6 +131,6 @@ The owner asked for the games in every theme. The question was how a pixel set d
 
 <br />
 
-Built with ❤️ by the Engineering Team. Distributed under the MIT License.
+Built with ❤️ by the Engineering Team. Proprietary; all rights reserved under [LICENSE-GAMES](../../LICENSE-GAMES).
 
 </div>

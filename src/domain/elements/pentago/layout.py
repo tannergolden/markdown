@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The Pentago sheet's layout: its four quarters, and what its panel counts, inside the sheet every game shares.
 
 The board stands where chess's does, the same size: four quarter plates of three holes a side, cut and lined as one

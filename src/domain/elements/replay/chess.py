@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """Chess's replay board: the profile's board, every move played with the README's own last-move motion.
 
 As the README's board brings in its last move, so every move here: the piece comes in from its square, a knight

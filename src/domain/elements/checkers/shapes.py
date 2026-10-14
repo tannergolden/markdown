@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The men's shapes, shared by every theme: a man and a crowned king, each in chess's 45-unit box.
 
 A man is a short cylinder seen from a little above, as chess's pieces are seen standing on their squares: its top

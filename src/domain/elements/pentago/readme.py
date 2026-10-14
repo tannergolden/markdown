@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What the README carries under the Pentago sheet: every empty hole as a move with its eight turns, folded, then the
 note.
 

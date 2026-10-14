@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The Hall of Fame of all four games as a pixel set draws it: the series, the podium, and a badge for every winner.
 
 The Hall reads as it does in the standard theme and every print, a match card, top to bottom: the house and GitHub

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What every game's data is checked for, and the state every sheet reads from it.
 
 The profile's own engine plays each game and writes what its sheet draws after every move, as it does for chess: the

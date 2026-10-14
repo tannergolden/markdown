@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """A finished game's countdown: the moment its fresh board comes, in the page's time, and how long was left as of
 the board's drawing.
 

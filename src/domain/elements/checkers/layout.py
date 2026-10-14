@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The Checkers sheet's layout: its board, and what its panel counts, inside the sheet every game shares.
 
 The board is chess's, in chess's place at chess's size, drawn by chess's own skins, with each of its thirty-two dark

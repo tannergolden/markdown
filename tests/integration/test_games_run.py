@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The games on @tannergolden's profile, redrawn through the command line run after run as its clock redraws them,
 leave exactly the files the README shows, so nothing an old board drew is ever left behind. A board's files are named
 for the board, never for its position, so a move, a finished game, a fresh board and a ghost going down each redraw

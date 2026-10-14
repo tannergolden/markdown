@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The Hall of Fame fits whatever its data says into the room the layout gives it, at the limits the data may reach.
 
 Every run of lettering the sheet sets is recorded with its box on the sheet, and so is every piece, every bar of the

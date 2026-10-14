@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The Tic-Tac sheet's layout: its board of nine boards, and what its panel counts, inside the sheet every game
 shares.
 

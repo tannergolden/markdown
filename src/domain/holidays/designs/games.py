@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The games on @tannergolden's profile as every pixel set draws them: the four boards, and the Hall of Fame of all four.
 
 A set restyles a game the way it restyles every other part of the page, and never changes what it is. Each board

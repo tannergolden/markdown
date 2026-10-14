@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """Pentago's motion: chess's choreography (`chess.motion`), and a marble set and a quarter turned.
 
 The board's edge is drawn in as chess's is and the panel rises a section at a time on chess's beats. The last move

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The Tic-Tac element: the first tier of the games on @tannergolden's profile, drawn as chess is drawn.
 
   tictac  the nine boards as they stand and the state of play beside it, with every open square named in the README

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What the README carries under the Hall of Fame's sheet: a badge for each winner, and the leaderboard.
 
 The names in a sheet cannot be clicked, so a row of badges follows it, one per winner it shows, each linking to that

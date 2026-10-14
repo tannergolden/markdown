@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The chess elements: the game on @tannergolden's profile and its Hall of Fame, drawn in every theme.
 
   chess       the board as it stands and the state of play beside it, with every legal move named in the README

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What the README carries under the chess sheets: every legal move, the badges and the leaderboard.
 
 An image cannot be clicked square by square, so the README carries the game's words under the board: every legal move as

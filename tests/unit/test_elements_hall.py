@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The Hall of Fame of all four games on @tannergolden's profile, in every theme, and nowhere else.
 
 The Hall is the series after 29 games: twelve of Chess, five of Checkers, three of Pentago and nine of Tic-Tac,

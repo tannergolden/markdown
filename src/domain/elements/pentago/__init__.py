@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The Pentago element: the second tier of the games on @tannergolden's profile, drawn as chess is drawn.
 
   pentago  the four quarters as they stand and the state of play beside them, with every empty hole and its turns

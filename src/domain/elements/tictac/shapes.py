@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The marks' shapes, shared by every theme: an X and an O as a pen draws them, each in a 100-unit box.
 
 A mark is its pen strokes, in the order a hand draws them: the X's falling stroke and then its rising one, the O

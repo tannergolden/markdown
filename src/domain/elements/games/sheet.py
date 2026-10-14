@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """A game's board sheet, wide and a phone's, drawn as chess's is: the same card or drafting sheet and its band, the
 board in the same place at the same size, and beside it (under it, on a phone) the same panel a section at a time.
 

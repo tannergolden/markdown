@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """Checkers' motion: chess's choreography (`chess.motion`), and a man that slides, hops and is crowned.
 
 The board's edge is plotted in as chess's is and the panel rises a section at a time on chess's beats. The last

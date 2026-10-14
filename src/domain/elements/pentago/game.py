@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What the Pentago sheet is drawn from: the game as the profile's own engine hands it over, checked and read.
 
 The board is six holes by six in four quarters of three by three, the upper left (a4 to c6), the upper right (d4 to

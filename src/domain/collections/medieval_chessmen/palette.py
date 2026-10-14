@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The Chessmen set's palette: its ramps of walrus ivory and its patina, bone stained red, the oak of the board
 and the hall, the hearth's fire and its smoke, stone, iron, leather and gilt, the stains a piece may take, its day
 and its night, and the closed set of every colour one of its files may use.

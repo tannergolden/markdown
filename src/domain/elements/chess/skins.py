@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What the chess sheets are made of, per theme: the standard theme's skin and the prints'.
 
 `layout` places every part; a skin draws it. The two skins answer the same questions (a square, a piece, a

@@ -18,6 +18,14 @@ twelve different worlds drawn by the same hand.
   - Keep passing until no design stands apart from its year.
 - The bar, in the owner's words: "make sure they are absolutely badass and anyone viewing it would be AMAZED!"
 
+## The games are proprietary
+
+- Everything about the games on the profile, the Game Materials, is proprietary under
+  [LICENSE-GAMES](LICENSE-GAMES), all rights reserved ([ADR-0010](docs/adrs/ADR-0010-The-Games-Are-Proprietary.md));
+  the rest of the kit stays MIT under [LICENSE](LICENSE).
+- A new or moved game file joins LICENSE-GAMES' list of paths in the same commit, and a game source file carries
+  `SPDX-License-Identifier: LicenseRef-Proprietary`, never MIT.
+
 ## Working here
 
 - The kit is standard-library Python. Run Python with the GitHub tokens unset:

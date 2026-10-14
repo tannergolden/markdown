@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The chess elements: the game on @tannergolden's profile and its Hall of Fame, in every theme, and nowhere else.
 
 The game is the Max Lange Attack the design was drawn from, game 13 after 21. Nd6+: GitHub to move and in check,

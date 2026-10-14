@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The Chessmen set's own rules, which the checks every set shares cannot know: what the night alone shows (the
 dark of the hall, the hearth's warmth, the fire's glow and its sparks, the firelight on the pieces' edges, the
 orange edge the hearth lights on every letter and the candle by the toppled king) stays out of the day's files;

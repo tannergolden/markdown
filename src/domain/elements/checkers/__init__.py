@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The Checkers element: the third tier of the games on @tannergolden's profile, drawn as chess is drawn.
 
   checkers  the board as it stands and the state of play beside it, with every legal move named in the README

@@ -1,3 +1,17 @@
+NOTICE: NOT ALL OF THIS REPOSITORY IS LICENSED UNDER THE MIT LICENSE.
+
+The Game Materials, as LICENSE-GAMES defines them, are everything in this
+repository that depicts, describes, encodes or implements the games on Tanner
+Golden's GitHub profile (Chess, Checkers, Pentago and Tic-Tac): their elements,
+boards, pieces, Hall of Fame, replays, designs, artwork, rules, tests and
+documentation. They are proprietary to Tanner Golden, all rights reserved, and
+licensed solely under LICENSE-GAMES. The MIT License below grants no right in
+them, and the word "Software" in it does not include them.
+
+Everything else in this repository is licensed under the MIT License:
+
+----------------------------------------------------------------------------
+
 MIT License
 
 Copyright (c) 2026 Tanner Golden

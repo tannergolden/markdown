@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """Replays: a finished game on @tannergolden's profile played again move by move on its own board, looping.
 
 The four samples are real games the profile's engine played to their end and wrote out as a replay's facts, one of

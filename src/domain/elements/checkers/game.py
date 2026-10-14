@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What the Checkers sheet is drawn from: the game as the profile's own engine hands it over, checked and read.
 
 The position arrives as checkers writes one, a PDN FEN: whose turn, then White's men's squares and Black's, a K

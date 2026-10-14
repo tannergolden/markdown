@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """Replays: a finished game on @tannergolden's profile, played again move by move on its own board, looping.
 
   check(facts)                                  what the facts get wrong, said precisely; none when they are right

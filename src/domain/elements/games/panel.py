@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The panel beside every game's board, a section at a time, as chess's is: the two sides, the turn, the last move
 and the score sheet, with the game's own count between them (`sheet` places them).
 

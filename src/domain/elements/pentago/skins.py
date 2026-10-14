@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What the Pentago sheet is made of, per theme: the standard theme's enamel and a print's drawing, as chess's
 sheets are (`games.skin`), with the quarters' and the marbles' own materials.
 

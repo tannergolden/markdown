@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What every game on @tannergolden's profile shares, so the four sheets read as one family drawn by one hand.
 
 Chess came first, and the games beside it (Tic-Tac, Pentago and Checkers) are drawn the way it is: the

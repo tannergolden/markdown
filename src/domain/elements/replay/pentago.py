@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """Pentago's replay board: the profile's four quarters, every turn played with the README's own last-move motion.
 
 The two ghosts are set in their holes first. Then each marble is set in its hole, which is ringed as it settles,

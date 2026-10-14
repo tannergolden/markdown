@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The pieces' shapes, shared by every theme: one set of silhouettes, so a knight is the same knight in each skin.
 
 Every piece is drawn in a 45-unit box, its foot on one base plate. Parts are drawn back to front, each with the

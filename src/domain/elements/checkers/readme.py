@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What the README carries under the Checkers sheet: every legal move, folded, then the note.
 
 Each move is named as checkers players name it, for what it is and never for what it does or where it goes, as chess's

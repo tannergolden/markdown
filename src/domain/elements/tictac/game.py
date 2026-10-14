@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What the Tic-Tac sheet is drawn from: the game as the profile's own engine hands it over, checked and read.
 
 Tic-Tac is Tic-Tac-Toe played on nine boards at once, three a side, the game also known as Ultimate Tic-Tac-Toe.

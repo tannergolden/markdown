@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The two materials every game's sheet is drawn in: chess's skins, and what a game beside chess adds to them.
 
 Everything chess's skins draw (the sheet and its band or title strip, the rules, the badges and plates, the

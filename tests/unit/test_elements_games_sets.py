@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The games on @tannergolden's profile and their Hall of Fame in every pixel set: while a holiday's set or a
 collection's design is up, it draws all four boards and the Hall in its own pixels, every file of one or none.
 

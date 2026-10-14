@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """Each game's pieces, as the Hall draws them, shared by every theme: one set of outlines in chess's 45-unit box.
 
 The Hall names every game by what it is played with, its two pieces, the house's first, on the left: chess's own

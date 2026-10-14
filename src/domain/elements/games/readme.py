@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What the README carries under a game's sheet, as it does under chess's: every legal move, folded shut under one line
 saying whose they are and how many, then the note.
 

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What the games are played with, in pixels: every set's chessmen, men, discs and marks, at the sizes its sheets set.
 
 A pixel set draws the four games with one set of pieces, the way it strikes its trophies in one set of metals: a

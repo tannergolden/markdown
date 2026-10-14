@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The chess sheets' one layout, which every theme draws: the board and its panel, and the Hall of Fame.
 
 Every coordinate, size and beat of motion here is the standard theme's, and none of it changes with the theme: a

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What the Hall of Fame of all four games is drawn from: the record the profile's engines hand over, checked and read.
 
 Every game on @tannergolden's profile, Chess, Checkers, Pentago and Tic-Tac, writes the same element into

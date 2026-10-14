@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What the four replay boards share: what each answers for the sheet, and the README's landing ring.
 
 Each game's replay board (`chess`, `checkers`, `pentago`, `tictac`) answers the same questions for the sheet: its

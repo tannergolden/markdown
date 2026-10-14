@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The Chessmen set: a winter's game in a Norse hall, the Lewis chessmen in walrus ivory and bone stained red.
 
 Every header is the hall itself: a wall of upright oak planks, weathered pale by day and dark by night, under a

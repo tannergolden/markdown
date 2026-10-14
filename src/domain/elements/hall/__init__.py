@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """The Hall of Fame of all four games on @tannergolden's profile: Chess, Checkers, Pentago and Tic-Tac.
 
   hall-of-fame  the series of every game and of all four together, the podium of the five leading winners across

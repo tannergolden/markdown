@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """What the Hall of Fame's sheets are made of, per theme: chess's two skins, and every game's pieces in each.
 
 The Hall is chess-hall grown to four games, so it is drawn in chess-hall's own materials (`chess.skins`), every

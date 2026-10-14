@@ -29,7 +29,7 @@ badges:
     icon: code
   - name: license
     label: License
-    message: MIT
+    message: MIT, games proprietary
     icon: scale
     link: LICENSE
   - name: ci

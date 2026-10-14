@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: LicenseRef-Proprietary
 """A finished game's countdown never makes a commit of its own: run after run, the page is drawn as of the moment the
 lock kept, so a run with nothing else to change changes nothing; and when the page changes for something else, it
 is drawn as of that run's moment, its countdown brought up to date with it. `check` draws it as of the same moment,
