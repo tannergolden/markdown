@@ -81,19 +81,19 @@ A page is a person's profile or a repository. Organization pages are next.
 [**tannergolden/tannergolden**](https://github.com/tannergolden/tannergolden),
 is the example of all of it on a profile repository. Its README is drawn by
 this kit every night at midnight EST, in profile mode, in the medieval
-collection's Chessmen all year, with the holidays on, from one stub and one
-settings file:
+collection's Illuminated all year with Capricorn's roundel on every header,
+with the holidays on, from one stub and one settings file:
 
 | Part         | On the profile                                                                                                                                                                                                                |
 | :----------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Banners**  | A header read from GitHub, the name and the bio, with a motto, a note and six figures; a footer with its closing words, and four buttons under it.                                                                            |
-| **Badges**   | Four static badges, and two live ones the run measures: whether the standards pass their own checks, and how long ago the last commit was.                                                                                    |
+| **Badges**   | Three static badges, and two live ones the run measures: whether the standards pass their own checks, and how long ago the last commit was.                                                                                   |
 | **Elements** | A schematic of how its repositories fit together, written by hand, and placards for the two latest releases and two good first issues, which its own scripts rewrite weekly.                                                  |
 | **Games**    | Chess, Checkers, Pentago and Tic-Tac, @tannergolden against GitHub, played live: each board after every move, every legal move a link that plays it, and the Hall of Fame with its leaderboard, drawn for this profile alone. |
 | **Trophies** | The case in profile mode: five core trophies in one row, the level and next-up cards over them, and the achievements under them.                                                                                              |
 
-Its stub is the one below with `mode: profile`, `theme: medieval-chessmen` and
-`holidays: 'true'`, and
+Its stub is the one below with `mode: profile`, `theme: medieval-illuminated`,
+`sign: capricorn` and `holidays: 'true'`, and
 [its settings](https://github.com/tannergolden/tannergolden/blob/Development/.github/markdown.yaml)
 set up every part, with a comment on each. This README is the other example:
 this repository's own page, in repository mode, in the `blueprint`, with the

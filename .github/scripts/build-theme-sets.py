@@ -67,9 +67,9 @@ TITLES = {"tictac": "Tic-Tac", "pentago": "Pentago", "checkers": "Checkers", "ch
 # The Hall of Fame of all four, one entry after them, drawn from its own sample: tests/fixtures/hall-of-fame.yaml.
 HALL = "hall-of-fame"
 # The games are drawn on one page, @tannergolden's profile, in whatever theme it wears: there, the medieval
-# collection's Chessmen, all year. Beside the standard theme the sheets feature one print, blackprint, in their
+# collection's Illuminated, all year. Beside the standard theme the sheets feature one print, blackprint, in their
 # thumbnails and their phone files.
-PROFILE, PROFILE_LOOK, FEATURED = f"https://github.com/{chess.OWNER}", "medieval-chessmen", "blackprint"
+PROFILE, PROFILE_LOOK, FEATURED = f"https://github.com/{chess.OWNER}", "medieval-illuminated", "blackprint"
 # The page says it drew this folder, so a rebuild may empty it and a wrong path never loses anything.
 MARK = '<meta name="generator" content="markdown-kit theme-sets">'
 
