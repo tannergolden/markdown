@@ -12,7 +12,7 @@ from domain.palette import ICONS as SHARED_ICONS
 from domain.palette import PALETTE
 from domain.trophies import calendar as cal
 from domain.trophies import catalogue as c
-from domain.trophies.scan import CONVENTIONAL, EMOJI, SEMVER, classify, empty_stats, merge_stats, without_refreshes
+from domain.trophies.scan import CONVENTIONAL, EMOJI, SEMVER, classify, empty_stats, forget, merge_stats, without_refreshes
 
 support.install()
 D = dt.date
@@ -201,6 +201,12 @@ class Commits(unittest.TestCase):
         self.assertEqual(without_refreshes({D(2026, 3, 2): 12, D(2026, 3, 3): 1}, merged),
                          {D(2026, 3, 2): 2, D(2026, 3, 3): 1})
         self.assertEqual(without_refreshes({D(2026, 3, 2): 2}, merged), {}, "a day left at zero is no active day")
+
+    def test_a_repository_gone_is_forgotten(self):
+        scans = {"me/kept": {"head": "a"}, "me/deleted": {"head": "b"}, "me/old-name": {"head": "c"}}
+        self.assertEqual(forget(scans, ["me/kept", "me/new"]), ["me/deleted", "me/old-name"])
+        self.assertEqual(scans, {"me/kept": {"head": "a"}}, "only the repositories still counted keep their scans")
+        self.assertEqual(forget(scans, ["me/kept"]), [], "nothing gone, nothing taken")
 
 
 if __name__ == "__main__":

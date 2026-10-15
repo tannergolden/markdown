@@ -117,6 +117,18 @@ def merge_stats(entries: list) -> dict:
     return out
 
 
+def forget(scans: dict, kept) -> list[str]:
+    """Take out of the ledger's scan section every repository not in `kept`, and return their names.
+
+    A repository deleted, renamed, made a fork or moved to another owner is never read again and never
+    counted, so its scan would only sit in the lock for good.
+    """
+    gone = sorted(key for key in scans if key not in set(kept))
+    for key in gone:
+        del scans[key]
+    return gone
+
+
 def without_refreshes(days: dict, stats: dict):
     """The contribution calendar with this kit's own refresh commits taken back out.
 

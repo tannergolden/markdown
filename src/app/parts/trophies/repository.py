@@ -16,7 +16,7 @@ from collections import Counter
 from domain.trophies import calendar as cal
 from domain.trophies.catalogue import RACH, RCORE, measure as tier_of
 from domain.trophies.ledger import value_at
-from domain.trophies.scan import SEMVER
+from domain.trophies.scan import SEMVER, forget
 
 from .scan import scan_repository
 
@@ -137,6 +137,7 @@ def measure(gh, owner: str, name: str, ledger: dict, *, today: dt.date, scan_pag
 
     # -- the commit scan, cached by head -----------------------------------------------------
     scans = ledger.setdefault("scan", {})
+    forget(scans, [f"{owner}/{name}"])
     entry = scan_repository(gh, owner, name, scans, {"pages": scan_pages})
     st = entry["stats"]
     if not entry.get("complete"):

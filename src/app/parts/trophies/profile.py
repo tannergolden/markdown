@@ -13,7 +13,7 @@ import datetime as dt
 
 from domain.trophies import calendar as cal
 from domain.trophies.catalogue import ACH, CORE, measure as tier_of
-from domain.trophies.scan import SEMVER, merge_stats, without_refreshes
+from domain.trophies.scan import SEMVER, forget, merge_stats, without_refreshes
 
 from .scan import scan_repository
 
@@ -170,6 +170,9 @@ def measure(gh, login: str, ledger: dict, *, today: dt.date, private: bool = Fal
 
     # -- the heavy part: read commits, under a budget, cached in the ledger ---------------
     scans = ledger.setdefault("scan", {})
+    if own_public and len(own_public) == _count(u.get("publicRepos")):
+        # Only from a listing that came back whole: a page lost on the way would cost a week of rescans.
+        forget(scans, [r["nameWithOwner"] for r in own])
     budget = {"pages": scan_pages}
     for r in sorted(own, key=lambda r: r["pushedAt"] or "", reverse=True):
         if budget["pages"] <= 0:
