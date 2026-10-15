@@ -29,7 +29,7 @@ category: docs
 
 <picture><source media="(prefers-color-scheme: dark)" srcset="assets/badges/static/status-dark.svg"><img alt="Status: Active" src="assets/badges/static/status.svg"></picture>
 <picture><source media="(prefers-color-scheme: dark)" srcset="assets/badges/static/python-dark.svg"><img alt="Python: Standard library only" src="assets/badges/static/python.svg"></picture>
-<a href="LICENSE"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/badges/static/license-dark.svg"><img alt="License: MIT" src="assets/badges/static/license.svg"></picture></a>
+<a href="LICENSE"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/badges/static/license-dark.svg"><img alt="License: MIT, games proprietary" src="assets/badges/static/license.svg"></picture></a>
 
 <img alt="CI: Passing" src="assets/badges/dynamic/ci.svg">
 <img alt="Release: v1.16.0" src="assets/badges/dynamic/release.svg">
