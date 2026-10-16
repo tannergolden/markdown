@@ -634,7 +634,7 @@ This repository follows it **by link**.
 
 <!-- markdown:trophies:start -->
 <p align="center">
-  <picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/level.svg"><img src="assets/trophies/level-day.svg" alt="tannergolden/markdown: level 21, 7,070 XP, case 27% complete, released 0 days ago"></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/level.svg"><img src="assets/trophies/level-day.svg" alt="tannergolden/markdown: level 21, 7,070 XP, case 27% complete, released 1 days ago"></picture>
   <picture><source media="(prefers-color-scheme: dark)" srcset="assets/trophies/next-up.svg"><img src="assets/trophies/next-up-day.svg" alt="Next up: Signed I 90%, Issues Resolved to Bronze 40%, Same-Day Fix 40%"></picture>
 </p>
 
