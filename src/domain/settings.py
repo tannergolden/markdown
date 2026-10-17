@@ -3,17 +3,19 @@
 """`.github/markdown.yaml`: a page's settings, with a default for every one of them.
 
 A page that writes no settings at all is drawn from what GitHub says about it,
-in the `standard` theme, with the holidays on. `theme` may also name a
-collection, which draws the page in a design for each month, or one design of
-a collection to keep all year (see `collections`), and `sign` the sign of the
-zodiac its headers carry, all year. Everything is optional, and the
-one file holds all of it: the page as a whole at the top, then a section for
-each part (`banners`, `badges`, `elements`, `trophies`), which each part checks
-for itself as it reads it.
+in the `standard` theme, with the holidays on and, for a repository, its
+birthday. `theme` may also name a collection, which draws the page in a design
+for each month, or one design of a collection to keep all year (see
+`collections`), and `sign` the sign of the zodiac its headers carry, all year.
+`birthday` gives a person's birthday, a month and a day, or turns the Birthday
+set off (see `birthday`). Everything is optional, and the one file holds all of
+it: the page as a whole at the top, then a section for each part (`banners`,
+`badges`, `elements`, `trophies`), which each part checks for itself as it
+reads it.
 
-The stub can set five of these too (`mode`, `theme`, `sign`, `holidays` and
-`holiday-days`), so the choices a person makes most often sit in the workflow
-they already have open. A value the stub sets wins over the file's.
+The stub can set six of these too (`mode`, `theme`, `sign`, `holidays`,
+`holiday-days` and `birthday`), so the choices a person makes most often sit in
+the workflow they already have open. A value the stub sets wins over the file's.
 
 Every key is checked, and an unknown key or value fails the run with the key
 named, rather than being ignored. A key may be written with hyphens or with
@@ -24,7 +26,7 @@ from __future__ import annotations
 import re
 from typing import Callable
 
-from . import collections, holidays
+from . import birthday, collections, holidays
 from .collections.hand import signs
 from .prints import DEFAULT_THEME, RAINBOW, PrintError, is_theme, themes, use as use_prints
 
@@ -38,6 +40,8 @@ DEFAULTS = {
                                # on the collection's calendar, and none on a design kept all year
     "holidays": True,          # each holiday's set takes over around its day
     "holiday_days": holidays.DEFAULT_DAYS,  # 3 to 7; New Year's Day always runs 3
+    "birthday": True,          # the Birthday set on the page's birthday: a person's, as MM-DD; a repository's,
+                               # the day GitHub created it; false keeps it away
     "timezone": "UTC",         # the zone the page's day changes in, so a holiday starts at its midnight
     "readme": "",              # empty: README.md, or profile/README.md for an organization
     "out": "",                 # empty: assets, each part in its own folder in it; profile/assets for an organization
@@ -50,7 +54,7 @@ DEFAULTS = {
 }
 TEXT = ("subject", "sign", "timezone", "readme", "out")
 # The keys the stub can set, as the workflow passes them: every value a string, "" for not set.
-INPUTS = ("mode", "theme", "sign", "holidays", "holiday_days")
+INPUTS = ("mode", "theme", "sign", "holidays", "holiday_days", "birthday")
 _ZONE = re.compile(r"UTC|[A-Za-z][A-Za-z0-9_+-]*(?:/[A-Za-z0-9_+-]+){0,2}")
 _SUBJECT = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})(?:/[A-Za-z0-9._-]{1,100})?")
 
@@ -123,6 +127,10 @@ def validate(given: dict | None, inputs: dict | None = None, *, catalogue: dict 
         cfg["holiday_days"] = holidays.check_days(cfg["holiday_days"])
     except holidays.HolidayError as exc:
         raise SettingsError(str(exc)) from exc
+    try:
+        cfg["birthday"] = birthday.check(cfg["birthday"])
+    except birthday.BirthdayError as exc:
+        raise SettingsError(str(exc)) from None
     if not _ZONE.fullmatch(cfg["timezone"]):
         raise SettingsError(f"timezone: {cfg['timezone']!r} is not a time zone name like UTC or America/New_York")
     cfg["lock"] = _bool("lock", cfg["lock"])

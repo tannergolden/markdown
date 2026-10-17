@@ -1,9 +1,9 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
-"""Every holiday set: each file it draws well formed, within its lint and budget, in the set's own closed
-palette, the same every time and at the kit's sizes; letters that hold 4.5:1 on what they sit on; motion only
-where the kit allows it; and the kit handing a page to the set while its window is up, file by file, falling
-back to the page's own drawing for any file the set cannot draw."""
+"""Every holiday set, and the Birthday set drawn with them: each file it draws well formed, within its lint and
+budget, in the set's own closed palette, the same every time and at the kit's sizes; letters that hold 4.5:1 on what
+they sit on; motion only where the kit allows it; and the kit handing a page to the set while it is up, file by
+file, falling back to the page's own drawing for any file the set cannot draw."""
 from __future__ import annotations
 
 import re
@@ -14,6 +14,7 @@ from unittest import mock
 from tests import support
 
 from domain import KIT, KIT_VERSION
+from domain import birthday as B
 from domain import holidays as H
 from domain.badges import data as BD
 from domain.banners import sample as BS
@@ -31,7 +32,9 @@ from domain.palette import PALETTE
 from infra.yaml_reader import loads
 
 support.install()
-SETS = {key: H.drawn_by(key) for key in H.SETS}
+# Each holiday's set, and the Birthday set, which is no holiday but is drawn with the same layouts and pixels.
+HOLIDAY_SETS = {key: H.drawn_by(key) for key in H.SETS}
+SETS = HOLIDAY_SETS | {B.KEY: B.drawn_by(B.KEY)}
 SPECIMEN = loads((support.ROOT / "tests" / "fixtures" / "driftmark" / ".github" / "markdown.yaml").read_text(encoding="utf-8"))
 ELEMENTS = ED.merged(ED.check(SPECIMEN["elements"]), {}, subject="driftmark/driftmark", today="2026-09-25")
 # The banned dashes, spelled by code point so this file never carries one.
@@ -85,15 +88,15 @@ def every_banner(key: str) -> list:
 
 class Registry(unittest.TestCase):
     def test_every_set_is_a_holiday_on_the_calendar_and_draws(self):
-        self.assertTrue(SETS)
-        for key, held in SETS.items():
+        self.assertTrue(HOLIDAY_SETS)
+        for key, held in HOLIDAY_SETS.items():
             self.assertIn(key, H.KEYS)
             self.assertEqual((held.key, held.name), (key, H.NAMES[key]))
             self.assertTrue(held.tokens)
 
     def test_a_set_is_told_the_day_its_holiday_falls_on_and_the_shared_one_is_not(self):
         import datetime as dt
-        for key, held in SETS.items():
+        for key, held in HOLIDAY_SETS.items():
             on = H.drawn_by(f"{key}:2026-10-31")
             self.assertEqual((on.key, on.day), (key, dt.date(2026, 10, 31)))
             self.assertIsNone(held.day)

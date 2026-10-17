@@ -8,7 +8,9 @@ committed files offline and compare them byte for byte, without a token and
 without the numbers moving underneath it:
 
   drawn     the theme the page was drawn in: its name, the print rainbowprint
-            was on, the holiday whose set had taken over, and the day
+            was on, the set that had taken over (a holiday's, or the
+            Birthday set), the day, and for a repository the day GitHub
+            created it, its birthday
   parts     each part's own record, which that part owns: the banners' last
             measurement, the trophies' history, and so on
   snapshot  the day the lock was last written for its own sake
@@ -75,12 +77,15 @@ def drawn(lock: dict) -> dict | None:
 
 
 def remember_drawn(lock: dict, *, theme: str, today: dt.date, holiday: str | None = None,
-                   rainbow: str | None = None, design: str | None = None) -> None:
-    """What the committed files were drawn in: the settings' theme, the holiday set that was up, the print a
-    rainbowprint was on, the collection's design for the month, and the day."""
+                   rainbow: str | None = None, design: str | None = None, born: dt.date | None = None) -> None:
+    """What the committed files were drawn in: the settings' theme, the set that was up (a holiday's key, or
+    `birthday`), the print a rainbowprint was on, the collection's design for the month, the day, and the day a
+    repository was born, which its birthday is drawn from."""
     lock["drawn"] = {"theme": theme, "holiday": holiday, "rainbow": rainbow, "day": today.isoformat()}
     if design:
         lock["drawn"]["design"] = design
+    if born:
+        lock["drawn"]["born"] = born.isoformat()
 
 
 def part(lock: dict, name: str) -> dict:

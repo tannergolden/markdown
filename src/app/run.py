@@ -26,7 +26,7 @@ import re
 import textwrap
 from pathlib import Path
 
-from domain import collections, holidays, lock, prints, readme, settings
+from domain import birthday, collections, holidays, lock, prints, readme, settings
 from domain.badges import data as badges_data
 from domain.banners import plan as banners_plan
 from domain.banners import sample as banners_sample
@@ -34,7 +34,7 @@ from domain.trophies import ledger as trophies_ledger
 from domain.trophies import plan as trophies_plan
 from domain.trophies import sample as trophies_sample
 
-from .page import Page, here_of, mode_and_subject, settle
+from .page import Page, born_on, here_of, mode_and_subject, settle
 from .parts import badges, banners, elements, trophies
 
 LOCK = ".github/markdown.lock.json"
@@ -278,7 +278,7 @@ def describe(page: Page, planned: dict) -> str:
     parts = planned["parts"]
     head = (banners_plan.describe(parts["banners"]) if "banners" in parts
             else f"the page for {page.subject} ({page.mode}) in "
-            + (f"the {page.holiday.name} set" if page.holiday else _own(page)))
+            + (f"the {_set_name(page.held)} set" if page.held else _own(page)))
     if "badges" in parts:
         head += f"; badges {', '.join(parts['badges']['names'])}"
     if "elements" in parts:
@@ -337,11 +337,29 @@ def _trophy_subject(planned: dict, measurement: dict, reached: dict) -> str:
     return subject if len(subject) <= 72 else subject[:69].rstrip(", ") + "..."
 
 
+def _set_name(key: str) -> str:
+    """A set's name by its key, as a commit says it: Halloween, Birthday."""
+    return birthday.NAME if key == birthday.KEY else holidays.NAMES.get(key, key)
+
+
 def _own(page: Page) -> str:
     """What the page is drawn in when no holiday's set is up, in words: its theme, or a collection's design."""
     if page.design:
         return collections.described(page.design, month=not page.pinned)
     return page.cfg["theme"]
+
+
+def _tomorrow(page: Page) -> str:
+    """What the page is drawn in the day after its birthday, in words: a holiday's set still up, else its theme or
+    the collection's design for that day."""
+    after, cfg = page.today + dt.timedelta(days=1), page.cfg
+    window = holidays.active(after, cfg["holiday_days"], cfg["holidays"])
+    if window and holidays.drawn_by(window.key):
+        return f"the {window.name} set"
+    design = collections.design_for(cfg["theme"], after)
+    if design:
+        return collections.described(design, month=not page.pinned)
+    return f"{cfg['theme']} again"
 
 
 def _drawn_in_set(page: Page) -> tuple[str, str]:
@@ -357,17 +375,23 @@ def _drawn_in_set(page: Page) -> tuple[str, str]:
 
 
 def _set_news(page: Page, held_was: str, design_was: str = "") -> tuple[str, str]:
-    """(a subject, a paragraph) when a holiday's set went up or came down with this run, or a collection's
-    design took over the page, else two blanks."""
+    """(a subject, a paragraph) when a holiday's set or the Birthday set went up or came down with this run, or a
+    collection's design took over the page, else two blanks."""
     own = _own(page)
     parts, apart = _drawn_in_set(page)
     if page.held != held_was:
+        if page.party:
+            who = page.subject if page.mode == "repository" else f"@{page.subject}"
+            whose = f"the {birthday.ordinal(page.party.age)} birthday of {who}" if page.party.age else f"{who}'s birthday"
+            return ("put up the Birthday set",
+                    f"It is {whose}, so the page is drawn in the Birthday set for the day: {parts} are drawn in "
+                    f"it{', ' + apart if apart else ''}, and tomorrow the page is drawn in {_tomorrow(page)}.")
         if page.held:
             w = page.holiday
             return (f"put up the {w.name} set",
                     f"The {w.name} set is up from {w.start:%B} {w.start.day} to {w.end:%B} {w.end.day}: {parts} "
                     f"are drawn in it{', ' + apart if apart else ''}, and the page goes back to {own} after.")
-        name = holidays.NAMES.get(held_was, held_was)
+        name = _set_name(held_was)
         if page.design:
             return f"take down the {name} set", f"The {name} set is down, and the page is drawn in {own}."
         return f"take down the {name} set", f"The {name} set is down, and the page is drawn in {own} again."
@@ -511,7 +535,7 @@ def finish(page: Page, ports, measured: dict, lk: dict, *, use_lock: bool, advan
                 if extra and extra["record"]:
                     record.update(localized=extra["record"], branch=extra["branch"])
             lock.remember_drawn(lk, theme=page.cfg["theme"], today=page.today, holiday=page.held or None,
-                                rainbow=page.rainbow, design=page.design or None)
+                                rainbow=page.rainbow, design=page.design or None, born=page.born)
             if due:
                 lock.mark_snapshot(lk, page.today)
             if write_lock(page.root, ports, lk):
@@ -551,7 +575,10 @@ def measure_page(root: Path, cfg: dict, ports, today: dt.date | None = None) -> 
     if mode == "organization":
         raise settings.SettingsError("organization pages are not drawn yet; set mode: repository for now")
     day = today or ports.today(cfg["timezone"])
-    page = settle(root, cfg, mode=mode, subject=subject, here=here, today=day, lk=lk)
+    # A repository's birthday is the day GitHub created it, in the page's own zone, as its holidays change over.
+    born = (born_on(gh, subject, ports.zone(cfg["timezone"]))
+            if mode == "repository" and cfg["birthday"] is not False else None)
+    page = settle(root, cfg, mode=mode, subject=subject, here=here, today=day, lk=lk, born=born)
     # the moment the run draws at: now, or noon of the day a preview or a test was told it is
     now = dt.datetime.combine(today, dt.time(12), dt.timezone.utc) if today else ports.now()
     page = dataclasses.replace(page, now=now)
@@ -620,9 +647,12 @@ def _offline_page(root: Path, cfg: dict, measured: dict, lk: dict, here: str = "
     stamp = m.get("today") or drawn.get("day")
     day = dt.date.fromisoformat(stamp) if stamp else dt.date(2026, 1, 1)
     if not stamp:
-        # A day nothing recorded is no holiday's: the page keeps its own theme, whatever day stands in.
-        cfg = dict(cfg, holidays=False)
-    return settle(root, cfg, mode=mode, subject=subject, here=here, today=day, lk=lk)
+        # A day nothing recorded is no holiday's and no birthday: the page keeps its own theme, whatever day
+        # stands in.
+        cfg = dict(cfg, holidays=False, birthday=False)
+    # A repository's birthday is what the run that drew the page read from GitHub, as the lock kept it.
+    born = dt.date.fromisoformat(drawn["born"]) if drawn.get("born") else None
+    return settle(root, cfg, mode=mode, subject=subject, here=here, today=day, lk=lk, born=born)
 
 
 def render(root: Path, cfg: dict, ports, measured: dict | None = None) -> int:

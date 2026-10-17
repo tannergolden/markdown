@@ -28,7 +28,7 @@ import datetime as dt
 import json
 from pathlib import Path
 
-from domain import KIT, KIT_VERSION, collections, holidays, palette, prints, settings
+from domain import KIT, KIT_VERSION, birthday, collections, holidays, palette, prints, settings
 from domain.badges import classic as badges_classic
 from domain.badges import data as badges_data
 from domain.badges import live as badges_live
@@ -84,7 +84,7 @@ def parser() -> argparse.ArgumentParser:
     def page(sp, today: bool = True):
         sp.add_argument("--root", type=Path, default=Path("."), help="the repository (default: here)")
         sp.add_argument("--input", action="append", metavar="KEY=VALUE", help="a value the stub sets, as the "
-                        "workflow passes it: mode, theme, sign, holidays, holiday-days")
+                        "workflow passes it: mode, theme, sign, holidays, holiday-days, birthday")
         if today:
             sp.add_argument("--today", type=_date, help="the day to draw, YYYY-MM-DD (default: today in the page's zone)")
         return sp
@@ -265,7 +265,7 @@ LONG_NAMES = ("constellation", "containerized", "conversation-starter", "well-fo
 
 
 def holiday_specimens(held, elements: dict | None = None):
-    """Every file the holiday set `held` draws for the kit's contents, its badge specimens and the elements
+    """Every file the pixel set `held` draws for the kit's contents, its badge specimens and the elements
     when given, as (what, svg, problems): drawn by the set itself, so a file it cannot draw is a problem here
     where a run would draw it in the page's own theme."""
     for name, (h, f) in contents().items():
@@ -365,9 +365,10 @@ def cmd_lint(args, ports: Ports) -> int:
         failed += bool(problems)
     else:
         elements = None
-    for key in holidays.SETS:
+    sets = [(key, holidays.drawn_by(key)) for key in holidays.SETS] + [(birthday.KEY, birthday.drawn_by(birthday.KEY))]
+    for key, held in sets:
         largest, problems, n = 0, [], 0
-        for what, svg, found in holiday_specimens(holidays.drawn_by(key), elements):
+        for what, svg, found in holiday_specimens(held, elements):
             n += 1
             largest = max(largest, len(svg.encode("utf-8")))
             problems += [f"{what}: {p}" for p in found]

@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: MIT
 #
 # The reusable workflow a repository calls from its one stub. The stub names
-# the schedule and, if it likes, the mode, the theme and the holidays; the
-# checkout, the measurement, the drawing and the commit all happen here, so a
-# fix lands once and reaches every README pinned to @v1.
+# the schedule and, if it likes, the mode, the theme, the holidays and the
+# birthday; the checkout, the measurement, the drawing and the commit all
+# happen here, so a fix lands once and reaches every README pinned to @v1.
 #
 # One run draws the whole page (the header and footer, the badges, the
 # elements and the trophy case) and makes one commit, so a theme or a holiday
@@ -47,6 +47,14 @@ on:
         default: ''
       holiday-days:
         description: "How long each holiday's set is up, 3 to 7 days; New Year's Day is always 3. Empty reads the settings."
+        type: string
+        default: ''
+      birthday:
+        description: >-
+          'false' keeps the Birthday set away. On a profile, the person's
+          birthday: a month and a day as 03-14, or the whole date as 1990-03-14
+          for their age. A repository's birthday is the day GitHub created it.
+          Empty reads the settings, whose default is on.
         type: string
         default: ''
       check:
@@ -138,6 +146,7 @@ jobs:
           sign: ${{ inputs.sign }}
           holidays: ${{ inputs.holidays }}
           holiday-days: ${{ inputs.holiday-days }}
+          birthday: ${{ inputs.birthday }}
           token: ${{ secrets.MARKDOWN_TOKEN || github.token }}
 
       # Authored by the kit's author and committed by the bot, so the page

@@ -46,6 +46,13 @@ inputs:
     description: "How long each holiday's set is up, 3 to 7 days. Empty reads the settings."
     required: false
     default: ''
+  birthday:
+    description: >-
+      'false' keeps the Birthday set away. On a profile, the person's birthday:
+      a month and a day as 03-14, or the whole date as 1990-03-14 for their age.
+      Empty reads the settings, whose default is on.
+    required: false
+    default: ''
   token:
     description: >-
       The token the run measures with. GITHUB_TOKEN reads everything public;
@@ -86,6 +93,7 @@ runs:
         KIT_SIGN: ${{ inputs.sign }}
         KIT_HOLIDAYS: ${{ inputs.holidays }}
         KIT_HOLIDAY_DAYS: ${{ inputs.holiday-days }}
+        KIT_BIRTHDAY: ${{ inputs.birthday }}
         KIT_PATH: ${{ github.action_path }}
         MARKDOWN_TOKEN: ${{ inputs.token }}
       run: |
@@ -115,6 +123,7 @@ runs:
         if [ -n "$KIT_SIGN" ]; then args+=( --input "sign=$KIT_SIGN" ); fi
         if [ -n "$KIT_HOLIDAYS" ]; then args+=( --input "holidays=$KIT_HOLIDAYS" ); fi
         if [ -n "$KIT_HOLIDAY_DAYS" ]; then args+=( --input "holiday-days=$KIT_HOLIDAY_DAYS" ); fi
+        if [ -n "$KIT_BIRTHDAY" ]; then args+=( --input "birthday=$KIT_BIRTHDAY" ); fi
         msg="$RUNNER_TEMP/markdown-commit.txt"
         rm -f "$msg"
         if [ "$KIT_COMMAND" = "run" ]; then

@@ -39,9 +39,29 @@ class SettingsTest(unittest.TestCase):
                                                                        "holidays": "false"})
         self.assertEqual((cfg["theme"], cfg["holiday_days"], cfg["holidays"]), ("blackprint", 4, False))
 
-    def test_the_stub_can_only_set_its_five_inputs(self):
+    def test_the_stub_can_only_set_its_six_inputs(self):
         self.refuses("the stub has no input 'timezone'", None, {"timezone": "UTC"})
-        self.assertEqual(S.INPUTS, ("mode", "theme", "sign", "holidays", "holiday_days"))
+        self.assertEqual(S.INPUTS, ("mode", "theme", "sign", "holidays", "holiday_days", "birthday"))
+
+    def test_a_birthday_is_on_off_a_month_and_a_day_or_the_whole_date(self):
+        self.assertIs(self.check()["birthday"], True)
+        self.assertIs(self.check({"birthday": False})["birthday"], False)
+        self.assertEqual(self.check({"birthday": "3-14"})["birthday"], "03-14")
+        self.assertEqual(self.check({"birthday": "02-29"})["birthday"], "02-29")
+        self.assertEqual(self.check({"birthday": "1990-03-14"})["birthday"], "1990-03-14")
+        self.assertEqual(self.check({"birthday": "2004-02-29"})["birthday"], "2004-02-29")
+        self.assertEqual(self.check({"birthday": "03-14"}, {"birthday": "false"})["birthday"], False)
+        self.assertEqual(self.check(None, {"birthday": "1990-03-14"})["birthday"], "1990-03-14")
+
+    def test_a_birthday_that_is_no_day_is_refused_without_repeating_it(self):
+        for bad, words in (("1999-02-29", "not a day of the calendar"), ("02-30", "not a day of the calendar"),
+                           ("14-03", "not a day of the calendar"), ("03/14/1990", "year first"),
+                           ("1850-03-14", "1900 or later"), ("the fourteenth", "expected true, false"),
+                           (314, "expected true, false")):
+            with self.assertRaises(S.SettingsError) as caught:
+                self.check({"birthday": bad})
+            self.assertIn(words, str(caught.exception), bad)
+            self.assertNotIn(str(bad), str(caught.exception), bad)
 
     def test_a_sign_is_one_of_the_twelve_whatever_its_case(self):
         self.assertEqual(self.check()["sign"], "")
