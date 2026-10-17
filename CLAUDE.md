@@ -26,6 +26,13 @@ twelve different worlds drawn by the same hand.
 - A new or moved game file joins LICENSE-GAMES' list of paths in the same commit, and a game source file carries
   `SPDX-License-Identifier: LicenseRef-Proprietary`, never MIT.
 
+## Nothing private is ever named here
+
+This repository is public, and so is everything it publishes. No private repository of this account is ever named,
+linked or described here: not in a file, a commit message, a pull request's title or description, an issue, a
+comment, a release note or a workflow's output. Speak of one by its role, never by its name, and read every diff and
+message for one before it goes out.
+
 ## Working here
 
 - The kit is standard-library Python. Run Python with the GitHub tokens unset:

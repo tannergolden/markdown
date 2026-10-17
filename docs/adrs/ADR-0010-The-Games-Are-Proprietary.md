@@ -40,8 +40,8 @@ _All rights reserved. No permission given. No AI reproduction._
 This repository was published under the MIT License as a whole: the kit
 anyone may use, and with it everything that draws the games on the owner's
 profile, their boards, pieces, Hall of Fame, replays and designs. The owner
-asked that everything about the games, here and in tannergolden/cheat and
-tannergolden/play, be for the owner alone: never reusable or resellable, with
+asked that everything about the games, here and in tannergolden/play, be for
+the owner alone: never reusable or resellable, with
 no permission ever given to anyone, and never reproduced by an AI, in a
 licence that reads as one. The kit itself is not about the games.
 
@@ -106,7 +106,7 @@ licence that reads as one. The kit itself is not about the games.
 ## 🔗 Traceability & Links
 
 - The licence itself, at the root of this repository
-- The same licence in tannergolden/cheat, tannergolden/play and
+- The same licence in tannergolden/play and
   tannergolden/markdown, each over its own games' materials
 
 ### 🔗 See also
