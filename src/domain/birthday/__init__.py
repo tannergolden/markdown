@@ -110,9 +110,10 @@ def on(today: dt.date, *, given: str = "", born: dt.date | None = None) -> Party
 
 
 def ordinal(n: int) -> str:
-    """A number as an ordinal, the way a birthday is counted: 1st, 2nd, 3rd, 11th, 22nd."""
-    tail = "th" if 10 <= n % 100 <= 20 else {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
-    return f"{n}{tail}"
+    """A number as an ordinal, the way a birthday is counted: 1st, 2nd, 3rd, 11th, 22nd. Each takes the end of its
+    word: first, second, third, and fourth for the rest."""
+    word = "fourth" if 10 <= n % 100 <= 20 else {1: "first", 2: "second", 3: "third"}.get(n % 10, "fourth")
+    return f"{n}{word[-2:]}"
 
 
 def drawn_by(held: str | None):
