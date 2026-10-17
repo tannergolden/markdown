@@ -1071,10 +1071,11 @@ def wrapping(i: int, xx, yy, y0, lift, night) -> str:
 
 def gift_cell(q: Pix, ox, oy, night):
     """The 11 by 15 cell a counter's digit sits in: a little gift box, its lid a strip of ribbon-tied strawberry over a
-    cream body, lit on its left."""
+    cream body, lit on its left. The body's face is laid on the layer beneath, so the digit set on it always shows,
+    whatever order the file writes its shapes in."""
     k = dim(night)
     body, edge = (PL[2], PL[4]) if night else (CR[6], CR[4])
-    q.rect(ox, oy + 3, 11, 12, body)
+    q.rect(ox, oy + 3, 11, 12, body, L="far")
     q.box(ox, oy + 3, 11, 12, edge)
     for x in range(ox - 1, ox + 12):
         q.px(x, oy + 1, S[(5 if x < ox + 9 else 3) + k])

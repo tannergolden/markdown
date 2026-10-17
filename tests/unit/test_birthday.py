@@ -117,6 +117,14 @@ class TheSet(unittest.TestCase):
             self.assertGreater(len(inked), 60, w)
             self.assertTrue(all(5 <= y <= 20 for _, y in inked), w)
 
+    def test_a_counters_digit_is_never_covered_by_its_gift_box(self):
+        for night in (False, True):
+            q = Pix(40, 40)
+            B.drawn_by("birthday").counter_cell(q, 10, 10, night)
+            digit = {(x, y) for x in range(13, 18) for y in range(15, 22)}   # where `counters` letters it
+            self.assertFalse(digit & set(q.layers["base"]), night)
+            self.assertTrue(digit <= set(q.layers["far"]), night)
+
     def test_the_candles_blow_out_once_a_loop_in_a_moving_file_and_stay_lit_in_a_still_one(self):
         held = B.drawn_by("birthday:2026-03-14:7")
         from domain.banners import sample
