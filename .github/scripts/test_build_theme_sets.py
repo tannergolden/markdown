@@ -116,9 +116,10 @@ class TestFiles(unittest.TestCase):
 
 
 def pixel_sets() -> tuple[list[str], list[str]]:
-    """The labels the sets a game is drawn in carry: each holiday's set by its name, then each design of the medieval
-    collection by its month."""
+    """The labels the sets a game is drawn in carry: each holiday's set by its name and the Birthday set after them,
+    then each design of the medieval collection by its month."""
     sets = [builder.holidays.NAMES[k] for k in builder.holidays.KEYS if k in builder.holidays.SETS]
+    sets.append(f'the {builder.birthday.NAME} set')
     medieval = builder.collections.COLLECTIONS['medieval']
     return sets, [f'{builder.collections.MONTHS[i]}: {builder.collections.name_of(k)}'
                   + (", the profile's" if k == builder.PROFILE_LOOK else '') for i, k in enumerate(medieval.keys)]
