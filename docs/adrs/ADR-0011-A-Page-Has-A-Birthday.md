@@ -83,7 +83,9 @@ falls on a holiday, and what a person gives away by naming it.
 - **The year is the person's to give.** Without it the cake carries five slim
   candles and the page says nothing of anyone's age. With it the cake carries
   the age in number candles, as a repository's always does, and the commit says
-  which birthday it is. The settings file is as public as the page, so the
+  which birthday it is. The cake holds an age up to 999, three number candles,
+  so a whole date's year may go back that far, and a year that would make the
+  page older fails the run. The settings file is as public as the page, so the
   documentation says that a year written there can be read by anyone. No
   message the kit prints repeats what was written.
 - **From the first anniversary.** A birthday whose year is known is celebrated

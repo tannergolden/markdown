@@ -139,9 +139,12 @@ def celebrated(cfg: dict, mode: str, today: dt.date, born: dt.date | None) -> bi
                                      "false, or leave it out")
     if given is False:
         return None
-    if mode == "repository":
-        return birthday.on(today, born=born)
-    return birthday.on(today, given=given) if isinstance(given, str) else None
+    try:
+        if mode == "repository":
+            return birthday.on(today, born=born)
+        return birthday.on(today, given=given) if isinstance(given, str) else None
+    except birthday.BirthdayError as exc:
+        raise settings.SettingsError(str(exc)) from None
 
 
 def settle(root: Path, cfg: dict, *, mode: str, subject: str, here: str, today: dt.date, lk: dict,

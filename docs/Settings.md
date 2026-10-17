@@ -247,7 +247,9 @@ it: the settings can turn it off, but never name another day. GitHub keeps no
 birthday for a person, so a profile has one only once its settings give it.
 The year is up to the person: the settings file is as public as the page, so
 a year written there, and the age the page draws from it, can be read by
-anyone. A February 29 birthday is kept on February 28 in a common year.
+anyone. The cake holds an age up to 999 in three number candles, so a whole
+date's year may go back that far, and a year that would make the page older
+fails the run. A February 29 birthday is kept on February 28 in a common year.
 
 `birthday: false` keeps the set away, and it has a switch of its own:
 `holidays: false` leaves the birthday on. The commit says when the set goes up,

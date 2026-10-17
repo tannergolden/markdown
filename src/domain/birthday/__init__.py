@@ -37,7 +37,7 @@ import re
 from dataclasses import dataclass
 
 KEY, NAME = "birthday", "Birthday"
-FIRST_YEAR = 1900       # the earliest year a whole birthday may give
+OLDEST = 999            # the oldest age a cake holds: three number candles
 _GIVEN = re.compile(r"(?:(\d{4})-)?(\d{1,2})-(\d{1,2})")
 
 
@@ -65,8 +65,6 @@ def check(value: object) -> bool | str:
         dt.date(year or 2024, month, day)            # 2024 is a leap year, so February 29 is a day without a year
     except ValueError:
         raise BirthdayError("birthday: that is not a day of the calendar") from None
-    if year is not None and year < FIRST_YEAR:
-        raise BirthdayError(f"birthday: a whole date's year is {FIRST_YEAR} or later")
     return (f"{year:04d}-" if year is not None else "") + f"{month:02d}-{day:02d}"
 
 
@@ -96,12 +94,16 @@ class Party:
 def on(today: dt.date, *, given: str = "", born: dt.date | None = None) -> Party | None:
     """The birthday the page celebrates on `today`, or None: a person's, on the day `given`, a month and a day or the
     whole date; a repository's, on the day it was `born`. A birthday whose year is known is celebrated from its first
-    anniversary on, and turns a year older each time."""
+    anniversary on, and turns a year older each time, up to the oldest age a cake holds: a year that would make it
+    older is a BirthdayError, whichever day it is asked on."""
     if given:
         *year, month, day = (int(n) for n in given.split("-"))
         if not year:
             return Party(today) if falls(month, day, today.year) == today else None
         born = dt.date(year[0], month, day)
+    if born and today.year - born.year > OLDEST:
+        raise BirthdayError(f"birthday: a cake holds an age up to {OLDEST}, so a whole date's year is "
+                            f"{today.year - OLDEST} or later")
     if born and today.year > born.year and falls(born.month, born.day, today.year) == today:
         return Party(today, today.year - born.year)
     return None
