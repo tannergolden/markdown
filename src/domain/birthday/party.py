@@ -4,17 +4,19 @@
 
 Titles are piped in strawberry frosting over a line of chocolate, with sprinkles on them; piped icing frames every
 sheet, the shell border round a cake, and bunting is hung along the top, its middle pennants spelling HAPPY BIRTHDAY.
-The headers stand on a tablecloth. H2, the kit's default, is the party: the cake on its stand, a strawberry tier
-swagged in cream and a vanilla tier ringed in mint ribbon, its candles lit, presents stacked beside it and paper
-honeycomb balls hung over it; once a loop, in a moving file, a breath blows the candles out, smoke curls up from the
-wicks, and they are lit again. H1 has the presents on its left, the top one jumping open now and then in a burst of
-sprinkles, and a sundae and a cupcake on its right; H3 a cupcake with one candle burning and a present. By day the
-paper is cream, dotted in the frostings' pastels; by night the lights are off and the candles light the room.
+The headers stand on a tablecloth, and every one has the cake. H2, the kit's default, is the party: the cake on its
+glass stand, a strawberry tier under a drip of cream with rosettes and strawberries on its ledge and a mint tier under
+a drip of strawberry, its candles lit, presents stacked beside it, a donkey piñata hung over them and a paper fan
+pinned up by the frame. H1 has the piñata over the presents on its left, the top one jumping open now and then in a
+burst of sprinkles, and on its right the cake in one tier under a paper fan, a cupcake beside it; H3 the cake in one
+tier with a present. Once a loop, in a moving file, a breath sweeps in, the flames bend away from it and go out, smoke
+curls up from the wicks, and they are lit again. By day the paper is cream, dotted in the frostings' pastels; by night
+the lights are off and the candles light the room.
 
-The cake carries the page's age in number candles, as many figures as it has, whenever the age is known: always for a
-repository, and for a person who gives the year they were born. It is the age of the birthday the set is handed
-(`age`), and the sample's when it is handed no day. A person who gives only a month and a day gets five slim candles,
-and the page says nothing of how old they are.
+The cake carries the page's age in gold number candles, as many figures as it has, up to 999, whenever the age is
+known: always for a repository, and for a person who gives the year they were born. It is the age of the birthday the
+set is handed (`age`), and the sample's when it is handed no day. A person who gives only a month and a day gets five
+slim candles, and the page says nothing of how old they are.
 """
 from __future__ import annotations
 
@@ -59,9 +61,10 @@ class Birthday(Holiday):
         )
 
     def lit(self, night):
-        """Strawberry frosting over the letters, a tone lighter by night so it reads in the dark. By day
-        `title_text` pipes a chocolate edge round them and a shadow under them first."""
-        return dict(paint=A.FROSTING, night=night)
+        """Strawberry frosting over the letters, a tone lighter by night so it reads in the dark, and by night the
+        candles' glow round them. By day `title_text` pipes a chocolate edge round them and a shadow under them
+        first."""
+        return dict(paint=A.FROSTING, night=night, glow=(FL[4], (0.16,)) if night else None)
 
     def paper(self, p, night, uid="p"):
         A.paper(p, night, uid=uid)
@@ -116,34 +119,44 @@ class Birthday(Holiday):
         A.cupcake(p, x + 4, y + 1, "lilac", "strawberry", night, "cherry")
 
     def scene(self, design, p, rule, night, motion):
-        """The party each header stands on (see `_presents`, `_cake` and `_cupcake`)."""
+        """The party each header stands on (see `_presents`, `_cake` and `_little_cake`)."""
         if design == "H1":
             return self._presents(p, rule, night, motion)
         if design == "H2":
             return self._cake(p, rule, night, motion)
-        return self._cupcake(p, rule, night, motion)
+        return self._little_cake(p, rule, night, motion)
 
     def _presents(self, p, rule, night, motion):
-        """H1: on the left three presents stacked, the top one jumping open now and then in a burst of sprinkles, a
-        honeycomb ball hung over them; on the right a sundae and a cupcake with its candle burning, another ball hung
-        over them."""
+        """H1: on the left a donkey piñata hung over three presents stacked, the top one jumping open now and then in
+        a burst of sprinkles; on the right a paper fan pinned over the cake, its candles lit, and a cupcake beside it.
+        Where the words leave the cake no room, a cupcake with a candle burning stands in for it."""
         base = rule - 1
         A.tablecloth(p, 5, 62, base, night, seed=2)
         A.tablecloth(p, 352, 411, base, night, seed=6)
-        for (fx, fy, fam) in ((46, 34, "lilac"), (395, 31, "mint")):
-            if p.clear_of_words(fx - 10, fy - 10, fx + 11, fy + 11):
-                A.paper_fan(p, fx, fy, 8, fam, night)
+        if p.clear_of_words(10, 22, 44, 47):
+            A.pinata(p, 12, 25, night, L=A.bobbing(p, motion, "bob1", (0, 0, 1, 1, 0, 0, 0, 1), dur=4.4))
+        if p.clear_of_words(385, 21, 406, 42):
+            A.paper_fan(p, 395, 31, 8, "lilac", night)
         A.surprise(p, 10, base, night, motion)
-        A.sundae(p, 370, base, night)
-        wick = A.cupcake(p, 394, base, "sky", "strawberry", night, "candle")
-        A.flame(p, *wick, night, motion=motion, phase=1)
-        for (sx, sr) in ((23, 14), (370, 6), (394, 5)):
-            A.contact(p, sx, base, sr)
+        if p.clear_of_words(352, base - 18, 364, base):
+            A.cupcake(p, 358, base, "lemon", "mint", night, "cherry")
+            A.contact(p, 358, base, 5)
+        if p.clear_of_words(365, base - 46, 408, base):
+            wicks = A.cake(p, 387, base, night, motion, self._age(), tiers=1)
+            A.contact(p, 387, base, 8)
+            A.light_pool(p, 387, base, 26, 3, night)
+            A.blown(p, wicks, night, motion)
+        else:
+            wick = A.cupcake(p, 394, base, "sky", "strawberry", night, "candle")
+            A.flame(p, *wick, night, motion=motion, phase=1)
+            A.contact(p, 394, base, 5)
+        A.contact(p, 23, base, 14)
         return [(5, 62), (352, 411)]
 
     def _cake(self, p, rule, night, motion):
-        """H2: the cake on its stand with its candles lit, presents stacked on its left and a cupcake on its right,
-        two honeycomb balls hung over them; in a moving file a breath blows the candles out once a loop."""
+        """H2: the cake on its glass stand with its candles lit, presents stacked on its left and a cupcake on its
+        right, a donkey piñata hung over the presents and a paper fan pinned up by the frame; in a moving file a
+        breath blows the candles out once a loop."""
         base = rule - 1
         A.tablecloth(p, 310, 411, base, night, seed=4)
         if p.clear_of_words(311, 20, 346, 48):
@@ -152,41 +165,42 @@ class Birthday(Holiday):
             A.paper_fan(p, 400, 28, 8, "sky", night)
         A.present(p, 314, base, 20, 14, "sky", "strawberry", night, wrap="dots", bow=False)
         A.present(p, 317, base - 14, 14, 10, "lemon", "lilac", night, wrap="stripes")
-        wicks = A.cake(p, 369, base, night, motion, self._age())
+        wicks = A.cake(p, 367, base, night, motion, self._age())
         A.cupcake(p, 404, base, "mint", "strawberry", night, "cherry")
-        for (sx, sr) in ((324, 11), (369, 11), (404, 5)):
+        for (sx, sr) in ((324, 11), (367, 9), (404, 5)):
             A.contact(p, sx, base, sr)
-        A.light_pool(p, 369, base, 36, 3, night)
+        A.light_pool(p, 367, base, 36, 3, night)
         A.blown(p, wicks, night, motion)
         return [(310, 411)]
 
-    def _cupcake(self, p, rule, night, motion):
-        """H3: a cupcake with its one candle burning, a present beside it and a cupcake with a cherry."""
+    def _little_cake(self, p, rule, night, motion):
+        """H3: the cake on its stand, its candles lit, and a present beside it; in a moving file a breath blows the
+        candles out once a loop."""
         base = rule - 1
-        A.tablecloth(p, 352, 411, base, night, seed=5)
-        A.present(p, 357, base, 12, 9, "lilac", "lemon", night, wrap="stripes")
-        wick = A.cupcake(p, 382, base, "sky", "strawberry", night, "candle")
-        A.flame(p, *wick, night, motion=motion, phase=2)
-        A.cupcake(p, 399, base, "lemon", "mint", night, "cherry")
-        for (sx, sr) in ((363, 7), (382, 5), (399, 5)):
+        A.tablecloth(p, 350, 411, base, night, seed=5)
+        A.present(p, 354, base, 11, 9, "lilac", "strawberry", night, wrap="stripes")
+        wicks = A.cake(p, 388, base, night, motion, self._age(), tiers=1)
+        for (sx, sr) in ((359, 6), (388, 8)):
             A.contact(p, sx, base, sr)
-        return [(352, 411)]
+        A.light_pool(p, 388, base, 26, 3, night)
+        A.blown(p, wicks, night, motion)
+        return [(350, 411)]
 
     def _age(self):
         """The age the cake carries: the birthday's when it is known, the sample's when the set is told no day."""
         return self.age if self.day else SAMPLE_AGE
 
     def scene_narrow(self, design, p, y, night):
-        """On a phone: H1's presents and a cupcake on the rule at `y`; H2's candle beside SECTION A-A, and a slice
+        """On a phone: H1's presents and two cupcakes on the rule at `y`; H2's paper fan by the title, and a slice
         of cake that stands on the figures' rule once it is drawn (see `rule_decor`); H3's cupcake beside the
-        title."""
+        title. Each stands only where the words leave it room."""
         if design == "H1":
             base = y - 1
             A.tablecloth(p, 5, 42, base, night, seed=7)
             A.tablecloth(p, 138, NARROW - 4, base, night, seed=9)
             if p.clear_of_words(7, y - 24, 38, y):
                 A.present(p, 9, base, 14, 10, "mint", "strawberry", night, wrap="dots", bow=False)
-                A.present(p, 11, base - 10, 10, 7, "lilac", "lemon", night, wrap="stripes")
+                A.present(p, 11, base - 10, 10, 7, "lemon", "lilac", night, wrap="stripes")
                 A.contact(p, 16, base, 8)
             if p.clear_of_words(142, y - 22, NARROW - 6, y):
                 wick = A.cupcake(p, 150, base, "sky", "strawberry", night, "candle")

@@ -234,10 +234,10 @@ Thanksgiving and Christmas. A set redraws the banners, the badges, the
 elements and the trophy case as pixel art, in the same files.
 
 On the page's birthday the Birthday set takes it for the day, over a
-holiday's set too: the cake with its candles lit, presents and a piñata,
-and HAPPY BIRTHDAY spelled across the bunting of every header. A
+holiday's set too: a drip cake with its candles lit on every header,
+presents and a piñata, and HAPPY BIRTHDAY spelled across the bunting. A
 repository's birthday is the day GitHub created it, and its cake carries
-its age in number candles. A person gives theirs in the settings,
+its age in gold number candles. A person gives theirs in the settings,
 `birthday: 03-14`, or with the year, `birthday: 1990-03-14`, for their
 age. `birthday: false` keeps it away. See
 [Birthday](docs/Settings.md#-birthday).

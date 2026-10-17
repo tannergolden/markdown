@@ -92,15 +92,16 @@ class TheSet(unittest.TestCase):
             self.assertEqual(len(A.candle_row(p, 60, 60, False, age)), wicks, age)
 
     def test_three_figures_stand_on_the_top_tier_with_their_flames_apart(self):
-        for age in (100, 888, 999):
-            p = Pix(415, 140)
-            wicks = A.cake(p, 200, 130, False, False, age)
-            tier = [x for (x, y), c in p.layers["base"].items() if y == wicks[0][1] + 12]
-            figures = [x for (x, y), c in p.layers["base"].items() if wicks[0][1] + 2 <= y <= wicks[0][1] + 11]
-            self.assertGreaterEqual(min(figures), min(tier), age)
-            self.assertLessEqual(max(figures), max(tier), age)
-            gaps = [b[0] - a[0] for a, b in zip(wicks, wicks[1:])]
-            self.assertTrue(all(g >= 6 for g in gaps), (age, gaps))
+        for tiers in (2, 1):
+            for age in (100, 888, 999):
+                p = Pix(415, 140)
+                wicks = A.cake(p, 200, 130, False, False, age, tiers=tiers)
+                tier = [x for (x, y), c in p.layers["base"].items() if y == wicks[0][1] + 12]
+                figures = [x for (x, y), c in p.layers["base"].items() if wicks[0][1] + 2 <= y <= wicks[0][1] + 11]
+                self.assertGreaterEqual(min(figures), min(tier), (tiers, age))
+                self.assertLessEqual(max(figures), max(tier), (tiers, age))
+                gaps = [b[0] - a[0] for a, b in zip(wicks, wicks[1:])]
+                self.assertTrue(all(g >= 6 for g in gaps), (tiers, age, gaps))
         self.assertEqual(B.drawn_by("birthday")._age(), SAMPLE_AGE)
         self.assertIsNone(B.drawn_by("birthday:2026-03-14")._age())
 
@@ -113,9 +114,12 @@ class TheSet(unittest.TestCase):
         for w in (415, 180):
             p = Pix(w, 40)
             A.bunting(p, 5, w - 5, 5, False, span=41 if w > 180 else 34)
-            inked = [(x, y) for (x, y), c in p.layers["base"].items() if c == A.C["ink"]]
-            self.assertGreater(len(inked), 60, w)
-            self.assertTrue(all(5 <= y <= 20 for _, y in inked), w)
+            named = {sid: key for key, sid in p.syms.items()}
+            letters = sorted((x, named[sid][1], y) for stroke, sid, x, y, _ in p.uses["base~"]
+                             if stroke == A.C["ink"] and named[sid][0] == "pennant letter")
+            self.assertEqual("".join(ch for _, ch, _ in letters), A.GREETING.replace(" ", ""), w)
+            self.assertTrue(all(5 <= y <= 20 - 7 for *_, y in letters), w)
+            self.assertGreater(p.meta["base~"][0], p.meta["base"][0], "the letters hang over their pennants")
 
     def test_a_counters_digit_is_never_covered_by_its_gift_box(self):
         for night in (False, True):
@@ -125,18 +129,20 @@ class TheSet(unittest.TestCase):
             self.assertFalse(digit & set(q.layers["base"]), night)
             self.assertTrue(digit <= set(q.layers["far"]), night)
 
-    def test_the_candles_blow_out_once_a_loop_in_a_moving_file_and_stay_lit_in_a_still_one(self):
+    def test_every_headers_candles_blow_out_once_a_loop_in_a_moving_file_and_stay_lit_in_a_still_one(self):
         held = B.drawn_by("birthday:2026-03-14:7")
         from domain.banners import sample
         from domain.banners.compose import compose
         from domain.banners.designs import DESIGNS, render
         from domain.banners.settings import check
         h, _, _ = compose(sample.SAMPLES["repository"], check({}) | {"theme": "standard", "holiday": held.key + ":2026-03-14:7"})
-        files = render(DESIGNS["H2"], h)
-        moving, still = files["header-day.svg"], files["header-still-day.svg"]
-        self.assertIn(f'keyTimes="0;{A.num(A.BLOW_OUT)};{A.num(A.BLOW_ON)}"', moving)
-        self.assertIn("birthday H2 day", moving)
-        self.assertNotIn("<animate", still)
+        for design in ("H1", "H2", "H3"):
+            files = render(DESIGNS[design], h)
+            moving, still = files["header-day.svg"], files["header-still-day.svg"]
+            self.assertIn(f'keyTimes="0;{A.num(A.BLOW_LEAN)};{A.num(A.BLOW_ON)}"', moving, design)
+            self.assertIn(f'keyTimes="0;{A.num(A.BLOW_LEAN)};{A.num(A.BLOW_OUT)}"', moving, design)
+            self.assertIn(f"birthday {design} day", moving)
+            self.assertNotIn("<animate", still, design)
 
 
 class ThePage(unittest.TestCase):

@@ -5,19 +5,20 @@
 The paper is a party's: cream by day, dotted with the frostings' pastels, and by night a room with the lights off,
 where the candles are the only light. The frame is piped icing, the shell border round a cake, flecked with
 sprinkles; bunting is hung along the top, and across the middle of every header its pennants spell HAPPY BIRTHDAY.
-The scenes are what only a birthday has: the cake and its candles, presents, cupcakes, a sundae, paper honeycomb
-balls, and sprinkles over everything. Every sprite is shaded from the one light in the upper left on the set's own
-ramps, and by night every candle's flame lights what stands near it.
+The scenes are what only a birthday has: the cake and its candles, presents, cupcakes, a donkey piñata, paper fans,
+and sprinkles over everything. Every sprite is shaded from the one light in the upper left on the set's own ramps,
+and by night every candle's flame lights what stands near it.
 
-A repository's cake carries its age in number candles. Once a loop, in a moving file, a breath blows the candles out:
-smoke curls up from the wicks, and they light again.
+The cake is a drip cake on a glass stand, and carries the page's age in gold number candles, up to three figures.
+Once a loop, in a moving file, a breath blows the candles out: the flames bend away from it and go out, smoke curls
+up from the wicks, and they light again.
 """
 from __future__ import annotations
 
 import math
 import random
 
-from ..holidays.pixel import BLINKS, FONTS, LX, LY, Paint, Pix, fold, num, sphere
+from ..holidays.pixel import BLINKS, FONTS, Paint, Pix, fold, num, sphere
 from .palette import C, GROUND, NIGHT_SKY, PASTELS, RAMP, X, step
 
 S, CR, CO, MI, LE, LI, SK, FL, CH, PL = (RAMP[n] for n in ("strawberry", "cream", "cocoa", "mint", "lemon", "lilac",
@@ -217,27 +218,41 @@ GREETING = "HAPPY BIRTHDAY"
 
 def _pennant(p: Pix, cx, top, rows, fam, night, letter=""):
     """One pennant hanging from row `top`, centred on `cx`: lit down its left edge, shaded down its right and at its
-    tip, its hem a tone lighter; a letter of the greeting, when it carries one, in dark ink across its upper half."""
-    R = RAMP[fam]
-    t = 5 + dim(night)
-    for j, wd in enumerate(rows):
-        x0 = cx - wd // 2
-        for i in range(wd):
-            c = R[t]
-            if j == 0:
-                c = R[min(6, t + 1)]
-            elif i == 0:
-                c = R[min(6, t + 1)]
-            elif i == wd - 1 or j == len(rows) - 1:
-                c = R[t - 1]
-            p.px(x0 + i, top + j, c)
+    tip, its hem a tone lighter; a letter of the greeting, when it carries one, in dark ink across its upper half.
+    Each pennant is drawn once a file and hung again and again, and so is each letter, on the layer just over the
+    pennants: a file writes the shapes of one ink together, so on the pennants' own layer a letter in the words' ink
+    could fall under its pennant."""
+    key = ("pennant", rows, fam, night)
+    if key not in p.syms:
+        R = RAMP[fam]
+        t = 5 + dim(night)
+        cells = {}
+        for j, wd in enumerate(rows):
+            for i in range(wd):
+                c = R[t]
+                if j == 0 or i == 0:
+                    c = R[min(6, t + 1)]
+                elif i == wd - 1 or j == len(rows) - 1:
+                    c = R[t - 1]
+                cells[(i - wd // 2, j)] = c
+        p.symbol(key, cells)
+    p.use(key, cx, top)
     if letter:
-        glyphs = FONTS["57"][0]
-        g = glyphs[letter]
-        lx = cx - g[0] // 2
-        for r, cols in enumerate(g[1]):
-            for col in cols:
-                p.px(lx + col, top + 1 + r, C["ink"])
+        g = FONTS["57"][0][letter]
+        mark = ("pennant letter", letter)
+        if mark not in p.syms:
+            p.symbol(mark, {(col, r): 1 for r, cols in enumerate(g[1]) for col in cols}, mono=True)
+        p.use(mark, cx - g[0] // 2, top + 1, p.layer("base~", z=0.3), stroke=C["ink"])
+
+
+def _fairy_lights(p: Pix, xa, xb, y, sag, seed):
+    """Fairy lights wound along a swag's twine by night, from `xa` to `xb`: a warm point every third pixel, each with
+    a faint glow over it, twinkling on three phases in a moving file, so they never all go dark."""
+    for i, x in enumerate(range(xa + 2, xb - 1, 3)):
+        yy = _sag(x, xa, xb, y, sag)
+        L = p.twinkle(i + seed)
+        p.px(x, yy, FL[6] if (i + seed) % 2 else X["star_pale"], L)
+        p.apx(x, yy - 1, FL[5], 0.3, L)
 
 
 def _sag(x, xa, xb, y, sag):
@@ -267,9 +282,9 @@ def _tack(p: Pix, x, y, night):
 
 
 def bunting(p: Pix, x0, x1, y, night, seed=0, span=41, sag=4, greet=True):
-    """Bunting along the top: triangular pennants in the frostings' pastels hung on twine, swagged from bow to bow.
-    Across the middle, when the room allows, a wider run of pennants spells HAPPY BIRTHDAY, a letter each, hung on a
-    shallower swag of its own."""
+    """Bunting along the top: triangular pennants in the frostings' pastels hung on twine, swagged from bow to bow,
+    and by night fairy lights wound along the twine. Across the middle, when the room allows, a wider run of
+    pennants spells HAPPY BIRTHDAY, a letter each, hung on a shallower swag of its own."""
     words = GREETING.split()
     step_ = 10
     banner_w = sum(len(word) for word in words) * step_ - 1 + 6 * (len(words) - 1)
@@ -293,11 +308,15 @@ def bunting(p: Pix, x0, x1, y, night, seed=0, span=41, sag=4, greet=True):
                 _pennant(p, x, top, PENNANT, PASTELS[fam_i % len(PASTELS)], night)
                 fam_i += 1
                 x += 9
+            if night:
+                _fairy_lights(p, xa, xb, y, sag, s)
         for xt in sorted({round(a + s * width) for s in range(n + 1)}):
             _tack(p, min(max(xt, x0 + 2), x1 - 3), y, night)
     if len(spans) == 2:
         b0, b1 = spans[0][1], spans[1][0]
         _twine(p, b0, b1, y, 3, night)
+        if night:
+            _fairy_lights(p, b0, b1, y, 3, 1)
         x, i = b0 + 3 + 4, 0
         for word in words:
             for ch in word:
@@ -412,9 +431,11 @@ def lamplight(p: Pix, night: bool):
             p.apx(x, y, FL[5], a, L)
 
 
-# A breath blows the cake's candles out once a loop: lit, then out with smoke curling up from the wicks, then lit
-# again. As shares of the loop: when they go out, and when they are lit again.
-BLOW_DUR, BLOW_OUT, BLOW_ON = 11.0, 0.8, 0.95
+# A breath blows the cake's candles out once a loop: lit, then a breath sweeps in from the left and the flames bend
+# away from it, then out with smoke curling up from the wicks, then lit again. As shares of the loop: when the breath
+# sets off, when the flames bend, when they go out, and when they are lit again.
+BLOW_DUR, BLOW_BREATH, BLOW_LEAN, BLOW_OUT, BLOW_ON = 11.0, 0.7, 0.75, 0.8, 0.95
+BREATH = ((0, 0), (1, 0), (2, 0), (3, -1), (1, 3), (2, 3), (3, 3), (4, 4))   # two curls of air, as (dx, dy)
 SMOKE = (                                   # each frame's wisp, as (dx, dy, alpha) above the wick
     ((0, 0, 0.7), (0, -1, 0.55), (1, -2, 0.4)),
     ((0, -2, 0.55), (1, -3, 0.5), (1, -4, 0.4), (0, -5, 0.3)),
@@ -436,16 +457,24 @@ def _glows(cx, cy, night, big=False) -> str:
     return "".join(out)
 
 
+def _bent(dx, dy):
+    """Where a flame's pixel at (dx, dy) stands while a breath from the left bends it over: the higher, the further."""
+    return dx + (0 if dy >= -1 else 1 if dy >= -3 else 2), dy
+
+
 def blown(p: Pix, wicks, night, motion, reach=20):
     """The cake's flames, one on each wick in `wicks` (x, y of the pixel just above it), with their glow and the light
-    they lay on the cake, drawn as one group: in a moving file it flickers, and once a loop a breath blows it out,
-    smoke curls up from every wick for a moment, a spark catches, and the candles are lit again. The still file keeps
-    them lit. Called once everything near the candles stands, so the light falls on it."""
-    body, flick, glows = {}, {}, []
+    they lay on the cake, drawn as one group: in a moving file it flickers, and once a loop a breath sweeps in from
+    the left, the flames bend away from it and go out, smoke curls up from every wick for a moment, a spark catches,
+    and the candles are lit again. The still file keeps them lit. Called once everything near the candles stands, so
+    the light falls on it."""
+    body, bent, flick, glows = {}, {}, {}, []
     own = set()
     for (x, y) in wicks:
         for (dx, dy, t) in BIG_FLAME:
             body[(x + dx, y + dy)] = FL[t]
+            bx, by = _bent(dx, dy)
+            bent[(x + bx, y + by)] = FL[t]
             own.add((x + dx, y + dy))
         flick[(x + BIG_TIP[0], y + BIG_TIP[1])] = FL[BIG_TIP[2]]
         flick[(x - 1, y - 4)] = FL[5]
@@ -465,9 +494,19 @@ def blown(p: Pix, wicks, night, motion, reach=20):
     inner = (f'<g>{p.markup(flick)}{p.markup(lit)}<animate attributeName="opacity" values="{vals}" keyTimes="{kt}" '
              f'dur="{dur:g}s" repeatCount="indefinite" calcMode="discrete"/></g>')
     moving = (f'<g>{halo}{p.markup(body)}{inner}<animate attributeName="opacity" values="1;0;1" '
-              f'keyTimes="0;{num(BLOW_OUT)};{num(BLOW_ON)}" dur="{num(BLOW_DUR)}s" repeatCount="indefinite" '
+              f'keyTimes="0;{num(BLOW_LEAN)};{num(BLOW_ON)}" dur="{num(BLOW_DUR)}s" repeatCount="indefinite" '
+              f'calcMode="discrete"/></g>'
+              f'<g opacity="0">{halo}{p.markup(bent)}{p.markup(lit)}<animate attributeName="opacity" values="0;1;0" '
+              f'keyTimes="0;{num(BLOW_LEAN)};{num(BLOW_OUT)}" dur="{num(BLOW_DUR)}s" repeatCount="indefinite" '
               f'calcMode="discrete"/></g>')
     p.raw(8, moving, halo + p.markup(body) + p.markup(flick) + p.markup(lit))
+    air, a = (CR[6], 0.45) if night else (SK[4], 0.55)
+    x0, y0 = min(x for x, _ in wicks), min(y for _, y in wicks) - 5
+    share = (BLOW_OUT - BLOW_BREATH) / 3
+    for i in range(3):
+        L = p.seq(f"breath{i}", BLOW_BREATH + i * share, BLOW_BREATH + (i + 1) * share, BLOW_DUR, z=9)
+        for (dx, dy) in BREATH:
+            p.apx(x0 - 16 + 5 * i + dx, y0 + dy, air, a, L)
     smoke = PL[6] if night else CR[1]
     share = (BLOW_ON - BLOW_OUT - 0.02) / len(SMOKE)
     for i, frame in enumerate(SMOKE):
@@ -509,24 +548,22 @@ FIGURES = {
 }
 
 
-def number_candle(p: Pix, x, top, digit: str, fam, night) -> tuple[int, tuple]:
-    """A number candle: the figure `digit` cast in wax, its strokes lit along their top and left and shaded along
-    their foot and right, flecked with glitter, its wick at the top of the figure's middle. Returns its width and where
-    its flame stands."""
-    R = RAMP[fam]
-    k = dim(night)
+def number_candle(p: Pix, x, top, digit: str, night) -> tuple[int, tuple]:
+    """A number candle: the figure `digit` cast in gold wax, its strokes lit along their top and left, shaded along
+    their foot and right and glittering all over, its wick at the top of the figure's middle. The gold is a tone deep
+    by day and by night alike: by day so the figure stands off the cream paper, by night as the flame's light falls on
+    it. Returns its width and where its flame stands."""
+    k = -1
     rows = FIGURES[digit]
     drawn = {(cx, cy) for cy, row in enumerate(rows) for cx, ch in enumerate(row) if ch == "#"}
     cells = {(cx + dx, cy + dy) for (cx, cy) in drawn for dx in (0, 1) for dy in (0, 1)}   # cast thick, as wax is
     for (cx, cy) in cells:
         up, left = (cx, cy - 1) not in cells, (cx - 1, cy) not in cells
         down, right = (cx, cy + 1) not in cells, (cx + 1, cy) not in cells
-        t = 4 + (up or left) - (down or right)
-        if up and left:
-            t = 6
-        if (cx * 3 + cy * 5) % 11 == 0 and t < 6:
-            t += 1                                           # a fleck of glitter
-        p.px(x + cx, top + cy, R[max(1, min(6, t + k))])
+        t = 6 if up and left else 4 + (up or left) - (down or right)
+        if (cx * 3 + cy * 5) % 7 == 0:
+            t = 6                                            # a fleck of glitter
+        p.px(x + cx, top + cy, LE[t + k])
     w = len(rows[0]) + 1
     top_row = min(cx for (cx, cy) in cells if cy == 0)
     mid = x + (top_row + max(cx for (cx, cy) in cells if cy == 0)) // 2
@@ -535,145 +572,156 @@ def number_candle(p: Pix, x, top, digit: str, fam, night) -> tuple[int, tuple]:
 
 
 def candle_row(p: Pix, cx, base, night, age=None):
-    """What stands on a cake's top: a repository's age in number candles, or five slim candles for a person, all
-    standing on row `base`. Returns where each flame stands."""
-    wicks = []
+    """What stands on a cake's top, its foot on row `base`: the page's age in gold number candles, or five slim
+    candles when the age is not known. Returns where each flame stands."""
     if age:
         figures = str(age)
-        fams = ("lilac", "sky", "mint")
-        total = 8 * len(figures) + 2 * (len(figures) - 1)
-        x = cx - total // 2
-        top = base - 10
-        for i, d in enumerate(figures):
-            _, wick = number_candle(p, x, top, d, fams[i % len(fams)], night)
-            wicks.append(wick)
-            x += 10
-        return wicks
-    for i, fam in enumerate(("strawberry", "sky", "lemon", "mint", "lilac")):
-        wicks.append(slim_candle(p, cx - 12 + i * 5, base - 8, 9, fam, night))
-    return wicks
+        x = cx - (10 * len(figures) - 2) // 2
+        return [number_candle(p, x + 10 * i, base - 9, d, night)[1] for i, d in enumerate(figures)]
+    return [slim_candle(p, cx - 12 + i * 5, base - 8, 9, fam, night)
+            for i, fam in enumerate(("strawberry", "sky", "lemon", "mint", "lilac"))]
 
 
 # --------------------------------------------------------------------------- the cake
-def _shells(p: Pix, x0, x1, y, ramp, night, up=True):
-    """A row of piped shells along a tier's edge from `x0` to `x1` on row `y`: a bead every three pixels, lit on its
-    left, the row under it one tone deeper; `up` sets the beads above the row, as a top rim's are."""
-    k = dim(night)
-    for x in range(x0, x1):
-        p.px(x, y, ramp[4 + k])
-        if (x - x0) % 3 == 1:
-            p.px(x, y - 1 if up else y + 1, ramp[6 + k] if (x - x0) % 6 == 1 else ramp[5 + k])
-        elif (x - x0) % 3 == 0:
-            p.px(x, y, ramp[5 + k])
+# The side of a tier, column by column, lit from the upper left: up to each share of its width, the tone it takes.
+SIDE = ((0.06, 4), (0.14, 5), (0.20, 6), (0.34, 5), (0.64, 4), (0.84, 3), (1.01, 2))
 
 
-def tier(p: Pix, cx, bottom, w, h, frosting, piping, night, seed=0, swags=True):
-    """One tier of the cake, `w` wide and `h` tall, its foot on row `bottom`: frosted all round, lit from the left
-    and falling into shade on the right, a rim of piped shells along its top and a bead border along its foot; on
-    the big tier swags of piping looped between little rosettes, with nonpareils between them. Returns its top row."""
-    R, P = RAMP[frosting], RAMP[piping]
+def _side(i, w, y=0):
+    """The tone of column `i` of a side `w` wide on row `y`: its band of SIDE, dithered with the band before where
+    two meet."""
+    t = (i + 0.5) / w
+    before = None
+    for edge, tone in SIDE:
+        if t < edge:
+            if before is not None and (t - before[0]) * w < 1 and (i + y) % 2 == 0:
+                return before[1]
+            return tone
+        before = (edge, tone)
+    return SIDE[-1][1]
+
+
+def drips(w, seed):
+    """How far a tier's glaze runs down each column of its side `w` wide: drips two or three columns wide at uneven
+    gaps and of uneven lengths, each rounded at its end, and between them the lip, a row or two deep."""
+    rnd = random.Random(seed)
+    lens = [rnd.choice((0, 0, 1)) for _ in range(w)]
+    x = rnd.randint(1, 3)
+    while x < w - 2:
+        wd, n = rnd.choice((2, 3, 3)), rnd.choice((2, 3, 4, 5, 6, 7, 4, 3))
+        for j in range(wd):
+            if x + j < w:
+                rounded = j == 1 if wd == 2 else j != 1
+                lens[x + j] = max(lens[x + j], n - (1 if rounded else 0))
+        x += wd + rnd.choice((1, 2, 2, 3, 4))
+    return lens
+
+
+def tier(p: Pix, cx, bottom, w, h, body, glaze, night, seed=0, lift=0, pearls="cream"):
+    """One tier of the cake, `w` wide and `h` tall, its foot on row `bottom`: frosted in `body`, lit from the upper
+    left and rounding into shade on the right (`lift` tones paler), its top seen from a little above and glazed in
+    `glaze`, the glaze running over the rim in drips; sprinkles over its side and piped pearls along its foot.
+    Returns its top row, the far edge of its top: a tier set on it stands two rows below that, on its near rim."""
+    R, G, P = RAMP[body], RAMP[glaze], RAMP[pearls]
     k = dim(night)
     x0, top = cx - w // 2, bottom - h + 1
-    for y in range(top, bottom + 1):
-        for x in range(x0, x0 + w):
-            t = (x - x0 + 0.5) / w
-            lam = max(0.0, (2 * t - 1) * -0.55 + math.sqrt(max(0.0, 1 - (2 * t - 1) ** 2)) * 0.62 + 0.12)
-            tone = 2 + lam * 3.4
-            b = math.floor(tone)
-            if tone - b > 0.62 or (tone - b > 0.38 and (x + y) % 2 == 0):
-                b += 1
-            if x == x0 + w - 1:
-                b = 1
-            p.px(x, y, R[max(1, min(6, b + k))])
-    _shells(p, x0, x0 + w, top, P, night)
-    _shells(p, x0, x0 + w, bottom, P, night, up=False)
-    rnd = random.Random(seed)
-    if swags:
-        gap = 11
-        for xa in range(x0 + 2, x0 + w - 6, gap):
-            xb = min(xa + gap, x0 + w - 3)
-            for x in range(xa, xb + 1):
-                tt = (x - xa) / max(1, xb - xa)
-                yy = top + 3 + round(4 * tt * (1 - tt) * 3)
-                p.px(x, yy, P[6 + k] if x < cx + w // 4 else P[5 + k])
-                p.px(x, yy + 1, step(R[3 + k], -1))
-            fam = ("lemon", "mint", "sky")[(xa // gap) % 3]
-            F = RAMP[fam]
-            for (dx, dy, t) in ((0, -1, 6), (-1, 0, 5), (0, 0, 4), (1, 0, 3), (0, 1, 3)):
-                p.px(xa + dx, top + 3 + dy, F[t + k])
-        for _ in range(w // 3):
-            x, y = rnd.randrange(x0 + 2, x0 + w - 3), rnd.randrange(top + 8, bottom - 2)
-            if p.get(x, y) in R:
-                p.px(x, y, sprinkle_colour(rnd.choice(SPRINKLE_FAMS[:4]), night, rnd.random() < 0.6))
-    else:
-        for _ in range(w // 2):
-            x, y = rnd.randrange(x0 + 2, x0 + w - 3), rnd.randrange(top + 3, bottom - 4)
-            if p.get(x, y) in R:
-                p.px(x, y, sprinkle_colour(rnd.choice(("strawberry", "mint", "sky", "lilac")), night,
-                                           rnd.random() < 0.6))
+    side = top + 3
+    for y in range(side, bottom + 1):
+        for i in range(w):
+            p.px(x0 + i, y, R[max(1, min(6, _side(i, w, y) + lift + k))])
+    for i in range(1, w - 1):
+        p.px(x0 + i, top, G[3 + k])
+    for i in range(w):
+        p.px(x0 + i, top + 1, G[5 + k] if 0 < i < w - 1 else G[4 + k])
+        p.px(x0 + i, top + 2, G[6 + k] if i < w * 0.62 else G[5 + k])
+    for i, n in enumerate(drips(w, seed)):
+        for y in range(side, min(side + n, bottom - 3) + 1):
+            p.px(x0 + i, y, G[max(1, min(6, _side(i, w) + 1 + k))])
+        if n >= 2 and side + n + 1 <= bottom - 2:
+            p.px(x0 + i, side + n + 1, R[max(1, min(6, _side(i, w) - 1 + lift + k))])    # the drip's shadow
+    rnd = random.Random(seed * 7 + 1)
+    for _ in range(w // 3):
+        x, y = rnd.randrange(x0 + 2, x0 + w - 2), rnd.randrange(side + 3, bottom - 1)
+        if p.get(x, y) in R:
+            p.px(x, y, sprinkle_colour(rnd.choice(SPRINKLE_FAMS[:4]), night, rnd.random() < 0.6))
+    for i in range(w):
+        p.px(x0 + i, bottom, P[(4, 6, 5)[i % 3] - (1 if i > w * 0.7 else 0) + k])
     return top
 
 
-def ribbon_band(p: Pix, cx, y, w, fam, night):
-    """A satin ribbon three rows deep round a tier from row `y`, tied in a bow at its front."""
+def rosette(p: Pix, x, y, fam, night):
+    """A rosette piped on a ledge, its foot on row `y`, centred on `x`: three pixels wide, its peak a pixel above,
+    lit on its left."""
     R = RAMP[fam]
     k = dim(night)
-    x0 = cx - w // 2
-    for x in range(x0, x0 + w):
-        edge = x == x0 + w - 1
-        p.px(x, y, R[5 + k] if not edge else R[3 + k])
-        p.px(x, y + 1, R[4 + k] if not edge else R[2 + k])
-        p.px(x, y + 2, R[3 + k] if not edge else R[2 + k])
-    bow = (".AA...AA.",
-           "AbbA.AbbA",
-           "AbbbKbbbA",
-           ".AA.K.AA.",
-           "...a.a...",
-           "..a...a..")
-    tone = {"A": 3, "b": 5, "K": 6, "a": 4}
-    for j, row in enumerate(bow):
-        for i, ch in enumerate(row):
-            if ch != ".":
-                t = tone[ch] + (1 if ch == "b" and i < 4 else 0)
-                p.px(cx - 4 + i, y - 2 + j, R[max(1, min(6, t + k))])
+    for (dx, dy, t) in ((0, -2, 6), (-1, -1, 5), (0, -1, 6), (1, -1, 4), (-1, 0, 4), (0, 0, 5), (1, 0, 3)):
+        p.px(x + dx, y + dy, R[t + k])
+
+
+def berry(p: Pix, x, y, night):
+    """A strawberry on a ledge, its tip on row `y` under `x`: red, a seed catching the light, its green cap."""
+    k = dim(night)
+    for (dx, dy, c) in ((0, -3, MI[4 + k]), (1, -3, MI[3 + k]), (-1, -2, CH[5 + k]), (0, -2, CH[4 + k]),
+                        (1, -2, CH[3 + k]), (-1, -1, CH[4 + k]), (0, -1, LE[5 + k]), (1, -1, CH[2 + k]),
+                        (0, 0, CH[2 + k])):
+        p.px(x + dx, y + dy, c)
 
 
 def stand(p: Pix, cx, base, w, night):
-    """A porcelain cake stand on row `base`: a broad plate `w` wide lit along its top, on a turned stem and a foot.
-    Returns the row the cake sits on."""
+    """A cake stand of pale blue glass on row `base`: a broad plate, its top seen from a little above and its rim
+    glinting, on a stem with a knop and a flared foot. Returns the row the cake stands on."""
     k = dim(night)
-    plate = base - 7
-    x0 = cx - w // 2
-    for x in range(x0, x0 + w):
-        t = (x - x0) / max(1, w - 1)
-        p.px(x, plate, CR[6] if t < 0.7 else CR[5])
-        p.px(x, plate + 1, CR[4 + k] if t < 0.6 else CR[3 + k])
-    for x in range(x0 + 2, x0 + w - 2):
-        p.px(x, plate + 2, CR[2 + k])
-    for (y, half) in ((plate + 3, 9), (plate + 4, 3), (plate + 5, 3), (plate + 6, 5), (base, 9)):
+    plate, x0 = base - 8, cx - w // 2
+    for i in range(2, w - 2):
+        p.px(x0 + i, plate - 1, SK[6 + k] if i < w * 0.3 else SK[5 + k])
+    for i in range(w):
+        t = i / (w - 1)
+        glint = 0.08 < t < 0.14 and not night
+        p.px(x0 + i, plate, C["white"] if glint else SK[6 + k] if t < 0.4 else SK[5 + k])
+        p.px(x0 + i, plate + 1, SK[4 + k] if t < 0.75 else SK[3 + k])
+    for i in range(3, w - 3):
+        p.px(x0 + i, plate + 2, SK[3 + k] if i < w - 8 else SK[2 + k])
+    for (y, half) in ((plate + 3, 1), (plate + 4, 2), (plate + 5, 1), (plate + 6, 3), (plate + 7, 5), (base, 8)):
         for x in range(cx - half, cx + half + 1):
-            t = (x - cx + half) / max(1, 2 * half)
-            p.px(x, y, CR[(5 if t < 0.3 else 4 if t < 0.7 else 3) + k] if y != plate + 3 else CR[3 + k])
-    return plate - 1
+            t = (x - cx + half + 0.5) / (2 * half + 1)
+            p.px(x, y, SK[(6 if t < 0.3 else 5 if t < 0.65 else 4) - (1 if y == base else 0) + k])
+    return plate - 2
 
 
-def cake(p: Pix, cx, base, night, motion, age=None):
-    """The birthday cake on its stand, standing on row `base`: a big tier of strawberry frosting swagged in cream
-    piping, a vanilla tier on it ringed with mint ribbon, and on top a repository's age in number candles or five slim
-    candles, all lit. Returns where each flame stands, for `blown` to light once everything near it is drawn."""
-    seat = stand(p, cx, base, 60, night)
-    top = tier(p, cx, seat, 50, 18, "strawberry", "cream", night, seed=3)
-    upper = tier(p, cx, top - 1, 34, 14, "cream", "strawberry", night, seed=5, swags=False)
-    ribbon_band(p, cx, top - 4, 34, "mint", night)
-    wicks = candle_row(p, cx, upper - 1, night, age)
-    return wicks
+def cake(p: Pix, cx, base, night, motion, age=None, tiers=2):
+    """The birthday cake on its glass stand, standing on row `base`: a big tier of strawberry frosting under a drip
+    of cream, rosettes and strawberries on its ledge, a mint tier on it under a drip of strawberry, and on top the
+    page's age in gold number candles, or five slim candles, all lit. With one tier, the strawberry tier alone on a
+    smaller stand, strawberries on its top where the candles leave room. Returns where each flame stands, for `blown`
+    to light once everything near it is drawn."""
+    if tiers == 1:
+        top = tier(p, cx, stand(p, cx, base, 42, night), 34, 16, "strawberry", "cream", night, seed=5)
+        if age and len(str(age)) <= 2:
+            for dx in (-14, 13):
+                berry(p, cx + dx, top + 1, night)
+        return candle_row(p, cx, top + 1, night, age)
+    seat = stand(p, cx, base, 58, night)
+    top = tier(p, cx, seat, 50, 20, "strawberry", "cream", night, seed=3)
+    upper = tier(p, cx, top + 2, 34, 16, "mint", "strawberry", night, seed=8, lift=1)
+    for dx in (-23, 22):
+        rosette(p, cx + dx, top + 2, "strawberry", night)
+    for dx in (-19, 18):
+        berry(p, cx + dx, top + 2, night)
+    return candle_row(p, cx, upper + 1, night, age)
 
 
 # --------------------------------------------------------------------------- presents
+# A present's bow as rows of tones, from its top down over the lid's top rows: two loops, lit along their tops and
+# open in the middle, tied in a knot over the ribbon, their tails falling over the lid. A box narrower than 12 takes
+# the small one.
+BOW = (".66......65.", "5..4....5..3", "5...4645...3", ".4443534332.", "....4..4....", "...3....3...")
+SMALL_BOW = (".65....65.", "5..4645..3", ".44353432.", "...4..4...")
+
+
 def present(p: Pix, x, base, w, h, fam, ribbon, night, wrap="dots", bow=True):
     """A present standing on row `base`, `w` wide and `h` tall: wrapped in `fam` paper, dotted, striped or plain, lit
     down its left and shaded down its right; its lid a row wider each side; a ribbon round it both ways, tied on top
-    in a bow. Returns the row its lid's top is on."""
+    in a bow. Returns the row its top is on: its bow's, or its lid's."""
     R, B = RAMP[fam], RAMP[ribbon]
     k = dim(night)
     top = base - h + 1
@@ -705,11 +753,12 @@ def present(p: Pix, x, base, w, h, fam, ribbon, night, wrap="dots", bow=True):
         p.px(xx, band, B[(5 if xx < x + w - 2 else 3) + k])
         p.px(xx, band + 1, B[(4 if xx < x + w - 2 else 2) + k])
     if bow:
-        for (dx, dy, t) in ((-4, -2, 5), (-3, -3, 6), (-2, -3, 5), (-1, -2, 4), (-4, -1, 4), (-3, -1, 3), (-2, -1, 4),
-                            (-1, -1, 5), (0, -1, 6), (1, -2, 4), (2, -3, 5), (3, -3, 4), (4, -2, 3), (1, -1, 3),
-                            (2, -1, 4), (3, -1, 3), (4, -1, 2), (0, -2, 5)):
-            p.px(mid + dx, top + dy, B[max(1, t + k)])
-    return top - (3 if bow else 0)
+        art, above, knot = (BOW, 4, 5) if w >= 12 else (SMALL_BOW, 3, 4)
+        for j, row in enumerate(art):
+            for i, ch in enumerate(row):
+                if ch != ".":
+                    p.px(mid - 1 - knot + i, top - above + j, B[max(1, int(ch) + k)])
+    return top - (above if bow else 0)
 
 
 # --------------------------------------------------------------------------- cupcakes
@@ -779,12 +828,13 @@ FRINGE = ("strawberry", "lemon", "mint", "sky", "lilac")
 def pinata(p: Pix, x, y, night, L="base", rope_top=4):
     """A donkey piñata hung from the ceiling on a rope from row `rope_top`, its top-left at (x, y): covered in rows of
     tissue fringe in the frostings' colours, each row's ragged edge falling over the next, a dark eye, a tassel for a
-    tail. The rope passes behind whatever hangs in front of it."""
+    tail. The rope stays where it is tied when the donkey sways on layer `L`, and passes behind whatever hangs in front
+    of it, the bunting's pennants too."""
     k = dim(night)
     rope = PL[5] if night else CO[4]
     for yy in range(rope_top, y + 11):
         if p.get(x + ROPE_AT, yy) is None:
-            p.px(x + ROPE_AT, yy, rope, L)
+            p.px(x + ROPE_AT, yy, rope)
     cells = {(cx, cy): ch for cy, row in enumerate(DONKEY) for cx, ch in enumerate(row) if ch != "."}
     for (cx, cy), ch in cells.items():
         band = cy // 2
@@ -811,93 +861,26 @@ def pinata(p: Pix, x, y, night, L="base", rope_top=4):
         p.px(x + cx, y + cy, c, L)
 
 
-def paper_fan(p: Pix, cx, cy, r, fam, night, L="base", pleats=12):
-    """A tissue paper fan pinned to the wall, centred on (cx, cy): a disc of pleats, every other one in shade, its
-    rim scalloped where each pleat ends, lit from the upper left, with a button of lemon at its heart."""
+def paper_fan(p: Pix, cx, cy, r, fam, night, L="base", pleats=16):
+    """A tissue paper fan pinned to the wall, centred on (cx, cy): a disc of pleats folded like a concertina, each lit
+    on one face and in shade on the other, its rim a tone deeper and zigzagged where each pleat comes to a point, with
+    a button of lemon at its heart."""
     R = RAMP[fam]
     k = dim(night)
     for y in range(math.floor(cy - r) - 1, math.ceil(cy + r) + 2):
         for x in range(math.floor(cx - r) - 1, math.ceil(cx + r) + 2):
             dx, dy = x + 0.5 - cx, y + 0.5 - cy
             d = math.hypot(dx, dy)
-            a = (math.atan2(dy, dx) + 2 * math.pi) % (2 * math.pi)
-            pleat = int(a / (2 * math.pi / pleats))
-            frac = a / (2 * math.pi / pleats) - pleat
-            edge = r - 0.9 * abs(frac - 0.5)
+            u = (math.atan2(dy, dx) + 2 * math.pi) % (2 * math.pi) / (2 * math.pi / pleats)
+            frac = u - int(u)
+            edge = r - 1.4 * abs(frac - 0.5)
             if d > edge:
                 continue
-            lit = (dx * LX + dy * LY) / max(1.0, d)
-            t = 5 if pleat % 2 == 0 else 3
-            if lit > 0.35:
-                t += 1
-            elif lit < -0.35:
-                t -= 1
-            if d > edge - 1 and pleat % 2 == 0:
-                t -= 1
-            p.px(x, y, R[max(1, min(6, t + k))], L)
+            t = (6 if frac < 0.5 else 4) - (1 if d > edge - 1 else 0)
+            p.px(x, y, R[t + k], L)
     for (dx, dy, t) in ((0, 0, 5), (-1, 0, 6), (0, -1, 6), (-1, -1, 6), (1, 0, 4), (0, 1, 4), (1, 1, 3),
                         (-1, 1, 4), (1, -1, 4)):
         p.px(round(cx) + dx, round(cy) + dy, LE[max(1, t + k)], L)
-
-
-# --------------------------------------------------------------------------- hanging honeycomb balls
-def honeycomb(p: Pix, cx, cy, r, fam, night, L="base", string_top=4):
-    """A paper honeycomb ball hung from the ceiling on a thread from row `string_top`: a sphere of tissue lit from the
-    upper left, its folded cells showing as bands across it; the thread passes behind whatever hangs in front."""
-    R = RAMP[fam]
-    k = dim(night)
-    for y in range(string_top, round(cy - r)):
-        if p.get(cx, y) is None:
-            p.px(cx, y, CR[3] if night else CO[4], L)
-    ramp = [R[max(0, min(6, i + k))] for i in range(7)]
-    cells = sphere(p, cx, cy, r, ramp, L=L, lo=1, hi=6, spec=False)
-    for (x, y), t in cells.items():
-        if (y - round(cy - r)) % 3 == 2 and t > 1:
-            p.px(x, y, ramp[t - 1], L)
-        if (x + y) % 5 == 0 and t > 2 and (y - round(cy - r)) % 3 == 0:
-            p.px(x, y, ramp[t - 1], L)
-    p.px(cx, round(cy - r) - 1, CR[4 + k], L)
-    p.px(cx, round(cy + r), CR[4 + k], L)
-
-
-# --------------------------------------------------------------------------- the sundae
-def sundae(p: Pix, cx, base, night):
-    """An ice cream sundae standing on row `base`: a footed glass, three scoops in it, strawberry, vanilla and mint,
-    a cloud of whipped cream, a cherry on top and a wafer standing in it."""
-    k = dim(night)
-    G = SK
-    # the foot and the stem
-    for x in range(cx - 5, cx + 5):
-        p.px(x, base, G[(6 if x < cx - 2 else 5 if x < cx + 2 else 4) + k])
-    for y in range(base - 3, base):
-        p.px(cx - 1, y, G[6 + k])
-        p.px(cx, y, G[4 + k])
-    # the bowl, its glass showing the scoops' foot
-    for j, half in enumerate((7, 7, 6, 6, 5, 4)):
-        y = base - 9 + j
-        for x in range(cx - half, cx + half):
-            edge = x in (cx - half, cx + half - 1)
-            inside = S[3 + k] if x < cx else CR[3 + k]
-            p.px(x, y, (G[6 + k] if x == cx - half else G[4 + k]) if edge else inside)
-        if j == 1:
-            p.px(cx - half + 2, y, C["white"])
-    sphere(p, cx - 3.5, base - 11.5, 4.2, [S[max(0, i + k)] for i in range(7)], lo=1, hi=6)
-    sphere(p, cx + 3.5, base - 11.5, 4.2, [MI[max(0, i + k)] for i in range(7)], lo=1, hi=6)
-    sphere(p, cx, base - 16.5, 4.2, [CR[max(0, i + k)] for i in range(7)], lo=1, hi=6)
-    for (dx, dy, t) in ((-2, -21, 6), (-1, -21, 6), (0, -21, 5), (1, -21, 5), (-1, -22, 6), (0, -22, 5),
-                        (-3, -20, 6), (2, -20, 4), (0, -23, 6)):
-        p.px(cx + dx, base + dy, CR[t])
-    sphere(p, cx - 0.5, base - 25, 1.8, CH, lo=2, hi=6)
-    p.px(cx, base - 27, MI[3 + k])
-    p.px(cx + 1, base - 28, MI[3 + k])
-    for j in range(8):                                       # the wafer, standing slantwise in the scoops
-        p.px(cx + 4 + j // 3, base - 17 - j, LE[(5 if j % 2 else 4) + k])
-        p.px(cx + 5 + j // 3, base - 17 - j, LE[3 + k])
-    rnd = random.Random(cx)
-    for _ in range(5):
-        x, y = rnd.randrange(cx - 6, cx + 6), rnd.randrange(base - 19, base - 9)
-        if p.get(x, y) in (S + MI + CR):
-            p.px(x, y, sprinkle_colour(rnd.choice(("lemon", "sky", "lilac")), night))
 
 
 # --------------------------------------------------------------------------- the surprise: a present that opens

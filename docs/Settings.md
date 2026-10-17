@@ -224,14 +224,16 @@ and a holiday's set too, which comes back the day after if its window is still
 open. Like a holiday's set, it redraws the header, the footer and its buttons,
 the badges, the elements and the trophy case as pixel art, in the same files:
 piped icing round every sheet, bunting along the top that spells HAPPY
-BIRTHDAY, and on H2 the cake with its candles lit, presents and a piñata. In a
-moving file a breath blows the candles out once a loop, and they light again.
+BIRTHDAY, and on every header a drip cake on a glass stand with its candles
+lit and presents beside it, H1 and H2 with a piñata and a paper fan hung over
+them. In a moving file a breath blows the candles out once a loop: the flames
+bend and go out, smoke curls up from the wicks, and they light again.
 
 Whose birthday it is follows the page's mode:
 
 | Mode         | The birthday                                                                                | The cake carries                                       |
 | :----------- | :------------------------------------------------------------------------------------------ | :----------------------------------------------------- |
-| `repository` | The day GitHub created the repository, in the page's `timezone`, from its first anniversary | Its age, in number candles                             |
+| `repository` | The day GitHub created the repository, in the page's `timezone`, from its first anniversary | Its age, in gold number candles                        |
 | `profile`    | The day the settings give: `birthday: 03-14`, or `birthday: 1990-03-14`                     | Its age when the year is given, else five slim candles |
 
 ```yaml
