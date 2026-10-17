@@ -279,8 +279,8 @@ h1 { margin: 0; font: 700 clamp(40px, 5.4vw, 68px)/0.95 var(--display); letter-s
   const first = read("first");
   const themes = M.themes;
   const byKey = new Map(themes.map((t) => [t.key, t]));
-  const GROUPS = [["standard", "The default"], ["print", "Prints"], ["holiday", "Holiday sets"], ["collection", "Collections"],
-    ["game", "Games"]];
+  const GROUPS = [["standard", "The default"], ["print", "Prints"], ["holiday", "Holiday sets"], ["birthday", "The birthday"],
+    ["collection", "Collections"], ["game", "Games"]];
 
   // Where a drawing comes from: beside the page, or, in a bundle, from the data the page has been given.
   const payload = new Map(Object.entries(read("thumbs")));
@@ -355,6 +355,7 @@ h1 { margin: 0; font: 700 clamp(40px, 5.4vw, 68px)/0.95 var(--display); letter-s
     const cells = [
       ["Kit", M.kit, "mono"],
       ["Themes", String(themes.length - counts.game), "", `${counts.standard} default, ${counts.print} prints, ${counts.holiday} holiday sets`
+        + (counts.birthday ? ", the birthday set" : "")
         + (counts.collection ? `, ${counts.collection} ${counts.collection === 1 ? "collection" : "collections"}` : "")
         + (games ? `; and ${games} ${games === 1 ? "game" : "games"}${halls ? " and their Hall of Fame" : ""}, for @tannergolden's profile alone` : "")],
       ["Drawings", M.drawings.toLocaleString("en-US"), "", "every one a file a README shows"],

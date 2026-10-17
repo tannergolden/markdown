@@ -38,7 +38,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from domain import KIT, KIT_VERSION, collections, holidays, prints  # noqa: E402
+from domain import KIT, KIT_VERSION, birthday, collections, holidays, prints  # noqa: E402
 from domain.badges import data as badges_data  # noqa: E402
 from domain.banners import sample  # noqa: E402
 from domain.banners.compose import compose  # noqa: E402
@@ -199,8 +199,11 @@ def header(d: Drawings, key: str, theme: str, holiday: str, code: str, name: str
                 still=(files["header-still-day.svg"], files["header-still-dark.svg"]))
 
 
-def banner_sections(d: Drawings, key: str, theme: str, holiday: str = "") -> list:
-    heads = [header(d, key, theme, holiday, *row) for row in HEADERS]
+def banner_sections(d: Drawings, key: str, theme: str, holiday: str = "", on_profile: str = "") -> list:
+    """The headers, the phone files and the footers. `on_profile` is the set a profile's header is drawn in when it
+    is not `holiday`: the Birthday set's for a person, who turns no age."""
+    heads = [header(d, key, theme, on_profile if profile and on_profile else holiday, code, name, label, profile)
+             for code, name, label, profile in HEADERS]
     phones = []
     for code, name, label, profile in HEADERS:
         if not profile:
@@ -343,8 +346,8 @@ def trophy_section(d: Drawings, key: str, theme: str, holiday: str = "") -> dict
 
 def swatches(key: str) -> list:
     """The colours a theme is known by, each with what it colours."""
-    if key in holidays.SETS:
-        held = holidays.drawn_by(key)
+    if key in holidays.SETS or key == birthday.KEY:
+        held = holidays.drawn_by(key) if key in holidays.SETS else birthday.drawn_by(key)
         return [{"role": f"{role}, {when}", "hex": hexof(held.ink(night)[role])}
                 for night, when in ((False, "day"), (True, "night")) for role in ("title", "accent", "body")]
     if key == prints.STANDARD:
@@ -434,6 +437,7 @@ def pixel_sets() -> list[tuple[str, str, str]]:
     """Every pixel set a game is drawn in, (key, holiday, label): each holiday's set, then each design of every
     collection with all twelve drawn, as its month's design."""
     sets = [(key, key, holidays.NAMES[key]) for key in holidays.KEYS if key in holidays.SETS]
+    sets.append((birthday.KEY, birthday.KEY, f"the {birthday.NAME} set"))
     for c in (collections.COLLECTIONS[k] for k in collections.themes()):
         sets += [(k, months_design(k), f"{collections.MONTHS[i]}: {collections.name_of(k)}"
                   + (", the profile's" if k == PROFILE_LOOK else "")) for i, k in enumerate(c.keys)]
@@ -461,8 +465,8 @@ def set_sections(d: Drawings, key: str, what: str) -> list:
                     still=(files[fn(key, "still", "day")], files[fn(key, "still", "dark")]))
 
     sets = pixel_sets()
-    out = [{"key": "holidays", "title": "In a holiday's set", "note": NOTES["game sets"],
-            "items": [sheet(k, h, label) for k, h, label in sets if k in holidays.SETS]}]
+    out = [{"key": "holidays", "title": "In a holiday's set, or the birthday's", "note": NOTES["game sets"],
+            "items": [sheet(k, h, label) for k, h, label in sets if k in holidays.SETS or k == birthday.KEY]}]
     for c in (collections.COLLECTIONS[k] for k in collections.themes()):
         out.append({"key": c.key, "title": f"In the {c.name} collection", "note": NOTES["game collection"],
                     "items": [sheet(k, h, label) for k, h, label in sets if k in c.keys]})
@@ -585,6 +589,23 @@ def theme_entry(d: Drawings, key: str) -> dict:
                 "sections": banner_sections(d, key, "standard", key)
                 + [element_section(d, key, "standard", key), badge_section(d, key, "standard", key),
                    trophy_section(d, key, "standard", key)]}
+    if key == birthday.KEY:
+        held = birthday.drawn_by(key)
+        return {"key": key, "name": held.name, "group": "birthday", "tag": "on the page's birthday",
+                "kicker": "Birthday set, up for the day",
+                "note": "Up for the page's birthday alone, midnight to midnight in its time zone: a person's, as the "
+                        "settings give it, or a repository's, the day GitHub created it, from its first anniversary "
+                        "on. It takes over whatever the page is in, a holiday's set too, then hands it back. The cake "
+                        "carries the age in number candles whenever it is known, here a repository's third birthday; "
+                        "a person who gives only a month and a day gets five slim candles and no age.",
+                "use": "birthday: 03-14",
+                "use_note": "A profile gives its birthday as a month and a day, or the whole date, 1990-03-14, for its "
+                            "age. A repository's birthday is on by default, the day GitHub created it. birthday: false "
+                            "keeps the set away.",
+                "swatches": swatches(key), "thumb": thumb(key),
+                "sections": banner_sections(d, key, "standard", key, on_profile=f"{key}:{TODAY}")
+                + [element_section(d, key, "standard", key), badge_section(d, key, "standard", key),
+                   trophy_section(d, key, "standard", key)]}
     if key == prints.RAINBOW:
         spectrum = [header(d, tone, tone, "", "H2", "h2", tone, False) for tone in prints.SPECTRUM]
         return {"key": key, "name": key, "group": "print", "tag": "all nine",
@@ -644,7 +665,7 @@ def build(out: Path, bundle: bool = False, only: list[str] | None = None) -> dic
     """Draw the themes into `out`; returns the page's manifest."""
     resources.install()
     keys = ([prints.STANDARD, *prints.PRINTS, prints.RAINBOW] + [k for k in holidays.KEYS if k in holidays.SETS]
-            + collections.themes() + list(GAMES) + [HALL])
+            + [birthday.KEY] + collections.themes() + list(GAMES) + [HALL])
     if only:
         unknown = sorted(set(only) - set(keys))
         if unknown:
