@@ -135,11 +135,11 @@ jobs:
 
 That is the whole setup. With no settings at all, the page gets a header and a
 footer read from GitHub and a trophy case, in the `standard` theme, with the
-holidays on. Two runs never draw at once: one that starts while another is
-drawing waits for it, then draws the page as it stands by then, so a redraw
-started straight after another is queued rather than failing to push. And the
-kit is handed `MARKDOWN_TOKEN` alone, never the repository's other secrets. The
-stub can set the choices made most often:
+holidays and a repository's birthday on. Two runs never draw at once: one that
+starts while another is drawing waits for it, then draws the page as it stands
+by then, so a redraw started straight after another is queued rather than
+failing to push. And the kit is handed `MARKDOWN_TOKEN` alone, never the
+repository's other secrets. The stub can set the choices made most often:
 
 | Input           | Default          | What it does                                                                |
 | :-------------- | :--------------- | :-------------------------------------------------------------------------- |
@@ -148,6 +148,7 @@ stub can set the choices made most often:
 | `sign`          | (the month's)    | The sign of the zodiac a collection's headers carry all year, as `leo`.     |
 | `holidays`      | `true`           | `'false'` keeps the holiday sets away.                                      |
 | `holiday-days`  | `3`              | How long each holiday's set is up, 3 to 7 days.                             |
+| `birthday`      | `true`           | `'false'` keeps the Birthday set away; on a profile, `'03-14'` names it.    |
 | `check`         | `false`          | Only check that the committed page is current. See below.                   |
 | `commit`        | `push`           | `pr` opens or updates one pull request instead of pushing.                  |
 | `commit-branch` | `chore/markdown` | The branch that pull request rides on.                                      |
@@ -231,6 +232,15 @@ Around each holiday its own set takes over the page, then hands it back: New
 Year's Day, Valentine's Day, Juneteenth, Independence Day, Halloween,
 Thanksgiving and Christmas. A set redraws the banners, the badges, the
 elements and the trophy case as pixel art, in the same files.
+
+On the page's birthday the Birthday set takes it for the day, over a
+holiday's set too: the cake with its candles lit, presents and a piñata,
+and HAPPY BIRTHDAY spelled across the bunting of every header. A
+repository's birthday is the day GitHub created it, and its cake carries
+its age in number candles. A person gives theirs in the settings,
+`birthday: 03-14`, or with the year, `birthday: 1990-03-14`, for their
+age. `birthday: false` keeps it away. See
+[Birthday](docs/Settings.md#-birthday).
 
 The trophy case wears the theme too, and keeps its style, its sizes and its
 words: `standard` strikes its cups, crests, medallions, crystals and plaques
@@ -486,9 +496,9 @@ and each of the other three games is folded shut under its name.
 **[See the games in every tone, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess)**:
 the theme-sets page shows each game's board and its phone files, and the Hall
 of Fame of all four with its phone files and the winners' badges, in the
-standard theme and every print, every holiday's set and every month of the
-Medieval collection, each from a sample whose players are as fictional as
-driftmark's contributors. What the games' settings hold is in
+standard theme and every print, every holiday's set, the Birthday set and every
+month of the Medieval collection, each from a sample whose players are as
+fictional as driftmark's contributors. What the games' settings hold is in
 [Settings](docs/Settings.md#-elements); the games themselves are
 [live on @tannergolden's profile](https://github.com/tannergolden).
 

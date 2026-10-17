@@ -23,8 +23,9 @@ _Optional, all of it. Checked, every key of it._
 
 A page's settings live in **`.github/markdown.yaml`** (`.github/markdown.yml`
 is read too; keep one). A page with no file at all is drawn from what GitHub
-says about it, in the `standard` theme, with the holidays on: a header, a
-footer and a trophy case, and nothing else until the settings ask.
+says about it, in the `standard` theme, with the holidays and a repository's
+birthday on: a header, a footer and a trophy case, and nothing else until the
+settings ask.
 
 The file holds the page as a whole at the top, then one section per part:
 `banners`, `badges`, `elements` and `trophies`. A part set to `false` is not
@@ -77,14 +78,16 @@ default filled in, which is the quickest way to see what a run will do.
 | `sign`         | (the month's)     | The sign of the zodiac a collection's headers carry all year, as `leo`, in place of the month's. See [Collections](#-collections).                                                   |
 | `holidays`     | `true`            | `false` keeps the holiday sets away. See [Holidays](#-holidays).                                                                                                                     |
 | `holiday-days` | `3`               | How long each holiday's set is up: 3 to 7 days. New Year's Day is always 3.                                                                                                          |
+| `birthday`     | `true`            | `false` keeps the Birthday set away. On a profile, the person's birthday: `03-14`, or `1990-03-14` for their age. See [Birthday](#-birthday).                                        |
 | `timezone`     | `UTC`             | The zone the page's day changes in, so a holiday starts at its own midnight. An IANA name: `America/New_York`.                                                                       |
 | `readme`       | `README.md`       | The README the blocks are written into; `profile/README.md` for an organization.                                                                                                     |
 | `out`          | `assets`          | Where the drawings go, each part in a folder of its own: `banners`, `badges`, `trophies` and `elements`. `profile/assets` for an organization.                                       |
 | `lock`         | `true`            | Keep `.github/markdown.lock.json`: what was measured, so `check` can draw the page again with no token.                                                                              |
 | `prints`       | none              | Your own prints, each a name and its colours. See [Your own prints](#your-own-prints).                                                                                               |
 
-The stub can set `mode`, `theme`, `sign`, `holidays` and `holiday-days` too, as
-inputs of the reusable workflow. A value the stub sets wins over the file's.
+The stub can set `mode`, `theme`, `sign`, `holidays`, `holiday-days` and
+`birthday` too, as inputs of the reusable workflow. A value the stub sets wins
+over the file's.
 
 ---
 
@@ -195,6 +198,8 @@ December 31 to January 2. There is no switch per holiday: `holidays: false`
 keeps them all away.
 
 `markdown-kit holidays --year 2026 --days 5` prints every window of a year.
+On the page's birthday the [Birthday](#-birthday) set takes the page from a
+holiday's set for the day, and hands it back the day after.
 
 A set redraws the header, the footer and its buttons, the badges, the elements
 and the trophy case as pixel art in its own palette, at the same sizes and in
@@ -207,6 +212,46 @@ lack, is drawn in the page's own theme; a trophy case is drawn whole, in the
 page's own theme, if any word of it cannot be. A `rainbowprint` holds its colour while
 a set is up and picks up where it was. The commit says when a set goes up and
 when it comes down.
+
+---
+
+## 🎂 Birthday
+
+On the page's birthday the Birthday set takes the whole page for the day,
+from midnight to midnight in its `timezone`, then hands it back. It wins over
+whatever else would draw the page that day: the theme, a collection's design,
+and a holiday's set too, which comes back the day after if its window is still
+open. Like a holiday's set, it redraws the header, the footer and its buttons,
+the badges, the elements and the trophy case as pixel art, in the same files:
+piped icing round every sheet, bunting along the top that spells HAPPY
+BIRTHDAY, and on H2 the cake with its candles lit, presents and a piñata. In a
+moving file a breath blows the candles out once a loop, and they light again.
+
+Whose birthday it is follows the page's mode:
+
+| Mode         | The birthday                                                                                | The cake carries                                       |
+| :----------- | :------------------------------------------------------------------------------------------ | :----------------------------------------------------- |
+| `repository` | The day GitHub created the repository, in the page's `timezone`, from its first anniversary | Its age, in number candles                             |
+| `profile`    | The day the settings give: `birthday: 03-14`, or `birthday: 1990-03-14`                     | Its age when the year is given, else five slim candles |
+
+```yaml
+# a person's page, the month and the day
+birthday: 03-14
+
+# or with the year, so the cake carries their age
+birthday: 1990-03-14
+```
+
+A repository's birthday is on by default and is always the day GitHub created
+it: the settings can turn it off, but never name another day. GitHub keeps no
+birthday for a person, so a profile has one only once its settings give it.
+The year is up to the person: the settings file is as public as the page, so
+a year written there, and the age the page draws from it, can be read by
+anyone. A February 29 birthday is kept on February 28 in a common year.
+
+`birthday: false` keeps the set away, and it has a switch of its own:
+`holidays: false` leaves the birthday on. The commit says when the set goes up,
+and which birthday it is when the age is known, and when it comes down.
 
 ---
 
