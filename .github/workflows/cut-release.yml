@@ -85,5 +85,5 @@ jobs:
     with:
       version: ${{ inputs.version }}
       move-major: ${{ inputs.move-major }}
-      required-files: '.github/workflows/markdown.yml actions/markdown/action.yml src/markdown-kit.py src/app/run.py src/domain/data/fonts/glyphs.json src/domain/data/prints.json'
+      required-files: '.github/workflows/markdown.yml .github/actions/markdown/action.yml src/markdown-kit.py src/app/run.py src/domain/data/fonts/glyphs.json src/domain/data/prints.json'
       check-command: 'make lint'

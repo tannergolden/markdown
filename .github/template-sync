@@ -119,6 +119,7 @@
 #/LICENSE
 #/.github/CODEOWNERS
 #/.github/FUNDING.yml
+#/.github/actions/**
 #/assets/**
 #/benchmarks/**
 #/packages/**

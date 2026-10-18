@@ -2,8 +2,9 @@
 # SPDX-License-Identifier: MIT
 #
 # The action the reusable workflow runs: one run of the kit on the checkout it
-# is handed. It lives under actions/, outside .github/, because the standards
-# keep actions there: .github/ is left out of release archives.
+# is handed. It lives under .github/actions/, beside the workflow that runs it,
+# and .gitattributes keeps that folder in release archives while it leaves the
+# rest of .github/ out.
 #
 # Most repositories never name this action; they call
 # .github/workflows/markdown.yml from a stub, which checks the repository and
@@ -104,7 +105,7 @@ runs:
         esac
         PY="$(command -v python3 || command -v python || true)"
         if [ -z "$PY" ]; then echo "::error::no python3 or python on PATH"; exit 1; fi
-        kit="$KIT_PATH/../../src/markdown-kit.py"
+        kit="$KIT_PATH/../../../src/markdown-kit.py"
 
         root="$GITHUB_WORKSPACE"
         # The reusable workflow fetches the kit beside the checkout; keep its

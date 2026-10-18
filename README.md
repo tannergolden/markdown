@@ -550,7 +550,7 @@ python3 src/markdown-kit.py collections                    # each collection's d
 | Path                             | Purpose                                                                                                      |
 | :------------------------------- | :----------------------------------------------------------------------------------------------------------- |
 | `.github/workflows/markdown.yml` | **The workflow** every stub calls: checkout, the kit, the commit                                             |
-| `actions/markdown/`              | **The action** the workflow runs: one run of the kit on the checkout                                         |
+| `.github/actions/markdown/`      | **The action** the workflow runs: one run of the kit on the checkout                                         |
 | `src/markdown-kit.py`            | **The kit's** command line, and the one place its layers meet                                                |
 | `src/domain/`                    | What a page looks like: the palette, the lettering, the themes and every drawing                             |
 | `src/app/`                       | What a run does: the settings, the measurement, the plan and the commit                                      |

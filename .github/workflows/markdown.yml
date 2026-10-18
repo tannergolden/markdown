@@ -138,7 +138,7 @@ jobs:
 
       - id: page
         name: '📝 The page'
-        uses: ./.markdown-kit/actions/markdown
+        uses: ./.markdown-kit/.github/actions/markdown
         with:
           command: ${{ inputs.check && 'check' || 'run' }}
           mode: ${{ inputs.mode }}
