@@ -90,6 +90,8 @@ jobs:
 
       test-command: 'make test'
 
+      frontmatter: 'enforce'
+
   # RULESET-LOAD-BEARING JOB ID: reports as 'secrets / 🔍 Scan for Secrets'.
   secrets:
     if: ${{ !github.event.repository.is_template && (github.event_name != 'push' || github.ref_name == github.event.repository.default_branch) }}

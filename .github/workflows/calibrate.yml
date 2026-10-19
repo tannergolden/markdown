@@ -47,7 +47,7 @@ jobs:
       contents: write # the data file and the catalogue written from it
     steps:
       - name: '🛡️ Harden Runner'
-        uses: tannergolden/standards/actions/harden@v1
+        uses: tannergolden/standards/.github/actions/harden@v1
         with:
           egress-policy: audit
           notice: '📐 Calibrate: samples starred public repositories through the API and commits the measured shares.'
