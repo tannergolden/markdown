@@ -1,8 +1,8 @@
 <!--
 title: '🖌️ DRAWING A COLLECTION'
 description: 'How a collection is drawn: its hand first, then twelve designs in that hand, each reviewed beside the others until the year reads as one artist''s work.'
-tags: [collections, themes, art-direction, pixel-art, guide]
-category: docs
+type: standard
+keywords: [collections, themes, art-direction, pixel-art, guide]
 -->
 
 <div align="center">

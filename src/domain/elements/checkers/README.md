@@ -1,8 +1,8 @@
 <!--
 title: '⛂ CHECKERS'
 description: 'The Checkers element: the third tier of the games on @tannergolden''s profile, one layout in every theme.'
-tags: [source, domain, elements, games, checkers, svg]
-category: docs
+type: index
+keywords: [source, domain, elements, games, svg]
 -->
 
 <div align="center">

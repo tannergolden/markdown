@@ -1,8 +1,8 @@
 <!--
 title: '📄 ADR-0008: THE TROPHY CASE WEARS THE PAGE''S THEME'
 description: 'The trophy case is drawn in the page''s theme, as every other part is: its five styles are the standard theme''s, a print draws them on its drafting paper, and a holiday''s set or a collection''s design strikes them in its pixels.'
-tags: [adr, architecture, decisions, themes, trophies]
-category: docs
+type: record
+keywords: [architecture, decisions, themes, trophies]
 status: 'Accepted'
 date: '2026-10-12'
 evidence: 'N/A'

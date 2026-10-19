@@ -1,8 +1,8 @@
 <!--
 title: '🎬 REPLAY'
 description: 'Replays: a finished game on @tannergolden''s profile played again move by move on its own board, looping, for tannergolden/play.'
-tags: [source, domain, elements, games, replay, svg]
-category: docs
+type: index
+keywords: [source, domain, elements, games, svg]
 -->
 
 <div align="center">

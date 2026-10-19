@@ -1,8 +1,8 @@
 <!--
 title: '💻 SOURCE CODE'
 description: 'Architecture and standards for the application source code.'
-tags: [architecture, code, technical, structure]
-category: docs
+type: standard
+keywords: [architecture, technical, structure]
 -->
 
 

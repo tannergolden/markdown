@@ -1,8 +1,8 @@
 <!--
 title: '📝 MARKDOWN'
 description: 'A README''s header, footer, badges, body and trophy case, measured on a schedule and drawn as committed SVGs from one stub.'
-tags: [readme, svg, banners, badges, trophies, github-actions]
-category: docs
+type: index
+keywords: [readme, svg, banners, badges, trophies, github-actions]
 -->
 
 <!-- markdown:header:start -->

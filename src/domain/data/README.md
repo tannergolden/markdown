@@ -1,8 +1,8 @@
 <!--
 title: '🗃️ DATA'
 description: 'The kit''s data: the glyph outlines and their licences, the print catalogue, and the repository population the trophies are calibrated against.'
-tags: [source, domain, data, fonts]
-category: docs
+type: index
+keywords: [source, domain, fonts]
 -->
 
 <div align="center">

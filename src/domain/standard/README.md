@@ -1,8 +1,8 @@
 <!--
 title: '🔖 STANDARD'
 description: 'The standard theme: the original badges'' own look, grown to a masthead header, its footer and the six elements.'
-tags: [source, domain, themes, standard]
-category: docs
+type: index
+keywords: [source, domain, themes]
 -->
 
 <div align="center">

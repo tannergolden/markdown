@@ -1,8 +1,8 @@
 <!--
 title: '🛠️ TECHNICAL'
 description: 'How the kit is built: where each piece of its source lives, the stack and the Makefile targets CI runs, and how a collection is drawn.'
-tags: [technical, architecture, tooling, collections]
-category: docs
+type: index
+keywords: [architecture, tooling, collections]
 -->
 
 <div align="center">

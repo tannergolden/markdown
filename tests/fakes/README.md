@@ -1,8 +1,8 @@
 <!--
 title: '🎭 FAKES'
 description: 'Stand-ins for the outside world: a GitHub that answers from a table, so no test touches the network.'
-tags: [testing, fakes, test-doubles, github]
-category: docs
+type: index
+keywords: [testing, test-doubles, github]
 -->
 
 <div align="center">

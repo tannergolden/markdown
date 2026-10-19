@@ -1,8 +1,8 @@
 <!--
 title: '🧩 ELEMENTS'
 description: 'The elements: the body of a page, six drawings made from the repository itself, on the same paper as its header and footer.'
-tags: [source, domain, elements, svg]
-category: docs
+type: index
+keywords: [source, domain, svg]
 -->
 
 <div align="center">

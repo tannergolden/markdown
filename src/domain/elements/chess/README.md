@@ -1,8 +1,8 @@
 <!--
 title: '♟️ CHESS'
 description: 'The chess elements: the game on @tannergolden''s profile and its Hall of Fame, one layout in every theme.'
-tags: [source, domain, elements, chess, svg]
-category: docs
+type: index
+keywords: [source, domain, elements, svg]
 -->
 
 <div align="center">

@@ -1,8 +1,8 @@
 <!--
 title: '🏆 TROPHIES'
 description: 'The trophy case: what a profile or a repository can earn, where each threshold sits, the ledger in the lock, and the cards each style draws.'
-tags: [source, domain, trophies, svg]
-category: docs
+type: index
+keywords: [source, domain, svg]
 -->
 
 <div align="center">

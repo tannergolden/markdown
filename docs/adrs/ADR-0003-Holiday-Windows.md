@@ -1,8 +1,8 @@
 <!--
 title: '📄 ADR-0003: HOLIDAY WINDOWS'
 description: 'The holiday sets are on by default and take over for 3 to 7 days centred on each holiday; New Year''s Day always runs 3.'
-tags: [adr, architecture, decisions, holidays]
-category: docs
+type: record
+keywords: [architecture, decisions, holidays]
 status: 'Accepted'
 date: '2026-09-28'
 evidence: 'N/A'

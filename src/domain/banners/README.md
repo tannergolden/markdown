@@ -1,8 +1,8 @@
 <!--
 title: '🪧 BANNERS'
 description: 'The banners: a page''s header and footer, the links row under the footer, and the plan and commit a run makes of them.'
-tags: [source, domain, banners, svg]
-category: docs
+type: index
+keywords: [source, domain, svg]
 -->
 
 <div align="center">

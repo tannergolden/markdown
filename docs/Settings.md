@@ -1,8 +1,8 @@
 <!--
 title: '⚙️ SETTINGS'
 description: 'Every key .github/markdown.yaml can hold, what each does, and the default a page that says nothing gets.'
-tags: [settings, configuration, reference]
-category: docs
+type: reference
+keywords: [configuration]
 -->
 
 <div align="center">

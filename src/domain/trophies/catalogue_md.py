@@ -9,8 +9,8 @@ from .catalogue import MODES, RARITY_NAMES, TIER_NAMES
 HEAD = """<!--
 title: '🏆 CATALOGUE'
 description: 'Every trophy and achievement the kit can award, in both modes, with the threshold and the GitHub data behind each one.'
-tags: [trophies, achievements, catalogue, reference]
-category: docs
+type: reference
+keywords: [trophies, achievements]
 -->
 
 <!-- markdownlint-disable MD041 -->

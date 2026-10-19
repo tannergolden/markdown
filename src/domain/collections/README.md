@@ -1,8 +1,8 @@
 <!--
 title: '🗓️ COLLECTIONS'
 description: 'The collections: one subject drawn twelve ways, a design for each month, every one in its collection''s hand.'
-tags: [source, domain, collections, themes]
-category: docs
+type: index
+keywords: [source, domain, themes]
 -->
 
 <div align="center">

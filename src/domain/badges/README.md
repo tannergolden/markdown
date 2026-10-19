@@ -1,8 +1,8 @@
 <!--
 title: '🏅 BADGES'
 description: 'The badges: the classic styles and their blueprint plates, what a live badge measures, and the shields.io links a page localizes.'
-tags: [source, domain, badges, svg]
-category: docs
+type: index
+keywords: [source, domain, svg]
 -->
 
 <div align="center">
