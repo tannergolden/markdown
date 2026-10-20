@@ -138,7 +138,7 @@ class Block(unittest.TestCase):
         self.assertIn(f'href="{B.CATALOGUE}#profile-commits"', block)
         self.assertIn(f'href="{B.CATALOGUE}#profile-polyglot"', block)
         self.assertIn(f'href="{B.CATALOGUE}#profile">the catalogue</a>', block)
-        self.assertIn("https://github.com/tannergolden/markdown/blob/HEAD/docs/Catalogue.md", block)
+        self.assertIn("https://github.com/tannergolden/markdown/blob/HEAD/docs/references/Catalogue.md", block)
         self.assertIn('srcset="assets/trophies/commits.svg"', block)
 
     def test_a_case_that_shows_no_achievements_has_no_drawer_and_counts_none(self):

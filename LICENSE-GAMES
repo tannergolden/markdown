@@ -32,8 +32,8 @@ grants no right in the Game Materials.
    - src/domain/holidays/designs/boards.py, games.py, hall.py, pieces.py
      and materials.py
    - docs/adrs/ADR-0009-The-Games-Wear-The-Pages-Theme.md
-   - docs/themes/chess/, checkers/, pentago/, tictac/, hall-of-fame/ and
-     medieval-chessmen/
+   - docs/references/themes/chess/, checkers/, pentago/, tictac/,
+     hall-of-fame/ and medieval-chessmen/
    - tests/fixtures/chess.yaml, checkers.yaml, pentago.yaml, tictac.yaml,
      hall-of-fame.yaml and replays/
    - tests/unit/test_elements_chess.py, test_elements_chess_fit.py,

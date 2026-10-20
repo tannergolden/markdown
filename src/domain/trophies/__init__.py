@@ -19,7 +19,7 @@
   plan          one measurement to every file, the block, and what the commit says
   settings      the `trophies:` section of the settings
   sample        made-up measurements for previews and the tests
-  catalogue_md  docs/Catalogue.md, written from the catalogue
+  catalogue_md  docs/references/Catalogue.md, written from the catalogue
 
 A case is drawn in the page's theme, as every part is: its five styles are
 the standard theme's, a print draws them on its drafting paper, and a

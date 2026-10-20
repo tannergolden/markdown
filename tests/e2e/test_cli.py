@@ -79,7 +79,7 @@ class CliTest(unittest.TestCase):
     def test_the_catalogue_command_prints_the_committed_page(self):
         done = kit("catalogue")
         self.assertEqual(done.returncode, 0, done.stderr)
-        self.assertEqual(done.stdout, (support.ROOT / "docs" / "Catalogue.md").read_text(encoding="utf-8"))
+        self.assertEqual(done.stdout, (support.ROOT / "docs" / "references" / "Catalogue.md").read_text(encoding="utf-8"))
 
     def test_a_repository_case_is_previewed_and_checks(self):
         done = kit("preview", "--root", str(self.root), "--input", "mode=repository", "--today", "2026-09-25")

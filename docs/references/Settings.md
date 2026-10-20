@@ -170,7 +170,7 @@ month's mark at the top centre of every header: the medieval collection's is
 the month's sign of the zodiac in a gold roundel, as medieval calendars marked
 their months. The mark belongs to the calendar, so a page that keeps one
 design all year, `theme: medieval-forge`, is drawn without it. See
-[Drawing a Collection](technical/Collections.md).
+[Drawing a Collection](../technical/Collections.md).
 
 A page can choose its own sign instead, one of the twelve in the table, and
 every header then carries that sign in the roundel all year: on a design kept
@@ -360,7 +360,7 @@ moves sorted into groups, each folded shut under its own line; and under the
 Hall, the winners' badges and the leaderboard. No banner stands over a game: its
 sheet says whose turn it is and by when, and how a finished game ended, so the
 README says nothing twice. The
-[theme-sets page](https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess)
+[theme-sets page](https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#chess)
 shows every sheet in every tone, every holiday's set and every month of the
 Medieval collection, each drawn from a sample game.
 
@@ -508,13 +508,13 @@ What the settings write wins over what was measured, so any element can carry
 a `title`, a `caption` or a `desc` of its own, and a roster or a certificate
 takes `size: half` to stand beside the other at half the page's width. The
 fields each kind draws from are in
-[`tests/fixtures/driftmark`](../tests/fixtures/driftmark/.github/markdown.yaml),
+[`tests/fixtures/driftmark`](../../tests/fixtures/driftmark/.github/markdown.yaml),
 a made-up project that writes every one of them by hand, and the games', drawn
 for one profile alone, in a sample game of each beside it:
-[`chess.yaml`](../tests/fixtures/chess.yaml),
-[`checkers.yaml`](../tests/fixtures/checkers.yaml),
-[`pentago.yaml`](../tests/fixtures/pentago.yaml) and
-[`tictac.yaml`](../tests/fixtures/tictac.yaml).
+[`chess.yaml`](../../tests/fixtures/chess.yaml),
+[`checkers.yaml`](../../tests/fixtures/checkers.yaml),
+[`pentago.yaml`](../../tests/fixtures/pentago.yaml) and
+[`tictac.yaml`](../../tests/fixtures/tictac.yaml).
 
 **The game elements, `chess`, `checkers`, `pentago`, `tictac` and
 `chess-hall`, are @tannergolden's own.** They are drawn on that profile alone,
@@ -713,15 +713,15 @@ over `.github/trophies.lock.json`.
 
 ## 🔗 Traceability & Links
 
-- [README](../README.md): the stub, and what a run does.
+- [README](../../README.md): the stub, and what a run does.
 - [Catalogue](Catalogue.md): every trophy and achievement.
-- [ADR-0003](adrs/ADR-0003-Holiday-Windows.md): the holiday windows.
-- [ADR-0004](adrs/ADR-0004-Standard-As-The-Default-Theme.md): `standard` as the default theme.
-- [ADR-0005](adrs/ADR-0005-The-Kit-Measures-Live-Badges.md): the live badges.
-- [ADR-0006](adrs/ADR-0006-A-Collection-Changes-With-The-Month.md): the collections.
-- [ADR-0007](adrs/ADR-0007-A-Collection-Is-Drawn-By-One-Hand.md): one hand for a collection's twelve designs.
-- [ADR-0008](adrs/ADR-0008-The-Trophy-Case-Wears-The-Pages-Theme.md): the trophy case drawn in the page's theme.
-- [ADR-0009](adrs/ADR-0009-The-Games-Wear-The-Pages-Theme.md): the games and their Hall of Fame drawn in the page's theme.
+- [ADR-0003](../adrs/ADR-0003-Holiday-Windows.md): the holiday windows.
+- [ADR-0004](../adrs/ADR-0004-Standard-As-The-Default-Theme.md): `standard` as the default theme.
+- [ADR-0005](../adrs/ADR-0005-The-Kit-Measures-Live-Badges.md): the live badges.
+- [ADR-0006](../adrs/ADR-0006-A-Collection-Changes-With-The-Month.md): the collections.
+- [ADR-0007](../adrs/ADR-0007-A-Collection-Is-Drawn-By-One-Hand.md): one hand for a collection's twelve designs.
+- [ADR-0008](../adrs/ADR-0008-The-Trophy-Case-Wears-The-Pages-Theme.md): the trophy case drawn in the page's theme.
+- [ADR-0009](../adrs/ADR-0009-The-Games-Wear-The-Pages-Theme.md): the games and their Hall of Fame drawn in the page's theme.
 
 ### 🔗 See also
 

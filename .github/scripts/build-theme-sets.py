@@ -13,7 +13,7 @@ every month's design of a collection, as they are drawn on that profile.
 Nothing is fetched and nothing depends on the day it runs, so drawing it twice
 writes the same bytes, and a change to a theme shows up as a change here.
 
-  make themes                     the page and one SVG per drawing, in docs/themes
+  make themes                     the page and one SVG per drawing, in docs/references/themes
   build-theme-sets.py --bundle D  the page and one data file per theme, in D, for
                                   a host that caps how many files a page may have
   ... --only standard,halloween   just these themes
@@ -718,7 +718,7 @@ def collection_page(key: str, out: Path, bundle: bool) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Draw every theme the kit draws, and the page that shows them.")
-    parser.add_argument("out", type=Path, help="the folder to draw into, emptied first (docs/themes)")
+    parser.add_argument("out", type=Path, help="the folder to draw into, emptied first (docs/references/themes)")
     parser.add_argument("--bundle", action="store_true", help="one data file per theme instead of one SVG per drawing")
     parser.add_argument("--only", default="", help="a comma-separated list of themes to draw; every theme if empty")
     args = parser.parse_args(argv)

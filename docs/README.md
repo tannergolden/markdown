@@ -40,15 +40,17 @@ why they ship as seed content rather than as law.
 
 <!-- AUTO-INDEX:BEGIN dir=. style=log -->
 
-| Entry                               | Purpose                                                                                                                                |
-| :---------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
-| [`adrs/`](adrs/README.md)           | Architecture decision records, one file per decision, each logged with its status, date and evidence.                                  |
-| [`technical/`](technical/README.md) | How the kit is built: where each piece of its source lives, the stack and the Makefile targets CI runs, and how a collection is drawn. |
-| [`templates/`](templates/README.md) | Index of the reusable document templates and when to use each one.                                                                     |
-| [`themes/`](themes/)                | The theme-sets page and one SVG per drawing, from `make themes`: every theme and collection as the kit draws it.                       |
-| [`Catalogue.md`](Catalogue.md)      | Every trophy and achievement the kit can award, in both modes, with the threshold and the GitHub data behind each one.                 |
-| [`README.md`](README.md)            | This file.                                                                                                                             |
-| [`Settings.md`](Settings.md)        | Every key .github/markdown.yaml can hold, what each does, and the default a page that says nothing gets.                               |
+| Entry                                     | Purpose                                                                                                                                                     |
+| :---------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`adrs/`](adrs/README.md)                 | Architecture decision records, one file per decision, each logged with its status, date and evidence.                                                       |
+| [`distribution/`](distribution/README.md) | From a branch to a release: how a change moves through this project and how a release reaches its users, wherever this project adds to the shared workflow. |
+| [`introduction/`](introduction/README.md) | Where to start: what this project is and how its parts fit together, the principles it holds to, how to get ready to work on it, and where it is going.     |
+| [`library/`](library/README.md)           | What to learn, and where: guides, background and further reading for anyone new to this project's domain or its tools.                                      |
+| [`operations/`](operations/README.md)     | Keeping this project healthy and safe once it runs: runbooks, incident response, post-mortems, security, and the risks it still carries.                    |
+| [`references/`](references/README.md)     | Things to look up: the glossary, catalogues, settings and formats, the pages this project consults rather than reads through.                               |
+| [`technical/`](technical/README.md)       | How the kit is built: where each piece of its source lives, the stack and the Makefile targets CI runs, and how a collection is drawn.                      |
+| [`templates/`](templates/README.md)       | Index of the reusable document templates and when to use each one.                                                                                          |
+| [`README.md`](README.md)                  | This file.                                                                                                                                                  |
 
 <!-- AUTO-INDEX:END -->
 
@@ -82,34 +84,42 @@ to keep that seed exactly as it is.
 
 ---
 
-## 📁 This Folder As You Grow
+## 📁 The Seven Folders
 
-`docs/` is where your instantiated documents go - the tree you build by copying
-seeds out, not the tree they sit in. A conventional shape, none of it mandatory:
+`docs/` is where your own documents go: the pages you write and the seeds you
+copy out, not the tree the seeds sit in. It arrives in the same seven folders
+as the standards' own documentation, so every repository on the standards
+reads the same way:
 
-```txt
+```bash
 docs/
-├── technical/           # architecture, backend, database, interface, testing
+├── introduction/        # where to start: overview, principles, setup, roadmap
+├── distribution/        # from a branch to a release: releasing, delivery
+├── technical/           # how it is built: architecture, source, designs, plans
+├── operations/          # keeping it healthy and safe: runbooks, post-mortems
+├── references/          # things to look up: glossary, catalogues, formats
+├── library/             # what to learn: guides, background, further reading
 ├── adrs/                # architecture decision records
-└── operations/          # runbooks, on-call, incident response
+└── templates/           # the seeds, copied out into the folders above
 ```
 
-Nothing belongs in it until you put something there, and `templates/` is not
-copied across - the seeds stay where they are and you take what you want.
-
-Give each folder you add a `README.md` that logs its files, the way every
-seeded folder does, and update it in the same change that adds a file.
+Each folder arrives empty but for a `README.md` that says what belongs in it
+and logs its files. Put each document you write in the folder its kind names,
+and add folders below them as you grow: give each one a `README.md` that logs
+its files, the way every seeded folder does, and update it in the same change
+that adds a file. `templates/` is not copied across: the seeds stay where they
+are and you take what you want.
 
 ---
 
 ## 📂 This Project's Documents
 
-- [Settings](Settings.md) - every key `.github/markdown.yaml` can hold, what each does, and its default
+- [Settings](references/Settings.md) - every key `.github/markdown.yaml` can hold, what each does, and its default
 - [Source Code](technical/Source-Code.md) - where each piece of the kit lives, and the layering rules its imports are held to
 - [Technology Stack & Tooling](technical/Technology-Stack-&-Tooling.md) - the stack, and the Makefile targets CI runs
 - [Drawing a Collection](technical/Collections.md) - how a collection is drawn in one hand, from its hand to its twelfth design
 - [Architecture Decision Records](adrs/README.md) - every decision the kit's design rests on, each with its status and date
-- [Catalogue](Catalogue.md) - every trophy and achievement a case can hold, what earns each, and how its threshold was set
+- [Catalogue](references/Catalogue.md) - every trophy and achievement a case can hold, what earns each, and how its threshold was set
 
 ---
 

@@ -22,7 +22,7 @@ from .. import readme
 
 NAME = "trophies"
 KIT_URL = "https://github.com/tannergolden/markdown"
-CATALOGUE = f"{KIT_URL}/blob/HEAD/docs/Catalogue.md"
+CATALOGUE = f"{KIT_URL}/blob/HEAD/docs/references/Catalogue.md"
 
 
 def _img(base: str, alt: str, embed: str, width: int | None = None) -> str:

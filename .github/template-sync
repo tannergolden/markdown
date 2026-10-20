@@ -131,3 +131,6 @@
 #/.github/workflows/cut-release.yml
 
 # --- Your rules ---------------------------------------------------------------
+# technical/ keeps a README that describes the kit's own pages, so the
+# template's, written for any project, never replaces it.
+!/docs/technical/README.md

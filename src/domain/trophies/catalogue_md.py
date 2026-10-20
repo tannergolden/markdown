@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
-"""docs/Catalogue.md, written from the catalogue and the calibration so it cannot drift from them."""
+"""docs/references/Catalogue.md, written from the catalogue and the calibration so it cannot drift from them."""
 from __future__ import annotations
 
 from . import calibration

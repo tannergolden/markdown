@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tests for the theme-sets page builder.
 
-WHY THIS EXISTS. docs/themes is what the README sends a reader to when they
+WHY THIS EXISTS. docs/references/themes is what the README sends a reader to when they
 choose a theme, and the builder that draws it runs rarely: by hand, after a
 theme changes. A broken path or a stale template would only show up as a
 blank picture on a page nobody re-checks. These tests draw two themes into a

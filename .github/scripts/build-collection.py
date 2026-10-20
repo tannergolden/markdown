@@ -14,7 +14,7 @@ the collection as one entry and sends a reader here for the rest.
 Nothing is fetched and nothing depends on the day it runs, except which month
 the calendar marks as this one, which the reader's own browser works out.
 
-  make themes                                   each complete collection, in docs/themes/<collection>
+  make themes                                   each complete collection, in docs/references/themes/<collection>
   build-collection.py medieval OUT --draft      a collection still being drawn, its months to come marked
   build-collection.py medieval OUT --bundle     one data file per design, for a host that caps files
 """

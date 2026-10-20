@@ -12,7 +12,7 @@ Enamel colours are palette tokens and the icons are the kit's own, so a case
 matches the badges and banners beside it. Five icons are the case's alone:
 `pull`, `issue`, `q` and `tick`, and its `check`, which is a tick in a ring.
 
-This file is data. `markdown-kit catalogue` writes docs/Catalogue.md from it.
+This file is data. `markdown-kit catalogue` writes docs/references/Catalogue.md from it.
 """
 from __future__ import annotations
 

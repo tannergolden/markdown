@@ -33,9 +33,9 @@ draw:
 		$(KIT) preview --root preview/$$mode --input mode=$$mode --today 2026-09-25 || exit 1; \
 	done
 
-## themes: Draw every theme into docs/themes, the page the README links to (no network)
+## themes: Draw every theme into docs/references/themes, the page the README links to (no network)
 themes:
-	@$(PYTHON) .github/scripts/build-theme-sets.py docs/themes
+	@$(PYTHON) .github/scripts/build-theme-sets.py docs/references/themes
 
 ## test: Everything CI runs: the kit's three suites and the repository script tests
 test: test-unit test-integration test-e2e test-scripts
@@ -60,9 +60,9 @@ test-scripts:
 holidays:
 	@$(KIT) holidays --year $$(date -u +%Y)
 
-## catalogue: Write docs/Catalogue.md from the trophies' catalogue and calibration
+## catalogue: Write docs/references/Catalogue.md from the trophies' catalogue and calibration
 catalogue:
-	@$(KIT) catalogue > docs/Catalogue.md
+	@$(KIT) catalogue > docs/references/Catalogue.md
 
 ## calibrate: Measure the repository population through the API (needs GITHUB_TOKEN), then write what reads it
 calibrate:

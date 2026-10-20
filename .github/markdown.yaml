@@ -4,7 +4,7 @@
 # This repository's own page: its README, drawn by the kit it documents, in
 # repository mode, every night, by 📝 Markdown, the same stub the README
 # tells every repository to copy. Whatever is not written here is read from
-# GitHub and git, and docs/Settings.md has every key.
+# GitHub and git, and docs/references/Settings.md has every key.
 
 # The page's one theme: every part is drawn in the blueprint.
 theme: blueprint

@@ -9,7 +9,7 @@
   measure    measure the page and print the measurement
   set        set badges' values in the settings file, NAME=MESSAGE[:COLOR], keeping its comments
   lint       draw every design for every sample in every print, and lint every file
-  catalogue  docs/Catalogue.md: every trophy and achievement, and what earns it
+  catalogue  docs/references/Catalogue.md: every trophy and achievement, and what earns it
   calibrate  measure the repository population the repository-mode trophies are set against
   settings   read a repository's settings and print them in full, every default filled in
   holidays   the holiday calendar: which set is up on a day, and the windows ahead or in a year
@@ -103,7 +103,7 @@ def parser() -> argparse.ArgumentParser:
                                    help="a badge's name, its new message, and a colour after a colon if it changes")
     sub.add_parser("lint", help="draw every design for every sample in every print, and lint every file").add_argument(
         "--specimen", type=Path, help="a repository whose elements are drawn in every print too")
-    sub.add_parser("catalogue", help="print docs/Catalogue.md, written from the catalogue")
+    sub.add_parser("catalogue", help="print docs/references/Catalogue.md, written from the catalogue")
     c = sub.add_parser("calibrate", help="measure the repository population the trophies are set against")
     c.add_argument("--out", type=Path, default=Path("src/domain/data/calibration/repositories.json"),
                    help="where the measurement goes (default: the kit's own data file)")

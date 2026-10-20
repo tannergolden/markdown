@@ -37,6 +37,6 @@ message for one before it goes out.
 
 - The kit is standard-library Python. Run Python with the GitHub tokens unset:
   `env -u GH_TOKEN -u GITHUB_TOKEN -u MARKDOWN_TOKEN ...`.
-- `make lint` and `make test` must pass before a push, and `make themes` redraws `docs/themes` after a theme
-  changes.
+- `make lint` and `make test` must pass before a push, and `make themes` redraws `docs/references/themes` after a
+  theme changes.
 - Commits follow [CONTRIBUTING](.github/CONTRIBUTING.md): Conventional Commits with an emoji, signed off.

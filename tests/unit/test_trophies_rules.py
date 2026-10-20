@@ -70,8 +70,8 @@ class Catalogue(unittest.TestCase):
 
     def test_the_catalogue_page_is_written_from_this_catalogue(self):
         from domain.trophies import catalogue_md
-        page = (support.ROOT / "docs" / "Catalogue.md").read_text(encoding="utf-8")
-        self.assertEqual(page, catalogue_md.page(), "docs/Catalogue.md is stale: run make catalogue")
+        page = (support.ROOT / "docs" / "references" / "Catalogue.md").read_text(encoding="utf-8")
+        self.assertEqual(page, catalogue_md.page(), "docs/references/Catalogue.md is stale: run make catalogue")
 
     def test_every_achievement_has_a_line_in_its_modes_measurer(self):
         # The measurers need GitHub to run, so this reads their source: a slug

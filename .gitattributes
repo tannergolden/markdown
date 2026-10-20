@@ -147,4 +147,4 @@ docs/**  linguist-documentation=true
 # The theme-sets page is drawn by `make themes`, every file of it: collapse it
 # in pull-request diffs, and leave it out of source archives, where nothing
 # reads it.
-docs/themes/**  linguist-generated=true -diff export-ignore
+docs/references/themes/**  linguist-generated=true -diff export-ignore

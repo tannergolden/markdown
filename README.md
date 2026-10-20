@@ -154,7 +154,7 @@ repository's other secrets. The stub can set the choices made most often:
 | `commit-branch` | `chore/markdown` | The branch that pull request rides on.                                      |
 
 Everything else a page can set lives in `.github/markdown.yaml`, and
-[`docs/Settings.md`](docs/Settings.md) has every key.
+[`docs/references/Settings.md`](docs/references/Settings.md) has every key.
 
 > [!TIP]
 > **`MARKDOWN_TOKEN` is optional.** `GITHUB_TOKEN` reads everything public, so
@@ -221,7 +221,7 @@ trophy case read as one family:
   stained glass at Easter, the jousts of May, the Bayeux charge in October,
   a dragon on its hoard in December. Naming one design, like
   `medieval-forge`, keeps it all year. See
-  [Collections](docs/Settings.md#-collections).
+  [Collections](docs/references/Settings.md#-collections).
 
 The header, the footer and the body each come as a **day** file and a
 **dark** file, and the README shows one through a `<picture>` that follows the
@@ -240,34 +240,34 @@ repository's birthday is the day GitHub created it, and its cake carries
 its age in gold number candles. A person gives theirs in the settings,
 `birthday: 03-14`, or with the year, `birthday: 1990-03-14`, for their
 age. `birthday: false` keeps it away. See
-[Birthday](docs/Settings.md#-birthday).
+[Birthday](docs/references/Settings.md#-birthday).
 
 The trophy case wears the theme too, and keeps its style, its sizes and its
 words: `standard` strikes its cups, crests, medallions, crystals and plaques
 in metal and enamel, a print draws each card as a sheet on its drafting paper,
 drawn further as the tier rises, and a holiday's set or a collection's design
 strikes it in pixels, on its own paper and in its own frame.
-`look: standard` under [`trophies:`](docs/Settings.md#-trophies) keeps the
+`look: standard` under [`trophies:`](docs/references/Settings.md#-trophies) keeps the
 standard look in every theme.
 
 <table>
   <tr>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#standard"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/standard/h2-still-dark.svg"><img src="docs/themes/standard/h2-still-day.svg" alt="The H2 header in standard, the default theme" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#standard"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/standard/h2-still-dark.svg"><img src="docs/references/themes/standard/h2-still-day.svg" alt="The H2 header in standard, the default theme" width="100%"></picture></a>
       <br /><sub><code>standard</code>, the default</sub>
     </td>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#blueprint"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/blueprint/h2-still-dark.svg"><img src="docs/themes/blueprint/h2-still-day.svg" alt="The H2 header in blueprint, this page's print" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#blueprint"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/blueprint/h2-still-dark.svg"><img src="docs/references/themes/blueprint/h2-still-day.svg" alt="The H2 header in blueprint, this page's print" width="100%"></picture></a>
       <br /><sub><code>blueprint</code>, this page's print</sub>
     </td>
   </tr>
   <tr>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#halloween"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/halloween/h2-still-dark.svg"><img src="docs/themes/halloween/h2-still-day.svg" alt="The H2 header in Halloween's set" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#halloween"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/halloween/h2-still-dark.svg"><img src="docs/references/themes/halloween/h2-still-day.svg" alt="The H2 header in Halloween's set" width="100%"></picture></a>
       <br /><sub>Halloween's set, October 30 to November 1</sub>
     </td>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#christmas"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/christmas/h2-still-dark.svg"><img src="docs/themes/christmas/h2-still-day.svg" alt="The H2 header in Christmas's set" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#christmas"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/christmas/h2-still-dark.svg"><img src="docs/references/themes/christmas/h2-still-day.svg" alt="The H2 header in Christmas's set" width="100%"></picture></a>
       <br /><sub>Christmas's set, December 24 to 26</sub>
     </td>
   </tr>
@@ -276,29 +276,29 @@ standard look in every theme.
 <table>
   <tr>
     <td width="25%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#standard"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/standard/trophy-trophy-3-dark.svg"><img src="docs/themes/standard/trophy-trophy-3-day.svg" alt="A gold trophy card in standard, the default theme" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#standard"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/standard/trophy-trophy-3-dark.svg"><img src="docs/references/themes/standard/trophy-trophy-3-day.svg" alt="A gold trophy card in standard, the default theme" width="100%"></picture></a>
       <br /><sub><code>standard</code></sub>
     </td>
     <td width="25%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#blueprint"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/blueprint/trophy-trophy-3-dark.svg"><img src="docs/themes/blueprint/trophy-trophy-3-day.svg" alt="A gold trophy card in blueprint, drawn on its drafting paper" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#blueprint"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/blueprint/trophy-trophy-3-dark.svg"><img src="docs/references/themes/blueprint/trophy-trophy-3-day.svg" alt="A gold trophy card in blueprint, drawn on its drafting paper" width="100%"></picture></a>
       <br /><sub><code>blueprint</code></sub>
     </td>
     <td width="25%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#halloween"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/halloween/trophy-trophy-3-dark.svg"><img src="docs/themes/halloween/trophy-trophy-3-day.svg" alt="A gold trophy card in Halloween's set, in pixels" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#halloween"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/halloween/trophy-trophy-3-dark.svg"><img src="docs/references/themes/halloween/trophy-trophy-3-day.svg" alt="A gold trophy card in Halloween's set, in pixels" width="100%"></picture></a>
       <br /><sub>Halloween's set</sub>
     </td>
     <td width="25%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/medieval/index.html"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/medieval/medieval-forge/trophy-trophy-3-dark.svg"><img src="docs/themes/medieval/medieval-forge/trophy-trophy-3-day.svg" alt="A gold trophy card in Forge, the medieval collection's November design" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/medieval/index.html"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/medieval/medieval-forge/trophy-trophy-3-dark.svg"><img src="docs/references/themes/medieval/medieval-forge/trophy-trophy-3-day.svg" alt="A gold trophy card in Forge, the medieval collection's November design" width="100%"></picture></a>
       <br /><sub><code>medieval</code> in November</sub>
     </td>
   </tr>
 </table>
 
-**[See every theme, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html)**:
+**[See every theme, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html)**:
 the theme-sets page shows each theme's headers, phone files, footers, elements,
 badges and trophy case on GitHub's light and dark grounds, at the size a README
 shows them.
-The page is [`docs/themes/index.html`](docs/themes/index.html) in this
+The page is [`docs/references/themes/index.html`](docs/references/themes/index.html) in this
 repository, and the link opens it through raw.githack.com, because GitHub
 shows an HTML file as its source.
 
@@ -433,73 +433,73 @@ and each of the other three games is folded shut under its name.
 <table>
   <tr>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-wide-blackprint-still-dark.svg"><img src="docs/themes/chess/chess-wide-blackprint-still-day.svg" alt="The chess board in blackprint, from a sample game" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/chess/chess-wide-blackprint-still-dark.svg"><img src="docs/references/themes/chess/chess-wide-blackprint-still-day.svg" alt="The chess board in blackprint, from a sample game" width="100%"></picture></a>
       <br /><sub>Chess, in <code>blackprint</code></sub>
     </td>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#checkers"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/checkers/checkers-wide-blackprint-still-dark.svg"><img src="docs/themes/checkers/checkers-wide-blackprint-still-day.svg" alt="The Checkers board in blackprint, from a sample game" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#checkers"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/checkers/checkers-wide-blackprint-still-dark.svg"><img src="docs/references/themes/checkers/checkers-wide-blackprint-still-day.svg" alt="The Checkers board in blackprint, from a sample game" width="100%"></picture></a>
       <br /><sub>Checkers, in <code>blackprint</code></sub>
     </td>
   </tr>
   <tr>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#pentago"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/pentago/pentago-wide-blackprint-still-dark.svg"><img src="docs/themes/pentago/pentago-wide-blackprint-still-day.svg" alt="The Pentago board in blackprint, from a sample game under the Ghost Rule" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#pentago"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/pentago/pentago-wide-blackprint-still-dark.svg"><img src="docs/references/themes/pentago/pentago-wide-blackprint-still-day.svg" alt="The Pentago board in blackprint, from a sample game under the Ghost Rule" width="100%"></picture></a>
       <br /><sub>Pentago, in <code>blackprint</code></sub>
     </td>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#tictac"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/tictac/tictac-wide-blackprint-still-dark.svg"><img src="docs/themes/tictac/tictac-wide-blackprint-still-day.svg" alt="The Tic-Tac board in blackprint, from a sample game under the Ghost Rule" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#tictac"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/tictac/tictac-wide-blackprint-still-dark.svg"><img src="docs/references/themes/tictac/tictac-wide-blackprint-still-day.svg" alt="The Tic-Tac board in blackprint, from a sample game under the Ghost Rule" width="100%"></picture></a>
       <br /><sub>Tic-Tac, in <code>blackprint</code></sub>
     </td>
   </tr>
   <tr>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-wide-standard-still-dark.svg"><img src="docs/themes/chess/chess-wide-standard-still-day.svg" alt="The chess board in standard, from a sample game" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/chess/chess-wide-standard-still-dark.svg"><img src="docs/references/themes/chess/chess-wide-standard-still-day.svg" alt="The chess board in standard, from a sample game" width="100%"></picture></a>
       <br /><sub>Chess, in <code>standard</code></sub>
     </td>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#checkers"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/checkers/checkers-wide-standard-still-dark.svg"><img src="docs/themes/checkers/checkers-wide-standard-still-day.svg" alt="The Checkers board in standard, from a sample game" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#checkers"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/checkers/checkers-wide-standard-still-dark.svg"><img src="docs/references/themes/checkers/checkers-wide-standard-still-day.svg" alt="The Checkers board in standard, from a sample game" width="100%"></picture></a>
       <br /><sub>Checkers, in <code>standard</code></sub>
     </td>
   </tr>
   <tr>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#pentago"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/pentago/pentago-wide-standard-still-dark.svg"><img src="docs/themes/pentago/pentago-wide-standard-still-day.svg" alt="The Pentago board in standard, from a sample game under the Ghost Rule" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#pentago"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/pentago/pentago-wide-standard-still-dark.svg"><img src="docs/references/themes/pentago/pentago-wide-standard-still-day.svg" alt="The Pentago board in standard, from a sample game under the Ghost Rule" width="100%"></picture></a>
       <br /><sub>Pentago, in <code>standard</code></sub>
     </td>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#tictac"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/tictac/tictac-wide-standard-still-dark.svg"><img src="docs/themes/tictac/tictac-wide-standard-still-day.svg" alt="The Tic-Tac board in standard, from a sample game under the Ghost Rule" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#tictac"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/tictac/tictac-wide-standard-still-dark.svg"><img src="docs/references/themes/tictac/tictac-wide-standard-still-day.svg" alt="The Tic-Tac board in standard, from a sample game under the Ghost Rule" width="100%"></picture></a>
       <br /><sub>Tic-Tac, in <code>standard</code></sub>
     </td>
   </tr>
   <tr>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#hall-of-fame"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/hall-of-fame/hall-of-fame-wide-blackprint-still-dark.svg"><img src="docs/themes/hall-of-fame/hall-of-fame-wide-blackprint-still-day.svg" alt="The Hall of Fame of all four games in blackprint, from a sample of fictional winners" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#hall-of-fame"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/hall-of-fame/hall-of-fame-wide-blackprint-still-dark.svg"><img src="docs/references/themes/hall-of-fame/hall-of-fame-wide-blackprint-still-day.svg" alt="The Hall of Fame of all four games in blackprint, from a sample of fictional winners" width="100%"></picture></a>
       <br /><sub>The Hall of Fame, in <code>blackprint</code></sub>
     </td>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#hall-of-fame"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/hall-of-fame/hall-of-fame-wide-standard-still-dark.svg"><img src="docs/themes/hall-of-fame/hall-of-fame-wide-standard-still-day.svg" alt="The Hall of Fame of all four games in standard, from a sample of fictional winners" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#hall-of-fame"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/hall-of-fame/hall-of-fame-wide-standard-still-dark.svg"><img src="docs/references/themes/hall-of-fame/hall-of-fame-wide-standard-still-day.svg" alt="The Hall of Fame of all four games in standard, from a sample of fictional winners" width="100%"></picture></a>
       <br /><sub>The Hall of Fame, in <code>standard</code></sub>
     </td>
   </tr>
   <tr>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/chess/chess-wide-halloween-still-dark.svg"><img src="docs/themes/chess/chess-wide-halloween-still-day.svg" alt="The chess board in the Halloween set's pixels, from a sample game" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#chess"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/chess/chess-wide-halloween-still-dark.svg"><img src="docs/references/themes/chess/chess-wide-halloween-still-day.svg" alt="The chess board in the Halloween set's pixels, from a sample game" width="100%"></picture></a>
       <br /><sub>Chess, in the <code>halloween</code> set</sub>
     </td>
     <td width="50%" align="center">
-      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#hall-of-fame"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/themes/hall-of-fame/hall-of-fame-wide-medieval-hoard-still-dark.svg"><img src="docs/themes/hall-of-fame/hall-of-fame-wide-medieval-hoard-still-day.svg" alt="The Hall of Fame of all four games in the Hoard, December's design of the Medieval collection, from a sample of fictional winners" width="100%"></picture></a>
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#hall-of-fame"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/hall-of-fame/hall-of-fame-wide-medieval-hoard-still-dark.svg"><img src="docs/references/themes/hall-of-fame/hall-of-fame-wide-medieval-hoard-still-day.svg" alt="The Hall of Fame of all four games in the Hoard, December's design of the Medieval collection, from a sample of fictional winners" width="100%"></picture></a>
       <br /><sub>The Hall of Fame, in <code>medieval-hoard</code>, December's design</sub>
     </td>
   </tr>
 </table>
 
-**[See the games in every tone, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/themes/index.html#chess)**:
+**[See the games in every tone, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#chess)**:
 the theme-sets page shows each game's board and its phone files, and the Hall
 of Fame of all four with its phone files and the winners' badges, in the
 standard theme and every print, every holiday's set, the Birthday set and every
 month of the Medieval collection, each from a sample whose players are as
 fictional as driftmark's contributors. What the games' settings hold is in
-[Settings](docs/Settings.md#-elements); the games themselves are
+[Settings](docs/references/Settings.md#-elements); the games themselves are
 [live on @tannergolden's profile](https://github.com/tannergolden).
 
 ---
@@ -547,21 +547,21 @@ python3 src/markdown-kit.py collections                    # each collection's d
 
 ## 📦 What's Inside
 
-| Path                             | Purpose                                                                                                      |
-| :------------------------------- | :----------------------------------------------------------------------------------------------------------- |
-| `.github/workflows/markdown.yml` | **The workflow** every stub calls: checkout, the kit, the commit                                             |
-| `.github/actions/markdown/`      | **The action** the workflow runs: one run of the kit on the checkout                                         |
-| `src/markdown-kit.py`            | **The kit's** command line, and the one place its layers meet                                                |
-| `src/domain/`                    | What a page looks like: the palette, the lettering, the themes and every drawing                             |
-| `src/app/`                       | What a run does: the settings, the measurement, the plan and the commit                                      |
-| `src/infra/`                     | Files, git, GitHub's API, the clock, and the kit's data files                                                |
-| `docs/`                          | [Settings](docs/Settings.md), the trophies' [catalogue](docs/Catalogue.md), and the decisions behind the kit |
-| `docs/themes/`                   | The theme-sets page: every theme as the kit draws it, from `make themes`                                     |
-| `tests/`                         | Unit, integration and end-to-end suites, and the fixtures they check against                                 |
+| Path                             | Purpose                                                                                                                            |
+| :------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------- |
+| `.github/workflows/markdown.yml` | **The workflow** every stub calls: checkout, the kit, the commit                                                                   |
+| `.github/actions/markdown/`      | **The action** the workflow runs: one run of the kit on the checkout                                                               |
+| `src/markdown-kit.py`            | **The kit's** command line, and the one place its layers meet                                                                      |
+| `src/domain/`                    | What a page looks like: the palette, the lettering, the themes and every drawing                                                   |
+| `src/app/`                       | What a run does: the settings, the measurement, the plan and the commit                                                            |
+| `src/infra/`                     | Files, git, GitHub's API, the clock, and the kit's data files                                                                      |
+| `docs/`                          | [Settings](docs/references/Settings.md), the trophies' [catalogue](docs/references/Catalogue.md), and the decisions behind the kit |
+| `docs/references/themes/`        | The theme-sets page: every theme as the kit draws it, from `make themes`                                                           |
+| `tests/`                         | Unit, integration and end-to-end suites, and the fixtures they check against                                                       |
 
 `make lint test` runs everything CI runs, and `make draw` draws a sample profile
 and a sample repository page into `preview/`, which git leaves alone.
-`make themes` draws every theme into `docs/themes`, which is committed, so run
+`make themes` draws every theme into `docs/references/themes`, which is committed, so run
 it after changing a theme.
 [`docs/technical/Source-Code.md`](docs/technical/Source-Code.md) lays out the
 layers and the rules between them.

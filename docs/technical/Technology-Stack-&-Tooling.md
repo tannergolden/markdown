@@ -93,7 +93,7 @@ Mapping the project-specific tools to the universal repository interface (Makefi
 | **Test** (`test-command`) | `make test`: `unittest` over `tests/unit`, its modules side by side a core each (`tests/parallel.py`), then `tests/integration`, `tests/e2e` and `.github/scripts`. | Execution of the validation suite, inside the CI job's 15 minutes. |
 | **Build** (`build-command`) | Nothing is built: the action runs the source as it is tagged. | Transformation into deployable artifacts. |
 | **`make deploy`** | None: a release is a tag, cut by the release workflow. | Environmental promotion.                  |
-| **`make catalogue`** | `docs/Catalogue.md`, written from the trophies' catalogue and calibration; a unit test fails when it is stale. | Documentation that cannot drift from the data. |
+| **`make catalogue`** | `docs/references/Catalogue.md`, written from the trophies' catalogue and calibration; a unit test fails when it is stale. | Documentation that cannot drift from the data. |
 | **`make calibrate`** | `markdown-kit calibrate` measures the repository population through the API (needs `GITHUB_TOKEN`), then `make calibrated` writes the catalogue again. The **📐 Calibrate** workflow runs it once a quarter. | Thresholds pinned to measurements. |
 
 ### 🔗 See also
