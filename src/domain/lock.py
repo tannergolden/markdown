@@ -9,7 +9,8 @@ without the numbers moving underneath it:
 
   drawn     the theme the page was drawn in: its name, the print rainbowprint
             was on, the set that had taken over (a holiday's, or the
-            Birthday set), the day, and for a repository the day GitHub
+            Birthday set), the collection's design or the pixel theme the
+            page was drawn in, the day, and for a repository the day GitHub
             created it, its birthday
   parts     each part's own record, which that part owns: the banners' last
             measurement, the trophies' history, and so on

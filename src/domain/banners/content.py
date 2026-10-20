@@ -54,8 +54,8 @@ class Header:
                       ("LICENSE", "MIT"))
     # The print it is drawn in: a key of `prints.PRINTS`.
     tone: str = "blueprint"
-    # The pixel set that draws it instead, as `pixelsets` names one: a holiday's key with its day, or a
-    # collection's design, with the day when it is drawn as the month's; "" for none.
+    # The pixel set that draws it instead, as `pixelsets` names one: a holiday's key with its day, a pixel
+    # theme's, or a collection's design, with the day when it is drawn as the month's; "" for none.
     holiday: str = ""
     off: frozenset = field(default_factory=frozenset)
 
@@ -112,7 +112,7 @@ class Footer:
     built: bool = True
     # The print it is drawn in, the header's: a key of `prints.PRINTS`.
     tone: str = "blueprint"
-    # The holiday whose set draws it instead, the header's, or "" for none.
+    # The pixel set that draws it instead, the header's, or "" for none.
     holiday: str = ""
     off: frozenset = field(default_factory=frozenset)
 

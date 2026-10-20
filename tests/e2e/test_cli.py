@@ -118,6 +118,17 @@ class CliTest(unittest.TestCase):
         self.assertEqual(done.returncode, 2)
         self.assertIn("keep one", done.stderr)
 
+    def test_themes_lists_every_kind_a_page_can_pick_and_the_sets_on_the_calendar(self):
+        done = kit("themes")
+        self.assertEqual(done.returncode, 0, done.stderr)
+        said = done.stdout
+        for kind in ("standard", "prints", "pixel themes", "collections", "holiday sets", "Birthday set"):
+            self.assertIn(f"  {kind}  ", said)
+        for key in ("blueprint", "rainbowprint", "heaven-and-hell (Heaven & Hell)", "medieval (Medieval)",
+                    "medieval-longship", "Halloween", "prints: in its settings"):
+            self.assertIn(key, said)
+        self.assertTrue(all(len(line) <= 100 for line in said.splitlines()), said)
+
     def test_holidays_on_a_given_day(self):
         done = kit("holidays", "--today", "2026-10-30")
         self.assertEqual(done.returncode, 0, done.stderr)

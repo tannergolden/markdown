@@ -140,8 +140,8 @@ def plan(result: dict, section: dict, *, folder: str, base: str, theme: str = ST
     `folder` is where the files go, from the repository's root, and `base`
     the same folder as the README reaches it. `theme` is the page's theme,
     rainbowprint already resolved to its print, and `holiday` the pixel set
-    the page is drawn in, a holiday's while it is up or a collection's design
-    (as `pixelsets` reads it): the case is drawn in the look they give it,
+    the page is drawn in, a holiday's while it is up, a pixel theme or a
+    collection's design (as `pixelsets` reads it): the case is drawn in the look they give it,
     unless the section keeps it standard (see `looks`).
     """
     mode = result["mode"]

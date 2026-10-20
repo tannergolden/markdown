@@ -365,9 +365,9 @@ def draw(b: dict, measured: dict, *, theme: str, shade: str | None, seed: str, h
 
     `shade` is the print a rainbowprint page is in, which a plate that names
     rainbowprint follows; `seed` picks a rotating badge's colour. While
-    `holiday` names a pixel set (a holiday's while it is up, or a collection's
-    design for the month; see `pixelsets`) it draws the badge, at the same
-    paths, unless its letters cannot.
+    `holiday` names a pixel set (a holiday's while it is up, a pixel theme, or
+    a collection's design for the month; see `pixelsets`) it draws the badge,
+    at the same paths, unless its letters cannot.
     """
     files = _holiday(b, measured, theme=theme, seed=seed, holiday=holiday) \
         or _draw(b, measured, theme=theme, shade=shade, seed=seed)
@@ -379,7 +379,7 @@ def draw(b: dict, measured: dict, *, theme: str, shade: str | None, seed: str, h
 
 
 def in_set(held, b: dict, measured: dict, *, theme: str, seed: str) -> dict[str, str] | None:
-    """The badge as the holiday set `held` draws it, in the form and at the paths the page draws it with,
+    """The badge as the pixel set `held` draws it, in the form and at the paths the page draws it with,
     unchecked; None when the set's letters cannot draw it."""
     message, colour = says(b, measured, seed)
     live_ = has_gold_label(b)

@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
-"""The themes a page can be drawn in: `standard`, the prints, and `rainbowprint`.
+"""The themes a page can be drawn in that are not pixel art: `standard`, the prints, and `rainbowprint`.
 
 `standard` is the default. It is the original badges' own look, grown to the
 size of a header, and every page is drawn in it unless the settings name
@@ -19,13 +19,17 @@ repository adds its own under `prints:` in its settings, in the same shape: a
 name for each set of colours, each a token or #RRGGBB, `label` and `night`
 optional.
 
-The holiday sets are not themes a page chooses. They take over from whichever
-theme it is drawn in around each holiday, then hand it back: see `holidays`.
+A page may name a pixel theme or a collection instead, each drawn in pixels
+(see `pixelthemes` and `collections`), and no print a repository adds may take
+the name of any theme the kit draws. The holiday sets are not themes a page
+chooses. They take over from whichever theme it is drawn in around each
+holiday, then hand it back: see `holidays`.
 """
 from __future__ import annotations
 
 import re
 
+from . import collections, pixelthemes
 from .palette import DECLARED, HEX, is_colour
 
 STANDARD = "standard"
@@ -55,7 +59,8 @@ def errors(name: object, spec: object) -> list[str]:
     """What is wrong with one print a repository defines, each said precisely."""
     if not isinstance(name, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", name):
         return [f"{name!r}: a print's name is lowercase letters, digits and hyphens"]
-    if name in BUILTIN or name in (RAINBOW, STANDARD):
+    drawn = name in BUILTIN or name in (RAINBOW, STANDARD) or name in pixelthemes.THEMES
+    if drawn or name in collections.COLLECTIONS or collections.owner(name):
         return [f"{name}: the kit already draws a theme by that name; give yours another"]
     if not isinstance(spec, dict):
         return [f"{name}: expected a map of its colours"]

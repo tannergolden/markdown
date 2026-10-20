@@ -127,7 +127,7 @@ def sample(badges: list[dict]) -> dict:
 def plan(section: dict, measured: dict, *, theme: str, shade: str | None, today: dt.date, out: str, readme: str,
          draw: bool = True, holiday: str = "") -> dict:
     """Every badge's files by path, the README's block, and what each says, on a page in `theme` (and in
-    the pixel set `holiday` names, a holiday's while it is up or a collection's design)."""
+    the pixel set `holiday` names, a holiday's while it is up, a pixel theme or a collection's design)."""
     folder = posixpath.join(out.strip("/") or ".", "badges")
     base = posixpath.relpath(folder, posixpath.dirname(readme) or ".")
     return BD.plan(section["list"], measured, theme=theme, shade=shade, today=today, folder=folder, base=base,

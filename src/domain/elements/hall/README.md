@@ -37,7 +37,7 @@ other across the top, the series under them as a table, all four games first
 and then each on a row of its own, and the podium under that, three blocks in
 gold, silver and bronze, a winner standing on each. Each sheet comes wide and on
 a phone, moving as it opens and still for anyone who asks for reduced motion.
-While a holiday's set or a collection's design is up, it draws the same match
+While a holiday's set, a pixel theme or a collection's design is up, it draws the same match
 card in its own pixels, as it draws the four boards
 ([`holidays/designs/hall.py`](../../holidays/designs/hall.py)), the blocks cut
 from the set's own world, a plaque of the trophies' metals on each, and each

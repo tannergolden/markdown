@@ -115,14 +115,54 @@ class TestFiles(unittest.TestCase):
             self.assertTrue(keep.is_file())
 
 
-def pixel_sets() -> tuple[list[str], list[str]]:
+def pixel_sets() -> tuple[list[str], list[str], list[str]]:
     """The labels the sets a game is drawn in carry: each holiday's set by its name and the Birthday set after them,
-    then each design of the medieval collection by its month."""
+    then each pixel theme by its name, then each design of the medieval collection by its month."""
     sets = [builder.holidays.NAMES[k] for k in builder.holidays.KEYS if k in builder.holidays.SETS]
     sets.append(f'the {builder.birthday.NAME} set')
+    pixels = [builder.pixelthemes.name_of(k) for k in builder.pixelthemes.themes()]
     medieval = builder.collections.COLLECTIONS['medieval']
-    return sets, [f'{builder.collections.MONTHS[i]}: {builder.collections.name_of(k)}'
-                  + (", the profile's" if k == builder.PROFILE_LOOK else '') for i, k in enumerate(medieval.keys)]
+    return sets, pixels, [f'{builder.collections.MONTHS[i]}: {builder.collections.name_of(k)}'
+                          + (", the profile's" if k == builder.PROFILE_LOOK else '')
+                          for i, k in enumerate(medieval.keys)]
+
+
+class APixelTheme(unittest.TestCase):
+    """A pixel theme is one entry of its own group, drawn whole as the set draws it every day of the year: its
+    headers, phones, footers, elements, badges and trophy case, and what to write to wear it."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.out = pathlib.Path(cls.tmp.name) / 'themes'
+        cls.key = builder.pixelthemes.themes()[0]
+        with contextlib.redirect_stdout(io.StringIO()):
+            builder.main([str(cls.out), '--only', cls.key])
+        cls.entry = manifest_of((cls.out / 'index.html').read_text(encoding='utf-8'))['themes'][0]
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.tmp.cleanup()
+
+    def test_it_is_its_own_kind_and_says_what_to_write_to_wear_it(self) -> None:
+        theme = builder.pixelthemes.THEMES[self.key]
+        self.assertEqual((self.entry['key'], self.entry['name'], self.entry['group'], self.entry['tag']),
+                         (self.key, theme.name, 'pixel', 'all year'))
+        self.assertEqual(self.entry['use'], f'theme: {self.key}')
+        self.assertTrue(self.entry['note'].startswith(theme.summary))
+        self.assertEqual({s['role'] for s in self.entry['swatches']},
+                         {f'{role}, {when}' for role in ('title', 'accent', 'body') for when in ('day', 'night')})
+
+    def test_it_is_drawn_whole_in_its_own_pixels(self) -> None:
+        sections = {s['key']: s for s in self.entry['sections']}
+        self.assertEqual(list(sections), ['headers', 'phones', 'footers', 'elements', 'badges', 'trophies'])
+        self.assertEqual([r['label'] for r in sections['badges']['rows']], ['In its classic styles', 'As a plate'])
+        for name in drawings_of(self.entry) + list(self.entry['thumb'].values()):
+            self.assertTrue((self.out / name).is_file(), name)
+        h2 = (self.out / self.entry['thumb']['dark']).read_text(encoding='utf-8')
+        self.assertIn(f' {self.key} ', h2.split('-->')[0])
+        dark = (self.out / sections['trophies']['rows'][1]['chips'][0]['dark']).read_text(encoding='utf-8')
+        self.assertIn(f'<!--markdown-kit v1 trophy {self.key} night-->', dark)
 
 
 class TheGame(unittest.TestCase):
@@ -152,7 +192,7 @@ class TheGame(unittest.TestCase):
     def test_its_board_is_drawn_in_the_standard_theme_and_every_print_as_the_other_boards_are(self) -> None:
         tones = [builder.prints.STANDARD, *builder.prints.PRINTS]
         sections = {s['key']: s for s in self.entry['sections']}
-        self.assertEqual(list(sections), ['board', 'holidays', 'medieval', 'phones'],
+        self.assertEqual(list(sections), ['board', 'holidays', 'pixel-themes', 'medieval', 'phones'],
                          'its Hall of Fame is the four games\' own entry now')
         items = sections['board']['items']
         self.assertEqual([it['label'].split(', ')[1] for it in items], tones)
@@ -166,11 +206,12 @@ class TheGame(unittest.TestCase):
             self.assertTrue((self.out / name).is_file(), name)
 
     def test_its_board_is_drawn_in_every_holidays_set_and_every_months_design_in_their_pixels(self) -> None:
-        sets, months = pixel_sets()
+        sets, pixels, months = pixel_sets()
         sections = {s['key']: s for s in self.entry['sections']}
         self.assertEqual([it['label'] for it in sections['holidays']['items']], [f'Board, {n}' for n in sets])
+        self.assertEqual([it['label'] for it in sections['pixel-themes']['items']], [f'Board, {n}' for n in pixels])
         self.assertEqual([it['label'] for it in sections['medieval']['items']], [f'Board, {n}' for n in months])
-        for section in ('holidays', 'medieval'):
+        for section in ('holidays', 'pixel-themes', 'medieval'):
             for it in sections[section]['items']:
                 self.assertTrue('sday' in it and 'sdark' in it, 'each with its still pair')
                 self.assertEqual(it['w'], 830)
@@ -236,8 +277,8 @@ class TheGamesBesideChess(unittest.TestCase):
         for key, entry in self.entries.items():
             sections = {s['key']: s for s in entry['sections']}
             with self.subTest(key=key):
-                self.assertEqual(list(sections), ['board', 'holidays', 'medieval', 'phones'])
-                self.assertEqual([len(sections[k]['items']) for k in ('holidays', 'medieval')],
+                self.assertEqual(list(sections), ['board', 'holidays', 'pixel-themes', 'medieval', 'phones'])
+                self.assertEqual([len(sections[k]['items']) for k in ('holidays', 'pixel-themes', 'medieval')],
                                  [len(n) for n in pixel_sets()])
                 items = sections['board']['items']
                 self.assertEqual([it['label'].split(', ')[1] for it in items], tones)
@@ -304,9 +345,11 @@ class TheHallOfFame(unittest.TestCase):
 
     def test_its_sheet_phones_and_badges_are_drawn_in_the_standard_theme_and_every_print(self) -> None:
         tones = [builder.prints.STANDARD, *builder.prints.PRINTS]
-        sets, months = pixel_sets()
+        sets, pixels, months = pixel_sets()
         sections = {s['key']: s for s in self.entry['sections']}
-        self.assertEqual(list(sections), ['hall', 'holidays', 'medieval', 'phones', 'badges'])
+        self.assertEqual(list(sections), ['hall', 'holidays', 'pixel-themes', 'medieval', 'phones', 'badges'])
+        self.assertEqual([it['label'] for it in sections['pixel-themes']['items']],
+                         [f'Hall of Fame, {n}' for n in pixels])
         self.assertEqual([it['label'] for it in sections['holidays']['items']], [f'Hall of Fame, {n}' for n in sets])
         self.assertEqual([it['label'] for it in sections['medieval']['items']],
                          [f'Hall of Fame, {n}' for n in months])
@@ -318,7 +361,7 @@ class TheHallOfFame(unittest.TestCase):
                          ['Hall of Fame, standard', "Hall of Fame, blackprint"])
         self.assertTrue(all(it['w'] == 360 for it in sections['phones']['items']))
         self.assertEqual([r['label'] for r in sections['badges']['rows']],
-                         ['In standard', "In blackprint"] + [f'In {n}' for n in sets + months])
+                         ['In standard', "In blackprint"] + [f'In {n}' for n in sets + pixels + months])
         self.assertEqual({len(r['chips']) for r in sections['badges']['rows']}, {5}, 'a badge for each winner')
 
     def test_every_drawing_the_entry_names_is_beside_the_page(self) -> None:

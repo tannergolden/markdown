@@ -1,7 +1,9 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
-"""A holiday set: the layouts every set shares, and the hooks each one draws its own art in.
+"""A pixel set: the layouts every set shares, and the hooks each one draws its own art in.
 
+Every holiday's set, the Birthday set, every collection's design and every
+pixel theme is a `Holiday`, named for the first sets the kit drew.
 `Holiday` lays out every file the kit draws in a set: the headers, footers
 and link buttons (`banners`), the six elements (`elements`), the badges
 (`badges`), the trophy case (`trophies`), and the games on @tannergolden's
@@ -30,8 +32,9 @@ __all__ = ["Holiday", "NARROW", "WIDE"]
 
 
 class Holiday(Banners, Elements, Badges, Trophies, Games):
-    """One holiday's set. Subclasses override the hooks; the layouts are shared."""
-    key = ""          # the calendar's key: "halloween"
+    """One pixel set: a holiday's, the Birthday set, a collection's design or a pixel theme. Subclasses override
+    the hooks; the layouts are shared."""
+    key = ""          # the key it is found by: "halloween", "medieval-forge", "heaven-and-hell"
     name = ""         # "Halloween"
     tokens: frozenset = frozenset()   # every colour its files may use, upper-case #RRGGBB
     day: dt.date | None = None        # the day the holiday falls on this time, when the kit says
@@ -118,14 +121,15 @@ class Holiday(Banners, Elements, Badges, Trophies, Games):
     def finish(self, p: Pix, night: bool):
         """The last pass over a finished drawing, like the light its lamps cast."""
 
-    mark_size = 0     # the width and height of the box the month's mark takes, in units; a holiday's set has none
+    mark_size = 0     # the width and height of the box the month's mark takes, in units; only a collection's
+                      # design has one
 
     def month_mark(self, p: Pix, cx, cy, night, motion):
         """The month's mark, centred on (cx, cy): the top centre of every header, over the middle of its top band.
         Every header calls it after its scene and its figures and before the last pass, in a box `mark_size` units
         square, and leaves it out should a layout ever set a word within two units of that box. A collection's
         design draws its hand's mark here when it is drawn as its collection's design for the month (see
-        `collections.hand`). A holiday's set draws nothing."""
+        `collections.hand`). A holiday's set, the Birthday set and a pixel theme draw nothing."""
 
     def footer_mark(self, p: Pix, x, y, night):
         """The ornament in the corner of a title block's notes."""

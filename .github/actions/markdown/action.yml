@@ -32,7 +32,7 @@ inputs:
     required: false
     default: ''
   theme:
-    description: 'standard, a print, rainbowprint, a print of the settings, or a collection such as medieval. Empty reads the settings.'
+    description: 'standard, a print, rainbowprint, a print of the settings, a pixel theme such as heaven-and-hell, or a collection such as medieval. Empty reads the settings.'
     required: false
     default: ''
   sign:

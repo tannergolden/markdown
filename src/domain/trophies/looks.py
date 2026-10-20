@@ -11,9 +11,9 @@ changes its material and nothing else:
             standard theme's look (`art`, `styles`)
   Drafted   a print's: every card a drawing on the print's drafting paper, in
             its line and its ink (`prints`)
-  Pixels    a pixel set's, a holiday's around its day or a collection's
-            design: every card in the set's pixels, palette and frame
-            (`holidays.designs.trophies`)
+  Pixels    a pixel set's, a holiday's around its day, a pixel theme's or
+            a collection's design's: every card in the set's pixels,
+            palette and frame (`holidays.designs.trophies`)
 
 `looks` picks them from the page's theme, the set the page is drawn in and the
 section's `look`: a page a set draws is drawn in the set, a page in a print in
@@ -118,8 +118,8 @@ def own(style: str, theme: str):
 
 def looks(section: dict, theme: str = STANDARD, holiday: str = "") -> list:
     """The looks a case is drawn in, the first that can draw it: the set the page is drawn in (`holiday`, a
-    holiday's key or a collection's design's, as `pixelsets` reads it), then the page's own look, then the
-    standard one. `theme` is the page's own theme, rainbowprint already resolved to its print."""
+    holiday's key, a pixel theme's or a collection's design's, as `pixelsets` reads it), then the page's own
+    look, then the standard one. `theme` is the page's own theme, rainbowprint already resolved to its print."""
     style = section["style"]
     if section.get("look", "theme") == STANDARD:
         return [Standard(style)]

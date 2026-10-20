@@ -17,7 +17,7 @@ from unittest import mock
 
 from tests import support
 
-from domain import collections, holidays as H, pixelsets
+from domain import collections, holidays as H, pixelsets, pixelthemes as P
 from domain.canvas import DAY
 from domain.elements import data as ED
 from domain.elements import draw as E
@@ -138,9 +138,9 @@ class Inside(unittest.TestCase):
                         self.assertInside(f"{name} {variant} labels", turned, lo, hi)
 
     def test_every_pixel_set_keeps_every_wire_inside_its_frame(self):
-        # Every holiday's set, and every collection's design drawn so far.
+        # Every holiday's set, every collection's design drawn so far, and every pixel theme.
         designs = [k for c in collections.COLLECTIONS.values() for k in c.keys if collections.is_drawn(k)]
-        for key in [*H.SETS, *designs]:
+        for key in [*H.SETS, *designs, *P.themes()]:
             held = pixelsets.drawn_by(key)
             cls = type(held)
             for name, d in layouts().items():

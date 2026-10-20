@@ -28,9 +28,10 @@ on:
           The page's theme: standard, a print (blueprint, redprint, orangeprint,
           yellowprint, greenprint, tealprint, indigoprint, purpleprint,
           pinkprint, brownprint, blackprint), rainbowprint for the next colour
-          on every update, a print of the settings, or a collection (medieval)
-          for a new pixel design each month. Empty reads the settings, whose
-          default is standard.
+          on every update, a print of the settings, a pixel theme
+          (heaven-and-hell) kept all year, or a collection (medieval) for a new
+          pixel design each month. Empty reads the settings, whose default is
+          standard.
         type: string
         default: ''
       sign:

@@ -56,7 +56,7 @@ image goes into the file. A player with no bitmap is their initials in the
 print's dial, the Arbiter is its scales, and an account that is gone is an
 empty dashed dial with no name. A replay is drawn in the page's print, and in
 blackprint when the page's theme has no replay look of its own: the standard
-theme, a holiday's set or a collection's design. A word the replay says on
+theme, a holiday's set, a pixel theme or a collection's design. A word the replay says on
 many moves is drawn once in the file and set wherever it stands, which keeps a
 long game's file small.
 

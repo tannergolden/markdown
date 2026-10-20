@@ -14,7 +14,7 @@ import unittest
 
 from tests import support
 
-from domain import collections, holidays as H
+from domain import collections, holidays as H, pixelthemes as P
 from domain.badges import data as BD
 from domain.canvas import BUDGET, Canvas, c, lint, prose
 from domain.elements import data as ED
@@ -79,9 +79,9 @@ class TheDrawings(unittest.TestCase):
                     self.assertFalse(any(EM in svg or EN in svg for svg in files.values()))
 
     def test_every_pixel_set_draws_it_too(self):
-        # Every holiday's set, and every collection's design drawn so far.
+        # Every holiday's set, every collection's design drawn so far, and every pixel theme.
         designs = [k for c in collections.COLLECTIONS.values() for k in c.keys if collections.is_drawn(k)]
-        for key in [*H.SETS, *designs]:
+        for key in [*H.SETS, *designs, *P.themes()]:
             for what in ("an issue number that reads as a colour", "an em dash", "a scheme a script would use"):
                 with self.subTest(key, what=what):
                     files = ED.render(placard(SAYS[what]), "standard", key)

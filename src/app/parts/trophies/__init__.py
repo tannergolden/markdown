@@ -84,7 +84,8 @@ def fold(record: dict, result: dict, section: dict, today: dt.date) -> dict:
 
 def plan(result: dict, section: dict, *, out: str, readme: str, theme: str = "standard", holiday: str = "") -> dict:
     """Every file of the case by path, the README's block, and the facts a commit names, on a page in `theme`
-    (and in the pixel set `holiday` names, a holiday's while it is up or a collection's design)."""
+    (and in the pixel set `holiday` names, a holiday's while it is up, a pixel theme or a collection's
+    design)."""
     problems = TS.for_mode(section, result["mode"])
     if problems:
         raise TP.TrophiesError("; ".join(problems))

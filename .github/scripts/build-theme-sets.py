@@ -4,11 +4,13 @@
 WHY THIS EXISTS. A theme is easier to choose by looking than by reading. The
 page shows every theme's headers, phone files, footers, elements, badges and
 trophy case, each drawn the way a run draws it, from the kit's own samples and
-the driftmark specimen, on GitHub's light and dark grounds. The four games the
-kit draws for @tannergolden's profile alone (Chess, Checkers, Pentago and
-Tic-Tac, the README's order) are shown beside them, each from a sample
-game, in the standard theme and every print, in every holiday's set and in
-every month's design of a collection, as they are drawn on that profile.
+the driftmark specimen, on GitHub's light and dark grounds: the standard theme,
+every print, every holiday's set and the Birthday set, every pixel theme, and
+every collection. The four games the kit draws for @tannergolden's profile
+alone (Chess, Checkers, Pentago and Tic-Tac, the README's order) are shown
+beside them, each from a sample game, in the standard theme and every print,
+in every holiday's set, every pixel theme and every month's design of a
+collection, as they are drawn on that profile.
 
 Nothing is fetched and nothing depends on the day it runs, so drawing it twice
 writes the same bytes, and a change to a theme shows up as a change here.
@@ -38,7 +40,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from domain import KIT, KIT_VERSION, birthday, collections, holidays, prints  # noqa: E402
+from domain import KIT, KIT_VERSION, birthday, collections, holidays, pixelthemes, prints  # noqa: E402
 from domain.badges import data as badges_data  # noqa: E402
 from domain.banners import sample  # noqa: E402
 from domain.banners.compose import compose  # noqa: E402
@@ -120,13 +122,16 @@ NOTES = {
                  "it: its paper and frame, its lettering, a board built of its own stuff in a frame of its own, and "
                  "the Hall's podium cut from it; the pieces are the same ivory and ebony in every set. Motion: Still "
                  "shows the file a reader who asks for reduced motion gets.",
+    "game pixel themes": "A pixel theme draws the games in its own pixels every day of the year, as a holiday's set "
+                         "draws them while it is up: its paper and frame, its lettering, a board built of its own "
+                         "world's stuff in a frame of its own, and the Hall's podium cut from it.",
     "game collection": "Each month's design draws the games in its pixels, in the hand the twelve share: its words in "
                        "the hand's two inks and its glint on the hand's period, its board, its frame and its podium "
                        "of its own world.",
     "game badges": "A badge for each winner, in a row under the Hall of Fame in the README, each a link to that "
                    "player's profile. The leader's glints. The first three are marked in gold, silver and bronze, "
-                   "and in a print in what its podium draws their blocks in: solid, lined and open. A holiday's set "
-                   "and a collection's design draw them as they draw every badge.",
+                   "and in a print in what its podium draws their blocks in: solid, lined and open. A holiday's set, "
+                   "a pixel theme and a collection's design draw them as they draw every badge.",
     "trophies standard": "The case in its own five styles, struck in metal and enamel: the level and next-up cards "
                          "over it, each style, a trophy in every tier, and a row of achievements, from the kit's "
                          "sample repository.",
@@ -279,6 +284,14 @@ def badge_chips(d: Drawings, key: str, theme: str, holiday: str = "", prefix: st
 
 
 def badge_section(d: Drawings, key: str, theme: str, holiday: str = "") -> dict:
+    if holiday in pixelthemes.THEMES:
+        # A pixel theme is the page's theme, never drawn over a print's page: a badge keeps its classic style, and
+        # one written as a plate is the set's plate.
+        return {"key": "badges", "title": "Badges",
+                "note": "A badge keeps its classic style, and one written as a plate, like blueprint-flat, is a plate "
+                        "in the theme's pixels, with a day file and a dark one. A live badge shows its state.",
+                "rows": [{"label": "In its classic styles", "chips": badge_chips(d, key, "standard", holiday)},
+                         {"label": "As a plate", "chips": badge_chips(d, key, "blueprint", holiday, "plate")}]}
     if holiday:
         return {"key": "badges", "title": "Badges",
                 "note": "On a standard page a badge keeps its classic style; on a print's page it is a plate, with a "
@@ -346,8 +359,9 @@ def trophy_section(d: Drawings, key: str, theme: str, holiday: str = "") -> dict
 
 def swatches(key: str) -> list:
     """The colours a theme is known by, each with what it colours."""
-    if key in holidays.SETS or key == birthday.KEY:
-        held = holidays.drawn_by(key) if key in holidays.SETS else birthday.drawn_by(key)
+    if key in holidays.SETS or key == birthday.KEY or key in pixelthemes.THEMES:
+        held = (holidays.drawn_by(key) if key in holidays.SETS else pixelthemes.drawn_by(key)
+                if key in pixelthemes.THEMES else birthday.drawn_by(key))
         return [{"role": f"{role}, {when}", "hex": hexof(held.ink(night)[role])}
                 for night, when in ((False, "day"), (True, "night")) for role in ("title", "accent", "body")]
     if key == prints.STANDARD:
@@ -429,15 +443,16 @@ GAME_NOTES = {
               "ghost, the Arbiter drawing the side that places first, and then the side that makes the first mark.",
 }
 DRAWN_IN = (" It is drawn in whatever theme the page is in: the standard theme's enamel, a print's drawing on "
-            "drafting paper, or the pixels of the holiday's set or the collection's design that is up, one family "
-            "with the other three boards.")
+            "drafting paper, or the pixels of the holiday's set, the pixel theme or the collection's design that is "
+            "up, one family with the other three boards.")
 
 
 def pixel_sets() -> list[tuple[str, str, str]]:
-    """Every pixel set a game is drawn in, (key, holiday, label): each holiday's set, then each design of every
-    collection with all twelve drawn, as its month's design."""
+    """Every pixel set a game is drawn in, (key, holiday, label): each holiday's set and the Birthday set, then
+    each pixel theme, then each design of every collection with all twelve drawn, as its month's design."""
     sets = [(key, key, holidays.NAMES[key]) for key in holidays.KEYS if key in holidays.SETS]
     sets.append((birthday.KEY, birthday.KEY, f"the {birthday.NAME} set"))
+    sets += [(key, key, pixelthemes.name_of(key)) for key in pixelthemes.themes()]
     for c in (collections.COLLECTIONS[k] for k in collections.themes()):
         sets += [(k, months_design(k), f"{collections.MONTHS[i]}: {collections.name_of(k)}"
                   + (", the profile's" if k == PROFILE_LOOK else "")) for i, k in enumerate(c.keys)]
@@ -457,7 +472,8 @@ def in_set(key: str, holiday: str) -> dict:
 
 
 def set_sections(d: Drawings, key: str, what: str) -> list:
-    """A game's wide files, or the Hall's, in every holiday's set and every month of each collection: a section each."""
+    """A game's wide files, or the Hall's, in every holiday's set, every pixel theme and every month of each
+    collection: a section each."""
     def sheet(name: str, holiday: str, label: str) -> dict:
         files, fn = in_set(key, holiday), elements_data.file_name
         return item(d, key, f"{key}-wide-{name}", f"{what}, {label}", files[fn(key, "wide", "day")],
@@ -467,6 +483,9 @@ def set_sections(d: Drawings, key: str, what: str) -> list:
     sets = pixel_sets()
     out = [{"key": "holidays", "title": "In a holiday's set, or the birthday's", "note": NOTES["game sets"],
             "items": [sheet(k, h, label) for k, h, label in sets if k in holidays.SETS or k == birthday.KEY]}]
+    if pixelthemes.themes():
+        out.append({"key": "pixel-themes", "title": "In a pixel theme", "note": NOTES["game pixel themes"],
+                    "items": [sheet(k, h, label) for k, h, label in sets if k in pixelthemes.THEMES]})
     for c in (collections.COLLECTIONS[k] for k in collections.themes()):
         out.append({"key": c.key, "title": f"In the {c.name} collection", "note": NOTES["game collection"],
                     "items": [sheet(k, h, label) for k, h, label in sets if k in c.keys]})
@@ -589,6 +608,19 @@ def theme_entry(d: Drawings, key: str) -> dict:
                 "sections": banner_sections(d, key, "standard", key)
                 + [element_section(d, key, "standard", key), badge_section(d, key, "standard", key),
                    trophy_section(d, key, "standard", key)]}
+    if key in pixelthemes.THEMES:
+        held = pixelthemes.drawn_by(key)
+        return {"key": key, "name": held.name, "group": "pixel", "tag": "all year",
+                "kicker": "Pixel theme, kept all year",
+                "note": f"{pixelthemes.THEMES[key].summary} One world drawn as pixel art, worn every day of the year: "
+                        "it never changes with the month, and its headers carry no month's mark.",
+                "use": f"theme: {key}",
+                "use_note": "A holiday's set still takes over around its day and hands the page back, and the "
+                            "Birthday set takes the page's birthday; holidays: false keeps the holidays away.",
+                "swatches": swatches(key), "thumb": thumb(key),
+                "sections": banner_sections(d, key, "standard", key)
+                + [element_section(d, key, "standard", key), badge_section(d, key, "standard", key),
+                   trophy_section(d, key, "standard", key)]}
     if key == birthday.KEY:
         held = birthday.drawn_by(key)
         return {"key": key, "name": held.name, "group": "birthday", "tag": "on the page's birthday",
@@ -665,7 +697,7 @@ def build(out: Path, bundle: bool = False, only: list[str] | None = None) -> dic
     """Draw the themes into `out`; returns the page's manifest."""
     resources.install()
     keys = ([prints.STANDARD, *prints.PRINTS, prints.RAINBOW] + [k for k in holidays.KEYS if k in holidays.SETS]
-            + [birthday.KEY] + collections.themes() + list(GAMES) + [HALL])
+            + [birthday.KEY] + pixelthemes.themes() + collections.themes() + list(GAMES) + [HALL])
     if only:
         unknown = sorted(set(only) - set(keys))
         if unknown:

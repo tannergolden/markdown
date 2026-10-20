@@ -30,7 +30,7 @@ lettered in outlines so a trophy looks the same on every device: the standard
 theme's look. The case is drawn in the page's theme, and
 [`looks.py`](looks.py) picks the look: the standard one, a print's, which
 [`prints.py`](prints.py) draws on the print's drafting paper, or a pixel set's,
-which every holiday's set and collection's design draws from
+which every holiday's set, pixel theme and collection's design draws from
 [`holidays/designs/trophies.py`](../holidays/designs/trophies.py).
 [`plan.py`](plan.py) turns one measurement into every file of the case and the
 README's block. [`catalogue_md.py`](catalogue_md.py) writes

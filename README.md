@@ -140,17 +140,17 @@ by then, so a redraw started straight after another is queued rather than
 failing to push. And the kit is handed `MARKDOWN_TOKEN` alone, never the
 repository's other secrets. The stub can set the choices made most often:
 
-| Input           | Default          | What it does                                                                |
-| :-------------- | :--------------- | :-------------------------------------------------------------------------- |
-| `mode`          | (guessed)        | `profile` or `repository`. A repository named after its owner is a profile. |
-| `theme`         | `standard`       | `standard`, a print, `rainbowprint`, a print of your own, or a collection.  |
-| `sign`          | (the month's)    | The sign of the zodiac a collection's headers carry all year, as `leo`.     |
-| `holidays`      | `true`           | `'false'` keeps the holiday sets away.                                      |
-| `holiday-days`  | `3`              | How long each holiday's set is up, 3 to 7 days.                             |
-| `birthday`      | `true`           | `'false'` keeps the Birthday set away; on a profile, `'03-14'` names it.    |
-| `check`         | `false`          | Only check that the committed page is current. See below.                   |
-| `commit`        | `push`           | `pr` opens or updates one pull request instead of pushing.                  |
-| `commit-branch` | `chore/markdown` | The branch that pull request rides on.                                      |
+| Input           | Default          | What it does                                                                              |
+| :-------------- | :--------------- | :---------------------------------------------------------------------------------------- |
+| `mode`          | (guessed)        | `profile` or `repository`. A repository named after its owner is a profile.               |
+| `theme`         | `standard`       | `standard`, a print, `rainbowprint`, a print of your own, a pixel theme, or a collection. |
+| `sign`          | (the month's)    | The sign of the zodiac a collection's headers carry all year, as `leo`.                   |
+| `holidays`      | `true`           | `'false'` keeps the holiday sets away.                                                    |
+| `holiday-days`  | `3`              | How long each holiday's set is up, 3 to 7 days.                                           |
+| `birthday`      | `true`           | `'false'` keeps the Birthday set away; on a profile, `'03-14'` names it.                  |
+| `check`         | `false`          | Only check that the committed page is current. See below.                                 |
+| `commit`        | `push`           | `pr` opens or updates one pull request instead of pushing.                                |
+| `commit-branch` | `chore/markdown` | The branch that pull request rides on.                                                    |
 
 Everything else a page can set lives in `.github/markdown.yaml`, and
 [`docs/references/Settings.md`](docs/references/Settings.md) has every key.
@@ -214,6 +214,12 @@ trophy case read as one family:
 - **`rainbowprint`** moves to the next colour of the spectrum each time
   something the page shows changes.
 - **Your own prints**, a name and three colours in the settings.
+- **Pixel themes**, one world drawn as pixel art and kept all year.
+  `heaven-and-hell` is heaven in GitHub's light mode and hell in its dark mode:
+  the pearly gates and an archangel over a sea of cloud by day, and by night
+  the gates of hell and a demon over a river of lava, each thing of heaven with
+  its fallen twin standing where it stood. See
+  [Pixel Themes](docs/references/Settings.md#-pixel-themes).
 - **Collections**, one subject drawn as pixel art twelve ways, a design for
   each month. `medieval` draws the page in the month's design and changes on
   the first of every month: a longship under the northern lights in January,
@@ -221,6 +227,10 @@ trophy case read as one family:
   a dragon on its hoard in December. Naming one design, like
   `medieval-forge`, keeps it all year. See
   [Collections](docs/references/Settings.md#-collections).
+
+[Themes and Sets](docs/technical/Themes.md) defines every kind of theme and set
+the kit draws, the words people use for each and how to add or remove one, and
+`markdown-kit themes` lists every theme a page can pick.
 
 The header, the footer and the body each come as a **day** file and a
 **dark** file, and the README shows one through a `<picture>` that follows the
@@ -244,8 +254,8 @@ age. `birthday: false` keeps it away. See
 The trophy case wears the theme too, and keeps its style, its sizes and its
 words: `standard` strikes its cups, crests, medallions, crystals and plaques
 in metal and enamel, a print draws each card as a sheet on its drafting paper,
-drawn further as the tier rises, and a holiday's set or a collection's design
-strikes it in pixels, on its own paper and in its own frame.
+drawn further as the tier rises, and a holiday's set, a pixel theme or a
+collection's design strikes it in pixels, on its own paper and in its own frame.
 `look: standard` under [`trophies:`](docs/references/Settings.md#-trophies) keeps the
 standard look in every theme.
 
@@ -268,6 +278,16 @@ standard look in every theme.
     <td width="50%" align="center">
       <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#christmas"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/references/themes/christmas/h2-still-dark.svg"><img src="docs/references/themes/christmas/h2-still-day.svg" alt="The H2 header in Christmas's set" width="100%"></picture></a>
       <br /><sub>Christmas's set, December 24 to 26</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#heaven-and-hell"><img src="docs/references/themes/heaven-and-hell/h2-still-day.svg" alt="The H2 header in Heaven &amp; Hell by day: the archangel keeping vigil before the glory of heaven" width="100%"></a>
+      <br /><sub><code>heaven-and-hell</code> in light mode</sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#heaven-and-hell"><img src="docs/references/themes/heaven-and-hell/h2-still-dark.svg" alt="The H2 header in Heaven &amp; Hell by night: the demon before a wall of fire" width="100%"></a>
+      <br /><sub><code>heaven-and-hell</code> in dark mode</sub>
     </td>
   </tr>
 </table>
@@ -401,7 +421,7 @@ of, and the score sheet), and the same motion as each file opens:
   a print's drawing on drafting paper: poché for the dark squares, the bars and
   the quarters, line shading for the light pieces, phantom lines where a piece
   stood and a revision cloud round whatever must be answered. Or, while a
-  holiday's set or a collection's design is up, its pixels: its paper, frame and
+  holiday's set, a pixel theme or a collection's design is up, its pixels: its paper, frame and
   lettering, a board built of its own world's stuff, a ship's planks, a
   cathedral's leaded glass or a mosaic's tesserae, in a frame of its own,
   Tic-Tac's nine boards a chequer of it and Pentago's plates lying in a bed
@@ -495,8 +515,8 @@ and each of the other three games is folded shut under its name.
 **[See the games in every tone, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#chess)**:
 the theme-sets page shows each game's board and its phone files, and the Hall
 of Fame of all four with its phone files and the winners' badges, in the
-standard theme and every print, every holiday's set, the Birthday set and every
-month of the Medieval collection, each from a sample whose players are as
+standard theme and every print, every holiday's set, the Birthday set, every
+pixel theme and every month of the Medieval collection, each from a sample whose players are as
 fictional as driftmark's contributors. What the games' settings hold is in
 [Settings](docs/references/Settings.md#-elements); the games themselves are
 [live on @tannergolden's profile](https://github.com/tannergolden).
@@ -534,6 +554,7 @@ python3 src/markdown-kit.py preview --root /tmp/page       # a sample page, the 
 python3 src/markdown-kit.py settings --root .              # a repository's settings, every default filled in
 python3 src/markdown-kit.py check --root .                 # is the committed page current?
 python3 src/markdown-kit.py set --root . status=Paused     # write a badge's value into the settings
+python3 src/markdown-kit.py themes                         # every theme a page can pick, by kind
 python3 src/markdown-kit.py holidays --year 2026 --days 5  # every holiday's window
 python3 src/markdown-kit.py collections                    # each collection's design for every month
 ```

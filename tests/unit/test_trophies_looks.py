@@ -14,7 +14,7 @@ from unittest import mock
 
 from tests import support
 
-from domain import collections, holidays, pixelsets, prints
+from domain import collections, holidays, pixelsets, pixelthemes, prints
 from domain.canvas import BUDGET, DARK, DAY, colours
 from domain.holidays.designs import trophies as T
 from domain.holidays.pixel import Pix
@@ -30,7 +30,8 @@ STYLES = ("trophy", "crest", "medallion", "crystal", "plaque")
 CASES = ("day", "night")
 CORE = C.RCORE[0]
 SIZES = {"card": (164, 222), "plaque": (264, 88), "pin": (104, 124), "level": (420, 152), "next-up": (328, 152)}
-SETS = [k for k in holidays.KEYS if k in holidays.SETS] + list(collections.COLLECTIONS["medieval"].keys)
+SETS = ([k for k in holidays.KEYS if k in holidays.SETS] + list(collections.COLLECTIONS["medieval"].keys)
+        + pixelthemes.themes())
 HALLOWEEN = "halloween:2026-10-31"
 
 
