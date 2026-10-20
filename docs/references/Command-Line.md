@@ -112,7 +112,7 @@ and their fixes.
 | `GITHUB_ACTIONS`      | `run`, `measure`                    | Set, the GitHub client writes its retries and partial answers as `::debug::` and `::warning::` lines |
 
 Work on this repository runs Python with the tokens unset, as
-[CLAUDE.md](../../CLAUDE.md) asks, so only `run`, `measure` and `calibrate` ever
+[AGENTS.md](../../AGENTS.md) asks, so only `run`, `measure` and `calibrate` ever
 need one exported.
 
 ---

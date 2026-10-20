@@ -576,7 +576,10 @@ pulled in by `uses:`. GitHub only runs a workflow that lives in the repository
 being pushed to, which is why these small files exist here at all. They are
 grouped by what they do, so one push produces one run with every check in it.
 Four are the kit's own: the workflow every page calls, this repository's own
-page, the release, and the calibration.
+page, the release, and the calibration. One, `intelligence-sync.yml`, calls
+[`tannergolden/intelligence`](https://github.com/tannergolden/intelligence)
+instead: every Monday it proposes that hub's latest release of the rules for AI
+agents as one pull request.
 
 | Workflow                   | Gives you                                                                |
 | :------------------------- | :----------------------------------------------------------------------- |
@@ -598,6 +601,7 @@ page, the release, and the calibration.
 | `auto-index.yml`           | Redraws every folder's log after a push, as one pull request             |
 | `preview-deploy.yml`       | Deploys pushes to a preview target, once one is configured               |
 | `verify-stubs.yml`         | Proves every job's permission ceiling matches its called workflow        |
+| `intelligence-sync.yml`    | The universal rules for AI agents in `AGENTS.md`, one pull request each  |
 
 **Do not rename the job ids** `ci` and `secrets` (in `checks.yml`) or `pr`
 (in `governance.yml`). A called workflow reports its checks as

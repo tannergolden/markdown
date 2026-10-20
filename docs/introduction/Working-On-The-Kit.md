@@ -24,7 +24,7 @@ _Preview without a token. Push on green._
 Python 3.10 or later, and git. Nothing else is installed: the kit is the
 standard library alone, and reads its own YAML
 ([ADR-0002](../adrs/ADR-0002-Standard-Library-Only.md)). Run Python here with
-the tokens unset, as [CLAUDE.md](../../CLAUDE.md) asks:
+the tokens unset, as [AGENTS.md](../../AGENTS.md) asks:
 
 ```bash
 env -u GH_TOKEN -u GITHUB_TOKEN -u MARKDOWN_TOKEN make lint
