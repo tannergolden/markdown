@@ -1,8 +1,8 @@
 <!--
 title: '🛠️ TECHNICAL'
-description: 'How the kit is built: where each piece of its source lives, the stack and the Makefile targets CI runs, how a run works end to end, and how a collection is drawn.'
+description: 'How the kit is built: where each piece of its source lives, the stack and the Makefile targets CI runs, how a run works end to end, every kind of theme it draws, and how a collection is drawn.'
 type: index
-keywords: [architecture, tooling, collections]
+keywords: [architecture, tooling, themes, collections]
 -->
 
 <div align="center">
@@ -27,8 +27,10 @@ every collection is drawn from. [Source Code](Source-Code.md) says where each
 piece of the kit lives and the rules its layers are held to, [Technology Stack &
 Tooling](Technology-Stack-&-Tooling.md) gives the stack and the Makefile targets
 CI runs, [How A Run Works](How-A-Run-Works.md) follows one run from the stub to
-its commit, and [Drawing a Collection](Collections.md) is read before a
-collection is started or changed.
+its commit, [Themes and Sets](Themes.md) defines every kind of theme and set the
+kit draws and how to add or remove each, and
+[Drawing a Collection](Collections.md) is read before a collection is started or
+changed.
 
 ---
 

@@ -95,8 +95,10 @@ themes or two days:
   another, or the day `--today` gives.
 - **What it is drawn in.** The first that applies: the Birthday set on the
   page's birthday; a holiday's set while its window is open and `holidays` is
-  on; a collection's design, the month's or the one the settings name; the print
-  a `rainbowprint` is on, which the lock remembers; and otherwise the theme.
+  on; a collection's design, the month's or the one the settings name; a pixel
+  theme's set, the same every day; the print a `rainbowprint` is on, which the
+  lock remembers; and otherwise the theme. [Themes and Sets](Themes.md) defines
+  each kind.
 - **Where it goes.** The README (`readme`, `README.md` by default) and the
   folder the parts draw into (`out`, `assets` by default).
 
@@ -171,15 +173,15 @@ at the files.
 Every value is measured again on every run; the lock adds only what GitHub
 cannot say afterwards, and what `check` needs to draw the page again offline.
 
-| Field                | Holds                                                                                                                                                                                         |
-| :------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `version`            | `1`. A kit that finds any other version refuses the lock                                                                                                                                      |
-| `drawn`              | The theme the page was drawn in, the set that was up (a holiday's key or `birthday`), the print a `rainbowprint` was on, the collection's design, the day, and a repository's birthday        |
-| `parts.banners.last` | The banners' measurement: the mode, the subject, the day, the repository and the person                                                                                                       |
-| `parts.badges`       | Each measured badge's message and state, and with `localize`, the badges it drew and the branch their links name                                                                              |
-| `parts.elements`     | Each element's measurement, the elements drawn, and `asof`                                                                                                                                    |
-| `parts.trophies`     | The case's ledger: the day each tier was first reached, a daily history of the core values kept for 400 days, the commit scanner's cache, and `last`, the measurement the case was drawn from |
-| `snapshot`           | The day the lock was last written for its own sake                                                                                                                                            |
+| Field                | Holds                                                                                                                                                                                                     |
+| :------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `version`            | `1`. A kit that finds any other version refuses the lock                                                                                                                                                  |
+| `drawn`              | The theme the page was drawn in, the set that was up (a holiday's key or `birthday`), the print a `rainbowprint` was on, the collection's design or the pixel theme, the day, and a repository's birthday |
+| `parts.banners.last` | The banners' measurement: the mode, the subject, the day, the repository and the person                                                                                                                   |
+| `parts.badges`       | Each measured badge's message and state, and with `localize`, the badges it drew and the branch their links name                                                                                          |
+| `parts.elements`     | Each element's measurement, the elements drawn, and `asof`                                                                                                                                                |
+| `parts.trophies`     | The case's ledger: the day each tier was first reached, a daily history of the core values kept for 400 days, the commit scanner's cache, and `last`, the measurement the case was drawn from             |
+| `snapshot`           | The day the lock was last written for its own sake                                                                                                                                                        |
 
 A run writes the lock when any file changed, when there is none yet, and seven
 days after its last snapshot besides. That weekly write is a real commit, which
@@ -198,14 +200,14 @@ something changed, and the workflow commits with it. Its subject is
 `chore(markdown):`, an emoji and what moved, in 72 characters at most, and the
 first of these that applies sets it:
 
-| On a page    | When                                                                                              | Subject                                                        |
-| :----------- | :------------------------------------------------------------------------------------------------ | :------------------------------------------------------------- |
-| With banners | Something the banners show moved, or they are drawn for the first time                            | 🪧 and what moved: `redraw with release v1.4.0 and 212 stars`  |
-| Either       | The trophy case moved                                                                             | 🏆 and the tier reached, the achievement earned, or the change |
-| Either       | A holiday's set or the Birthday set went up or came down, or a collection's next design took over | 💄 and the set or the design                                   |
-| With banners | Anything else                                                                                     | 🪧 `redraw the banners for` the page                           |
-| Without      | The badges moved and no element was redrawn                                                       | 🏷️ and the badges                                              |
-| Without      | Anything else                                                                                     | 📐 and the elements redrawn, or the page                       |
+| On a page    | When                                                                                                               | Subject                                                        |
+| :----------- | :----------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------- |
+| With banners | Something the banners show moved, or they are drawn for the first time                                             | 🪧 and what moved: `redraw with release v1.4.0 and 212 stars`  |
+| Either       | The trophy case moved                                                                                              | 🏆 and the tier reached, the achievement earned, or the change |
+| Either       | A holiday's set or the Birthday set went up or came down, or a collection's next design or a pixel theme took over | 💄 and the set, the design or the pixel theme                  |
+| With banners | Anything else                                                                                                      | 🪧 `redraw the banners for` the page                           |
+| Without      | The badges moved and no element was redrawn                                                                        | 🏷️ and the badges                                              |
+| Without      | Anything else                                                                                                      | 📐 and the elements redrawn, or the page                       |
 
 The body says what the page now shows, what changed since the last drawing, and
 which files were redrawn or taken away. The kit sets its own commits aside: a
