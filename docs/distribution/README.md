@@ -47,9 +47,10 @@ the folder holds.
 
 <!-- AUTO-INDEX:BEGIN dir=. style=log -->
 
-| Entry                    | Purpose    |
-| :----------------------- | :--------- |
-| [`README.md`](README.md) | This file. |
+| Entry                                          | Purpose                                                                                                                                                                                                                                               |
+| :--------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`README.md`](README.md)                       | This file.                                                                                                                                                                                                                                            |
+| [`Releasing-The-Kit.md`](Releasing-The-Kit.md) | How a version of the kit is cut with Cut Release, what it checks, what moving v1 does to every page, how to undo a release, and how a page pins a version of its own. Read it before dispatching a release or changing what a page already relies on. |
 
 <!-- AUTO-INDEX:END -->
 

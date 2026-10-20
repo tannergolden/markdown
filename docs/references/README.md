@@ -41,12 +41,14 @@ the folder holds.
 
 <!-- AUTO-INDEX:BEGIN dir=. style=log -->
 
-| Entry                          | Purpose                                                                                                                |
-| :----------------------------- | :--------------------------------------------------------------------------------------------------------------------- |
-| [`themes/`](themes/)           | The theme-sets page and one SVG per drawing, from `make themes`: every theme and collection as the kit draws it.       |
-| [`Catalogue.md`](Catalogue.md) | Every trophy and achievement the kit can award, in both modes, with the threshold and the GitHub data behind each one. |
-| [`README.md`](README.md)       | This file.                                                                                                             |
-| [`Settings.md`](Settings.md)   | Every key .github/markdown.yaml can hold, what each does, and the default a page that says nothing gets.               |
+| Entry                                | Purpose                                                                                                                                                                                                                                                   |
+| :----------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`themes/`](themes/)                 | The theme-sets page and one SVG per drawing, from `make themes`: every theme and collection as the kit draws it.                                                                                                                                          |
+| [`Catalogue.md`](Catalogue.md)       | Every trophy and achievement the kit can award, in both modes, with the threshold and the GitHub data behind each one.                                                                                                                                    |
+| [`Command-Line.md`](Command-Line.md) | Every markdown-kit command with its flags, what it reads and writes, whether it needs a token, the environment it reads, and what its exit status means. Look a command up here before scripting it or running it against a page.                         |
+| [`Glossary.md`](Glossary.md)         | The words the kit, its settings and its code use in a sense of their own, from block and lock to plate, set, hand and ledger, each defined once with where to read more. Look a word up here when Settings or a module uses it without saying what it is. |
+| [`README.md`](README.md)             | This file.                                                                                                                                                                                                                                                |
+| [`Settings.md`](Settings.md)         | Every key .github/markdown.yaml can hold, what each does, and the default a page that says nothing gets.                                                                                                                                                  |
 
 <!-- AUTO-INDEX:END -->
 

@@ -40,17 +40,17 @@ why they ship as seed content rather than as law.
 
 <!-- AUTO-INDEX:BEGIN dir=. style=log -->
 
-| Entry                                     | Purpose                                                                                                                                                     |
-| :---------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`adrs/`](adrs/README.md)                 | Architecture decision records, one file per decision, each logged with its status, date and evidence.                                                       |
-| [`distribution/`](distribution/README.md) | From a branch to a release: how a change moves through this project and how a release reaches its users, wherever this project adds to the shared workflow. |
-| [`introduction/`](introduction/README.md) | Where to start: what this project is and how its parts fit together, the principles it holds to, how to get ready to work on it, and where it is going.     |
-| [`library/`](library/README.md)           | What to learn, and where: guides, background and further reading for anyone new to this project's domain or its tools.                                      |
-| [`operations/`](operations/README.md)     | Keeping this project healthy and safe once it runs: runbooks, incident response, post-mortems, security, and the risks it still carries.                    |
-| [`references/`](references/README.md)     | Things to look up: the glossary, catalogues, settings and formats, the pages this project consults rather than reads through.                               |
-| [`technical/`](technical/README.md)       | How the kit is built: where each piece of its source lives, the stack and the Makefile targets CI runs, and how a collection is drawn.                      |
-| [`templates/`](templates/README.md)       | Index of the reusable document templates and when to use each one.                                                                                          |
-| [`README.md`](README.md)                  | This file.                                                                                                                                                  |
+| Entry                                     | Purpose                                                                                                                                                            |
+| :---------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`adrs/`](adrs/README.md)                 | Architecture decision records, one file per decision, each logged with its status, date and evidence.                                                              |
+| [`distribution/`](distribution/README.md) | From a branch to a release: how a change moves through this project and how a release reaches its users, wherever this project adds to the shared workflow.        |
+| [`introduction/`](introduction/README.md) | Where to start: what this project is and how its parts fit together, the principles it holds to, how to get ready to work on it, and where it is going.            |
+| [`library/`](library/README.md)           | What to learn, and where: guides, background and further reading for anyone new to this project's domain or its tools.                                             |
+| [`operations/`](operations/README.md)     | Keeping this project healthy and safe once it runs: runbooks, incident response, post-mortems, security, and the risks it still carries.                           |
+| [`references/`](references/README.md)     | Things to look up: the glossary, catalogues, settings and formats, the pages this project consults rather than reads through.                                      |
+| [`technical/`](technical/README.md)       | How the kit is built: where each piece of its source lives, the stack and the Makefile targets CI runs, how a run works end to end, and how a collection is drawn. |
+| [`templates/`](templates/README.md)       | Index of the reusable document templates and when to use each one.                                                                                                 |
+| [`README.md`](README.md)                  | This file.                                                                                                                                                         |
 
 <!-- AUTO-INDEX:END -->
 
@@ -114,10 +114,16 @@ are and you take what you want.
 
 ## 📂 This Project's Documents
 
+- [Working On The Kit](introduction/Working-On-The-Kit.md) - what a machine needs, how to preview any page without a token, and what to run after each kind of change
 - [Settings](references/Settings.md) - every key `.github/markdown.yaml` can hold, what each does, and its default
+- [Command Line](references/Command-Line.md) - every `markdown-kit` command, its flags, what it reads and writes, and its exit status
+- [Glossary](references/Glossary.md) - the kit's own words, from block and lock to plate, set, hand and ledger
 - [Source Code](technical/Source-Code.md) - where each piece of the kit lives, and the layering rules its imports are held to
 - [Technology Stack & Tooling](technical/Technology-Stack-&-Tooling.md) - the stack, and the Makefile targets CI runs
+- [How A Run Works](technical/How-A-Run-Works.md) - one run from the stub to the commit: settle, measure, plan, write, lock
 - [Drawing a Collection](technical/Collections.md) - how a collection is drawn in one hand, from its hand to its twelfth design
+- [Releasing The Kit](distribution/Releasing-The-Kit.md) - cutting a version, what moving `v1` does to every page, undoing a release, pinning a page
+- [Troubleshooting A Run](operations/Troubleshooting-A-Run.md) - every message a run or a check prints, what it means, and the fix
 - [Architecture Decision Records](adrs/README.md) - every decision the kit's design rests on, each with its status and date
 - [Catalogue](references/Catalogue.md) - every trophy and achievement a case can hold, what earns each, and how its threshold was set
 

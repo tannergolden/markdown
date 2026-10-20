@@ -5,7 +5,6 @@ type: standard
 keywords: [architecture, technical, structure]
 -->
 
-
 <div align="center">
 
 # 💻 SOURCE CODE
@@ -66,6 +65,8 @@ Dependencies must point inward - the domain never imports from delivery or infra
 - **Comments explain _why_**, decisions get an [ADR](../adrs/README.md).
 
 ### 🔗 See also
+
+- [How A Run Works](How-A-Run-Works.md) - one run through these modules, from the stub to the commit
 
 > [!TIP]
 > Every canonical guide is indexed in the [&#x1F4DA; Standards Index](https://github.com/tannergolden/standards/blob/Development/docs/README.md). If you rename or move a file, update every reference to it across the repository to prevent link drift.

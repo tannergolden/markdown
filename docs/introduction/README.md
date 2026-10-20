@@ -41,9 +41,10 @@ the folder holds.
 
 <!-- AUTO-INDEX:BEGIN dir=. style=log -->
 
-| Entry                    | Purpose    |
-| :----------------------- | :--------- |
-| [`README.md`](README.md) | This file. |
+| Entry                                            | Purpose                                                                                                                                                                                                                                |
+| :----------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`README.md`](README.md)                         | This file.                                                                                                                                                                                                                             |
+| [`Working-On-The-Kit.md`](Working-On-The-Kit.md) | What a machine needs to change the kit, how to see any page in any theme on any day without a token, what to run after each kind of change, and which files are only ever generated. Read it before a first change to this repository. |
 
 <!-- AUTO-INDEX:END -->
 

@@ -43,9 +43,10 @@ the folder holds.
 
 <!-- AUTO-INDEX:BEGIN dir=. style=log -->
 
-| Entry                    | Purpose    |
-| :----------------------- | :--------- |
-| [`README.md`](README.md) | This file. |
+| Entry                                                  | Purpose                                                                                                                                                                                                              |
+| :----------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`README.md`](README.md)                               | This file.                                                                                                                                                                                                           |
+| [`Troubleshooting-A-Run.md`](Troubleshooting-A-Run.md) | What to do when a page's run fails, a check says the page is stale, or a run passes and the page still looks wrong: each message the kit prints, what it means, and the fix. Read it with the failed run's log open. |
 
 <!-- AUTO-INDEX:END -->
 
