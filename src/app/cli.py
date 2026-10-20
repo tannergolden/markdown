@@ -12,6 +12,7 @@
   catalogue  docs/references/Catalogue.md: every trophy and achievement, and what earns it
   calibrate  measure the repository population the repository-mode trophies are set against
   settings   read a repository's settings and print them in full, every default filled in
+  themes     every theme a page can pick, by kind, and the sets the calendar puts up over it
   holidays   the holiday calendar: which set is up on a day, and the windows ahead or in a year
   collections  each collection's year: its design for every month, and the one up on a day
   palette    the 64 colour tokens, and the letters each takes
@@ -26,9 +27,10 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import textwrap
 from pathlib import Path
 
-from domain import KIT, KIT_VERSION, birthday, collections, holidays, palette, prints, settings
+from domain import KIT, KIT_VERSION, birthday, collections, holidays, palette, pixelthemes, prints, settings
 from domain.badges import classic as badges_classic
 from domain.badges import data as badges_data
 from domain.badges import live as badges_live
@@ -112,6 +114,7 @@ def parser() -> argparse.ArgumentParser:
     c.add_argument("--today", type=_date, help="the day to date it (default: today)")
     s = page(sub.add_parser("settings", help="read a repository's settings and print them in full"), today=False)
     s.set_defaults(command="settings")
+    sub.add_parser("themes", help="every theme a page can pick, by kind, and the sets the calendar puts up")
     h = sub.add_parser("holidays", help="the holiday calendar")
     h.add_argument("--year", type=int, help="every window in this year")
     h.add_argument("--days", type=int, default=holidays.DEFAULT_DAYS, help="holiday-days, 3 to 7 (default 3)")
@@ -366,6 +369,7 @@ def cmd_lint(args, ports: Ports) -> int:
     else:
         elements = None
     sets = [(key, holidays.drawn_by(key)) for key in holidays.SETS] + [(birthday.KEY, birthday.drawn_by(birthday.KEY))]
+    sets += [(key, pixelthemes.drawn_by(key)) for key in pixelthemes.themes()]
     for key, held in sets:
         largest, problems, n = 0, [], 0
         for what, svg, found in holiday_specimens(held, elements):
@@ -404,6 +408,36 @@ def cmd_settings(args, ports: Ports) -> int:
 
 def _span(w: holidays.Window) -> str:
     return f"{w.start:%a %b %d} to {w.end:%a %b %d, %Y}  ({w.days} days)"
+
+
+def cmd_themes(args, ports: Ports) -> int:
+    """Every theme a page can pick with `theme:`, by kind, then the sets the calendar puts up over whichever it
+    picked: the kinds docs/technical/Themes.md defines, as this kit has them."""
+
+    def say(kind: str, text: str, indent: int = 0):
+        lead = f"  {kind:<14}" + " " * indent
+        for i, line in enumerate(textwrap.wrap(text, 100 - len(lead))):
+            print((lead if i == 0 else " " * len(lead)) + line, file=ports.out)
+
+    print("Themes: theme: names one, and the page wears it every day the calendar puts nothing up.", file=ports.out)
+    say("standard", "standard, the default: the original badges' look, laid out as a masthead")
+    say("prints", "one colour drawn as a drafting sheet: " + ", ".join(prints.BUILTIN))
+    say("", f"{prints.RAINBOW}: the next print of the spectrum each time the page moves")
+    say("", "or a print of the page's own, named under prints: in its settings")
+    say("pixel themes", "one world drawn in pixels, kept all year:" + ("" if pixelthemes.themes() else " none yet"))
+    for k in pixelthemes.themes():
+        say("", f"{k} ({pixelthemes.name_of(k)}): {pixelthemes.THEMES[k].summary}", indent=2)
+    for c in collections.COLLECTIONS.values():
+        state = "" if collections.complete(c.key) else \
+            f", still being drawn: {collections.drawn(c.key)} of {len(collections.MONTHS)} designs done"
+        say("collections", f"{c.key} ({c.name}): a pixel design for each month{state}, or one of its designs "
+            f"kept all year, {c.keys[0]} to {c.keys[-1]} (markdown-kit collections)")
+    print("Sets on the calendar: each takes the page for its days and hands it back; no theme: picks one.",
+          file=ports.out)
+    say("holiday sets", ", ".join(holidays.NAMES[k] for k in holidays.KEYS if k in holidays.SETS)
+        + " (holidays: false keeps them away; markdown-kit holidays)")
+    say("Birthday set", "on the page's birthday (birthday: false keeps it away)")
+    return 0
 
 
 def cmd_holidays(args, ports: Ports) -> int:
@@ -492,7 +526,7 @@ def cmd_replay(args, ports: Ports) -> int:
 
 COMMANDS = {"run": cmd_run, "render": cmd_render, "check": cmd_check, "preview": cmd_preview, "measure": cmd_measure,
             "set": cmd_set, "lint": cmd_lint, "catalogue": cmd_catalogue, "calibrate": cmd_calibrate, "settings": cmd_settings, "holidays": cmd_holidays,
-            "collections": cmd_collections, "palette": cmd_palette,
+            "themes": cmd_themes, "collections": cmd_collections, "palette": cmd_palette,
             "icons": cmd_icons, "version": cmd_version, "replay": cmd_replay}
 
 

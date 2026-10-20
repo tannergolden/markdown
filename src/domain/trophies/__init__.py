@@ -23,7 +23,8 @@
 
 A case is drawn in the page's theme, as every part is: its five styles are
 the standard theme's, a print draws them on its drafting paper, and a
-holiday's set or a collection's design strikes them in its pixels. Each look
+holiday's set, a pixel theme or a collection's design strikes them in its
+pixels. Each look
 keeps the style, the sizes and the words, and `look: standard` in the
 settings keeps the standard look in every theme.
 """

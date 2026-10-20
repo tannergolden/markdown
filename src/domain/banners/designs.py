@@ -16,8 +16,8 @@ image in a README can carry only the one link that wraps it.
 A design drawn in `standard` is drawn by `standard.banners`, the masthead,
 and in any print by its own function here: the codes, the files and the
 README blocks are the same whichever draws them. While a pixel set draws
-the page (a holiday's while it is up, or a collection's design for the
-month; see `pixelsets`) it draws every file instead, and a file it cannot draw within the lint (a
+the page (a holiday's while it is up, a pixel theme, or a collection's design
+for the month; see `pixelsets`) it draws every file instead, and a file it cannot draw within the lint (a
 character its letters lack, or a budget it cannot keep) is drawn as it
 always is.
 """

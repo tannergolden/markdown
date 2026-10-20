@@ -29,7 +29,8 @@ holiday is a package of its own, its palette in `palette.py` and its art in
 
 The sets share two packages: `pixel/`, the engine they are drawn with, and
 `designs/`, the layouts every set shares and the hooks each one draws its own
-art in.
+art in. The Birthday set, every collection's design and every pixel theme are
+drawn with the same two ([Themes and Sets](../../../docs/technical/Themes.md)).
 
 ---
 

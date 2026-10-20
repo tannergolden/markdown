@@ -16,7 +16,7 @@ from unittest import mock
 from tests import support
 from tests.unit.test_schematic_border import _box, layouts
 
-from domain import collections, holidays as H, pixelsets
+from domain import collections, holidays as H, pixelsets, pixelthemes as P
 from domain.elements import data as ED
 from domain.elements import draw as E
 from domain.holidays.pixel import Pix
@@ -65,10 +65,10 @@ def under_a_row() -> dict:
 
 class Touch(unittest.TestCase):
     def test_no_cards_touch_comes_within_two_units_of_a_word(self):
-        # Every holiday's set, and every collection's design drawn so far.
+        # Every holiday's set, every collection's design drawn so far, and every pixel theme.
         designs = [k for c in collections.COLLECTIONS.values() for k in c.keys if collections.is_drawn(k)]
         sheets = {**layouts(), "a group under a row": under_a_row()}
-        for key in [*H.SETS, *designs]:
+        for key in [*H.SETS, *designs, *P.themes()]:
             held = pixelsets.drawn_by(key)
             cls = type(held)
             real = cls.node_deco
@@ -103,7 +103,7 @@ class Touch(unittest.TestCase):
         # the gap, clear of both cards and their touch, in every set.
         designs = [k for c in collections.COLLECTIONS.values() for k in c.keys if collections.is_drawn(k)]
         d = under_a_row()
-        for key in [*H.SETS, *designs]:
+        for key in [*H.SETS, *designs, *P.themes()]:
             held = pixelsets.drawn_by(key)
             for night in (False, True):
                 lettered = []

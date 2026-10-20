@@ -53,6 +53,13 @@ class PrintsTest(unittest.TestCase):
     def test_standard_cannot_be_redefined(self):
         self.assertTrue(prints.errors("standard", {"line": "navy", "ink": "navy", "sheet": "navy"}))
 
+    def test_no_print_takes_the_name_of_a_pixel_theme_a_collection_or_one_of_its_designs(self):
+        # The settings look for a print first, so a print by one of their names would draw the page in it silently.
+        spec = {"line": "navy", "ink": "navy", "sheet": "navy"}
+        for name in ("heaven-and-hell", "medieval", "medieval-forge"):
+            self.assertEqual(prints.errors(name, spec), [f"{name}: the kit already draws a theme by that name; give "
+                                                         "yours another"], name)
+
     def test_rainbowprint_walks_the_spectrum_and_wraps(self):
         self.assertEqual(prints.rainbow_after(None), "redprint")
         self.assertEqual(prints.rainbow_after("redprint"), "orangeprint")

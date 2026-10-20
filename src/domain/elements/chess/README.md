@@ -41,8 +41,8 @@ for reduced motion. Round the pictures the README carries the game's words
 winner's profile, and the leaderboard, @tannergolden's own row on top of
 GitHub's ten leading players. Tic-Tac, Pentago and Checkers are drawn
 by the same hand, on this sheet, in these two materials and to this motion
-([`games/`](../games/README.md)). While a holiday's set or a collection's design
-is up, it draws the board in its own pixels instead
+([`games/`](../games/README.md)). While a holiday's set, a pixel theme or a
+collection's design is up, it draws the board in its own pixels instead
 ([`holidays/designs/`](../../holidays/designs/__init__.py)), and `chess-hall`
 keeps the page's own theme.
 

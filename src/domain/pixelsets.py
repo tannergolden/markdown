@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
-"""The pixel set a page is drawn in: a holiday's set around its day, a collection's design for its month, or
-the Birthday set on the page's birthday.
+"""The pixel set a page is drawn in: a holiday's set around its day, a collection's design for its month, a
+pixel theme the page keeps all year, or the Birthday set on the page's birthday.
 
 All are drawn with the same layouts and pixels, so the parts ask here for
 the set a page is drawn in by its key: a holiday's with the day it falls on
@@ -10,13 +10,14 @@ needs, or a collection's design, with the day after a colon when it is drawn
 as the collection's design for the month (`medieval-forge:2026-11-01`), which
 gives its headers the month's mark, and alone when a page keeps it all year
 (`medieval-forge`); with the sign a page chose for its headers last
-(`medieval-forge:leo`); or the Birthday set's, with the day and a
-repository's age after it (`birthday:2026-03-14:7`). See `holidays`,
-`collections` and `birthday`.
+(`medieval-forge:leo`); a pixel theme's alone, as it has no calendar
+(`heaven-and-hell`); or the Birthday set's, with the day and a repository's
+age after it (`birthday:2026-03-14:7`). See `holidays`, `collections`,
+`pixelthemes` and `birthday`.
 """
 from __future__ import annotations
 
-from . import birthday, collections, holidays
+from . import birthday, collections, holidays, pixelthemes
 
 
 def drawn_by(held: str | None):
@@ -26,15 +27,19 @@ def drawn_by(held: str | None):
         return birthday.drawn_by(held)
     if key in holidays.SETS:
         return holidays.drawn_by(held)
+    if key in pixelthemes.THEMES:
+        return pixelthemes.drawn_by(held)
     return collections.drawn_by(held)
 
 
 def name(held: str | None) -> str:
-    """The set's name in words: `the Halloween set`, `the Birthday set`, or `Forge, the medieval collection's
-    November design`."""
+    """The set's name in words: `the Halloween set`, `the Birthday set`, `Forge, the medieval collection's
+    November design`, or `the Heaven & Hell theme`."""
     key = (held or "").partition(":")[0]
     if key == birthday.KEY:
         return f"the {birthday.NAME} set"
     if key in holidays.NAMES:
         return f"the {holidays.NAMES[key]} set"
+    if key in pixelthemes.THEMES:
+        return pixelthemes.described(key)
     return collections.described(key)

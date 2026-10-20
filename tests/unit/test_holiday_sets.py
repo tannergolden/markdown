@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
-"""Every holiday set, and the Birthday set drawn with them: each file it draws well formed, within its lint and
+"""Every holiday set, the Birthday set and every pixel theme, all drawn with the same layouts and pixels: each
+file a set draws well formed, within its lint and
 budget, in the set's own closed palette, the same every time and at the kit's sizes; letters that hold 4.5:1 on what
 they sit on; motion only where the kit allows it; and the kit handing a page to the set while it is up, file by
 file, falling back to the page's own drawing for any file the set cannot draw."""
@@ -16,6 +17,7 @@ from tests import support
 from domain import KIT, KIT_VERSION
 from domain import birthday as B
 from domain import holidays as H
+from domain import pixelthemes as P
 from domain.badges import data as BD
 from domain.banners import sample as BS
 from domain.banners.compose import LIMITS, compose
@@ -32,9 +34,10 @@ from domain.palette import PALETTE
 from infra.yaml_reader import loads
 
 support.install()
-# Each holiday's set, and the Birthday set, which is no holiday but is drawn with the same layouts and pixels.
+# Each holiday's set, the Birthday set and each pixel theme's: neither of the last two is a holiday, but both are
+# drawn with the same layouts and pixels, and held to the same rules.
 HOLIDAY_SETS = {key: H.drawn_by(key) for key in H.SETS}
-SETS = HOLIDAY_SETS | {B.KEY: B.drawn_by(B.KEY)}
+SETS = HOLIDAY_SETS | {B.KEY: B.drawn_by(B.KEY)} | {key: P.drawn_by(key) for key in P.themes()}
 SPECIMEN = loads((support.ROOT / "tests" / "fixtures" / "driftmark" / ".github" / "markdown.yaml").read_text(encoding="utf-8"))
 ELEMENTS = ED.merged(ED.check(SPECIMEN["elements"]), {}, subject="driftmark/driftmark", today="2026-09-25")
 # The banned dashes, spelled by code point so this file never carries one.

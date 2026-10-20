@@ -1,7 +1,8 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
-"""The pixel engine the holiday sets draw with: the canvas, its two faces, the badges' icons in pixels,
-and the light every sprite is shaded by. Nothing here belongs to one holiday."""
+"""The pixel engine every pixel set draws with, the holiday sets', the Birthday set's, the collections'
+designs' and the pixel themes': the canvas, its two faces, the badges' icons in pixels, and the light every
+sprite is shaded by. Nothing here belongs to one set."""
 from __future__ import annotations
 
 from .canvas import BLINKS, Paint, Pix, num

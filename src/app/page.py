@@ -13,6 +13,8 @@ design draws the banners, the badges, the elements and the trophy case, as a
 holiday's set does. A page that follows the collection's calendar carries the
 month's mark in its headers; a page that keeps one design all year does not.
 A page that chose a sign, `sign: leo`, carries that one instead, either way.
+A page in a pixel theme is drawn in its set every day, as a page that keeps
+one design all year is, and carries no mark and no sign (see `pixelthemes`).
 
 On the page's birthday the Birthday set takes the page from all of them, for
 the day (see `birthday`): a person's birthday comes from the settings, and a
@@ -25,7 +27,7 @@ import datetime as dt
 from dataclasses import dataclass
 from pathlib import Path
 
-from domain import birthday, collections, holidays, lock, prints, settings
+from domain import birthday, collections, holidays, lock, pixelthemes, prints, settings
 
 
 @dataclass(frozen=True)
@@ -39,11 +41,12 @@ class Page:
     readme: str             # the README's path, relative to the root
     out: str                # the folder the files go in, relative to the root
     theme: str              # what the page is drawn in: standard, or a print (rainbowprint resolved to one);
-                            # standard for a collection, for any file its design cannot draw
+                            # standard for a collection or a pixel theme, for any file its set cannot draw
     rainbow: str | None     # the print rainbowprint is on, or None for any other theme
     holiday: holidays.Window | None  # the holiday whose set draws the page today, or None
-    design: str = ""        # the collection's design for the month, or the design the settings name; ""
-                            # for any other theme. A holiday's set still draws the page while it is up
+    design: str = ""        # the collection's design for the month, the design the settings name, or the
+                            # pixel theme they name; "" for any other theme. A holiday's set still draws the page
+                            # while it is up
     now: dt.datetime | None = None  # the moment a run draws at, in UTC: None for a redraw from the lock alone
     party: birthday.Party | None = None  # the page's birthday when it is today, whose set draws the page; a
                                          # holiday's set gives way to it, and `holiday` is then None
@@ -59,7 +62,8 @@ class Page:
 
     @property
     def pinned(self) -> bool:
-        """Whether the settings name one design of a collection, which the page keeps all year."""
+        """Whether the settings name one design of a collection, or a pixel theme, which the page keeps all
+        year."""
         return bool(self.design) and self.cfg["theme"] == self.design
 
     @property
@@ -68,14 +72,17 @@ class Page:
         repository's age (see `birthday.Party`); a holiday set's key and the day its holiday falls on; the
         collection's design for the month and the day, which tells the design it is drawn as the month's and
         gives its headers the month's mark; the design the settings name, alone, for a page that keeps it all
-        year and carries no mark; or "" for the page's own theme. A design comes with the sign the page chose
-        after it, `medieval-forge:leo`, which its headers carry in place of the month's."""
+        year and carries no mark; the pixel theme the settings name, alone; or "" for the page's own theme. A
+        collection's design comes with the sign the page chose after it, `medieval-forge:leo`, which its headers
+        carry in place of the month's; a pixel theme carries no sign."""
         if self.party:
             return self.party.held
         if self.holiday:
             return f"{self.holiday.key}:{self.holiday.day.isoformat()}"
         if not self.design:
             return ""
+        if pixelthemes.is_drawn(self.design):
+            return self.design
         drawn = self.design if self.pinned else f"{self.design}:{self.today.isoformat()}"
         sign = self.cfg.get("sign") or ""
         return f"{drawn}:{sign}" if sign else drawn
@@ -150,14 +157,16 @@ def celebrated(cfg: dict, mode: str, today: dt.date, born: dt.date | None) -> bi
 def settle(root: Path, cfg: dict, *, mode: str, subject: str, here: str, today: dt.date, lk: dict,
            rainbow: str | None = None, born: dt.date | None = None) -> Page:
     """The page, with its theme resolved: a rainbowprint drawn in `rainbow`, or the lock's shade, or the first;
-    a collection in its design for the month of `today`; and on the page's birthday, the Birthday set over every
-    one of them, a repository's from the day it was `born`."""
+    a collection in its design for the month of `today`; a pixel theme in its set; and on the page's birthday,
+    the Birthday set over every one of them, a repository's from the day it was `born`."""
     tone = rainbow if rainbow else shade(cfg, lk)
     party = celebrated(cfg, mode, today, born if mode == "repository" else None)
     window = None if party else holidays.active(today, cfg["holiday_days"], cfg["holidays"])
     if window and not holidays.drawn_by(window.key):
         window = None   # its set is not drawn yet, so the page keeps its own theme
     design = collections.design_for(cfg["theme"], today)
+    if pixelthemes.is_theme(cfg["theme"]):
+        design = cfg["theme"]   # drawn as a design kept all year is: one set, every day
     return Page(root=Path(root), cfg=cfg, mode=mode, subject=subject, here=here, today=today,
                 readme=settings.readme_path(cfg, mode), out=settings.out_dir(cfg, mode),
                 theme=tone or (prints.STANDARD if design else cfg["theme"]), rainbow=tone, holiday=window,

@@ -70,20 +70,20 @@ default filled in, which is the quickest way to see what a run will do.
 
 ## 🧭 The Page
 
-| Key            | Default           | What it does                                                                                                                                                                         |
-| :------------- | :---------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mode`         | `auto`            | `profile`, `repository` or `organization`. `auto` reads a profile repository (`name/name`) as a profile, an organization's `.github` as its page, and anything else as a repository. |
-| `subject`      | (the repo)        | Whose page it is: a login, an organization, or `owner/name`. Empty: this repository, or its owner on a profile.                                                                      |
-| `theme`        | `standard`        | `standard`, a print, `rainbowprint`, a print of your own, or a collection. See [Themes](#-themes) and [Collections](#-collections).                                                  |
-| `sign`         | (the month's)     | The sign of the zodiac a collection's headers carry all year, as `leo`, in place of the month's. See [Collections](#-collections).                                                   |
-| `holidays`     | `true`            | `false` keeps the holiday sets away. See [Holidays](#-holidays).                                                                                                                     |
-| `holiday-days` | `3`               | How long each holiday's set is up: 3 to 7 days. New Year's Day is always 3.                                                                                                          |
-| `birthday`     | `true`            | `false` keeps the Birthday set away. On a profile, the person's birthday: `03-14`, or `1990-03-14` for their age. See [Birthday](#-birthday).                                        |
-| `timezone`     | `UTC`             | The zone the page's day changes in, so a holiday starts at its own midnight. An IANA name: `America/New_York`.                                                                       |
-| `readme`       | `README.md`       | The README the blocks are written into; `profile/README.md` for an organization.                                                                                                     |
-| `out`          | `assets`          | Where the drawings go, each part in a folder of its own: `banners`, `badges`, `trophies` and `elements`. `profile/assets` for an organization.                                       |
-| `lock`         | `true`            | Keep `.github/markdown.lock.json`: what was measured, so `check` can draw the page again with no token.                                                                              |
-| `prints`       | none              | Your own prints, each a name and its colours. See [Your own prints](#your-own-prints).                                                                                               |
+| Key            | Default       | What it does                                                                                                                                                                         |
+| :------------- | :------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mode`         | `auto`        | `profile`, `repository` or `organization`. `auto` reads a profile repository (`name/name`) as a profile, an organization's `.github` as its page, and anything else as a repository. |
+| `subject`      | (the repo)    | Whose page it is: a login, an organization, or `owner/name`. Empty: this repository, or its owner on a profile.                                                                      |
+| `theme`        | `standard`    | `standard`, a print, `rainbowprint`, a print of your own, a pixel theme, or a collection. See [Themes](#-themes), [Pixel Themes](#-pixel-themes) and [Collections](#-collections).   |
+| `sign`         | (the month's) | The sign of the zodiac a collection's headers carry all year, as `leo`, in place of the month's. See [Collections](#-collections).                                                   |
+| `holidays`     | `true`        | `false` keeps the holiday sets away. See [Holidays](#-holidays).                                                                                                                     |
+| `holiday-days` | `3`           | How long each holiday's set is up: 3 to 7 days. New Year's Day is always 3.                                                                                                          |
+| `birthday`     | `true`        | `false` keeps the Birthday set away. On a profile, the person's birthday: `03-14`, or `1990-03-14` for their age. See [Birthday](#-birthday).                                        |
+| `timezone`     | `UTC`         | The zone the page's day changes in, so a holiday starts at its own midnight. An IANA name: `America/New_York`.                                                                       |
+| `readme`       | `README.md`   | The README the blocks are written into; `profile/README.md` for an organization.                                                                                                     |
+| `out`          | `assets`      | Where the drawings go, each part in a folder of its own: `banners`, `badges`, `trophies` and `elements`. `profile/assets` for an organization.                                       |
+| `lock`         | `true`        | Keep `.github/markdown.lock.json`: what was measured, so `check` can draw the page again with no token.                                                                              |
+| `prints`       | none          | Your own prints, each a name and its colours. See [Your own prints](#your-own-prints).                                                                                               |
 
 The stub can set `mode`, `theme`, `sign`, `holidays`, `holiday-days` and
 `birthday` too, as inputs of the reusable workflow. A value the stub sets wins
@@ -100,15 +100,19 @@ over the file's.
 | `redprint` to `pinkprint`  | The spectrum, one print per colour: red, orange, yellow, green, teal, blue, indigo, purple, pink.         |
 | `brownprint`, `blackprint` | The two prints the trade named first after the blueprint.                                                 |
 | `rainbowprint`             | The next colour of the spectrum each time something the page shows moves. The lock remembers where it is. |
-| `medieval`                 | A collection: a pixel design for each month, changing on the first. See [Collections](#-collections).    |
+| `heaven-and-hell`          | A pixel theme: angels by day and demons by night, all year. See [Pixel Themes](#-pixel-themes).           |
+| `medieval`                 | A collection: a pixel design for each month, changing on the first. See [Collections](#-collections).     |
 
 The theme reaches every part at once. The banners and the elements are drawn in
 it. The badges are drawn as written in `standard`, and in a print each becomes
 its plate in that print. The trophy case is drawn in it too: its five styles
 are the standard theme's own, a print draws each one on its drafting paper, and
-a collection's design strikes each one in its pixels, at the same sizes and in
-the same words. `look: standard` under [`trophies:`](#-trophies) keeps the
-standard look in every theme.
+a pixel theme or a collection's design strikes each one in its pixels, at the
+same sizes and in the same words. `look: standard` under
+[`trophies:`](#-trophies) keeps the standard look in every theme.
+
+[Themes and Sets](../technical/Themes.md) defines every kind of theme, and
+`markdown-kit themes` lists every theme a page can pick, by kind.
 
 ### Your own prints
 
@@ -126,7 +130,31 @@ prints:
 theme: goldprint
 ```
 
-`markdown-kit palette` lists the 64 tokens.
+`markdown-kit palette` lists the 64 tokens. A print may not take the name of a
+theme the kit already draws, a pixel theme's or a collection's included.
+
+---
+
+## 🌗 Pixel Themes
+
+A pixel theme is one world drawn as pixel art, and a page that names it wears it
+every day of the year. It draws the header, the footer and its buttons, the
+badges, the elements and the trophy case in its pixels, at the same sizes and in
+the same files, as a holiday's set does. It never changes with the month, and
+its headers carry no month's mark and no sign: `sign:` belongs to a collection.
+With holidays on, a holiday's set still takes over around its day and hands the
+page back, and on the page's birthday the Birthday set takes it for the day.
+
+| Theme             | What it draws                                                                                                                                                                                                                                                                                     |
+| :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `heaven-and-hell` | Heaven & Hell: in GitHub's light mode the page is heaven, the pearly gates, the archangel and its herald over a sea of cloud; in its dark mode the same page is hell, the gates of hell, the demon and its herald over a river of lava, each thing of heaven with its fallen twin where it stood. |
+
+```yaml
+theme: heaven-and-hell
+```
+
+A pixel theme draws a page as a collection's design kept all year does, and is
+no collection's: see [ADR-0012](../adrs/ADR-0012-A-Pixel-Theme-Is-Kept-All-Year.md).
 
 ---
 
@@ -349,7 +377,7 @@ badges away, as every run takes away whatever the kit drew and draws no longer.
 | :------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `standard`           | Enamel and lit pieces under one lamp, in chess's colours: the dark squares, Tic-Tac's bars and Pentago's quarters in the theme's blue, the last move amber, and whatever the rules make the side to move answer (a king in check, a man that must jump) glowing red.                                                                                                                                                                          |
 | A print              | A drawing on drafting paper in the print's colour: poché for the dark squares, the bars and the quarters, line shading for the light pieces, phantom lines where a piece stood and a revision cloud round whatever must be answered.                                                                                                                                                                                                          |
-| A holiday or a month | The set's pixels, as it draws every part of the page: its paper, frame and lettering, a board built of its own world's stuff in a frame of its own and the Hall's podium cut from it, the same hand-drawn ivory and ebony pieces in every set, what the rules point to and what wins in the trophies' gold, and a collection's words in its hand's two inks. A set draws a game whole, every file of it, or leaves it in the page's own look. |
+| A set                | The set's pixels, a holiday's, a pixel theme's or a month's, as it draws every part of the page: its paper, frame and lettering, a board built of its own world's stuff in a frame of its own and the Hall's podium cut from it, the same hand-drawn ivory and ebony pieces in every set, what the rules point to and what wins in the trophies' gold, and a collection's words in its hand's two inks. A set draws a game whole, every file of it, or leaves it in the page's own look. |
 
 Round the pictures the README carries each game's words, since an image cannot
 be clicked square by square: Chess's board never folded, always in view, and
@@ -361,8 +389,8 @@ Hall, the winners' badges and the leaderboard. No banner stands over a game: its
 sheet says whose turn it is and by when, and how a finished game ended, so the
 README says nothing twice. The
 [theme-sets page](https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#chess)
-shows every sheet in every tone, every holiday's set and every month of the
-Medieval collection, each drawn from a sample game.
+shows every sheet in every tone, every holiday's set, every pixel theme and
+every month of the Medieval collection, each drawn from a sample game.
 
 ---
 
@@ -543,7 +571,7 @@ it. Under the badges it folds shut the `leaders`: @tannergolden's own moves,
 wins and games on top, then GitHub's ten leading players by their wins and then
 their moves, each `[login, moves, wins, games]` and linking to their profile.
 All of them are drawn in the standard theme or the page's print, as one layout,
-whatever holiday or collection is up.
+whatever holiday, pixel theme or collection is up.
 
 The other three boards take what chess's does wherever a game shares it: the
 `game` and `move`, the `players`, the day the move is `due` by, the `last` move
@@ -670,7 +698,7 @@ two side signs, the house's first, then the moves, then the wins in all, and a
 rule that a win counts only for the player who makes the winning move. Its
 counts, each game's series and a player's wins in a game and games, go up to
 999,999, and its moves up to 999,999,999. It is drawn to the board's budget, in
-the standard theme and every print, whatever holiday or collection is up.
+the standard theme and every print, whatever holiday, pixel theme or collection is up.
 
 ---
 
@@ -700,8 +728,8 @@ Every trophy and achievement is listed with its threshold and rarity in the
 The case is drawn in the page's theme, as every part is: in `standard` in its
 own styles, struck in metal and enamel; in a print as drawings on the print's
 drafting paper, each card a sheet from the set, drawn further as its tier
-rises; and in a holiday's set or a collection's design in the set's pixels, on
-its paper and in its frame. Every look keeps the style, the sizes and the
+rises; and in a holiday's set, a pixel theme or a collection's design in the
+set's pixels, on its paper and in its frame. Every look keeps the style, the sizes and the
 words, so the README's block reads the same in all of them.
 
 The lock keeps the case's history: the day each tier was first reached, which
@@ -722,6 +750,9 @@ over `.github/trophies.lock.json`.
 - [ADR-0007](../adrs/ADR-0007-A-Collection-Is-Drawn-By-One-Hand.md): one hand for a collection's twelve designs.
 - [ADR-0008](../adrs/ADR-0008-The-Trophy-Case-Wears-The-Pages-Theme.md): the trophy case drawn in the page's theme.
 - [ADR-0009](../adrs/ADR-0009-The-Games-Wear-The-Pages-Theme.md): the games and their Hall of Fame drawn in the page's theme.
+- [ADR-0011](../adrs/ADR-0011-A-Page-Has-A-Birthday.md): the page's birthday.
+- [ADR-0012](../adrs/ADR-0012-A-Pixel-Theme-Is-Kept-All-Year.md): a pixel theme, kept all year.
+- [Themes and Sets](../technical/Themes.md): every kind of theme and set, defined once.
 
 ### 🔗 See also
 

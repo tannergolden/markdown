@@ -1,7 +1,8 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: LicenseRef-Proprietary
-"""The games on @tannergolden's profile and their Hall of Fame in every pixel set: while a holiday's set or a
-collection's design is up, it draws all four boards and the Hall in its own pixels, every file of one or none.
+"""The games on @tannergolden's profile and their Hall of Fame in every pixel set: while a holiday's set, a
+collection's design or a pixel theme is up, it draws all four boards and the Hall in its own pixels, every file of
+one or none.
 
 Every file is the kit's, by name and width, well formed, within its lint and its budget, in the set's palette with the
 two sides' ivory and ebony and the trophies' metals, and the same every time. A moving file plays as it opens and its
@@ -22,7 +23,7 @@ from unittest import mock
 
 from tests import support
 
-from domain import KIT, KIT_VERSION, collections, holidays, pixelsets
+from domain import KIT, KIT_VERSION, collections, holidays, pixelsets, pixelthemes
 from domain.canvas import BUDGET, lint
 from domain.elements import data as ED
 from domain.elements import draw as E
@@ -37,7 +38,8 @@ from infra.yaml_reader import loads
 from tests.unit import test_elements_games as SAMPLES
 
 support.install()
-SETS = [k for k in holidays.KEYS if k in holidays.SETS] + list(collections.COLLECTIONS["medieval"].keys)
+SETS = ([k for k in holidays.KEYS if k in holidays.SETS] + list(collections.COLLECTIONS["medieval"].keys)
+        + pixelthemes.themes())
 DASHES = ("–", "—", "―")
 # Two sets every file of which is drawn twice and pushed to the data's limits: a holiday's and a collection's month.
 TWO = ("halloween", "medieval-chessmen:2026-02-01")

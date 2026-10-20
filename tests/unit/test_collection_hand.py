@@ -13,6 +13,7 @@ from tests.unit.test_holiday_sets import contents
 
 from domain import collections as C
 from domain import holidays as H
+from domain import pixelthemes as P
 from domain.canvas import DARK, DAY
 from domain.collections import zodiac
 from domain.collections.hand import HANDS, MEDIEVAL, CollectionSet, check, lab, signs
@@ -222,6 +223,16 @@ class InTheHeaders(unittest.TestCase):
         for key in H.SETS:
             held = H.drawn_by(f"{key}:{H.window(key, 2026).day.isoformat()}")
             self.assertIsNotNone(held.day)
+            self.assertEqual(held.mark_size, 0)
+            h, _ = contents(key)["repository"]
+            for night in (False, True):
+                for what, p in headers(held, h, night):
+                    self.assertFalse(any(layer.startswith("mark") for layer in p.layers), (key, what, night))
+
+    def test_a_pixel_theme_carries_none(self):
+        # A pixel theme keeps no calendar, so it has no month to mark.
+        for key in P.themes():
+            held = P.drawn_by(key)
             self.assertEqual(held.mark_size, 0)
             h, _ = contents(key)["repository"]
             for night in (False, True):

@@ -40,7 +40,7 @@ REQUIRED = {
 # sheet says whose turn it is.
 FOLDS = {"checkers": "🏁 Checkers", "pentago": "🌀 Pentago", "tictac": "❌ Tic-Tac"}
 # The games on @tannergolden's profile and their Hall of Fame: drawn in the standard theme and every print by their
-# own packages, and by a holiday's set or a collection's design in its pixels (`holidays.designs.games`), every file
+# own packages, and by a holiday's set, a pixel theme or a collection's design in its pixels (`holidays.designs.games`), every file
 # of one in the set or none, so a board is never half in one look and half in another.
 GAMES = frozenset({"tictac", "pentago", "checkers", "chess", "hall-of-fame"})
 # Kinds that draw themselves in the standard theme and every print, by their own packages, rather than as the
@@ -143,8 +143,8 @@ def render(elements: dict, tone: str, holiday: str = "") -> dict[str, str]:
 
     `standard` is drawn by `standard.elements`, a print by `draw`, from the
     same data into the same files. While `holiday` names a pixel set (a
-    holiday's while it is up, or a collection's design for the month; see
-    `pixelsets`) it draws them instead, at its own shared half height, and a file it cannot draw within
+    holiday's while it is up, a pixel theme, or a collection's design for the
+    month; see `pixelsets`) it draws them instead, at its own shared half height, and a file it cannot draw within
     the lint is drawn as it always is. A set draws a game, or the Hall of Fame, whole or not at all
     (`held_game`).
     """

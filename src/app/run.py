@@ -26,7 +26,7 @@ import re
 import textwrap
 from pathlib import Path
 
-from domain import birthday, collections, holidays, lock, prints, readme, settings
+from domain import birthday, collections, holidays, lock, pixelthemes, prints, readme, settings
 from domain.badges import data as badges_data
 from domain.banners import plan as banners_plan
 from domain.banners import sample as banners_sample
@@ -343,7 +343,10 @@ def _set_name(key: str) -> str:
 
 
 def _own(page: Page) -> str:
-    """What the page is drawn in when no holiday's set is up, in words: its theme, or a collection's design."""
+    """What the page is drawn in when no holiday's set is up, in words: its theme, a pixel theme, or a
+    collection's design."""
+    if pixelthemes.is_drawn(page.design):
+        return pixelthemes.described(page.design)
     if page.design:
         return collections.described(page.design, month=not page.pinned)
     return page.cfg["theme"]
@@ -356,6 +359,8 @@ def _tomorrow(page: Page) -> str:
     window = holidays.active(after, cfg["holiday_days"], cfg["holidays"])
     if window and holidays.drawn_by(window.key):
         return f"the {window.name} set"
+    if pixelthemes.is_theme(cfg["theme"]):
+        return f"{pixelthemes.described(cfg['theme'])} again"
     design = collections.design_for(cfg["theme"], after)
     if design:
         return collections.described(design, month=not page.pinned)
@@ -376,7 +381,7 @@ def _drawn_in_set(page: Page) -> tuple[str, str]:
 
 def _set_news(page: Page, held_was: str, design_was: str = "") -> tuple[str, str]:
     """(a subject, a paragraph) when a holiday's set or the Birthday set went up or came down with this run, or a
-    collection's design took over the page, else two blanks."""
+    collection's design or a pixel theme took over the page, else two blanks."""
     own = _own(page)
     parts, apart = _drawn_in_set(page)
     if page.held != held_was:
@@ -397,6 +402,9 @@ def _set_news(page: Page, held_was: str, design_was: str = "") -> tuple[str, str
         return f"take down the {name} set", f"The {name} set is down, and the page is drawn in {own} again."
     if not page.design or page.held or page.design == design_was:
         return "", ""
+    if pixelthemes.is_drawn(page.design):
+        return (f"draw the page in {pixelthemes.name_of(page.design)}",
+                f"The page is drawn in {own}: {parts}, all year{', ' + apart if apart else ''}.")
     c = collections.owner(page.design)
     name = collections.name_of(page.design)
     if page.pinned:

@@ -4,9 +4,11 @@
 
 A page that writes no settings at all is drawn from what GitHub says about it,
 in the `standard` theme, with the holidays on and, for a repository, its
-birthday. `theme` may also name a collection, which draws the page in a design
-for each month, or one design of a collection to keep all year (see
-`collections`), and `sign` the sign of the zodiac its headers carry, all year.
+birthday. `theme` may also name a print, a pixel theme, which draws the page in
+its pixels all year (see `pixelthemes`), a collection, which draws the page in a
+design for each month, or one design of a collection to keep all year (see
+`collections`), and `sign` the sign of the zodiac a collection's headers carry,
+all year.
 `birthday` gives a person's birthday, a month and a day, or turns the Birthday
 set off (see `birthday`). Everything is optional, and the one file holds all of
 it: the page as a whole at the top, then a section for each part (`banners`,
@@ -26,7 +28,7 @@ from __future__ import annotations
 import re
 from typing import Callable
 
-from . import birthday, collections, holidays
+from . import birthday, collections, holidays, pixelthemes
 from .collections.hand import signs
 from .prints import DEFAULT_THEME, RAINBOW, PrintError, is_theme, themes, use as use_prints
 
@@ -35,7 +37,8 @@ PARTS = ("banners", "badges", "elements", "trophies")
 DEFAULTS = {
     "mode": "auto",            # profile | repository | organization; auto guesses from the repository
     "subject": "",             # a login, an organization, or owner/name; empty: this repository or its owner
-    "theme": DEFAULT_THEME,    # standard, a print, rainbowprint, one of `prints`, or a collection or its design
+    "theme": DEFAULT_THEME,    # standard, a print, rainbowprint, one of `prints`, a pixel theme, or a collection
+                               # or one of its designs
     "sign": "",                # a collection's headers carry this sign all year, as leo; empty: the month's sign
                                # on the collection's calendar, and none on a design kept all year
     "holidays": True,          # each holiday's set takes over around its day
@@ -146,11 +149,11 @@ def validate(given: dict | None, inputs: dict | None = None, *, catalogue: dict 
         except PrintError as exc:
             raise SettingsError(str(exc)) from exc
     cfg["theme"] = str(cfg["theme"]).strip()
-    if not is_theme(cfg["theme"]) and not collections.is_theme(cfg["theme"]):
+    if not (is_theme(cfg["theme"]) or pixelthemes.is_theme(cfg["theme"]) or collections.is_theme(cfg["theme"])):
         unfinished = collections.unfinished(cfg["theme"])
         if unfinished:
             raise SettingsError(f"theme: {unfinished}, and a page can pick it once all of them are")
-        known = ", ".join([*themes(), *collections.themes()])
+        known = ", ".join([*themes(), *pixelthemes.themes(), *collections.themes()])
         raise SettingsError(f"theme: {cfg['theme']!r} is not one of {known}; "
                             "a repository adds its own under prints, and a collection's design can be named alone")
     if cfg["theme"] == RAINBOW and not cfg["lock"]:
