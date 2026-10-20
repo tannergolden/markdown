@@ -12,7 +12,7 @@ type: reference
 
 **Every command the kit answers to, with what it reads, writes and needs.**
 
-_Sixteen commands. Three need a token._
+_Seventeen commands. Three need a token._
 
 </div>
 
@@ -49,6 +49,7 @@ runs most: `make draw`, `make lint`, `make catalogue` and `make calibrate`.
 | `lint`        | Draws every design for every sample in every print, every badge, trophy and set, and lints each file | No                                    | Nothing                                                 |
 | `catalogue`   | Prints `docs/references/Catalogue.md` from the trophies' catalogue and calibration                   | No                                    | Nothing; `make catalogue` writes the file               |
 | `calibrate`   | Measures the repository population the repository-mode trophies are set against                      | Yes, with a token, thousands of calls | `--out`                                                 |
+| `themes`      | Every theme a page can pick, by kind, and the sets the calendar puts up over them                    | No                                    | Nothing                                                 |
 | `holidays`    | Which holiday's set is up on a day, and the windows ahead or in a year                               | No                                    | Nothing                                                 |
 | `collections` | Each collection's design for every month, and the one up on a day                                    | No                                    | Nothing                                                 |
 | `palette`     | The 64 colour tokens, each with the letters it takes                                                 | No                                    | Nothing                                                 |

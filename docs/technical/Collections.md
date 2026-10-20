@@ -20,7 +20,7 @@ _One artist. Twelve months. Every rule that can be measured, tested._
 
 ## 🎯 The rule
 
-A collection is twelve pixel designs on one subject, one for each month ([ADR-0006](../adrs/ADR-0006-A-Collection-Changes-With-The-Month.md)). Every collection, the medieval one and every one after it, must read as **the work of one artist**: twelve different worlds drawn by the same hand ([ADR-0007](../adrs/ADR-0007-A-Collection-Is-Drawn-By-One-Hand.md)).
+A collection is twelve pixel designs on one subject, one for each month ([ADR-0006](../adrs/ADR-0006-A-Collection-Changes-With-The-Month.md)). Every collection, the medieval one and every one after it, must read as **the work of one artist**: twelve different worlds drawn by the same hand ([ADR-0007](../adrs/ADR-0007-A-Collection-Is-Drawn-By-One-Hand.md)). One world kept all year is not a collection but a pixel theme ([ADR-0012](../adrs/ADR-0012-A-Pixel-Theme-Is-Kept-All-Year.md)): see [Themes and Sets](Themes.md).
 
 A design keeps its own subject, scene, materials, frame, title and palette. It shares its collection's **hand**: the light, the inks of its words, the band its grounds fall in, its firelight and moonlight, its people, its timing and the month's mark. The hand lives in `src/domain/collections/hand.py`, and the tests hold every design to it.
 

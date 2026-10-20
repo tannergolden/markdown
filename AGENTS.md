@@ -1,6 +1,6 @@
 <!--
 title: '🤖 Agent Instructions'
-description: 'How AI agents work on the Markdown Kit, tannergolden/markdown: the universal rules first, then the rules for its collections, the games and this public repository. Read it before any change here.'
+description: 'How AI agents work on the Markdown Kit, tannergolden/markdown: the universal rules first, then the rules for its themes, its collections, the games and this public repository. Read it before any change here.'
 type: standard
 -->
 
@@ -68,6 +68,34 @@ From CONSTITUTION.md in github.com/tannergolden/intelligence, which gives the re
 This repository is the Markdown Kit: the workflow, the action and the standard-library Python that draw a profile or
 a repository's README, its banners, badges, elements and trophies. These are the owner's standing rules for every
 agent that works on it.
+
+### Every kind of theme has one name
+
+[Themes and Sets](docs/technical/Themes.md) defines every kind of theme and set the kit draws, the words people
+use for each, and how to add or remove one. Read it before adding, changing or removing any of them, and name the
+kind a request means before writing anything; when it could mean two, ask.
+
+- A **theme** is what `theme:` names, of exactly one of five kinds:
+  - `standard`, the default.
+  - A **print**: one colour drawn as a drafting sheet. The kit's are data in `src/domain/data/prints.json`, and a
+    page adds its own under `prints:`, with no code.
+  - A **pixel theme**: one world drawn as pixel art and kept all year, in `src/domain/pixelthemes/<key>/`, as
+    `heaven-and-hell` is ([ADR-0012](docs/adrs/ADR-0012-A-Pixel-Theme-Is-Kept-All-Year.md)).
+  - A **collection**: twelve pixel designs on one subject, one for each month, drawn by one hand, in
+    `src/domain/collections/`.
+  - **A collection's design**, named alone and kept all year, as `medieval-forge` is.
+- A **holiday's set** and the **Birthday set** are no themes: the calendar puts them up over any theme, and they
+  hand the page back.
+- A **set** is any of them drawn in pixel art, a subclass of `holidays.designs.Holiday`: every holiday's set, the
+  Birthday set, every collection's design and every pixel theme.
+- GitHub's light mode and dark mode are the two halves of every theme, never two themes.
+- People's words:
+  - "A single theme" or "a standalone theme" in pixel art is a pixel theme.
+  - "A theme collection" or "a theme for every month" is a collection.
+  - "A custom colour theme" is a print of the page's own.
+- `python3 src/markdown-kit.py themes` lists every theme a page can pick, by kind.
+- A pixel theme is held to a collection's bar: review every header at 1x, by day and by night, wide and on a phone,
+  and fix the weakest first.
 
 ### Collections are drawn by one hand
 

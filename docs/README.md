@@ -120,6 +120,7 @@ are and you take what you want.
 - [Source Code](technical/Source-Code.md) - where each piece of the kit lives, and the layering rules its imports are held to
 - [Technology Stack & Tooling](technical/Technology-Stack-&-Tooling.md) - the stack, and the Makefile targets CI runs
 - [How A Run Works](technical/How-A-Run-Works.md) - one run from the stub to the commit: settle, measure, plan, write, lock
+- [Themes and Sets](technical/Themes.md) - every kind of theme and set the kit draws, defined once, and how to add or remove each
 - [Drawing a Collection](technical/Collections.md) - how a collection is drawn in one hand, from its hand to its twelfth design
 - [Releasing The Kit](distribution/Releasing-The-Kit.md) - cutting a version, what moving `v1` does to every page, undoing a release, pinning a page
 - [Troubleshooting A Run](operations/Troubleshooting-A-Run.md) - every message a run or a check prints, what it means, and the fix
