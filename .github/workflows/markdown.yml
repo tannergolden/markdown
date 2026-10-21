@@ -81,12 +81,13 @@ on:
         default: 'v1'
       author:
         description: >-
-          Who the refresh commit is authored by, as "Name <email>": the kit's
-          author by default, since the drawing is the kit's, and the bot signs
-          for it as committer. The kit recognises its own commits by their
-          scope and never counts one as a person's.
+          Who the refresh commit is authored by, as "Name <email>":
+          github-actions[bot] by default, the bot that also commits it, so a
+          refresh never lands on a person's contribution graph. The kit
+          recognises its own commits by their scope and never counts one as a
+          person's.
         type: string
-        default: 'Tanner Golden <24684994+tannergolden@users.noreply.github.com>'
+        default: 'github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>'
     secrets:
       MARKDOWN_TOKEN:
         description: >-
@@ -149,9 +150,9 @@ jobs:
           birthday: ${{ inputs.birthday }}
           token: ${{ secrets.MARKDOWN_TOKEN || github.token }}
 
-      # Authored by the kit's author and committed by the bot, so the page
-      # says who drew it and the log what pushed it. The message is the one
-      # the kit wrote for this run: a Conventional Commit per
+      # Authored and committed by the bot unless the stub names an author, so
+      # a refresh never counts as a person's contribution. The message is the
+      # one the kit wrote for this run: a Conventional Commit per
       # tannergolden/standards, with values that make it unique.
       - name: '📤 Commit and push'
         if: ${{ !inputs.check && steps.page.outputs.changed == 'true' && inputs.commit != 'pr' }}

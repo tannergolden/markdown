@@ -16,8 +16,8 @@
 # Top N% chips and the rarities follow the measurement.
 #
 # Once a quarter, to match the Innovation Graph's cadence; the population
-# moves slower than that. Commits are authored by the kit's author and
-# committed by the bot, per the standards' commit identity protocol.
+# moves slower than that. Commits are authored and committed by the bot, so
+# a measurement never counts as a person's contribution.
 
 name: '📐 Calibrate'
 
@@ -67,12 +67,12 @@ jobs:
           python3 src/markdown-kit.py calibrate --per-band "$PER_BAND"
           make calibrated
 
-      # Authored by the kit's author, committed by the bot, so the kit sets
-      # the commit aside as no person's.
+      # Authored and committed by the bot, so the commit is no person's,
+      # here and on anyone's contribution graph.
       - name: '📤 Commit and push'
         shell: bash
         env:
-          AUTHOR: 'Tanner Golden <24684994+tannergolden@users.noreply.github.com>'
+          AUTHOR: 'github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>'
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           set -euo pipefail
