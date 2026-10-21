@@ -2,7 +2,6 @@
 title: '🧱 PARTS'
 description: 'Each part of a page measured and planned on its own: the banners, the badges, the elements and the trophy case.'
 type: index
-keywords: [source, application-layer, planning]
 -->
 
 <div align="center">

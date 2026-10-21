@@ -2,7 +2,6 @@
 title: '🏆 CATALOGUE'
 description: 'Every trophy and achievement the kit can award, in both modes, with the threshold and the GitHub data behind each one.'
 type: reference
-keywords: [trophies, achievements]
 -->
 
 <!-- markdownlint-disable MD041 -->

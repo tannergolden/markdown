@@ -2,7 +2,6 @@
 title: '🏷️ RELEASING THE KIT'
 description: 'How a version of the kit is cut with Cut Release, what it checks, what moving v1 does to every page, how to undo a release, and how a page pins a version of its own. Read it before dispatching a release or changing what a page already relies on.'
 type: guide
-keywords: [cut release, versions, moving major, v1, rollback, pinning, kit-ref, semver]
 -->
 
 <div align="center">

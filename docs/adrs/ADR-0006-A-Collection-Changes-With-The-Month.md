@@ -2,7 +2,6 @@
 title: '📄 ADR-0006: A COLLECTION CHANGES WITH THE MONTH'
 description: 'A collection is twelve pixel designs on one subject; a page that picks it is drawn in the month''s design, which changes on the first of every month.'
 type: record
-keywords: [architecture, decisions, themes, collections]
 status: 'Accepted'
 date: '2026-10-07'
 evidence: 'N/A'

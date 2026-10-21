@@ -2,7 +2,6 @@
 title: '📖 GLOSSARY'
 description: 'The words the kit, its settings and its code use in a sense of their own, from block and lock to plate, set, hand and ledger, each defined once with where to read more. Look a word up here when Settings or a module uses it without saying what it is.'
 type: reference
-keywords: [terms, vocabulary, definitions, words]
 -->
 
 <div align="center">

@@ -2,7 +2,6 @@
 title: '🎲 GAMES'
 description: 'What the four games on @tannergolden''s profile share: one sheet, one panel and one pair of materials, so they read as one hand.'
 type: index
-keywords: [source, domain, elements, svg]
 -->
 
 <div align="center">

@@ -2,7 +2,6 @@
 title: '🧭 HOW A RUN WORKS'
 description: 'One run of the kit from the stub to the commit: how the workflow fetches the kit, and how the page is settled, measured, planned, written, locked and committed. Read it before changing src/app/, the lock or the reusable workflow.'
 type: guide
-keywords: [pipeline, lock, measurement, readme blocks, reusable workflow, composite action, commit message]
 -->
 
 <div align="center">

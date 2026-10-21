@@ -2,7 +2,6 @@
 title: '🎉 HOLIDAYS'
 description: 'The holiday calendar and its sets: which holiday draws a page on a given day, the pixel engine the sets share, and one package per holiday.'
 type: index
-keywords: [source, domain, themes]
 -->
 
 <div align="center">

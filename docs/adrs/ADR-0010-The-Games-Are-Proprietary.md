@@ -2,7 +2,6 @@
 title: '📄 ADR-0010: THE GAMES ARE PROPRIETARY'
 description: 'The Game Materials, everything in this repository about the games on the owner''s profile, are proprietary to the owner, under LICENSE-GAMES; the rest of the kit stays MIT.'
 type: record
-keywords: [licence, legal, ai]
 status: 'Accepted'
 date: '2026-10-14'
 evidence: 'N/A'

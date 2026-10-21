@@ -2,7 +2,6 @@
 title: '🗓️ COLLECTIONS'
 description: 'The collections: one subject drawn twelve ways, a design for each month, every one in its collection''s hand.'
 type: index
-keywords: [source, domain, themes]
 -->
 
 <div align="center">

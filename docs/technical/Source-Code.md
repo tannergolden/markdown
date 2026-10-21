@@ -2,7 +2,6 @@
 title: '💻 SOURCE CODE'
 description: 'Architecture and standards for the application source code.'
 type: standard
-keywords: [architecture, technical, structure]
 -->
 
 <div align="center">

@@ -2,7 +2,6 @@
 title: '🎬 MARKDOWN ACTION'
 description: 'The composite action every page runs: the kit itself, at the tag a page pins, with nothing installed.'
 type: index
-keywords: [actions, composite-action, workflows, distribution]
 -->
 
 <div align="center">

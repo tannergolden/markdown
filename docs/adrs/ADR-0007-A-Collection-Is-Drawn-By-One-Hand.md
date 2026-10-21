@@ -2,7 +2,6 @@
 title: '📄 ADR-0007: A COLLECTION IS DRAWN BY ONE HAND'
 description: 'The twelve designs of a collection keep their own subjects and share one hand: the same light, inks, ground, flame, people, motion and the month''s mark, so the year reads as one artist''s work.'
 type: record
-keywords: [architecture, decisions, themes, collections, art-direction]
 status: 'Accepted'
 date: '2026-10-08'
 evidence: 'N/A'

@@ -2,7 +2,6 @@
 title: '📄 ADR-0002: STANDARD LIBRARY ONLY'
 description: 'The kit is Python and its standard library, with nothing to install, and reads its own YAML.'
 type: record
-keywords: [architecture, decisions, dependencies]
 status: 'Accepted'
 date: '2026-09-28'
 evidence: 'N/A'

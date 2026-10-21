@@ -2,7 +2,6 @@
 title: '⌨️ COMMAND LINE'
 description: 'Every markdown-kit command with its flags, what it reads and writes, whether it needs a token, the environment it reads, and what its exit status means. Look a command up here before scripting it or running it against a page.'
 type: reference
-keywords: [cli, markdown-kit, commands, flags, exit status, environment variables]
 -->
 
 <div align="center">

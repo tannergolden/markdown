@@ -2,7 +2,6 @@
 title: '🤖 Agent Instructions'
 description: 'How AI agents work on the Markdown Kit, tannergolden/markdown: the universal rules first, then the rules for its collections, the games and this public repository. Read it before any change here.'
 type: standard
-keywords: [agents-md, ai-agents, markdown-kit, collections, game-materials, licence]
 -->
 
 <!-- markdownlint-disable MD041 -->

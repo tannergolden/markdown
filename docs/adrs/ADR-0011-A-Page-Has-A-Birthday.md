@@ -2,7 +2,6 @@
 title: '📄 ADR-0011: A PAGE HAS A BIRTHDAY'
 description: 'On the page''s birthday the Birthday set takes the page for that one day, over a holiday''s set too: a person''s birthday as the settings give it, a month and a day or the whole date, a repository''s the day GitHub created it.'
 type: record
-keywords: [architecture, decisions, holidays]
 status: 'Accepted'
 date: '2026-10-17'
 evidence: 'N/A'

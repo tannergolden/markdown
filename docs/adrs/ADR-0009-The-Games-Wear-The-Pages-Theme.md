@@ -2,7 +2,6 @@
 title: '📄 ADR-0009: THE GAMES WEAR THE PAGE''S THEME'
 description: 'The games on @tannergolden''s profile and their Hall of Fame are drawn in the page''s theme, as the trophy case is: while a holiday''s set or a collection''s design is up, in its pixels, every file of a game or none.'
 type: record
-keywords: [architecture, decisions, themes]
 status: 'Accepted'
 date: '2026-10-12'
 evidence: 'N/A'

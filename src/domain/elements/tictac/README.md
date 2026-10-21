@@ -2,7 +2,6 @@
 title: '❌ TIC-TAC'
 description: 'The Tic-Tac element: the first tier of the games on @tannergolden''s profile, one layout in every theme.'
 type: index
-keywords: [source, domain, elements, games, tictac, svg]
 -->
 
 <div align="center">

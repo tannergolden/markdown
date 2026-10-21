@@ -2,7 +2,6 @@
 title: '⛂ CHECKERS'
 description: 'The Checkers element: the third tier of the games on @tannergolden''s profile, one layout in every theme.'
 type: index
-keywords: [source, domain, elements, games, svg]
 -->
 
 <div align="center">

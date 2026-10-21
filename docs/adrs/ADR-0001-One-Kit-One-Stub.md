@@ -2,7 +2,6 @@
 title: '📄 ADR-0001: ONE KIT, ONE STUB'
 description: 'Banners, badges, elements and trophies become one kit, run from one stub, in one daily run that makes one commit.'
 type: record
-keywords: [architecture, decisions]
 status: 'Accepted'
 date: '2026-09-28'
 evidence: 'N/A'

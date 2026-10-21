@@ -2,7 +2,6 @@
 title: '🎭 FAKES'
 description: 'Stand-ins for the outside world: a GitHub that answers from a table, so no test touches the network.'
 type: index
-keywords: [testing, test-doubles, github]
 -->
 
 <div align="center">

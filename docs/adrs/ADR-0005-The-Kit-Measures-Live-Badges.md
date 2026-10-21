@@ -2,7 +2,6 @@
 title: '📄 ADR-0005: THE KIT MEASURES LIVE BADGES'
 description: 'A live badge names what it measures, and every run measures it, instead of another workflow setting its value.'
 type: record
-keywords: [architecture, decisions]
 status: 'Accepted'
 date: '2026-09-28'
 evidence: 'N/A'

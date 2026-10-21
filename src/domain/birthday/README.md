@@ -2,7 +2,6 @@
 title: '🎂 BIRTHDAY'
 description: 'The page''s birthday and its set: whether the Birthday set draws a page on a given day, how old the page turns, and the set itself, drawn with the holiday sets'' pixels.'
 type: index
-keywords: [source, domain, themes]
 -->
 
 <div align="center">

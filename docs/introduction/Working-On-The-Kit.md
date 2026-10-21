@@ -2,7 +2,6 @@
 title: '🧰 WORKING ON THE KIT'
 description: 'What a machine needs to change the kit, how to see any page in any theme on any day without a token, what to run after each kind of change, and which files are only ever generated. Read it before a first change to this repository.'
 type: guide
-keywords: [setup, contributing, preview, make targets, generated files, local development]
 -->
 
 <div align="center">

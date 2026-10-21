@@ -2,7 +2,6 @@
 title: '📄 ADR-0004: STANDARD AS THE DEFAULT THEME'
 description: 'A page that names no theme is drawn in standard, the original badges'' own look.'
 type: record
-keywords: [architecture, decisions, themes]
 status: 'Accepted'
 date: '2026-09-28'
 evidence: 'N/A'

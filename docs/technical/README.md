@@ -2,7 +2,6 @@
 title: '🛠️ TECHNICAL'
 description: 'How the kit is built: where each piece of its source lives, the stack and the Makefile targets CI runs, how a run works end to end, and how a collection is drawn.'
 type: index
-keywords: [architecture, tooling, collections]
 -->
 
 <div align="center">

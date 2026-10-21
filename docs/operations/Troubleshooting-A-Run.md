@@ -2,7 +2,6 @@
 title: '🩺 TROUBLESHOOTING A RUN'
 description: 'What to do when a page''s run fails, a check says the page is stale, or a run passes and the page still looks wrong: each message the kit prints, what it means, and the fix. Read it with the failed run''s log open.'
 type: guide
-keywords: [errors, failures, stale, check mode, tokens, permissions, notes, runbook]
 -->
 
 <div align="center">

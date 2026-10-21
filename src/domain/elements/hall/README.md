@@ -2,7 +2,6 @@
 title: '🏆 HALL OF FAME'
 description: 'The Hall of Fame of all four games on @tannergolden''s profile: the series, the podium and the leaderboard, one layout in every theme.'
 type: index
-keywords: [source, domain, elements, chess, games, svg]
 -->
 
 <div align="center">

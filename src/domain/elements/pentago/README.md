@@ -2,7 +2,6 @@
 title: '🌀 PENTAGO'
 description: 'The Pentago element: the second tier of the games on @tannergolden''s profile, one layout in every theme.'
 type: index
-keywords: [source, domain, elements, games, svg]
 -->
 
 <div align="center">
