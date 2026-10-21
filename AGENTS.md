@@ -116,6 +116,7 @@ message for one before it goes out.
 ## Conventions
 
 - Commits follow [CONTRIBUTING](.github/CONTRIBUTING.md): Conventional Commits with an emoji, signed off.
+- Changes land on Development through a squash-merged pull request, never a direct push.
 
 ## Where things live
 
