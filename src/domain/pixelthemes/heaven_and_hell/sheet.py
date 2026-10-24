@@ -491,7 +491,7 @@ def crust(p: Pix, x0, x1, y, seed=0):
 TWINS = (("halo", "devil"), ("feather", "skull"), ("star", "flame"), ("sword", "pitchfork"))
 ICONS = {
     "halo": [".......", ".awaab.", "a.....c", "b.....d", ".bccdd.", ".......", "......."],
-    "devil": ["a.....a", "ab...ba", ".bhhhb.", ".hefeh.", ".hhhhh.", "..hgh..", "...h..."],
+    "devil": ["a.....a", "ac...ca", ".chhhc.", ".hefeh.", ".hhhhh.", "..hgh..", "...h..."],
     "feather": [".....ab", "....aab", "...aab.", "..aab..", ".aab...", ".ab....", "q......"],
     "skull": [".abbbc.", "abbbbbc", "beeceec", "bfgcfgc", "bbbcbbd", ".bcccd.", ".c.c.d."],
     "star": ["...a...", "..aab..", "aaabbbc", ".abbbc.", "..bbc..", ".bc.cc.", "b.....c"],
@@ -505,7 +505,7 @@ def icon_pal(name: str) -> dict:
     """A sprite's tones: heaven's for a day face, lit from the upper left; hell's for a night face, lit by the fire."""
     return {
         "halo": {"w": C["white"], "a": GOLD[5], "b": GOLD[4], "c": GOLD[3], "d": GOLD[2]},
-        "devil": {"a": HORN[5], "b": HORN[3], "h": HIDE[4], "e": FIRE[5], "f": HIDE[2], "g": HORN[6]},
+        "devil": {"a": HORN[5], "c": HORN[3], "h": HIDE[4], "e": FIRE[5], "f": HIDE[2], "g": HORN[6]},
         "feather": {"a": LINEN[3], "b": LINEN[1], "q": GOLD[3]},
         "skull": {"a": BONE[6], "b": BONE[5], "c": BONE[3], "d": BONE[2], "e": BASALT[0], "f": LAVA[4],
                   "g": FIRE[5]},

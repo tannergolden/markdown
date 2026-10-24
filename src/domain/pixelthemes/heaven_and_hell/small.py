@@ -230,13 +230,13 @@ def imp_on_rock(p: Pix, x, foot, k=1.0, motion=True, L="base"):
 
 
 # A feather drifting down, tipping one way and the other as it falls: a white vane, its shaded edge, its quill.
-FEATHER = (["....aq", "..aab.", ".aab..", "ab...."], ["qa....", ".baa..", "..baa.", "....ba"])
+FEATHER = (["....aq", "..aac.", ".aac..", "ac...."], ["qa....", ".caa..", "..caa.", "....ca"])
 
 
 def feather_symbol(p: Pix, frame: int):
     key = ("feather", frame)
     if key not in p.syms:
-        pal = {"a": C["white"], "b": LINEN[3], "q": GOLD[4]}
+        pal = {"a": C["white"], "c": LINEN[3], "q": GOLD[4]}
         p.symbol(key, {(i, j): pal[ch] for j, r in enumerate(FEATHER[frame]) for i, ch in enumerate(r) if ch in pal})
     return key
 
