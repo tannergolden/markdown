@@ -13,6 +13,7 @@ reference to an id that does not exist, and a file grown past its budget.
 from __future__ import annotations
 
 import re
+from functools import lru_cache
 from html import escape
 
 from . import KIT, KIT_VERSION
@@ -113,9 +114,10 @@ def prose(s) -> str:
     return str(s).translate(_HYPHENS)
 
 
+@lru_cache(maxsize=8)
 def _marks(svg: str) -> str:
     """`svg` with what it says to a reader blanked out, the same length, so a lint reads only what it paints
-    and what it links to."""
+    and what it links to. A lint blanks each file more than once, so the last few are kept."""
     def blank(m: re.Match) -> str:
         if m.group(1) is not None:
             return m.group(1) + " " * len(m.group(2))
@@ -135,21 +137,29 @@ def _spellings(word: str) -> list[str]:
     return out
 
 
+# Each set of stops as one pattern, so the first of them is found in one pass that ends where it is, where a
+# search for each would run to the end of the file for any that is not there.
+_STOPS: dict[str, re.Pattern] = {}
+
+
 def _stop(text: str, i: int, stops: str) -> int:
     """The offset just past the first of `stops` at or after `i`, or the end of `text`."""
-    found = [j for j in (text.find(ch, i) for ch in stops) if j >= 0]
-    return min(found) + 1 if found else len(text)
+    pattern = _STOPS.get(stops)
+    if pattern is None:
+        pattern = _STOPS[stops] = re.compile(f"[{re.escape(stops)}]")
+    m = pattern.search(text, i)
+    return m.start() + 1 if m else len(text)
 
 
 def _matches(pattern: re.Pattern, text: str, starts: tuple[str, ...], window, fold: bool = False) -> list:
     """What `pattern.finditer(text)` finds, tried only where a match can begin, on only the text it can reach.
 
     Every pattern the lint uses begins with a literal, one of `starts`, and
-    ends at or before a character `window(i, start)` finds, so matching the
-    slice between them, with one character before it for a lookbehind, finds
-    the same matches in the same order, in a fraction of the time on a large
-    file. With `fold`, a start is looked for in every spelling a case-blind
-    pattern accepts.
+    ends at or before a character `window(i, start)` finds, so matching from
+    the one to the other, where a lookbehind or a word boundary still reads
+    the character before, finds the same matches in the same order, in a
+    fraction of the time on a large file. With `fold`, a start is looked for
+    in every spelling a case-blind pattern accepts.
     """
     spots = []
     for start in starts:
@@ -162,11 +172,10 @@ def _matches(pattern: re.Pattern, text: str, starts: tuple[str, ...], window, fo
     for i, start in sorted(spots):
         if i < end:
             continue
-        lo = max(0, i - 1)
-        m = pattern.match(text[lo:window(i, start)], i - lo)
+        m = pattern.match(text, i, window(i, start))
         if m:
             found.append(m)
-            end = lo + m.end()
+            end = m.end()
     return found
 
 

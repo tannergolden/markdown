@@ -44,6 +44,20 @@ def num(v: float) -> str:
     return s.replace("0.", ".", 1) if s.startswith("0.") else s.replace("-0.", "-.", 1)
 
 
+_HALVES: dict[int, str] = {}
+
+
+def _half(n) -> str:
+    """`num(n / 2)`. A pixel path is worked out in half pixels, whole numbers that recur in every path, so each
+    is written out once."""
+    if type(n) is not int:
+        return num(n / 2)
+    s = _HALVES.get(n)
+    if s is None:
+        s = _HALVES[n] = num(n / 2)
+    return s
+
+
 # How each kind of blinking repeats: opacity values, their key times, the loop's length in seconds and
 # how far apart the three phases start. All discrete, so a pixel is either lit or not.
 BLINKS = {
@@ -180,7 +194,8 @@ class Pix:
             return
         x, y = int(x), int(y)
         if 0 <= x < self.w and 0 <= y < self.h:
-            L = self._on(L)
+            if self.into:
+                L = self._on(L)
             if L not in self.layers:
                 self.layer(L)
             self.layers[L][(x, y)] = c
@@ -212,9 +227,25 @@ class Pix:
         return self.layers[L].get((int(x), int(y))) if L in self.layers else None
 
     def rect(self, x, y, w, h, c, L="base"):
-        for yy in range(int(y), int(y + h)):
-            for xx in range(int(x), int(x + w)):
-                self.px(xx, yy, c, L)
+        if c is None:
+            return
+        if ":" in c:   # a see-through pixel adds to what lies under it, so each is laid on its own
+            for yy in range(int(y), int(y + h)):
+                for xx in range(int(x), int(x + w)):
+                    self.px(xx, yy, c, L)
+            return
+        xs = range(max(int(x), 0), min(int(x + w), self.w))
+        ys = range(max(int(y), 0), min(int(y + h), self.h))
+        if not xs or not ys:
+            return
+        if self.into:
+            L = self._on(L)
+        if L not in self.layers:
+            self.layer(L)
+        cells = self.layers[L]
+        for yy in ys:
+            for xx in xs:
+                cells[(xx, yy)] = c
 
     def hline(self, x0, x1, y, c, L="base"):
         self.rect(x0, y, x1 - x0, 1, c, L)
@@ -397,7 +428,10 @@ class Pix:
 
     def clear_of_words(self, x0, y0, x1, y1) -> bool:
         """Whether the box from (x0, y0) to (x1, y1), ends excluded, touches no text."""
-        return not any(x0 < b[2] and b[0] < x1 and y0 < b[3] and b[1] < y1 for b in self.words)
+        for b in self.words:
+            if x0 < b[2] and b[0] < x1 and y0 < b[3] and b[1] < y1:
+                return False
+        return True
 
     def _text(self, x, y, s, c, font="57", scale=1, L="base", track=1, shadow=None, paint=None, bevel=None,
               glow=None, night=False, outline=None, finish=None):
@@ -564,42 +598,42 @@ class Pix:
         tall, is one vertical stroke down the middle of its column; everything else is a horizontal
         stroke along the middle of its row. Every move after the first is relative to where the
         last stroke ended, so the numbers stay small."""
-        cells = {(x, y) for y, xs in rows.items() for x in xs}
-        lone = {(x, y) for (x, y) in cells if (x - 1, y) not in cells and (x + 1, y) not in cells}
-        vertical, used = [], set()
-        for (x, y) in sorted(lone, key=lambda q: (q[0], q[1])):
-            if (x, y) in used or (x, y - 1) in lone:
+        runs = []
+        for y, xs in rows.items():
+            xs = sorted(set(xs))
+            if not xs:
                 continue
-            h = 1
-            while (x, y + h) in lone:
-                h += 1
-            if h >= 2:
-                vertical.append((y, x, h))
-                used.update((x, y + i) for i in range(h))
-        strokes = []
-        left = {}
-        for (x, y) in cells - used:
-            left.setdefault(y, []).append(x)
-        for y, xs in left.items():
-            xs.sort()
             start = prev = xs[0]
             for x in xs[1:]:
                 if x == prev + 1:
                     prev = x
                     continue
-                strokes.append((y, start, "h", prev - start + 1))
+                runs.append((y, start, prev - start + 1))
                 start = prev = x
-            strokes.append((y, start, "h", prev - start + 1))
-        strokes += [(y, x, "v", h) for (y, x, h) in vertical]
-        strokes.sort(key=lambda s: (s[0], s[1]))
+            runs.append((y, start, prev - start + 1))
+        # A run of one is a lone pixel, and lone pixels stacked two or more tall make a column.
+        lone = {(x, y) for (y, x, n) in runs if n == 1}
+        strokes, used = [], set()
+        for (x, y) in lone:
+            if (x, y - 1) in lone:
+                continue
+            h = 1
+            while (x, y + h) in lone:
+                h += 1
+            if h >= 2:
+                strokes.append((y, x, "v", h))
+                used.update((x, y + i) for i in range(h))
+        strokes += [(y, x, "h", n) for (y, x, n) in runs if n != 1 or (x, y) not in used]
+        strokes.sort()
+        # In half pixels, so a stroke along the middle of a row or a column stays a whole number.
         out, at = [], None
         for (y, x, kind, n) in strokes:
-            sx, sy = (x, y + 0.5) if kind == "h" else (x + 0.5, y)
+            sx, sy = (2 * x, 2 * y + 1) if kind == "h" else (2 * x + 1, 2 * y)
             if at is None:
-                out.append(f"M{num(sx)} {num(sy)}{kind}{n}")
+                out.append(f"M{_half(sx)} {_half(sy)}{kind}{n}")
             else:
-                out.append(f"m{num(sx - at[0])} {num(sy - at[1])}{kind}{n}")
-            at = (sx + n, sy) if kind == "h" else (sx, sy + n)
+                out.append(f"m{_half(sx - at[0])} {_half(sy - at[1])}{kind}{n}")
+            at = (sx + 2 * n, sy) if kind == "h" else (sx, sy + 2 * n)
         return "".join(out).replace(" -", "-")
 
     def markup(self, pix: dict) -> str:
@@ -690,7 +724,14 @@ class Pix:
     def _paths(self, pix: dict) -> str:
         by = {}
         for (x, y), c in pix.items():
-            by.setdefault(c, {}).setdefault(y, []).append(x)
+            rows = by.get(c)
+            if rows is None:
+                rows = by[c] = {}
+            xs = rows.get(y)
+            if xs is None:
+                rows[y] = [x]
+            else:
+                xs.append(x)
         out = []
         for c, rows in sorted(by.items()):
             if ":" in c:
