@@ -39,17 +39,17 @@ why they ship as seed content rather than as law.
 
 <!-- AUTO-INDEX:BEGIN dir=. style=log -->
 
-| Entry                                     | Purpose                                                                                                                                                            |
-| :---------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`adrs/`](adrs/README.md)                 | Architecture decision records, one file per decision, each logged with its status, date and evidence.                                                              |
-| [`distribution/`](distribution/README.md) | From a branch to a release: how a change moves through this project and how a release reaches its users, wherever this project adds to the shared workflow.        |
-| [`introduction/`](introduction/README.md) | Where to start: what this project is and how its parts fit together, the principles it holds to, how to get ready to work on it, and where it is going.            |
-| [`library/`](library/README.md)           | What to learn, and where: guides, background and further reading for anyone new to this project's domain or its tools.                                             |
-| [`operations/`](operations/README.md)     | Keeping this project healthy and safe once it runs: runbooks, incident response, post-mortems, security, and the risks it still carries.                           |
-| [`references/`](references/README.md)     | Things to look up: the glossary, catalogues, settings and formats, the pages this project consults rather than reads through.                                      |
-| [`technical/`](technical/README.md)       | How the kit is built: where each piece of its source lives, the stack and the Makefile targets CI runs, how a run works end to end, and how a collection is drawn. |
-| [`templates/`](templates/README.md)       | Index of the reusable document templates and when to use each one.                                                                                                 |
-| [`README.md`](README.md)                  | This file.                                                                                                                                                         |
+| Entry                                     | Purpose                                                                                                                                                                                          |
+| :---------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`adrs/`](adrs/README.md)                 | Architecture decision records, one file per decision, each logged with its status, date and evidence.                                                                                            |
+| [`distribution/`](distribution/README.md) | From a branch to a release: how a change moves through this project and how a release reaches its users, wherever this project adds to the shared workflow.                                      |
+| [`introduction/`](introduction/README.md) | Where to start: what this project is and how its parts fit together, the principles it holds to, how to get ready to work on it, and where it is going.                                          |
+| [`library/`](library/README.md)           | What to learn, and where: guides, background and further reading for anyone new to this project's domain or its tools.                                                                           |
+| [`operations/`](operations/README.md)     | Keeping this project healthy and safe once it runs: runbooks, incident response, post-mortems, security, and the risks it still carries.                                                         |
+| [`references/`](references/README.md)     | Things to look up: the glossary, catalogues, settings and formats, the pages this project consults rather than reads through.                                                                    |
+| [`technical/`](technical/README.md)       | How the kit is built: where each piece of its source lives, the stack and the Makefile targets CI runs, how a run works end to end, every kind of theme it draws, and how a collection is drawn. |
+| [`templates/`](templates/README.md)       | Index of the reusable document templates and when to use each one.                                                                                                                               |
+| [`README.md`](README.md)                  | This file.                                                                                                                                                                                       |
 
 <!-- AUTO-INDEX:END -->
 

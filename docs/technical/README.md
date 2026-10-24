@@ -44,6 +44,7 @@ changed.
 | [`README.md`](README.md)                                         | This file.                                                                                                                                                                                                                            |
 | [`Source-Code.md`](Source-Code.md)                               | Architecture and standards for the application source code.                                                                                                                                                                           |
 | [`Technology-Stack-&-Tooling.md`](Technology-Stack-&-Tooling.md) | Declares the technology stack and maps it to the universal make interface.                                                                                                                                                            |
+| [`Themes.md`](Themes.md)                                         | Every kind of theme and set the kit draws, defined once: what each is, how a page gets it, what people call it, and how to add or remove one.                                                                                         |
 
 <!-- AUTO-INDEX:END -->
 
