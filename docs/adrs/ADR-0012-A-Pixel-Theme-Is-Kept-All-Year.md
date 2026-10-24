@@ -127,11 +127,11 @@ to add or remove a theme, can tell them apart.
 
 ## 📈 Consequence Matrix
 
-| Category         | Impact / Consequence                                                                                             |
-| :--------------- | :--------------------------------------------------------------------------------------------------------------- |
-| **Positive (+)** | A page wears one world all year with one line, and a new world needs one set, not twelve designs.                |
+| Category         | Impact / Consequence                                                                                              |
+| :--------------- | :---------------------------------------------------------------------------------------------------------------- |
+| **Positive (+)** | A page wears one world all year with one line, and a new world needs one set, not twelve designs.                 |
 | **Negative (-)** | One more kind of theme to tell apart from a collection's design kept all year, which draws the page the same way. |
-| **Neutral (~)**  | The theme-sets page draws each pixel theme beside the holiday sets and the collections' months.                  |
+| **Neutral (~)**  | The theme-sets page draws each pixel theme beside the holiday sets and the collections' months.                   |
 
 ---
 
