@@ -2,7 +2,6 @@
 title: '📄 ADR-0012: A PIXEL THEME IS KEPT ALL YEAR'
 description: 'A pixel theme is one world drawn as pixel art, a theme a page names and keeps all year: no calendar, no month''s mark and no sign, every part of the page in its pixels, and the holidays and the birthday still taking their days.'
 type: record
-keywords: [architecture, decisions, themes]
 status: 'Accepted'
 date: '2026-10-20'
 evidence: 'N/A'

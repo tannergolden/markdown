@@ -2,7 +2,6 @@
 title: '🌗 PIXEL THEMES'
 description: 'The pixel themes: one world drawn as pixel art, a theme a page names and keeps all year, every part of the page in its pixels.'
 type: index
-keywords: [source, domain, themes]
 -->
 
 <div align="center">

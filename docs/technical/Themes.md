@@ -2,7 +2,6 @@
 title: '🎨 THEMES AND SETS'
 description: 'Every kind of theme and set the kit draws, defined once: what each is, how a page gets it, what people call it, and how to add or remove one.'
 type: standard
-keywords: [themes, prints, pixel-themes, collections, holidays, glossary, guide]
 -->
 
 <div align="center">
