@@ -7,7 +7,10 @@ of pixels, drawn low to high: halos behind everything, the stars that
 twinkle, the fireworks, the drawing, light pooled on the ground, the flames
 and their glows, fog, then whatever flies. A layer holds solid and
 see-through pixels, shapes (the big halos) and uses of symbols drawn once in
-`<defs>`. A few moving things are raw markup with a still twin.
+`<defs>`. A few moving things are raw markup with a still twin. A set may
+ask for a finished drawing to be written as lightly as it can be
+(`compact`): a colour a layer holds in tall flat bands is then written as
+rectangles instead of a stroke a row, the same drawing unit for unit.
 
 What moves moves in discrete steps, so a pixel is either lit or not: lights
 twinkle, flicker or blink on three staggered phases, a ghost bobs, fog
@@ -621,6 +624,68 @@ class Pix:
                 if x is not None:
                     start = prev = x
         return "".join(out)
+
+    @staticmethod
+    def blocks(cells) -> str:
+        """Path data that fills exactly the pixels `cells` as rectangles: the runs along each row, a run of the same
+        start and width on the rows under it merged into one, each placed relative to the last. A tall flat band is
+        one rectangle, where `area` writes it a row at a time."""
+        rows = {}
+        for (x, y) in cells:
+            rows.setdefault(y, []).append(x)
+        runs = {}
+        for y, xs in rows.items():
+            xs.sort()
+            start = prev = xs[0]
+            for x in xs[1:] + [None]:
+                if x is not None and x == prev + 1:
+                    prev = x
+                    continue
+                runs.setdefault(y, []).append((start, prev - start + 1))
+                if x is not None:
+                    start = prev = x
+        held, found = {}, []
+        for y in sorted(runs):
+            going = {}
+            for run in runs[y]:
+                if run in held and sum(held[run]) == y:
+                    top, h = held.pop(run)
+                    going[run] = (top, h + 1)
+                else:
+                    going[run] = (y, 1)
+            found += [(x, top, w, h) for (x, w), (top, h) in held.items()]
+            held = going
+        found += [(x, top, w, h) for (x, w), (top, h) in held.items()]
+        out, at = [], (0, 0)
+        for i, (x, y, w, h) in enumerate(sorted(found, key=lambda b: (b[1], b[0]))):
+            out.append(f"{'m' if i else 'M'}{x - at[0]} {y - at[1]}h{w}v{h}h-{w}z")
+            at = (x, y)
+        return "".join(out).replace(" -", "-")
+
+    def compact(self, keep: tuple = ()):
+        """The drawing written as lightly as it can be, the same unit for unit: each solid colour of each layer's
+        pixels in the cheaper of two forms, the strokes `_paths` writes a row's run at a time, or the rectangles
+        `blocks` merges down the rows a run repeats on, which carry a tall flat band for a fraction of the bytes.
+        The rectangles join the layer's shapes, which are written under its pixels and its symbols as the pixels
+        they take the place of were, and those pixels leave the layer. A layer whose name begins with one of
+        `keep` stays as drawn. Nothing calls it but a set that asks for it, as the very last of a drawing, once
+        nothing more will read its pixels."""
+        for name, cells in self.layers.items():
+            if name.startswith(keep) or not cells:
+                continue
+            by = {}
+            for xy, c in cells.items():
+                if ":" not in c:
+                    by.setdefault(c, []).append(xy)
+            for c, xys in sorted(by.items()):
+                rows = {}
+                for (x, y) in xys:
+                    rows.setdefault(y, []).append(x)
+                d = self.blocks(xys)
+                if len(d) + 2 < len(self._d(rows)):
+                    self.shapes[name].append(f'<path fill="{c}" d="{d}"/>')
+                    for xy in xys:
+                        del cells[xy]
 
     def _paths(self, pix: dict) -> str:
         by = {}

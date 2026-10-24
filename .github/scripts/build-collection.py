@@ -39,6 +39,9 @@ from domain.palette import hexof  # noqa: E402
 from infra import resources  # noqa: E402
 
 TEMPLATE = HERE / "collection.html"
+# A collection may dress its page in a look of its own, `collection-<key>.css` beside the template: its fonts and
+# its colours, the template's tokens set again. One without keeps the template's own, the medieval hall's.
+LOOK = "collection-{}.css"
 # The page says it drew this folder, so a rebuild may empty it and a wrong path never loses anything.
 MARK = '<meta name="generator" content="markdown-kit collection">'
 
@@ -64,6 +67,12 @@ def design_entry(d, c, key: str) -> dict:
                     "swatches": swatches(held), "colours": len(held.tokens),
                     "hero": {"day": f"{key}/h1-still-day.svg", "dark": f"{key}/h1-still-dark.svg"},
                     "use": f"theme: {key}", "sign": signs(c.key)[n - 1], "sections": sections}
+
+
+def look(name: str) -> str:
+    """The style a collection's page is dressed in after the template's own: its `collection-<key>.css`, or nothing."""
+    css = HERE / LOOK.format(name)
+    return f"\n<style>\n{css.read_text(encoding='utf-8')}</style>" if css.is_file() else ""
 
 
 def clear(out: Path) -> None:
@@ -117,7 +126,7 @@ def build(name: str, out: Path, bundle: bool = False, draft: bool = False) -> di
                 '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n' + page)
     for slot, value in (("__MANIFEST__", TS.script_json(manifest)), ("__HEROES__", TS.script_json(heroes)),
                         ("__FIRST__", TS.script_json(first)), ("__KIT__", f"{KIT} v{KIT_VERSION}"),
-                        ("__NAME__", c.name)):
+                        ("__NAME__", c.name), ("__LOOK__", look(c.key))):
         page = page.replace(slot, value)
     (out / "index.html").write_text(page, encoding="utf-8")
     return manifest

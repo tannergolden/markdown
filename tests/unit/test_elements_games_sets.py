@@ -38,8 +38,8 @@ from infra.yaml_reader import loads
 from tests.unit import test_elements_games as SAMPLES
 
 support.install()
-SETS = ([k for k in holidays.KEYS if k in holidays.SETS] + list(collections.COLLECTIONS["medieval"].keys)
-        + pixelthemes.themes())
+SETS = ([k for k in holidays.KEYS if k in holidays.SETS]
+        + [k for c in collections.COLLECTIONS.values() for k in c.keys] + pixelthemes.themes())
 DASHES = ("–", "—", "―")
 # Two sets every file of which is drawn twice and pushed to the data's limits: a holiday's and a collection's month.
 TWO = ("halloween", "medieval-chessmen:2026-02-01")
@@ -222,7 +222,7 @@ class EverySet(unittest.TestCase):
                     self.assertEqual(" ".join(said[at:at + 3]), words, (key, words[:24], variant))
 
     def test_a_collections_design_letters_its_games_in_its_hands_two_inks(self):
-        for key in collections.COLLECTIONS["medieval"].keys:
+        for key in (k for c in collections.COLLECTIONS.values() for k in c.keys):
             held = pixelsets.drawn_by(key)
             for night in (False, True):
                 k = held.ink(night)
@@ -282,7 +282,9 @@ class TheirStuff(unittest.TestCase):
                 self.assertIn(f'"{marks["glow"].upper()}"', drawn(key)[("chess", "still", theme)][0].upper(), (key, theme))
 
     def test_no_two_sets_of_a_year_stand_their_winners_on_the_same_podium(self):
-        for year in ([k for k in SETS if not k.startswith("medieval-")], [k for k in SETS if k.startswith("medieval-")]):
+        # The holidays', the Birthday's and the pixel themes' year, and each collection's.
+        years = [list(c.keys) for c in collections.COLLECTIONS.values()]
+        for year in [[k for k in SETS if not any(k in y for y in years)], *years]:
             seen: dict = {}
             for key in year:
                 pod = pixelsets.drawn_by(key).game_podium(False)

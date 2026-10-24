@@ -224,8 +224,12 @@ trophy case read as one family:
   each month. `medieval` draws the page in the month's design and changes on
   the first of every month: a longship under the northern lights in January,
   stained glass at Easter, the jousts of May, the Bayeux charge in October,
-  a dragon on its hoard in December. Naming one design, like
-  `medieval-forge`, keeps it all year. See
+  a dragon on its hoard in December. `matrix` draws twelve worlds of the
+  Matrix: the code itself falling down a terminal's glass in January, the two
+  pills in February's storm, the jump across the summer skyline, the fields
+  where the machines grow us at Halloween, the room of screens where the year
+  is reviewed in December. Naming one design, like `medieval-forge` or
+  `matrix-rain`, keeps it all year. See
   [Collections](docs/references/Settings.md#-collections).
 
 [Themes and Sets](docs/technical/Themes.md) defines every kind of theme and set
@@ -516,8 +520,8 @@ and each of the other three games is folded shut under its name.
 the theme-sets page shows each game's board and its phone files, and the Hall
 of Fame of all four with its phone files and the winners' badges, in the
 standard theme and every print, every holiday's set, the Birthday set, every
-pixel theme and every month of the Medieval collection, each from a sample whose players are as
-fictional as driftmark's contributors. What the games' settings hold is in
+pixel theme and every month of every collection, each from a sample whose
+players are as fictional as driftmark's contributors. What the games' settings hold is in
 [Settings](docs/references/Settings.md#-elements); the games themselves are
 [live on @tannergolden's profile](https://github.com/tannergolden).
 

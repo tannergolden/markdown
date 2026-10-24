@@ -125,8 +125,9 @@ class CliTest(unittest.TestCase):
         for kind in ("standard", "prints", "pixel themes", "collections", "holiday sets", "Birthday set"):
             self.assertIn(f"  {kind}  ", said)
         for key in ("blueprint", "rainbowprint", "heaven-and-hell (Heaven & Hell)", "medieval (Medieval)",
-                    "medieval-longship", "Halloween", "prints: in its settings"):
+                    "medieval-longship", "matrix (Matrix)", "matrix-rain", "Halloween", "prints: in its settings"):
             self.assertIn(key, said)
+        self.assertEqual(said.count("  collections  "), 1, "every collection under the one kind")
         self.assertTrue(all(len(line) <= 100 for line in said.splitlines()), said)
 
     def test_holidays_on_a_given_day(self):

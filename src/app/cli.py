@@ -427,11 +427,12 @@ def cmd_themes(args, ports: Ports) -> int:
     say("pixel themes", "one world drawn in pixels, kept all year:" + ("" if pixelthemes.themes() else " none yet"))
     for k in pixelthemes.themes():
         say("", f"{k} ({pixelthemes.name_of(k)}): {pixelthemes.THEMES[k].summary}", indent=2)
+    say("collections", "a pixel design for each month, or one of its designs kept all year (markdown-kit "
+        "collections):" + ("" if collections.COLLECTIONS else " none yet"))
     for c in collections.COLLECTIONS.values():
         state = "" if collections.complete(c.key) else \
             f", still being drawn: {collections.drawn(c.key)} of {len(collections.MONTHS)} designs done"
-        say("collections", f"{c.key} ({c.name}): a pixel design for each month{state}, or one of its designs "
-            f"kept all year, {c.keys[0]} to {c.keys[-1]} (markdown-kit collections)")
+        say("", f"{c.key} ({c.name}): {c.keys[0]} to {c.keys[-1]}{state}", indent=2)
     print("Sets on the calendar: each takes the page for its days and hands it back; no theme: picks one.",
           file=ports.out)
     say("holiday sets", ", ".join(holidays.NAMES[k] for k in holidays.KEYS if k in holidays.SETS)

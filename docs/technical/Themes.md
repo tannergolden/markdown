@@ -52,8 +52,8 @@ There are five, and `theme:` takes one value of exactly one of them.
 | **Standard**              | `standard`, the default                                                                             | The original badges' look at the size of a header, laid out as a masthead.                                                                         | `src/domain/standard/`                                                      | [ADR-0004](../adrs/ADR-0004-Standard-As-The-Default-Theme.md)                                                                          |
 | **Print**                 | `blueprint`, `redprint` to `pinkprint`, `brownprint`, `blackprint`, `rainbowprint`, or a page's own | One colour drawn as a drafting sheet: lines on white by day, the sheet by night. `rainbowprint` walks the spectrum. Prints are data, not drawings. | `src/domain/data/prints.json`; a page's own under `prints:` in its settings | [ADR-0004](../adrs/ADR-0004-Standard-As-The-Default-Theme.md)                                                                          |
 | **Pixel theme**           | `heaven-and-hell`                                                                                   | One world drawn as pixel art, kept all year: no calendar, no month's mark, no sign.                                                                | `src/domain/pixelthemes/<key>/`                                             | [ADR-0012](../adrs/ADR-0012-A-Pixel-Theme-Is-Kept-All-Year.md)                                                                         |
-| **Collection**            | `medieval`                                                                                          | One subject drawn twelve ways, a pixel design for each month, changing on the first, the twelve drawn by one hand.                                 | `src/domain/collections/`                                                   | [ADR-0006](../adrs/ADR-0006-A-Collection-Changes-With-The-Month.md), [ADR-0007](../adrs/ADR-0007-A-Collection-Is-Drawn-By-One-Hand.md) |
-| **A collection's design** | `medieval-longship` to `medieval-hoard`                                                             | One of a collection's twelve, named alone and kept all year, without the month's mark.                                                             | `src/domain/collections/<key>/`                                             | [ADR-0006](../adrs/ADR-0006-A-Collection-Changes-With-The-Month.md)                                                                    |
+| **Collection**            | `medieval`, `matrix`                                                                                | One subject drawn twelve ways, a pixel design for each month, changing on the first, the twelve drawn by one hand.                                 | `src/domain/collections/`                                                   | [ADR-0006](../adrs/ADR-0006-A-Collection-Changes-With-The-Month.md), [ADR-0007](../adrs/ADR-0007-A-Collection-Is-Drawn-By-One-Hand.md) |
+| **A collection's design** | `medieval-longship` to `medieval-hoard`, `matrix-rain` to `matrix-architect`                        | One of a collection's twelve, named alone and kept all year, without the month's mark.                                                             | `src/domain/collections/<key>/`                                             | [ADR-0006](../adrs/ADR-0006-A-Collection-Changes-With-The-Month.md)                                                                    |
 
 A pixel theme and a collection's design named alone draw a page the same way:
 one set, every day. They differ in where they come from. A design is one of
@@ -93,9 +93,11 @@ or a collection's design alike, and hands it back after.
 - **Design**: one of a collection's twelve, which a page can also name alone.
 - **Hand**: what a collection's twelve designs share, so the year reads as one
   artist's work, in `src/domain/collections/hand.py`. Only a collection has one.
-- **Month's mark** and **sign**: the roundel a collection's headers carry while
-  the page follows its calendar, and the sign of the zodiac in it, which
-  `sign:` can fix. Only a collection's designs carry them.
+- **Month's mark** and **sign**: the mark a collection's headers carry while the
+  page follows its calendar, the medieval hand's roundel with the month's sign
+  of the zodiac in it or the Matrix hand's screen with the month's numeral lit
+  on it, and the name of the month it marks, which `sign:` can fix. Only a
+  collection's designs carry them.
 - **Twins**: the two halves of a theme drawn as a pair, each thing of one with
   its counterpart standing where it stood.
 - **Look**: `look:` under `trophies:`, which keeps the trophy case in the

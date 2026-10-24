@@ -29,8 +29,10 @@ in `art.py`.
 [`hand.py`](hand.py) holds what a collection's twelve designs share, so the year
 reads as one artist's work: its inks, its ground, its flame, its moon, its skin,
 its glint and the month's mark, which [`zodiac.py`](zodiac.py) draws for the
-medieval hand
+medieval hand and [`phosphor.py`](phosphor.py) for the Matrix hand
 ([ADR-0007](../../../docs/adrs/ADR-0007-A-Collection-Is-Drawn-By-One-Hand.md)).
+The Matrix collection's designs also share the code itself, its glyphs, its
+falling streams and the beam that glints down a title, in [`rain.py`](rain.py).
 Every design subclasses `CollectionSet`, and the tests hold each one to its
 hand. Before starting or changing a collection, read [Drawing a
 Collection](../../../docs/technical/Collections.md).

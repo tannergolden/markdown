@@ -101,6 +101,7 @@ over the file's.
 | `rainbowprint`             | The next colour of the spectrum each time something the page shows moves. The lock remembers where it is. |
 | `heaven-and-hell`          | A pixel theme: angels by day and demons by night, all year. See [Pixel Themes](#-pixel-themes).           |
 | `medieval`                 | A collection: a pixel design for each month, changing on the first. See [Collections](#-collections).     |
+| `matrix`                   | A collection: the Matrix, a pixel design for each month. See [Collections](#-collections).                |
 
 The theme reaches every part at once. The banners and the elements are drawn in
 it. The badges are drawn as written in `standard`, and in a print each becomes
@@ -161,11 +162,13 @@ no collection's: see [ADR-0012](../adrs/ADR-0012-A-Pixel-Theme-Is-Kept-All-Year.
 
 A collection is one subject drawn twelve ways, as pixel art: a design for each
 month of the year. `theme: medieval` draws the page in the medieval
-collection's design for the month it is in, and the next design takes over at
-the page's midnight on the first of every month, in its `timezone`. Nothing is
-remembered to make it happen, so a late or missed run is put right by the next
-one, and a page that picks a collection mid-month gets that month's design at
-once.
+collection's design for the month it is in, and `theme: matrix` in the Matrix
+collection's, and the next design takes over at the page's midnight on the
+first of every month, in its `timezone`. Nothing is remembered to make it
+happen, so a late or missed run is put right by the next one, and a page that
+picks a collection mid-month gets that month's design at once.
+
+### Medieval
 
 | Month     | Design      | Theme to keep it all year | Its sign      |
 | :-------- | :---------- | :------------------------ | :------------ |
@@ -182,6 +185,25 @@ once.
 | November  | Forge       | `medieval-forge`          | `sagittarius` |
 | December  | Hoard       | `medieval-hoard`          | `capricorn`   |
 
+### Matrix
+
+| Month     | Design     | Theme to keep it all year | Its sign  |
+| :-------- | :--------- | :------------------------ | :-------- |
+| January   | Rain       | `matrix-rain`             | `ichi`    |
+| February  | Choice     | `matrix-choice`           | `ni`      |
+| March     | Exit       | `matrix-exit`             | `san`     |
+| April     | Rabbit     | `matrix-rabbit`           | `shi`     |
+| May       | Dojo       | `matrix-dojo`             | `go`      |
+| June      | Rooftop    | `matrix-rooftop`          | `roku`    |
+| July      | Subway     | `matrix-subway`           | `shichi`  |
+| August    | Oracle     | `matrix-oracle`           | `hachi`   |
+| September | Hovercraft | `matrix-hovercraft`       | `ku`      |
+| October   | Harvest    | `matrix-harvest`          | `juu`     |
+| November  | Chateau    | `matrix-chateau`          | `juuichi` |
+| December  | Architect  | `matrix-architect`        | `juuni`   |
+
+### Both
+
 A design redraws the header, the footer and its buttons, the badges, the
 elements and the trophy case, at the same sizes and in the same files, as a
 holiday's set does. With holidays on, a holiday's set still takes over around
@@ -195,17 +217,25 @@ fall in, their firelight, their people and their timing, so the year reads as
 one artist's work. A page that follows the collection's calendar carries the
 month's mark at the top centre of every header: the medieval collection's is
 the month's sign of the zodiac in a gold roundel, as medieval calendars marked
-their months. The mark belongs to the calendar, so a page that keeps one
-design all year, `theme: medieval-forge`, is drawn without it. See
+their months, and the Matrix collection's is the month's numeral, 一 for
+January to 十二 for December, as a Japanese calendar numbers its months, lit
+in phosphor on a terminal's small screen and decoded from the code every ten
+seconds. The mark belongs to the calendar, so a page that keeps one design all
+year, `theme: medieval-forge`, is drawn without it. See
 [Drawing a Collection](../technical/Collections.md).
 
-A page can choose its own sign instead, one of the twelve in the table, and
-every header then carries that sign in the roundel all year: on a design kept
-all year, and on the collection's calendar in place of the month's.
+A page can choose its own sign instead, one of the twelve in its collection's
+table, and every header then carries that sign all year: on a design kept all
+year, and on the collection's calendar in place of the month's.
 
 ```yaml
 theme: medieval-forge
 sign: leo
+```
+
+```yaml
+theme: matrix
+sign: shichi
 ```
 
 Every collection has exactly twelve designs, and a page can pick a collection,
@@ -389,7 +419,7 @@ sheet says whose turn it is and by when, and how a finished game ended, so the
 README says nothing twice. The
 [theme-sets page](https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#chess)
 shows every sheet in every tone, every holiday's set, every pixel theme and
-every month of the Medieval collection, each drawn from a sample game.
+every month of every collection, each drawn from a sample game.
 
 ---
 

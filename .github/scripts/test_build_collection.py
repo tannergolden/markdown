@@ -116,6 +116,14 @@ class Draft(unittest.TestCase):
         self.assertEqual(sorted(p.name for p in (self.out / 'themes').iterdir()),
                          sorted(f"{m['key']}.json" for m in manifest['months'][:2]))
 
+    def test_a_collection_wears_a_look_of_its_own_and_one_without_keeps_the_templates(self):
+        self.build(draft=True)
+        page = (self.out / 'index.html').read_text(encoding='utf-8')
+        self.assertIn('</style>\n\n<header class="wrap mast">', page, 'the stand-in has no look, so nothing follows')
+        look = builder.look('matrix')
+        self.assertTrue(look.startswith('\n<style>\n') and look.endswith('</style>'))
+        self.assertIn((builder.HERE / 'collection-matrix.css').read_text(encoding='utf-8'), look)
+
     def test_a_folder_holding_something_else_is_never_emptied(self):
         self.out.mkdir(parents=True)
         (self.out / 'keep.txt').write_text('mine', encoding='utf-8')

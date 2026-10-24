@@ -85,6 +85,20 @@ COLLECTIONS = {
         ("medieval-forge", "Forge"),              # the smithy's fire as the cold comes in
         ("medieval-hoard", "Hoard"),              # a dragon asleep on its gold through midwinter
     )),
+    "matrix": Collection("matrix", "Matrix", (
+        ("matrix-rain", "Rain"),                  # the code itself, falling as the year begins
+        ("matrix-choice", "Choice"),              # two pills and a storm, in February's red
+        ("matrix-exit", "Exit"),                  # a ringing phone on a wet street in March
+        ("matrix-rabbit", "Rabbit"),              # the white rabbit's hole at Easter
+        ("matrix-dojo", "Dojo"),                  # the training program in May
+        ("matrix-rooftop", "Rooftop"),            # the jump across the summer skyline
+        ("matrix-subway", "Subway"),              # the station in the July heat
+        ("matrix-oracle", "Oracle"),              # cookies in the oven, a spoon that bends
+        ("matrix-hovercraft", "Hovercraft"),      # the ship in the tunnels of the real
+        ("matrix-harvest", "Harvest"),            # the fields where the machines grow us, for Halloween
+        ("matrix-chateau", "Chateau"),            # a banquet by candlelight for November
+        ("matrix-architect", "Architect"),        # the room of screens where the year is reviewed
+    )),
 }
 
 

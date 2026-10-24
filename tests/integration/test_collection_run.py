@@ -4,7 +4,8 @@
 of the month and named in its commit, a holiday's set still taking over and handing back to the month's
 design, a named design kept all year, and a collection still being drawn refused. A page on the collection's
 calendar carries the month's mark in every header, and a page that keeps one design all year carries none,
-unless the page chose a sign, which it carries either way."""
+unless the page chose a sign, which it carries either way: in the medieval collection's hand and in the Matrix
+collection's, each with its own mark and its own signs."""
 from __future__ import annotations
 
 import unittest
@@ -157,6 +158,47 @@ class TheMonthsMark(B.Folder):
             self.assertIn("<!--markdown-kit v1 medieval-forge H2 ", self.svg(name), name)
             self.assertFalse(any(part in self.svg(name) for part in TH.markup(180 if "narrow" in name else 415, 11)),
                              name)
+        self.assertEqual(B.run(["check", "--root", str(self.root)])[0], 0)
+
+
+class TheMatrixCalendar(TheMonthsMark):
+    """The Matrix collection in July, in its own hand: the month's design is Subway, its mark July's numeral on the
+    hand's screen, and a page may choose another month's numeral by its name."""
+    settings = "theme: matrix\n"
+
+    def screen(self, name: str, month: int) -> bool:
+        """Whether a header file carries month `month`'s screen, whole, at its top centre."""
+        svg = self.svg(name)
+        return all(part in svg for part in TH.markup(180 if "narrow" in name else 415, month, TH.MATRIX))
+
+    def test_a_page_on_the_calendar_carries_the_mark_in_every_header_and_check_agrees(self):
+        code, out = self.run_on("2026-07-10")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.lock()["drawn"]["design"], "matrix-subway")
+        for name in self.HEADERS:
+            self.assertIn("<!--markdown-kit v1 matrix-subway H2 ", self.svg(name), name)
+            self.assertTrue(self.screen(name, 7), name)
+        self.assertFalse(self.screen("footer-day.svg", 7))
+        self.assertEqual(B.run(["check", "--root", str(self.root)])[0], 0)
+
+    def test_a_page_that_chose_a_sign_carries_it_kept_all_year_and_on_the_calendar_and_check_agrees(self):
+        for settings in ("theme: matrix-subway\nsign: juuni\n", "theme: matrix\nsign: Juuni\n"):
+            self.set(settings)
+            code, out = self.run_on("2026-07-10")
+            self.assertEqual(code, 0, out)
+            for name in self.HEADERS:
+                self.assertIn("<!--markdown-kit v1 matrix-subway H2 ", self.svg(name), (settings, name))
+                self.assertTrue(self.screen(name, 12), (settings, name, "December's numeral"))
+                self.assertFalse(self.screen(name, 7), (settings, name, "not July's"))
+            self.assertEqual(B.run(["check", "--root", str(self.root)])[0], 0, settings)
+
+    def test_a_page_that_keeps_one_design_all_year_carries_none_and_check_agrees(self):
+        self.set("theme: matrix-subway\n")
+        code, out = self.run_on("2026-07-10")
+        self.assertEqual(code, 0, out)
+        for name in self.HEADERS:
+            self.assertIn("<!--markdown-kit v1 matrix-subway H2 ", self.svg(name), name)
+            self.assertFalse(self.screen(name, 7), name)
         self.assertEqual(B.run(["check", "--root", str(self.root)])[0], 0)
 
 

@@ -1,0 +1,80 @@
+/* The Matrix collection's page: by day a line printer's greenbar paper, by night a terminal's dark glass with the
+   code's phosphor on it, scanned in lines. Only the template's tokens and faces are set again, and the title's
+   rule becomes the terminal's cursor; the layout is the template's. Every word clears 4.5:1 on its ground. */
+@import url("https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap");
+:root {
+  color-scheme: light;
+  --paper: #edf3ea;
+  --band: #e2ecdd;
+  --sheet: #f8fbf6;
+  --ink: #0b1f14;
+  --ink-soft: #2c4a38;
+  --rule: #c5d8c5;
+  --rule-strong: #6f9c7c;
+  --gilt: #076e52;
+  --gilt-wash: #d8ecd9;
+  --gilt-ink: #f4fff2;
+  --oxblood: #a3231c;
+  --warn: #a3231c;
+  --glow: transparent;
+  --display: "VT323", "IBM Plex Mono", ui-monospace, monospace;
+  --body: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #050c08;
+    --band: rgba(43, 212, 106, .035);
+    --sheet: #0a1610;
+    --ink: #cff5d9;
+    --ink-soft: #8dc9a1;
+    --rule: #173525;
+    --rule-strong: #2c6d47;
+    --gilt: #2bd46a;
+    --gilt-wash: #0f2b1c;
+    --gilt-ink: #04110a;
+    --oxblood: #ff7a70;
+    --warn: #ff8f7a;
+    --glow: rgba(43, 212, 106, .5);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #050c08;
+  --band: rgba(43, 212, 106, .035);
+  --sheet: #0a1610;
+  --ink: #cff5d9;
+  --ink-soft: #8dc9a1;
+  --rule: #173525;
+  --rule-strong: #2c6d47;
+  --gilt: #2bd46a;
+  --gilt-wash: #0f2b1c;
+  --gilt-ink: #04110a;
+  --oxblood: #ff7a70;
+  --warn: #ff8f7a;
+  --glow: rgba(43, 212, 106, .5);
+}
+/* Greenbar by day, two lines of print to a band; scanlines by night, a line in three lit. */
+body { font-size: 16px; background: var(--paper) repeating-linear-gradient(180deg, transparent 0 32px, var(--band) 32px 64px); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body { background-image: repeating-linear-gradient(180deg, var(--band) 0 1px, transparent 1px 3px); }
+}
+:root[data-theme="dark"] body { background-image: repeating-linear-gradient(180deg, var(--band) 0 1px, transparent 1px 3px); }
+h1 { font-size: clamp(56px, 8.4vw, 108px); letter-spacing: .08em; text-shadow: 0 0 18px var(--glow); }
+h1 .rule { display: inline-block; width: .46em; height: .1em; margin: 0 0 0 .14em; vertical-align: baseline; animation: cursor 1.06s steps(1) infinite; }
+@keyframes cursor { 50% { opacity: 0; } }
+.lede { font-size: 17px; }
+.card-month b { font-size: 26px; letter-spacing: .08em; }
+.card-name { font-size: 30px; }
+.card-tag { font-size: 13.5px; }
+.current { font-size: 30px; }
+.sheet-head h2 { font-size: clamp(46px, 5.8vw, 80px); text-shadow: 0 0 14px var(--glow); }
+.tagline { font-size: 18px; }
+.blurb { font-size: 16px; }
+.facts .big { font-size: 38px; }
+.part-head h3 { font-size: 30px; letter-spacing: .08em; }
+.part-head p { font-size: 15px; }
+.pager span { font-size: 28px; }
+.now { box-shadow: 0 0 10px var(--glow); }
+.card[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--gilt), 0 0 18px var(--glow); }
+@media (prefers-reduced-motion: reduce) { h1 .rule { animation: none; } }

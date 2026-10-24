@@ -70,8 +70,14 @@ class SettingsTest(unittest.TestCase):
         self.assertEqual(self.check({"theme": "medieval", "sign": "aries"}, {"sign": ""})["sign"], "aries")
         self.refuses("sign: 'ophiuchus' is not one of aquarius, pisces, aries", {"theme": "medieval",
                                                                                 "sign": "ophiuchus"})
+        # Each collection's page takes its own hand's twelve, and never another hand's.
+        self.assertEqual(self.check({"theme": "matrix", "sign": "Shichi"})["sign"], "shichi")
+        self.assertEqual(self.check({"theme": "matrix-rain", "sign": " JUUNI "})["sign"], "juuni")
+        self.refuses("sign: 'leo' is not one of ichi, ni, san", {"theme": "matrix", "sign": "leo"})
+        self.refuses("sign: 'ichi' is not one of aquarius, pisces, aries", {"theme": "medieval-forge", "sign": "ichi"})
         # Only a collection's headers carry a sign, and a page in another theme may keep one for when it picks one.
         self.assertEqual(self.check({"theme": "blueprint", "sign": "leo"})["sign"], "leo")
+        self.assertEqual(self.check({"theme": "blueprint", "sign": "shichi"})["sign"], "shichi")
 
     def test_holiday_days_are_checked(self):
         self.refuses("holiday-days: 8 is outside 3 to 7", {"holiday-days": 8})

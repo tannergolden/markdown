@@ -34,7 +34,9 @@ of a collection is drawn to:
 - The month's mark. On a page that follows the collection's calendar, the
   hand draws the month's mark at the top centre of every header, in the same
   place in every design (see `Holiday.month_mark`). The medieval hand's mark
-  is the month's sign of the zodiac in gold on a lapis roundel (`zodiac`).
+  is the month's sign of the zodiac in gold on a lapis roundel (`zodiac`);
+  the Matrix hand's is the month's numeral in the code's own script, lit in
+  phosphor on a small screen (`phosphor`).
   The mark belongs to the calendar, so a page that keeps one design all
   year, as `theme: medieval-forge` does, is drawn without it. A page may
   choose one of the twelve itself, `sign: leo`, and then carries that one on
@@ -69,7 +71,7 @@ from ..banners.settings import check as banners_check
 from ..holidays.designs import Holiday
 from ..holidays.designs.banners import MARK_Y, mark_box as _box
 from ..holidays.pixel import Pix, make_ramp
-from . import zodiac
+from . import phosphor, zodiac
 
 
 @dataclass(frozen=True)
@@ -128,7 +130,21 @@ MEDIEVAL = Hand(
     signs=zodiac.SIGNS,
 )
 
-HANDS = {"medieval": MEDIEVAL}
+MATRIX = Hand(
+    body=("#0B1F14", "#CFF5D9"),                # toner green-black by day, phosphor white by night
+    muted=("#2C4A38", "#8DC9A1"),
+    day_ground=(74, 92, 32),
+    night_ground=(3, 14, 22),
+    flame="#2BD46A",                            # one phosphor: every light in the simulation burns code green
+    moon="#CFE8D5",                             # one pale moon
+    skin=("#EAB896", "#C08A60", "#7A4E33"),
+    glint=phosphor.GLINT,
+    mark=phosphor.SCREEN,                       # the month's numeral in the code's script, lit on a phosphor screen
+    mark_size=phosphor.SIZE,
+    signs=phosphor.SIGNS,
+)
+
+HANDS = {"medieval": MEDIEVAL, "matrix": MATRIX}
 
 
 def signs(theme: str = "") -> list[str]:

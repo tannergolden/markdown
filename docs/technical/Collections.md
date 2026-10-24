@@ -30,15 +30,15 @@ A design keeps its own subject, scene, materials, frame, title and palette. It s
 
 A collection starts from its hand, not from its January. Before anything is drawn, write its entry in `HANDS`:
 
-| Part | What it fixes | The medieval hand |
-| :--- | :------------ | :---------------- |
-| `body`, `muted` | The ink of every word, by day and by night, the same in all twelve designs | Iron-gall brown and warm cream |
-| `day_ground`, `night_ground` | The band of lightness and colour the sheet behind the words falls in | L\* 72 to 90 and C\* at most 40 by day; L\* 4 to 16 and C\* at most 24 by night |
-| `flame`, `moon` | The ramps every fire and every moon is drawn on | One amber flame, one pale moon |
-| `skin` | The ramps the people's skin is drawn on | Three tones |
-| `glint` | How often a title's glint passes | Every 12 seconds |
-| `mark` | The month's mark, at the top centre of every header of a page that follows the calendar | The month's sign of the zodiac in a gold roundel on lapis |
-| `signs` | The names of the twelve marks, January's first, so a page can choose one to carry all year with `sign` | Aquarius to Capricorn |
+| Part | What it fixes | The medieval hand | The Matrix hand |
+| :--- | :------------ | :---------------- | :-------------- |
+| `body`, `muted` | The ink of every word, by day and by night, the same in all twelve designs | Iron-gall brown and warm cream | Toner green-black and phosphor white |
+| `day_ground`, `night_ground` | The band of lightness and colour the sheet behind the words falls in | L\* 72 to 90 and C\* at most 40 by day; L\* 4 to 16 and C\* at most 24 by night | L\* 74 to 92 and C\* at most 32 by day; L\* 3 to 14 and C\* at most 22 by night |
+| `flame`, `moon` | The ramps every fire and every moon is drawn on | One amber flame, one pale moon | One phosphor green, the code's, for every light in the simulation; one pale moon |
+| `skin` | The ramps the people's skin is drawn on | Three tones | Three tones |
+| `glint` | How often a title's glint passes | Every 12 seconds | Every 10 seconds, a terminal's beam passing down the title |
+| `mark` | The month's mark, at the top centre of every header of a page that follows the calendar | The month's sign of the zodiac in a gold roundel on lapis | The month's numeral, 一 to 十二, lit in phosphor on a small screen in a gunmetal bezel |
+| `signs` | The names of the twelve marks, January's first, so a page can choose one to carry all year with `sign` | Aquarius to Capricorn | Ichi to Juuni, the numerals as a month's name reads them |
 
 Every colour the hand paints joins each design's closed palette through `CollectionSet`, and every word's ink must clear 4.5:1 against both edges of the hand's bands.
 

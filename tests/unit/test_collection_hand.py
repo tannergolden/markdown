@@ -1,9 +1,10 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
 """The hand a collection is drawn in: every collection has one, and its inks hold 4.5:1 against both ends of its
-bands; the medieval hand's mark draws the twelve signs, each its own and within its box; a design drawn as its
-month's design carries the mark at the top centre of every header, clear of every word, while a design kept all
-year and a holiday's set carry none; and `check` names how a design breaks its hand."""
+bands; the medieval hand's mark draws the twelve signs and the Matrix hand's the twelve numerals, each its own and
+within its box; a design drawn as its month's design carries the mark at the top centre of every header, clear of
+every word, while a design kept all year and a holiday's set carry none; and `check` names how a design breaks its
+hand."""
 from __future__ import annotations
 
 import datetime as dt
@@ -15,8 +16,8 @@ from domain import collections as C
 from domain import holidays as H
 from domain import pixelthemes as P
 from domain.canvas import DARK, DAY
-from domain.collections import zodiac
-from domain.collections.hand import HANDS, MEDIEVAL, CollectionSet, check, lab, signs
+from domain.collections import phosphor, zodiac
+from domain.collections.hand import HANDS, MATRIX, MEDIEVAL, CollectionSet, check, lab, signs
 from domain.holidays.designs.banners import MARK_Y
 from domain.holidays.pixel import Pix
 from domain.holidays.pixel.shade import luminance
@@ -41,10 +42,11 @@ def headers(held, h, night: bool):
         yield f"{code} phone", {"H1": held.h1_narrow, "H2": held.h2_narrow, "H3": held.h3_narrow}[code](h, night)
 
 
-def mark(width: int, height: int, month: int, night: bool = False, motion: bool = False) -> Pix:
-    """The medieval hand's mark alone, at the top centre of a header `width` units wide."""
+def mark(width: int, height: int, month: int, night: bool = False, motion: bool = False, hand=MEDIEVAL) -> Pix:
+    """A hand's mark alone, the medieval hand's unless `hand` says, at the top centre of a header `width` units
+    wide."""
     p = Pix(width, height)
-    MEDIEVAL.mark(p, width // 2, MARK_Y, month, night, motion)
+    hand.mark(p, width // 2, MARK_Y, month, night, motion)
     return p
 
 
@@ -53,9 +55,10 @@ def cells(p: Pix) -> dict:
     return {(name, x, y): c for name, layer in p.layers.items() for (x, y), c in layer.items()}
 
 
-def markup(width: int, month: int) -> list[str]:
-    """The paths the mark's layers are written as in a header `width` units wide: each is in the file as it is."""
-    p = mark(width, 40, month)
+def markup(width: int, month: int, hand=MEDIEVAL) -> list[str]:
+    """The paths a hand's mark's layers are written as in a header `width` units wide, the medieval hand's unless
+    `hand` says: each is in the file as it is."""
+    p = mark(width, 40, month, hand=hand)
     return [p._paths(layer) for layer in p.layers.values() if layer]
 
 
@@ -106,7 +109,13 @@ class Hands(unittest.TestCase):
                          [1, 7, 12, 0, 0])
         self.assertEqual(signs("medieval"), [s.lower() for s in zodiac.SIGNS])
         self.assertEqual(signs("medieval-forge"), signs("medieval"))
-        self.assertEqual(signs("standard"), signs("medieval"), "every hand's, for a theme that is no collection's")
+        self.assertEqual(MATRIX.signs, phosphor.SIGNS)
+        self.assertEqual([MATRIX.month_of(s) for s in ("ichi", "Shichi", "JUUNI", "leo", "")], [1, 7, 12, 0, 0])
+        self.assertEqual(signs("matrix"), [s.lower() for s in phosphor.SIGNS])
+        self.assertEqual(signs("matrix-rain"), signs("matrix"))
+        self.assertEqual(signs("standard"), signs("medieval") + signs("matrix"),
+                         "every hand's, for a theme that is no collection's")
+        self.assertEqual(len(set(signs("standard"))), 24, "no two hands share a sign's name")
 
     def test_lab_measures_as_cielab_does(self):
         light, chroma, hue = lab("#FF0000")
@@ -161,6 +170,86 @@ class TheMark(unittest.TestCase):
         blank = len(Pix(415, 40).svg("t", "d", still=True))
         for month in range(1, 13):
             self.assertLessEqual(len(mark(415, 40, month).svg("t", "d", still=True)) - blank, 950, zodiac.sign(month))
+
+
+class TheScreen(unittest.TestCase):
+    """The Matrix hand's mark: the month's numeral, in the script the code falls in, lit on a small screen."""
+
+    def test_each_of_the_twelve_numerals_is_drawn_each_its_own_and_within_the_box(self):
+        self.assertEqual(len(phosphor.SIGNS), 12)
+        self.assertEqual(set(phosphor.NUMERALS), set(phosphor.SIGNS))
+        n, drawn = MATRIX.mark_size, set()
+        self.assertTrue(15 <= n <= 19)
+        for month in range(1, 13):
+            got = cells(mark(60, 60, month, hand=MATRIX))
+            self.assertTrue(got, month)
+            x0, y0 = 30 - n // 2, MARK_Y - n // 2
+            for _, x, y in got:
+                self.assertTrue(x0 <= x < x0 + n and y0 <= y < y0 + n, (month, x, y))
+            drawn.add(frozenset(got.items()))
+        self.assertEqual(len(drawn), 12, "every month's numeral is its own")
+
+    def test_every_numeral_is_a_terminals_bitmap_lit_on_the_glass(self):
+        """Each numeral is at most nine units square and lies wholly on the screen's glass; its strokes burn white
+        at every upper and left edge, and it leaves a dim ghost of itself down and to the right."""
+        for name, art in phosphor.NUMERALS.items():
+            self.assertLessEqual(max(len(row) for row in art), 9, name)
+            self.assertLessEqual(len(art), 9, name)
+        for month in range(1, 13):
+            glass, lit = phosphor.layers(month)[2], phosphor.layers(month)[-1]
+            units = phosphor._numeral(month)
+            self.assertLessEqual(units, set(glass), phosphor.sign(month))
+            self.assertLessEqual(set(lit), set(glass), phosphor.sign(month))
+            self.assertTrue(all(lit[(x, y)] in (phosphor.PHOSPHOR[4], phosphor.PHOSPHOR[5]) for x, y in units))
+            edges = {(x, y) for x, y in units if (x, y - 1) not in units or (x - 1, y) not in units}
+            self.assertEqual({xy for xy in units if lit[xy] == phosphor.PHOSPHOR[5]}, edges, phosphor.sign(month))
+            self.assertTrue({c for xy, c in lit.items() if xy not in units} <= {phosphor.PHOSPHOR[1]}, "its ghost")
+
+    def test_it_is_the_same_by_day_and_by_night_and_only_a_moving_header_decodes_it(self):
+        """By day and by night the screen is the same. In a moving header the numeral is decoded every `GLINT`
+        seconds, the hand's period: two of the code's glyphs show in its place for a fiftieth of the loop each, and
+        the numeral holds the rest of the time; the still file keeps the numeral alone."""
+        self.assertEqual(MATRIX.glint, phosphor.GLINT)
+        for month in range(1, 13):
+            self.assertEqual(cells(mark(415, 40, month, hand=MATRIX)), cells(mark(415, 40, month, night=True,
+                                                                                  hand=MATRIX)))
+            p = mark(415, 40, month, motion=True, hand=MATRIX)
+            timed = {name: p.meta[name][2] for name in p.layers if p.meta[name][2]}
+            self.assertEqual(sorted(timed.values()), [
+                ("seq", 0, phosphor.DECODE, phosphor.GLINT, False),
+                ("seq", phosphor.DECODE, 2 * phosphor.DECODE, phosphor.GLINT, False),
+                ("seq", 2 * phosphor.DECODE, 1, phosphor.GLINT, True)], month)
+            still = cells(mark(415, 40, month, hand=MATRIX))
+            kept = {k: c for k, c in cells(p).items() if not p.meta[k[0]][2] or p.meta[k[0]][2][4]}
+            self.assertEqual(set(kept.values()), set(still.values()), "the still file keeps the numeral")
+
+    def test_every_colour_it_paints_is_its_own(self):
+        for month in range(1, 13):
+            for motion in (False, True):
+                for c in cells(mark(415, 40, month, motion=motion, hand=MATRIX)).values():
+                    self.assertIn(c, phosphor.TOKENS, (month, c))
+        self.assertLessEqual(phosphor.TOKENS, MATRIX.tokens)
+
+    def test_it_takes_out_what_it_covers(self):
+        """Whatever a scene left under the screen, on any layer, is taken out, so nothing shows through it or is
+        laid over it."""
+        p = Pix(415, 40)
+        for name in ("base", p.twinkle(0), p.flicker(1)):
+            p.rect(200, 0, 15, 20, MATRIX.flame, name)
+        MATRIX.mark(p, 207, MARK_Y, 5, False, False)
+        box = {(x, y) for _, x, y in cells(mark(415, 40, 5, hand=MATRIX))}
+        for name, layer in p.layers.items():
+            if not name.startswith("mark"):
+                self.assertFalse(box & set(layer), name)
+
+    def test_it_is_compact(self):
+        """At most 1,200 bytes still, and 2,000 with the glyphs it is decoded through in a moving header."""
+        blank = len(Pix(415, 40).svg("t", "d", still=True))
+        for month in range(1, 13):
+            self.assertLessEqual(len(mark(415, 40, month, hand=MATRIX).svg("t", "d", still=True)) - blank, 1200,
+                                 phosphor.sign(month))
+            moving = mark(415, 40, month, motion=True, hand=MATRIX)
+            self.assertLessEqual(len(moving.svg("t", "d", still=False)) - blank, 2000, phosphor.sign(month))
 
 
 class InTheHeaders(unittest.TestCase):

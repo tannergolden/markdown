@@ -30,8 +30,8 @@ STYLES = ("trophy", "crest", "medallion", "crystal", "plaque")
 CASES = ("day", "night")
 CORE = C.RCORE[0]
 SIZES = {"card": (164, 222), "plaque": (264, 88), "pin": (104, 124), "level": (420, 152), "next-up": (328, 152)}
-SETS = ([k for k in holidays.KEYS if k in holidays.SETS] + list(collections.COLLECTIONS["medieval"].keys)
-        + pixelthemes.themes())
+SETS = ([k for k in holidays.KEYS if k in holidays.SETS]
+        + [k for c in collections.COLLECTIONS.values() for k in c.keys] + pixelthemes.themes())
 HALLOWEEN = "halloween:2026-10-31"
 
 
@@ -317,7 +317,7 @@ class APixelSetsCase(unittest.TestCase):
                                         (key, night, dims, (x0, y0, x1, y1)))
 
     def test_a_collections_design_letters_its_trophies_in_its_hands_two_inks(self):
-        for key in collections.COLLECTIONS["medieval"].keys:
+        for key in (k for c in collections.COLLECTIONS.values() for k in c.keys):
             held = pixelsets.drawn_by(key)
             for night in (False, True):
                 k = held.ink(night)
