@@ -2,8 +2,8 @@
   "//": "Where each file here was last synced from. Written by 🔄 Template Sync alone; never edit it by hand.",
   "format": 1,
   "template": "tannergolden/path",
-  "version": "",
-  "commit": "",
+  "version": "v1.3.0",
+  "commit": "bbc8bba9fe8d1374a199d3e93a45c5ec7825a1a7",
   "identity": {
     "owner": "tannergolden",
     "repository": "tannergolden/markdown",
@@ -28,7 +28,7 @@
       "mode": "100644"
     },
     ".gitattributes": {
-      "blob": "91b694e527b9bbef76257f8dfe8722218577df30",
+      "blob": "0f59aedb80d2717001f31d7db84e3aac88f421ab",
       "mode": "100644"
     },
     ".github/CODEOWNERS": {
@@ -176,7 +176,7 @@
       "mode": "100644"
     },
     ".github/template-sync": {
-      "blob": "c5a8a3a573fa22172eb19b3a430a1918fcac0b3e",
+      "blob": "b587cb79a0b6354640adc51d2420485892d7654d",
       "mode": "100644"
     },
     ".github/template-sync.md": {
@@ -244,7 +244,7 @@
       "mode": "100644"
     },
     ".github/workflows/verify-stubs.yml": {
-      "blob": "720543ccbfb421a99c78911c0261cb33bfa2edbe",
+      "blob": "0de243e39ecdf89474b662ecb2a060e7dbee7b14",
       "mode": "100644"
     },
     ".gitignore": {
@@ -279,30 +279,6 @@
       "blob": "7e9c3128630a9109d17bb6e81b0c404e4db35e5e",
       "mode": "100644"
     },
-    "assets/animations/README.md": {
-      "blob": "d0e41b92bf1b38490193244ed7d26c43358a8033",
-      "mode": "100644"
-    },
-    "assets/audio/README.md": {
-      "blob": "e008476142f3c7993ca0f96ef15a939a113aea4c",
-      "mode": "100644"
-    },
-    "assets/badges/README.md": {
-      "blob": "bd1ee3a8fc469a9ed0e7db86e32bbe4f232172e5",
-      "mode": "100644"
-    },
-    "assets/badges/dynamic/README.md": {
-      "blob": "c3972a2b366aec459b4a26310b9785ae11b6fc9b",
-      "mode": "100644"
-    },
-    "assets/badges/static/README.md": {
-      "blob": "fca9007302c9b781dadbc8d3955c27bafdeff95a",
-      "mode": "100644"
-    },
-    "assets/banners/README.md": {
-      "blob": "eebe78805a20e5d82683f899e5e8e8ec24b9efd4",
-      "mode": "100644"
-    },
     "assets/branding/README.md": {
       "blob": "443026f806c730163bdc1f572e1816bd0515dd39",
       "mode": "100644"
@@ -311,56 +287,12 @@
       "blob": "d8cb394d83a2958ee456da1a38900d5c1e7cc656",
       "mode": "100644"
     },
-    "assets/elements/README.md": {
-      "blob": "aa2a44bdfa2aa749e56ddd5aa547bc37ab4b3fd8",
-      "mode": "100644"
-    },
-    "assets/fonts/README.md": {
-      "blob": "f91e52c1588f3e61eeaa299089d781bf26d87e6e",
-      "mode": "100644"
-    },
     "assets/html/README.md": {
       "blob": "6c16bdf84b809b7429698d22985afc39ed92abfa",
       "mode": "100644"
     },
-    "assets/icons/README.md": {
-      "blob": "bf99cd9bc66c16359cd2454ae3cec2d365633ae0",
-      "mode": "100644"
-    },
-    "assets/illustrations/README.md": {
-      "blob": "796161dacbc3eeeb3b75513702b391f505eeade0",
-      "mode": "100644"
-    },
-    "assets/mockups/README.md": {
-      "blob": "91229df234e227c22fc1fabdf29a9ef2367a53f0",
-      "mode": "100644"
-    },
-    "assets/photos/README.md": {
-      "blob": "39e8a7be6bc62dcd4c82472b40e678f61e50f962",
-      "mode": "100644"
-    },
-    "assets/print/README.md": {
-      "blob": "9258e634db7a68c643c20ae59114c7135c65c06e",
-      "mode": "100644"
-    },
     "assets/screenshots/README.md": {
       "blob": "6e7f4bad4740b813846b1558029d404ab199908f",
-      "mode": "100644"
-    },
-    "assets/slides/README.md": {
-      "blob": "d574d60b9f79aeb60fedb19b686cdcce775c1fa8",
-      "mode": "100644"
-    },
-    "assets/social/README.md": {
-      "blob": "6df92cb97a42d6ddda513d70e015983184b200ed",
-      "mode": "100644"
-    },
-    "assets/trophies/README.md": {
-      "blob": "4e0c44c588be041259b8938a511d95c7f848dfd9",
-      "mode": "100644"
-    },
-    "assets/video/README.md": {
-      "blob": "de7c52d01b6e528f7f0378a0a7cd783f0071f151",
       "mode": "100644"
     },
     "benchmarks/README.md": {
@@ -540,5 +472,238 @@
       "mode": "100644"
     }
   },
-  "pending": {}
+  "pending": {
+    ".devcontainer/README.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    ".github/CODE_OF_CONDUCT.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    ".github/CONTRIBUTING.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    ".github/DISCUSSION_TEMPLATE/README.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    ".github/GOVERNANCE.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    ".github/ISSUE_TEMPLATE/README.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    ".github/SECURITY.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    ".github/SUPPORT.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    ".github/scripts/README.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    ".github/template-sync.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    ".github/workflows/README.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    ".github/workflows/apply-standards.yml": {
+      "version": "v1.3.0",
+      "reason": "needs a token"
+    },
+    ".github/workflows/auto-format.yml": {
+      "version": "v1.3.0",
+      "reason": "needs a token"
+    },
+    ".github/workflows/checks.yml": {
+      "version": "v1.3.0",
+      "reason": "needs a token"
+    },
+    ".github/workflows/ci-failure-alert.yml": {
+      "version": "v1.3.0",
+      "reason": "needs a token"
+    },
+    ".github/workflows/dependabot-automerge.yml": {
+      "version": "v1.3.0",
+      "reason": "needs a token"
+    },
+    ".github/workflows/governance.yml": {
+      "version": "v1.3.0",
+      "reason": "needs a token"
+    },
+    ".github/workflows/lifecycle.yml": {
+      "version": "v1.3.0",
+      "reason": "needs a token"
+    },
+    ".github/workflows/maintenance.yml": {
+      "version": "v1.3.0",
+      "reason": "needs a token"
+    },
+    ".github/workflows/preview-deploy.yml": {
+      "version": "v1.3.0",
+      "reason": "needs a token"
+    },
+    ".github/workflows/prune-runs.yml": {
+      "version": "v1.3.0",
+      "reason": "needs a token"
+    },
+    ".github/workflows/release.yml": {
+      "version": "v1.3.0",
+      "reason": "needs a token"
+    },
+    ".github/workflows/template-sync.yml": {
+      "version": "v1.3.0",
+      "reason": "needs a token"
+    },
+    ".vscode/README.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/README.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/adrs/README.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/ADR.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/Communication.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/Implementation-Plan.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/Post-Mortem.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/README.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/Research-Log.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/Technical-Design.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/User-Story.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/Packages-&-Workspaces.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/README.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/Source-Code.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/Technology-Stack-&-Tooling.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/backend/API-Design-Standards.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/backend/Authentication-&-Security.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/backend/README.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/backend/Schema-&-Validation.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/benchmarks/Performance-Benchmarks.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/benchmarks/README.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/database/Data-Models-&-Entities.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/database/Migration-Policies.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/database/README.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/infrastructure/CI-CD-Pipelines.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/infrastructure/Deployment-Protocols.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/infrastructure/Environment-Configuration.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/infrastructure/README.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/interface/Formatting-&-Standards.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/interface/README.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/interface/Styling-&-Theming.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/interface/UI-Setup-&-Environment.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/testing/E2E-Testing.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/testing/README.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    },
+    "docs/templates/technical/testing/Unit-Test-Standards.md": {
+      "version": "v1.3.0",
+      "reason": "conflict"
+    }
+  }
 }
