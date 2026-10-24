@@ -2,8 +2,9 @@
 # SPDX-License-Identifier: MIT
 """Heaven & Hell's own rules, which the checks every set shares cannot know: every header stands on heaven's
 cloud by day and on hell's river of lava by night, never on the other's; the ground, the herald's call across the
-H3 and the sky's blended bands keep two units clear of every word; and its boards and podium are heaven's and
-hell's own stuffs."""
+H3 and the sky's blended bands keep two units clear of every word; its marks, link buttons and placard are
+heaven's by day and their fallen twins by night; a written colour keeps its family among its badges; and its boards
+and podium are heaven's and hell's own stuffs."""
 from __future__ import annotations
 
 import math
@@ -15,11 +16,14 @@ from tests.unit.test_holiday_sets import contents
 
 from domain import pixelthemes
 from domain.canvas import DARK, DAY
+from domain.holidays.designs.badges import nearest
 from domain.holidays.pixel import Pix
+from domain.palette import PALETTE
 from domain.pixelthemes.heaven_and_hell import flyers as FL
 from domain.pixelthemes.heaven_and_hell import scenes as SC
 from domain.pixelthemes.heaven_and_hell import sheet as S
-from domain.pixelthemes.heaven_and_hell.palette import DAY_SKY, NIGHT_SKY, RAMP
+from domain.pixelthemes.heaven_and_hell import trim as T
+from domain.pixelthemes.heaven_and_hell.palette import DAY_SKY, NIGHT_SKY, RAMP, TOKENS
 
 support.install()
 KEY = "heaven-and-hell"
@@ -94,6 +98,67 @@ class ClearOfWords(unittest.TestCase):
             else:
                 self.assertGreaterEqual(shapes.count("<polygon"), 4)
                 self.assertNotIn(RAMP["fire"][6], colours)
+
+
+def colours(p: Pix) -> set:
+    """Every colour drawn on `p`, in pixels, on any of its layers."""
+    return {c.split(":")[0] for layer in p.layers.values() for c in layer.values()}
+
+
+class TheSmallTwins(unittest.TestCase):
+    def test_each_link_button_carries_a_thing_of_heaven_by_day_and_its_fallen_twin_by_night(self):
+        seen = set()
+        for i, (day, night) in enumerate(S.TWINS):
+            for name, dark in ((day, False), (night, True)):
+                art, pal = SET.link_icon(i, dark, "#000000")
+                self.assertEqual(art, S.ICONS[name], (i, dark))
+                self.assertEqual((len(art), {len(r) for r in art}), (7, {7}), name)
+                self.assertLessEqual({c.upper() for c in pal.values()}, TOKENS, name)
+                self.assertLessEqual(set("".join(art)) - {"."}, set(pal), name)
+                seen.add(name)
+        self.assertEqual(len(seen), 2 * len(S.TWINS))
+
+    def test_the_marks_are_heavens_gold_by_day_and_hells_fire_by_night(self):
+        for mark in (S.section_mark, S.strip_mark):
+            day, dark = Pix(415, 80), Pix(415, 80)
+            mark(day, 200, 40, False)
+            mark(dark, 200, 40, True)
+            self.assertIn(RAMP["gold"][4], colours(day), mark.__name__)
+            self.assertFalse(colours(day) & (set(RAMP["fire"]) | set(RAMP["hide"])), mark.__name__)
+            self.assertTrue(colours(dark) & (set(RAMP["fire"]) | set(RAMP["hide"])), mark.__name__)
+            self.assertFalse(colours(dark) & set(RAMP["gold"]), mark.__name__)
+
+    def test_a_link_buttons_top_is_gilt_and_pearl_by_day_and_iron_studded_red_hot_by_night(self):
+        day, dark = Pix(120, 13), Pix(120, 13)
+        S.link_top(day, 2, 118, 2, 7, False)
+        S.link_top(dark, 2, 118, 2, 7, True)
+        self.assertLessEqual(colours(day), set(RAMP["gold"]) | set(RAMP["pearl"]))
+        self.assertLessEqual(colours(dark), set(RAMP["iron"]) | set(RAMP["lava"]) | set(RAMP["fire"]))
+        self.assertIn(RAMP["fire"][5], colours(dark))
+
+    def test_a_placard_is_a_tablet_of_marble_or_burning_rock_hung_with_its_festoon_laid_in_pixels(self):
+        for night in (False, True):
+            p = Pix(202, 92)
+            T.placard_board(p, night)
+            drawn = colours(p)
+            if night:
+                self.assertTrue({RAMP["basalt"][3], RAMP["iron"][5], RAMP["fire"][5]} <= drawn)
+                self.assertFalse(drawn & set(RAMP["pearl"]))
+            else:
+                self.assertTrue({RAMP["pearl"][5], RAMP["gold"][6]} <= drawn)
+                self.assertFalse(drawn & (set(RAMP["basalt"]) | set(RAMP["iron"])))
+            # The festoon is pixels, not a symbol placed over the board, so a tag lettered later covers it.
+            self.assertFalse([u for uses in p.uses.values() for u in uses], night)
+
+
+class TheBadges(unittest.TestCase):
+    def test_a_written_colour_keeps_its_family(self):
+        swatches = SET.badge_swatches()
+        for colour, swatch in (("gold", "gilt"), ("yellow", "gold"), ("white", "pearl"), ("black", "embers"),
+                               ("green", "laurel"), ("blue", "azure"), ("navy", "heavens"), ("purple", "dusk"),
+                               ("sky", "sky"), ("pink", "rose"), ("orange", "flame"), ("maroon", "hide"),
+                               ("brown", "horn"), ("slate", "steel"), ("charcoal", "iron"), ("sand", "bone")):
+            self.assertEqual(nearest(PALETTE[colour], swatches), swatch, colour)
 
 
 class TheGames(unittest.TestCase):

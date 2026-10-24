@@ -18,6 +18,10 @@ studded red-hot under a chain hung with caged flames, and the titles are hellfir
 stands on a river of lava, fire licking up off it, black rock backlit by the fires heaped where heaven's cumulus
 stood. The gates of hell stand where heaven's stood, the demon where the angel stood, before a wall of fire on the
 H2, and on the H3 the herald of hell blows a jet of fire from a ram's horn.
+
+The small things are twins too: the H2's halo is a horned head by night and the H3's star a flame, the link buttons
+carry heaven's halo, feather, star and sword by day and the horned head, skull, flame and pitchfork by night, a
+placard is a tablet of marble or of burning rock, and a badge takes the nearest of heaven's colours and hell's.
 """
 from __future__ import annotations
 
@@ -91,6 +95,12 @@ class HeavenAndHell(Holiday):
     def title_text(self, p, x, y, s, night, scale):
         return S.title(p, x, y, s, night, scale, motion=p.w == WIDE)
 
+    def section_mark(self, p, x, y, night):
+        S.section_mark(p, x, y, night)
+
+    def strip_mark(self, p, x, y, night):
+        S.strip_mark(p, x, y, night)
+
     # ---- the headers' scenes
     phone_scene_rows = SC.PHONE_ROWS["H1"]
 
@@ -136,8 +146,13 @@ class HeavenAndHell(Holiday):
             return C["fill_n"], LAVA[2], C["ink_n"], IRON[1]
         return C["fill"], GOLD[2], C["ink"], X["dim_day"]
 
+    def link_top(self, p, x0, x1, y, seed, night):
+        S.link_top(p, x0, x1, y, seed, night)
+
     def link_icon(self, index, night, ink):
-        return [".......", "...#...", "..###..", ".#####.", "..###..", "...#...", "......."], {"#": ink}
+        """The halo, the feather, the star and the sword of light by turns, and by night each one's fallen twin: the
+        horned head, the skull, the flame and the pitchfork."""
+        return S.icon(index, night)
 
     # ---- the elements
     def card_bevel(self, night):
@@ -203,6 +218,9 @@ class HeavenAndHell(Holiday):
     def seal_mark(self, p, x, y, night):
         T.seal_mark(p, x, y, night)
 
+    def placard_board(self, p, night):
+        T.placard_board(p, night)
+
     def placard_mark(self, p, x, y, night):
         T.placard_mark(p, x, y, night)
 
@@ -225,8 +243,39 @@ class HeavenAndHell(Holiday):
                 "red": (LAVA[2], C["white"]), "slate": (IRON[3], C["white"])}
 
     def badge_swatches(self):
-        return {"gold": (GOLD[4], X["tag_ink_day"], None), "pearl": (PEARL[5], C["ink"], None),
-                "fire": (LAVA[3], C["white"], None), "iron": (IRON[2], C["white"], None)}
+        """Heaven's colours and hell's, so a written colour keeps its family: gold and gilt, pearl edged in gold,
+        cloud and its dusk, the sky, azure, the heavens starred with gold, laurel, rose and the steel of a sword of
+        light; the fire, the flame, a demon's hide, horn, bone, iron, and the black rock with its embers glowing."""
+        R = RAMP
+        return {"gold": (GOLD[4], X["tag_ink_day"], None), "gilt": (GOLD[3], X["tag_ink_day"], None),
+                "pearl": (PEARL[5], C["ink"], "outline"), "cloud": (R["cloud"][1], X["tag_ink_night"], None),
+                "dusk": (R["cloud"][0], C["white"], None), "sky": (R["azure"][3], X["tag_ink_night"], None),
+                "azure": (R["azure"][2], C["white"], None), "heavens": (R["azure"][1], C["white"], "stars"),
+                "laurel": (R["laurel"][3], C["white"], None), "rose": (R["rose"][3], C["white"], None),
+                "steel": (R["steel"][2], C["white"], None), "fire": (LAVA[3], C["white"], None),
+                "flame": (LAVA[4], X["tag_ink_night"], None), "hide": (R["hide"][2], C["white"], None),
+                "horn": (R["horn"][2], C["white"], None), "bone": (R["bone"][5], C["ink"], None),
+                "iron": (IRON[4], C["white"], None), "embers": (R["basalt"][2], C["ink_n"], "embers")}
+
+    def badge_pattern(self, pattern, x, y, c, s, text_rows):
+        """Stars of gold and white on the heavens, and embers on the black rock, kept off the letters' rows."""
+        if y in text_rows:
+            return c
+        if pattern == "stars" and (x * 7 + y * 13) % 23 == 0:
+            return C["white"] if (x + y) % 2 else GOLD[5]
+        if pattern == "embers" and (x * 5 + y * 11) % 13 == 0:
+            return (LAVA[4], FIRE[5], LAVA[3])[(x + y) % 3]
+        return c
+
+    def badge_outline(self, pattern):
+        return GOLD[2] if pattern == "outline" else None
+
+    def badge_shine(self, c, y, h):
+        """Plastic's gloss under heaven's light from above: its third row a step lighter, its foot a step darker."""
+        return step(c, 1) if y == 2 else step(c, -1) if y == h - 1 else c
+
+    def plate_edge(self, block):
+        return step(block, -1)
 
     def plate_colours(self, mode):
         if mode == "day":

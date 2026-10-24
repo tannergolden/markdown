@@ -2,10 +2,12 @@
 # SPDX-License-Identifier: MIT
 """The elements' trim, by day in heaven's gold, pearl and light and by night in hell's iron, bone and fire: the
 cards' bands and what sits on their lids, the lights on the wires, the histogram's pillars, the dial's halo, the
-counters' tablets, the releases along the time line, the faces of the people who made it, and the seal's sun."""
+counters' tablets, the releases along the time line, the faces of the people who made it, the seal's sun, and the
+placard's tablet of stone."""
 from __future__ import annotations
 
 import math
+import random
 
 from ...holidays.pixel import LX, LY, LZ, Pix, sphere, tube
 from .palette import C, RAMP, X, step
@@ -306,3 +308,59 @@ def badge_top(p: Pix, w, s, seed, night, inside):
                 p.px(x, 1, LAVA[4])
         elif x % 3 == 0:
             p.px(x, 1, PEARL[6])
+
+
+def placard_board(p: Pix, night):
+    """A placard as a tablet of stone, the sky inside it as on every sheet. By day white marble veined in pearl, lit
+    along its top and left and edged without and within in gilt, a gilt stud at each corner, and a festoon of pearls
+    swagged along its top hung with gold stars. By night a slab of black rock lit from below by the fire and cracked
+    through to the fire under it, a seam of the fire's glow round the sky inside it, a rivet red-hot at each corner,
+    and an iron chain swagged along its top hung with caged flames. The festoon is laid in pixels, so the owner's
+    tag, however long, stands in front of it."""
+    from . import sheet as S
+    S.paper(p, night, uid="pl")
+    w, h = p.w, p.h
+    veins = _veins(w, h, night)
+    for y in range(h):
+        for x in range(w):
+            sides = {0: y, 1: x, 2: h - 1 - y, 3: w - 1 - x}
+            side = min(sides, key=sides.get)
+            across = sides[side]
+            if across > 3:
+                continue
+            lit = side in ((2, 3) if night else (0, 1))
+            if across == 0:
+                c = BASALT[0] if night else GOLD[2]
+            elif across == 3:
+                c = LAVA[1] if night else (GOLD[4] if lit else GOLD[3])
+            elif (x, y) in veins:
+                c = veins[(x, y)]
+            elif night:
+                c = BASALT[4] if lit and across == 1 else BASALT[3] if lit else BASALT[2]
+            else:
+                c = C["white"] if lit and across == 1 else PEARL[5] if lit or across == 2 else PEARL[4]
+            p.px(x, y, c)
+    for (x, y) in ((1, 1), (w - 3, 1), (1, h - 3), (w - 3, h - 3)):
+        hot = (FIRE[5], LAVA[4], LAVA[3], LAVA[2]) if night else (GOLD[6], GOLD[4], GOLD[4], GOLD[2])
+        for (dx, dy), c in zip(((0, 0), (1, 0), (0, 1), (1, 1)), hot):
+            p.px(x + dx, y + dy, c)
+    S.festoon(p, 86, 150, 4, night, sag=3, span=32, pixels=True)
+
+
+def _veins(w, h, night) -> dict:
+    """The marble's veins, or the rock's cracks: lines wandering along the band's two inner rows, now on one and
+    now on the other, a stretch of each and a gap, a crack glowing hotter where it runs deepest."""
+    rnd = random.Random(5 if night else 3)
+    path = [(x, 0) for x in range(4, w - 4)] + [(w - 1, y) for y in range(4, h - 4)] \
+        + [(x, h - 1) for x in range(w - 5, 3, -1)] + [(0, y) for y in range(h - 5, 3, -1)]
+    out, i = {}, rnd.randrange(8)
+    while i < len(path):
+        run, row = rnd.randint(6, 16), rnd.choice((1, 2))
+        for (x, y) in path[i:i + run]:
+            inward = (0, 1) if y == 0 else (-1, 0) if x == w - 1 else (0, -1) if y == h - 1 else (1, 0)
+            q = (x + inward[0] * row, y + inward[1] * row)
+            out[q] = (LAVA[4] if row == 2 else LAVA[3]) if night else PEARL[3]
+            if rnd.random() < 0.3:
+                row = 3 - row
+        i += run + rnd.randint(14, 40)
+    return out

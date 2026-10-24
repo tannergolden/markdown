@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2026 Tanner Golden
 # SPDX-License-Identifier: MIT
-"""The Heaven & Hell theme's sheet: its two skies, its frames, what hangs along the top of a header, its titles
-and what lies along a header's rule.
+"""The Heaven & Hell theme's sheet: its two skies, its frames, what hangs along the top of a header, its titles,
+what lies along a header's rule, and the marks and link buttons beside them.
 
 By day the sheet is heaven: a deep azure warming to gold over the clouds, each band of the sky laid into the next
 over two rows of checkerboard, heaven's light falling through it in shafts from the upper left, a gilt frame strung
@@ -15,11 +15,13 @@ import random
 
 from ...holidays.pixel import Paint, Pix, num
 from ...holidays.pixel.type import FONTS, fold
-from .kit import glow
+from .kit import ellipse, glow
 from .palette import C, DAY_SKY, NIGHT_SKY, RAMP, X
 
-GOLD, PEARL, CLOUD = RAMP["gold"], RAMP["pearl"], RAMP["cloud"]
+GOLD, PEARL, CLOUD, LINEN, STEEL, AZURE = (RAMP["gold"], RAMP["pearl"], RAMP["cloud"], RAMP["linen"], RAMP["steel"],
+                                           RAMP["azure"])
 LAVA, FIRE, IRON, BASALT, SMOKE = RAMP["lava"], RAMP["fire"], RAMP["iron"], RAMP["basalt"], RAMP["smoke"]
+HIDE, HORN, BONE = RAMP["hide"], RAMP["horn"], RAMP["bone"]
 GLINT = 12.0        # seconds between the glints that cross a gilt title
 
 
@@ -249,48 +251,60 @@ def corners(p: Pix, night: bool):
 
 
 # --------------------------------------------------------------------------- along the top
-def festoon(p: Pix, x0, x1, y, night: bool, seed=0, sag=4, span=38):
+def festoon(p: Pix, x0, x1, y, night: bool, seed=0, sag=4, span=38, pixels=False):
     """What hangs along a header's top. By day a festoon of pearls swagged between gilt studs, a gold star
     hanging at the foot of every swag and twinkling. By night an iron chain swagged between red-hot studs, a flame
     burning in a little cage at the foot of every swag. Every swag is the same, so one is drawn and hung as often
-    as the top has room for."""
+    as the top has room for; `pixels` lays each in pixels instead, under whatever is drawn over it later, as a
+    placard's tags are."""
     n = max(1, round((x1 - x0) / span))
     w = (x1 - x0) // n
     x0 += ((x1 - x0) - n * w) // 2
     key = ("swag", night, w, sag)
-    if key not in p.syms:
-        cells = {}
-        for x in range(1, w):
-            t = x / w
-            yy = round(sag * (1 - (2 * t - 1) ** 2))
-            if night:
-                if (x // 2) % 2:
-                    cells[(x, yy)] = IRON[4]
-                    cells[(x, yy + 1)] = IRON[2]
-                else:
-                    cells[(x, yy)] = IRON[5]
-                    cells[(x, yy - 1)] = IRON[3]
-                    cells[(x, yy + 1)] = IRON[1]
-            else:
-                bead = x % 3
-                if bead == 0:
-                    cells[(x, yy)] = GOLD[4]                     # the gold cord between the pearls
-                else:
-                    cells[(x, yy)] = C["white"] if bead == 1 else PEARL[4]
-                    cells[(x, yy + 1)] = PEARL[3] if bead == 1 else PEARL[1]
-                    cells.setdefault((x, yy - 1), PEARL[5] if bead == 1 else PEARL[3])
-        p.symbol(key, cells)
+    if not pixels and key not in p.syms:
+        p.symbol(key, swag(w, sag, night))
+    cells = swag(w, sag, night) if pixels else {}
     for i in range(n):
         a = x0 + w * i
-        p.use(key, a, y)
+        if pixels:
+            for (dx, dy), c in cells.items():
+                p.px(a + dx, y + dy, c)
+        else:
+            p.use(key, a, y)
         cx = a + w // 2
         foot = y + sag + 1
         if night:
-            caged_flame(p, cx, foot, phase=i)
+            caged_flame(p, cx, foot, phase=i, pixels=pixels)
         else:
-            hanging_star(p, cx, foot, phase=i)
+            hanging_star(p, cx, foot, phase=i, pixels=pixels)
         stud(p, a + w, y, night)
     stud(p, x0, y, night)
+
+
+def swag(w: int, sag: int, night: bool) -> dict:
+    """One swag of the festoon, `w` wide and sagging `sag` rows, from the stud at its left: pearls on a gold cord
+    by day, the links of an iron chain by night."""
+    cells = {}
+    for x in range(1, w):
+        t = x / w
+        yy = round(sag * (1 - (2 * t - 1) ** 2))
+        if night:
+            if (x // 2) % 2:
+                cells[(x, yy)] = IRON[4]
+                cells[(x, yy + 1)] = IRON[2]
+            else:
+                cells[(x, yy)] = IRON[5]
+                cells[(x, yy - 1)] = IRON[3]
+                cells[(x, yy + 1)] = IRON[1]
+        else:
+            bead = x % 3
+            if bead == 0:
+                cells[(x, yy)] = GOLD[4]                     # the gold cord between the pearls
+            else:
+                cells[(x, yy)] = C["white"] if bead == 1 else PEARL[4]
+                cells[(x, yy + 1)] = PEARL[3] if bead == 1 else PEARL[1]
+                cells.setdefault((x, yy - 1), PEARL[5] if bead == 1 else PEARL[3])
+    return cells
 
 
 def stud(p: Pix, x, y, night):
@@ -304,34 +318,43 @@ def stud(p: Pix, x, y, night):
         p.px(x + 1, y, GOLD[2])
 
 
+HUNG_STAR = ["...o...", "...a...", "..aac..", "abbbbcd", ".bbbcd.", ".bc.cd.", "b.....d"]
 
 
-def hanging_star(p: Pix, cx, y, phase=0):
-    """A little gold star hung on a thread, lit on its upper left, its heart twinkling: drawn once, hung often."""
-    key = ("star",)
-    if key not in p.syms:
-        art = ["...o...", "...a...", "..aac..", "abbbbcd", ".bbbcd.", ".bc.cd.", "b.....d"]
-        pal = {"o": GOLD[3], "a": GOLD[6], "b": GOLD[5], "c": GOLD[4], "d": GOLD[2]}
-        p.symbol(key, {(i - 3, j): pal[ch] for j, r in enumerate(art) for i, ch in enumerate(r) if ch in pal})
-    p.use(key, cx, y)
+def hanging_star(p: Pix, cx, y, phase=0, pixels=False):
+    """A little gold star hung on a thread, lit on its upper left, its heart twinkling: drawn once, hung often, or
+    laid in pixels."""
+    pal = {"o": GOLD[3], "a": GOLD[6], "b": GOLD[5], "c": GOLD[4], "d": GOLD[2]}
+    if pixels:
+        p.sprite(cx - 3, y, HUNG_STAR, pal)
+    else:
+        key = ("star",)
+        if key not in p.syms:
+            p.symbol(key, {(i - 3, j): pal[ch] for j, r in enumerate(HUNG_STAR) for i, ch in enumerate(r)
+                           if ch in pal})
+        p.use(key, cx, y)
     p.px(cx, y + 3, C["white"], p.twinkle(phase))
 
 
-def caged_flame(p: Pix, cx, y, phase=0):
-    """A little iron cage hung on a chain, a flame in it that flickers: drawn once a phase, hung often."""
+def caged_flame(p: Pix, cx, y, phase=0, pixels=False):
+    """A little iron cage hung on a chain, a flame in it that flickers: drawn once a phase, hung often, or laid in
+    pixels."""
     ph = phase % 3
+    if pixels:
+        cage(p, cx, y, ph)
+    else:
+        p.stamp(("cage", ph), lambda q, ox, oy: cage(q, ox, oy, ph), cx, y, pad=8)
 
-    def draw(q, ox, oy):
-        q.px(ox, oy, IRON[3])
-        q.sprite(ox - 2, oy + 1, ["#.#.#", "#...#", "#...#", ".###."], {"#": IRON[4]})
-        L = q.flicker(ph)
-        for dx, dy, c in ((0, 3, FIRE[6]), (0, 2, FIRE[5]), (-1, 3, FIRE[4]), (1, 3, FIRE[4]), (0, 1, FIRE[3]),
-                          (0, 0, LAVA[4])):
-            q.px(ox + dx, oy + 1 + dy, c, L)
-        for (qx, qy) in ((ox - 2, oy + 2), (ox + 2, oy + 2)):
-            q.px(qx, qy, LAVA[4] + ":0.3", L)
 
-    p.stamp(("cage", ph), draw, cx, y, pad=8)
+def cage(q: Pix, ox, oy, ph):
+    q.px(ox, oy, IRON[3])
+    q.sprite(ox - 2, oy + 1, ["#.#.#", "#...#", "#...#", ".###."], {"#": IRON[4]})
+    L = q.flicker(ph)
+    for dx, dy, c in ((0, 3, FIRE[6]), (0, 2, FIRE[5]), (-1, 3, FIRE[4]), (1, 3, FIRE[4]), (0, 1, FIRE[3]),
+                      (0, 0, LAVA[4])):
+        q.px(ox + dx, oy + 1 + dy, c, L)
+    for (qx, qy) in ((ox - 2, oy + 2), (ox + 2, oy + 2)):
+        q.px(qx, qy, LAVA[4] + ":0.3", L)
 
 
 # --------------------------------------------------------------------------- the titles
@@ -459,3 +482,88 @@ def crust(p: Pix, x0, x1, y, seed=0):
             p.px(dx, y + 1, LAVA[4])
             p.px(dx, y + 2, LAVA[3])
         x = e + rnd.randint(2, 9)
+
+
+# --------------------------------------------------------------------------- the marks and the link buttons
+# Four sprites, 7 by 7, each a thing of heaven drawn where its fallen twin stands by night: the halo and the horned
+# head, the feather and the skull, the star and the flame, the sword of light and the pitchfork. The link buttons
+# carry them by turns; the H2's mark is the first pair and the H3's the third.
+TWINS = (("halo", "devil"), ("feather", "skull"), ("star", "flame"), ("sword", "pitchfork"))
+ICONS = {
+    "halo": [".......", ".awaab.", "a.....c", "b.....d", ".bccdd.", ".......", "......."],
+    "devil": ["a.....a", "ab...ba", ".bhhhb.", ".hefeh.", ".hhhhh.", "..hgh..", "...h..."],
+    "feather": [".....ab", "....aab", "...aab.", "..aab..", ".aab...", ".ab....", "q......"],
+    "skull": [".abbbc.", "abbbbbc", "beeceec", "bfgcfgc", "bbbcbbd", ".bcccd.", ".c.c.d."],
+    "star": ["...a...", "..aab..", "aaabbbc", ".abbbc.", "..bbc..", ".bc.cc.", "b.....c"],
+    "flame": ["...1...", "..121..", "..232..", ".23431.", "1345431", "2456542", ".35653."],
+    "sword": ["......w", ".....ab", "....ab.", ".c.ab..", "..c....", ".d.c...", "e......"],
+    "pitchfork": [".a.a.a.", ".b.b.b.", ".ccccc.", "...b...", "...b...", "...b...", "...b..."],
+}
+
+
+def icon_pal(name: str) -> dict:
+    """A sprite's tones: heaven's for a day face, lit from the upper left; hell's for a night face, lit by the fire."""
+    return {
+        "halo": {"w": C["white"], "a": GOLD[5], "b": GOLD[4], "c": GOLD[3], "d": GOLD[2]},
+        "devil": {"a": HORN[5], "b": HORN[3], "h": HIDE[4], "e": FIRE[5], "f": HIDE[2], "g": HORN[6]},
+        "feather": {"a": LINEN[3], "b": LINEN[1], "q": GOLD[3]},
+        "skull": {"a": BONE[6], "b": BONE[5], "c": BONE[3], "d": BONE[2], "e": BASALT[0], "f": LAVA[4],
+                  "g": FIRE[5]},
+        "star": {"a": GOLD[5], "b": GOLD[4], "c": GOLD[2]},
+        "flame": {str(i): FIRE[i] for i in range(7)},
+        "sword": {"w": C["white"], "a": STEEL[4], "b": STEEL[2], "c": GOLD[3], "d": AZURE[2], "e": GOLD[2]},
+        "pitchfork": {"a": LAVA[4], "b": IRON[6], "c": IRON[5]},
+    }[name]
+
+
+def icon(index: int, night: bool) -> tuple:
+    """The `index`-th link button's sprite and its tones."""
+    name = TWINS[index % len(TWINS)][1 if night else 0]
+    return ICONS[name], icon_pal(name)
+
+
+def section_mark(p: Pix, x, y, night: bool):
+    """After an H2's SECTION A-A, the sign of the guardian it shows: by day a halo in the glory of its own light, lit
+    on its far rim and its left and twinkling there; by night a horned head, its eyes burning in the heat round it."""
+    if night:
+        glow(p, x + 3.5, y + 3.0, 5.0, 4.5, X["heat"], (0.12, 0.22))
+        p.sprite(x, y - 1, ICONS["devil"], icon_pal("devil"))
+        Lb = p.blink(1)
+        p.px(x + 2, y + 2, FIRE[6], Lb)
+        p.px(x + 4, y + 2, FIRE[6], Lb)
+        return
+    cx, cy = x + 5.0, y + 3.0
+    glow(p, cx, cy, 7.0, 3.6, X["glory"], (0.2, 0.36))
+    for (qx, qy) in ellipse(cx, cy, 5.0, 2.0) - ellipse(cx, cy + 0.15, 3.4, 0.8):
+        t = 4 + (1 if qy < cy else -1) + (1 if qx + 0.5 < cx - 2 else -1 if qx + 0.5 > cx + 2 else 0)
+        p.px(qx, qy, GOLD[max(2, min(6, t))])
+    p.px(int(cx) - 3, int(cy) - 2, C["white"], p.twinkle(1))
+
+
+def strip_mark(p: Pix, x, y, night: bool):
+    """Beside an H3's title, the herald's own light: by day a gold star, its heart twinkling and a glint beside it;
+    by night a flame of hell's own fire, flickering, and sparks flying off it."""
+    if night:
+        from .hell import flame
+        glow(p, x + 3.5, y, 4.5, 6.0, X["heat"], (0.1, 0.2), L=p.flicker(1, back=True))
+        flame(p, x + 3, y + 4, s=0.8, phase=1, halo=False)
+        p.px(x + 8, y - 5, FIRE[5], p.twinkle(2))
+        p.px(x + 9, y - 8, LAVA[4], p.twinkle(0))
+    else:
+        p.sprite(x, y - 3, ICONS["star"], icon_pal("star"))
+        p.px(x + 3, y, C["white"], p.twinkle(0))
+        sparkle(p, x + 10, y - 4, L=p.twinkle(2))
+
+
+def link_top(p: Pix, x0, x1, y, seed, night: bool):
+    """Along a link button's top edge, the sheet's frame in little. By day gilt, lit along its top, over a string of
+    pearls on a gold cord. By night black iron studded red-hot every six pixels, over a seam of the fire's glow, as
+    the frame's own iron is."""
+    for xx in range(x0 - 1, x1 + 1):
+        k = xx + seed
+        if night:
+            p.px(xx, y, FIRE[5] if k % 6 == 0 else IRON[4])
+            p.px(xx, y + 1, (LAVA[4], LAVA[2], LAVA[1], LAVA[1], LAVA[1], LAVA[2])[k % 6])
+        else:
+            p.px(xx, y, GOLD[5])
+            p.px(xx, y + 1, (C["white"], PEARL[2], GOLD[3])[k % 3])
