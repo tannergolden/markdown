@@ -27,8 +27,8 @@ it in [`e2e/`](e2e/README.md). [`fixtures/`](fixtures/README.md) holds the golde
 files and sample pages they compare against, and [`fakes/`](fakes/README.md)
 stands in for GitHub, so no test touches the network.
 
-`make test` runs all three, then the tests of the scripts under
-`.github/scripts/`, and
+`make test` runs all three and the tests of the scripts under
+`.github/scripts/`, every module side by side ([`parallel.py`](parallel.py)), and
 [`.github/workflows/checks.yml`](../.github/workflows/checks.yml) runs the same
 command on every pull request.
 

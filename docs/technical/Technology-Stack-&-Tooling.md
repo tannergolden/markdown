@@ -89,7 +89,7 @@ Mapping the project-specific tools to the universal repository interface (Makefi
 | :---------------- | :------------------------ | :---------------------------------------- |
 | **Setup** | Nothing: the kit installs nothing, so there is no `make setup`. | Bootstrap the local workspace. |
 | **Lint** (`lint-command`) | `make lint`: the repository validator, `compileall` over `src` and `tests`, the layering test, and `markdown-kit lint`, which draws every design, badge and trophy and lints each file. | Static analysis and style enforcement. |
-| **Test** (`test-command`) | `make test`: `unittest` over `tests/unit`, its modules side by side a core each (`tests/parallel.py`), then `tests/integration`, `tests/e2e` and `.github/scripts`. | Execution of the validation suite, inside the CI job's 15 minutes. |
+| **Test** (`test-command`) | `make test`: `unittest` over `tests/unit`, `tests/integration`, `tests/e2e` and `.github/scripts`, every module side by side a core each (`tests/parallel.py`). | Execution of the validation suite, inside the CI job's 15 minutes. |
 | **Build** (`build-command`) | Nothing is built: the action runs the source as it is tagged. | Transformation into deployable artifacts. |
 | **`make deploy`** | None: a release is a tag, cut by the release workflow. | Environmental promotion.                  |
 | **`make catalogue`** | `docs/references/Catalogue.md`, written from the trophies' catalogue and calibration; a unit test fails when it is stale. | Documentation that cannot drift from the data. |

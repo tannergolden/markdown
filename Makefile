@@ -37,8 +37,10 @@ draw:
 themes:
 	@$(PYTHON) .github/scripts/build-theme-sets.py docs/references/themes
 
-## test: Everything CI runs: the kit's three suites and the repository script tests
-test: test-unit test-integration test-e2e test-scripts
+## test: Everything CI runs: the kit's three suites and the repository script tests, every module side by side
+test:
+	@$(PYTHON) tests/parallel.py tests/unit 'test_*.py' tests/integration 'test_*.py' tests/e2e 'test_*.py' \
+		.github/scripts 'test_*.py'
 
 ## test-unit: The rules, each in isolation (no git, no network), a module to a core at once
 test-unit:

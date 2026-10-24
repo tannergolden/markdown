@@ -31,10 +31,10 @@ env -u GH_TOKEN -u GITHUB_TOKEN -u MARKDOWN_TOKEN make test
 ```
 
 No test reaches the network: [`tests/fakes/`](../../tests/fakes/README.md)
-answers for GitHub. `make test` runs the unit modules side by side, one to a
-core (`TEST_JOBS` sets another number), then the integration, end-to-end and
-script suites; the whole of `make lint test` takes about six minutes on a quick
-runner and more than ten on a slow one.
+answers for GitHub. `make test` runs every module of the unit, integration,
+end-to-end and script suites side by side, one to a core (`TEST_JOBS` sets
+another number); the whole of `make lint test` takes about eleven minutes on
+four cores, inside the fifteen the CI job allows.
 
 ---
 
