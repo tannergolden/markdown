@@ -113,6 +113,15 @@ class Titles(unittest.TestCase):
             A.tube_title(still, 10, 20, "HARVEST", night, 4, False)
             self.assertFalse([L for L in still.layers if L.startswith("tw")], night)
 
+    def test_a_titles_rings_are_kept_in_the_order_it_meets_its_letters_so_every_run_draws_the_same_file(self):
+        """Each letter's ring is kept once a file, in the order the title first meets the letter: a set's order,
+        which Python draws afresh in every run, would number the rings differently each time the same title is
+        drawn."""
+        p = Pix(415, 60)
+        A.tube_title(p, 10, 20, "HARVEST", False, 4, True)
+        rings = [k[1] for k in p.syms if isinstance(k, tuple) and k[0] == "ring"]
+        self.assertEqual(rings, list("HARVEST"))
+
 
 class Motion(unittest.TestCase):
     def test_the_clouds_drift_the_lightning_strikes_and_the_harvester_plucks_each_on_its_cadence(self):

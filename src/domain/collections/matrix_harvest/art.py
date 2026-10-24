@@ -246,7 +246,8 @@ def _outlined(p: Pix, x, y, s, scale: int, colour: str, L="base"):
         placed.append((ch, cx))
         cx += (glyphs[ch][0] + 1) * scale
     rings = {}
-    for ch in {c for c, _ in placed}:
+    # In the order the title meets them, not a set's, which changes from run to run, so every run draws the same file.
+    for ch in dict.fromkeys(c for c, _ in placed):
         if ("ring", ch, scale) in p.syms:
             continue
         cells = {(col * scale + dx, r * scale + dy) for r, cols in enumerate(glyphs[ch][1]) for col in cols
