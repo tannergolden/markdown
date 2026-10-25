@@ -112,6 +112,6 @@ A collection ships whole. A page can pick it only once all twelve designs are dr
 
 <br />
 
-Built with ❤️ by the Engineering Team. Distributed under the MIT License.
+Built with ❤️ by the Engineering Team. Distributed under the terms in [LICENSE](/LICENSE).
 
 </div>

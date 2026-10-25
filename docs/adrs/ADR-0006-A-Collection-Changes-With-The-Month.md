@@ -124,6 +124,6 @@ The kit had two kinds of theme: a single theme, `standard`, and a family of prin
 
 <br />
 
-Built with ❤️ by the Engineering Team. Distributed under the MIT License.
+Built with ❤️ by the Engineering Team. Distributed under the terms in [LICENSE](/LICENSE).
 
 </div>
