@@ -1,26 +1,37 @@
 # Installed from tannergolden/standards. Edit freely: this file is YOURS.
 #
-# Everything that REACTS to humans, in one file: pull request title and
-# sign-off validation, onboarding and triage, the stale sweep, and the
-# slash commands in issue comments.
+# Everything that REACTS to humans, in one file: onboarding and triage, the
+# stale sweep, and the slash commands in issue comments. The required pull
+# request check, which reads the title and the sign-off, is
+# `semantic-pr.yml`, beside this.
 #
-# All three jobs run on privileged triggers (pull_request_target, comments)
-# and NONE of them checks out or executes pull-request code - they read and
-# write through the API. That is what makes grouping them safe; do not add a
-# job here that checks out a pull request's head.
+# PRIVILEGED TRIGGERS, ON PURPOSE. The `governance` and `issue-ops` jobs
+# write labels and comments, so they run on privileged triggers
+# (`pull_request_target`, comments), and NONE of them checks out or executes
+# pull-request code: they read and write through the API. That is what makes
+# them safe; do not add a job here that checks out a pull request's head.
+# The `pr` check only reads, so it runs on the unprivileged `pull_request`,
+# and in a file of its own: a job here is listed on every pull request's
+# `pull_request_target` run, skipped or not.
 #
-# ⚠️ THE `pr` JOB ID IS A CHECK NAME. It reports as 'pr / ✍️ DCO Sign-Off',
-# which branch protection names. Renaming it leaves every pull request
-# waiting on a check that never reports.
+# ⚠️ GITHUB'S DEFAULT POLICY BLOCKS `pull_request_target` IN A PUBLIC
+# REPOSITORY that has no Actions event policy allowing it, from 2 December
+# 2026 at the latest. Only the `governance` job uses it, for the pull request
+# triage and the first-time welcome, so the required `pr` check is
+# unaffected either way. 🎯 Apply Standards writes the policy with its
+# settings job; or add one by hand under Settings → Actions → Policies,
+# scoped to this file. An event rule is an allowlist, so it must name every
+# event in `on:` below. Add a trigger here and add it to the policy too,
+# through `actions.event_policy` in a settings override, or the next
+# settings run puts the policy back without it.
 
 name: '⚖️ Governance'
 
 on:
+  # Triage and the first-time welcome, which write labels and comments on a
+  # fork's pull request and so need the privileged trigger.
   pull_request_target:
-    # The union of what the jobs need: `edited` re-validates a corrected
-    # title, `reopened` re-triages. The extra firings are idempotent - the
-    # labeler re-applies the same labels, the title check re-passes.
-    types: [opened, edited, synchronize, reopened]
+    types: [opened, synchronize, reopened]
   issues:
     types: [opened]
   issue_comment:
@@ -32,8 +43,9 @@ on:
 concurrency:
   # Keyed per pull request or issue: under pull_request_target github.ref is
   # the BASE branch, so a branch-keyed group would put every open pull
-  # request into one queue slot.
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.event.issue.number || github.ref }}
+  # request into one queue slot. The event is part of the key, so the
+  # triage of a pull request and a comment on it never wait on each other.
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.event.issue.number || github.ref }}
   cancel-in-progress: false
 
 # ⚠️ THE `permissions:` BELOW IS A CEILING, NOT A GRANT. For a job that calls a
@@ -52,19 +64,15 @@ concurrency:
 permissions: {}
 
 jobs:
-  # RULESET-LOAD-BEARING JOB ID: reports as 'pr / ✍️ DCO Sign-Off'.
-  pr:
-    if: ${{ !github.event.repository.is_template && (github.event_name == 'pull_request_target') }}
-    permissions:
-      pull-requests: read # read the PR title under validation
-      statuses: write # publish the semantic-title status check on the PR
-    uses: tannergolden/standards/.github/workflows/semantic-pr.yml@v1
-
   governance:
-    # Everything except comments, which belong to issue-ops below. The
-    # called workflow gates its own jobs by event: triage on pull requests,
-    # onboarding on first interactions, the stale sweep on the schedule.
-    if: ${{ !github.event.repository.is_template && (github.event_name != 'issue_comment') }}
+    # Pull request triage, onboarding, the stale sweep and the label sync.
+    # The called workflow gates its own jobs by event: triage on pull
+    # requests, onboarding on first interactions, the sweep on the schedule.
+    #
+    # Inert in the golden path template, and live in every other
+    # repository, a template derived from it included: `is_template` alone
+    # is true there too, so the guard also names it.
+    if: ${{ !(github.event.repository.is_template && github.event.repository.name == 'path') && contains(fromJSON('["pull_request_target", "issues", "schedule", "workflow_dispatch"]'), github.event_name) }}
     permissions:
       contents: read # read the labeler rules
       issues: write # post the welcome on issues
@@ -75,10 +83,10 @@ jobs:
     # Slash commands in issue comments - /assign, /label, /close and the
     # rest. Anything unrecognised is left alone.
     #
-    # Inert in a template repository, live in every repository generated
-    # from one. `is_template` is true only in the template itself, which
-    # is the same signal init-template.yml guards on.
-    if: ${{ github.event_name == 'issue_comment' && !github.event.repository.is_template }}
+    # Inert in the golden path template, and live in every other
+    # repository, a template derived from it included: `is_template` alone
+    # is true there too, so the guard also names it.
+    if: ${{ github.event_name == 'issue_comment' && !(github.event.repository.is_template && github.event.repository.name == 'path') }}
     permissions:
       issues: write # apply the command's label and assignment changes
     uses: tannergolden/standards/.github/workflows/issue-ops.yml@v1

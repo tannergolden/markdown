@@ -27,10 +27,14 @@ _Structured strategy. Reduced risk. Clear implementation._
 
 A concise description of what this implementation aims to achieve and the problem it solves.
 
+---
+
 ## 🗺️ Scope
 
 - **In scope**: [What this plan delivers]
 - **Out of scope**: [Deferred or excluded work]
+
+---
 
 ## 🏗️ Proposed Changes
 
@@ -43,16 +47,22 @@ A concise description of what this implementation aims to achieve and the proble
 
 - [ ] Describe change 1
 
+---
+
 ## 📅 Milestones
 
 1. [Milestone - deliverable and rough sequencing]
 2. [Milestone - deliverable and rough sequencing]
+
+---
 
 ## ⚠️ Risks & Mitigations
 
 | Risk   | Likelihood              | Mitigation            |
 | :----- | :---------------------- | :-------------------- |
 | [Risk] | [High \| Medium \| Low] | [How it is contained] |
+
+---
 
 ## 🧪 Verification Plan
 
@@ -67,6 +77,8 @@ make test
 
 1. Step 1 of manual check
 2. Step 2 of manual check
+
+---
 
 ## ⏪ Rollback
 
@@ -87,6 +99,6 @@ make test
 
 <br />
 
-Built with ❤️ by the Engineering Team. Distributed under the MIT License.
+Built with ❤️ by the Engineering Team. Distributed under the terms in [LICENSE](/LICENSE).
 
 </div>

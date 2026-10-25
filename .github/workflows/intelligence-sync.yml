@@ -5,7 +5,9 @@
 # which tannergolden/intelligence renders and releases. Every Monday, and
 # whenever you run it, it proposes the latest release's block as one pull
 # request on `chore/intelligence`, and leaves every section this repository
-# owns as it was. A first sync creates AGENTS.md. Merging stays yours.
+# owns as it was. A first sync creates AGENTS.md, and docs/Prompts.md, an
+# empty page for this repository's own prompts that sync never changes; the
+# universal prompts stay in the hub. Merging stays yours.
 #
 # It runs on this repository's own GITHUB_TOKEN, with no App and no key, so
 # two settings matter: Settings > Actions > General must allow GitHub
@@ -15,7 +17,15 @@
 # secret, if this repository has one, opens it as you instead.
 #
 # `@v0` follows the hub's latest release. To stop, delete this file; the
-# `no-intelligence` topic also keeps `make sync` away.
+# `no-intelligence` topic also keeps `make sync` away, and the
+# `no-intelligence-prompts` topic keeps the prompts page out alone.
+#
+# ⚠️ IT IS SILENT IN THE GOLDEN PATH TEMPLATE. Its guard names it, as every
+# standards stub's does, so it does nothing in tannergolden/path and comes
+# alive in each repository generated from it.
+# This repository's docs/Prompts.md shipped with the template, so the first
+# sync leaves it as it is. 🔄 Template Sync keeps this file current from the
+# template, merged with any edit you make to it.
 
 name: '🔁 Intelligence Sync'
 
@@ -39,10 +49,11 @@ permissions: {}
 
 jobs:
   sync:
+    if: ${{ !(github.event.repository.is_template && github.event.repository.name == 'path') }}
     permissions:
       contents: write # push the sync branch (PR-only flow)
       pull-requests: write # open or update the sync pull request
-    uses: tannergolden/intelligence/.github/workflows/sync.yml@v0 # zizmor: ignore[unpinned-uses] - first-party workflow on its moving major, the way every stub calls it.
+    uses: tannergolden/intelligence/.github/workflows/sync.yml@v0
     with:
       dry-run: ${{ inputs.dry-run || false }}
     # Only this one secret, never `secrets: inherit`: the hub's code needs

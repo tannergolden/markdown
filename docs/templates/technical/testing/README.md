@@ -47,8 +47,8 @@ area, in [`../benchmarks/`](../benchmarks/README.md).
 
 <!-- AUTO-INDEX:END -->
 
-🗂️ Machined Indexes redraws this log after every push, from each template's own
-frontmatter.
+🗂️ Machined Indexes redraws this log after every push to the default branch,
+from each template's own frontmatter.
 
 ---
 
@@ -67,6 +67,6 @@ frontmatter.
 
 <br />
 
-Built with ❤️ by the Engineering Team. Distributed under the MIT License.
+Built with ❤️ by the Engineering Team. Distributed under the terms in [LICENSE](/LICENSE).
 
 </div>

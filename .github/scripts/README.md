@@ -26,7 +26,12 @@ typo in any of them breaks something quietly. The scripts here check those files
 from the first commit, and the tests beside them check the scripts.
 
 They live under `.github/` so the root of the repository stays yours. Each needs
-only Python 3, plus PyYAML for the ones that read YAML.
+only Python 3, plus the one package pinned in
+[`requirements.txt`](requirements.txt), PyYAML, for the ones that read YAML.
+
+[`hooks/`](hooks/README.md) holds the git hooks that run the commit-message,
+sign-off and secret checks on your machine before a commit exists, so a pull
+request is not the first place you hear about them.
 
 ---
 
@@ -36,14 +41,17 @@ only Python 3, plus PyYAML for the ones that read YAML.
 
 | Entry                                                          | Purpose                                                                                                                           |
 | :------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| [`hooks/`](hooks/README.md)                                    | The git hooks this repository ships, what each catches before a commit is recorded, and how to switch them on.                    |
 | [`build-collection.py`](build-collection.py)                   | Draw a collection's year: its twelve designs, a month to each, and the page that shows them.                                      |
 | [`build-theme-sets.py`](build-theme-sets.py)                   | Draw every theme the kit draws a page in, and the page that shows them.                                                           |
 | [`collection-matrix.css`](collection-matrix.css)               | -                                                                                                                                 |
 | [`collection.html`](collection.html)                           | The page `build-collection.py` fills in: a collection's twelve designs, each drawn by the kit on GitHub's light and dark grounds. |
 | [`README.md`](README.md)                                       | This file.                                                                                                                        |
+| [`requirements.txt`](requirements.txt)                         | The Python packages the scripts beside this file need, and nothing else.                                                          |
 | [`test_build_collection.py`](test_build_collection.py)         | Tests for the collection page builder.                                                                                            |
 | [`test_build_theme_sets.py`](test_build_theme_sets.py)         | Tests for the theme-sets page builder.                                                                                            |
 | [`test_gitignore.py`](test_gitignore.py)                       | Tests for this repository's .gitignore.                                                                                           |
+| [`test_hooks.py`](test_hooks.py)                               | Tests for the git hooks in .github/scripts/hooks/.                                                                                |
 | [`test_validate_repository.py`](test_validate_repository.py)   | Tests for the repository validator.                                                                                               |
 | [`test_verify_stub_ceilings.py`](test_verify_stub_ceilings.py) | Tests for the stub ceiling checker.                                                                                               |
 | [`theme-sets.html`](theme-sets.html)                           | The page `build-theme-sets.py` fills in: every theme the kit draws a README in, on GitHub's light and dark grounds.               |
@@ -52,13 +60,20 @@ only Python 3, plus PyYAML for the ones that read YAML.
 
 <!-- AUTO-INDEX:END -->
 
-🗂️ Machined Indexes redraws this log after every push, from each docstring. Who
-runs them:
+🗂️ Machined Indexes redraws this log after every push to the default branch,
+from each docstring. Who runs them:
 
 - `checks.yml` runs `validate-repository.py` as the `ci` job's `lint-command`,
   and every `test_*.py` here as its `test-command`. That discovers a test
   added beside a new script without anyone remembering to list it.
-- `verify-stubs.yml` runs `verify-stub-ceilings.py`.
+- `verify-stubs.yml` installs `requirements.txt` and runs
+  `verify-stub-ceilings.py`.
+- `cut-release.yml` runs `validate-repository.py` before it tags a release, so
+  a release the validator fails is refused. In the template, that includes a
+  change to the owner's half of `docs/Prompts.md`.
+- Git runs the hooks in `hooks/` once `core.hooksPath` points at them, which
+  the development container does for you; `test_hooks.py` holds them to the
+  same rules CI applies.
 
 > [!NOTE]
 > **The tests keep their underscores on purpose.** `unittest` imports each
@@ -73,8 +88,15 @@ runs them:
 From the root of the repository:
 
 ```bash
+python3 -m pip install --require-hashes --requirement .github/scripts/requirements.txt
 python3 .github/scripts/validate-repository.py
 python3 -m unittest discover -s .github/scripts -p 'test_*.py'
+```
+
+And once per clone, to have git run the hooks:
+
+```bash
+git config core.hooksPath .github/scripts/hooks
 ```
 
 `verify-stub-ceilings.py` also needs the standards checked out at `v1` in
@@ -93,6 +115,6 @@ as a second gate or go. What it checks stays true either way.
 
 <br />
 
-Built with ❤️ by the Engineering Team. Distributed under the terms in [LICENSE](../../LICENSE).
+Built with ❤️ by the Engineering Team. Distributed under the terms in [LICENSE](/LICENSE).
 
 </div>

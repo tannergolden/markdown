@@ -39,16 +39,22 @@ permissions: {}
 
 jobs:
   deploy:
-    # Inert in a template repository, live in every repository generated
-    # from one. `is_template` is true only in the template itself, which
-    # is the same signal init-template.yml guards on.
-    if: ${{ !github.event.repository.is_template }}
+    # Inert in the golden path template, and live in every other
+    # repository, a template derived from it included: `is_template` alone
+    # is true there too, so the guard also names it.
+    if: ${{ !(github.event.repository.is_template && github.event.repository.name == 'path') }}
     permissions:
       contents: read # check out the ref being previewed
       id-token: write # OIDC token for keyless auth to the deploy target
     uses: tannergolden/standards/.github/workflows/preview-deploy.yml@v1
     # The deploy command is yours; the credential reaches it as
     # $DEPLOY_TOKEN. Nothing is published until you set one.
+    #
+    # Keyless instead? Trust this repository's OIDC token in your cloud, and
+    # mind its subject: a repository created, renamed or transferred after
+    # 15 July 2026 presents the immutable form,
+    # `repo:OWNER@OWNER-ID/REPO@REPO-ID:...`, so a trust policy written for
+    # `repo:OWNER/REPO:...` rejects it.
     #
     # with:
     #   deploy-command: 'npx vercel deploy --prebuilt --token "$DEPLOY_TOKEN"'

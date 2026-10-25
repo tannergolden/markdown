@@ -4,7 +4,6 @@ description: 'Reference data and methodologies for performance testing.'
 type: template
 -->
 
-
 <div align="center">
 
 # ⚡ PERFORMANCE BENCHMARKS
@@ -72,6 +71,6 @@ Store each run as a dated entry using the [&#x1F50E; Research Log template](../.
 
 <br />
 
-Built with ❤️ by the Engineering Team. Distributed under the MIT License.
+Built with ❤️ by the Engineering Team. Distributed under the terms in [LICENSE](/LICENSE).
 
 </div>

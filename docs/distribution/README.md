@@ -27,8 +27,11 @@ pipelines, testing and versioning are written down once, in the standards'
 and followed here by link. This folder holds what this project adds to them, or
 does its own way.
 
-- **Releasing**: how a release is cut, checked and published here.
-- **Delivery**: where a release goes, and how its users get it.
+- **Releasing**: how a release is cut, checked and published here, from the
+  [Release Process](../templates/distribution/Release-Process.md) seed.
+- **Delivery**: where a release goes, how its users get it, and how they check
+  it is genuine, from the
+  [Release Verification](../templates/distribution/Release-Verification.md) seed.
 - **Workflow**: a step this project asks of every change that the standards do
   not ask everywhere.
 
@@ -53,8 +56,8 @@ the folder holds.
 
 <!-- AUTO-INDEX:END -->
 
-🗂️ Machined Indexes redraws this log after every push, from each document's own
-frontmatter.
+🗂️ Machined Indexes redraws this log after every push to the default branch,
+from each document's own frontmatter.
 
 ---
 
@@ -73,6 +76,6 @@ frontmatter.
 
 <br />
 
-Built with ❤️ by the Engineering Team. Distributed under the MIT License.
+Built with ❤️ by the Engineering Team. Distributed under the terms in [LICENSE](/LICENSE).
 
 </div>

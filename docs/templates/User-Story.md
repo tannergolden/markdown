@@ -29,6 +29,8 @@ _Empathy driven. Clear criteria. Better outcomes._
 **I want** [to perform some action],
 **So that** [I can achieve some goal/benefit].
 
+---
+
 ## ✅ Acceptance Criteria
 
 Verifiable outcomes - each one testable, none about implementation detail:
@@ -37,24 +39,34 @@ Verifiable outcomes - each one testable, none about implementation detail:
 - [ ] Given [context], when [action], then [outcome].
 - [ ] Errors and empty states behave as specified.
 
+---
+
 ## 🚫 Out of Scope
 
 - [Explicitly excluded behavior - prevents silent scope creep]
+
+---
 
 ## 🎨 Wireframes/Mockups
 
 - [Link to Figma/Design]
 - [User Interface conventions](technical/interface/Formatting-&-Standards.md) - the fill-in standard for this project's interface rules
 
+---
+
 ## 🔗 Dependencies
 
 - [Blocking stories, services, migrations, or approvals]
+
+---
 
 ## 🛠️ Technical Notes
 
 - Database schema changes needed
 - New API endpoints required
 - Third-party integrations
+
+---
 
 ## 🏁 Definition of Done
 
@@ -77,6 +89,6 @@ Verifiable outcomes - each one testable, none about implementation detail:
 
 <br />
 
-Built with ❤️ by the Engineering Team. Distributed under the MIT License.
+Built with ❤️ by the Engineering Team. Distributed under the terms in [LICENSE](/LICENSE).
 
 </div>

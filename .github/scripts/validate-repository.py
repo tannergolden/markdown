@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2026 Tanner Golden
+# SPDX-License-Identifier: MIT
 """Validate this repository's own configuration.
 
 WHY THIS EXISTS. The `ci` job in `checks.yml` fails when lint, test and
@@ -18,6 +20,24 @@ about any language. Link checking and spelling are separate jobs in the
 called workflow already; workflow semantics and security are the `lint` job.
 This
 covers the gap between them: the configuration files nothing else parses.
+In the template alone, it also holds the owner's half of docs/Prompts.md
+still, since every generated repository's own prompts live there.
+
+It also catches a placeholder the template left for initialisation to
+replace, once initialisation has run and it is still there: a contact link
+still naming the owner-and-repository placeholder, or a CODEOWNERS rule
+naming `@your-org/your-team`.
+Each is a broken link or an owner that does not exist, and neither says so
+on its own.
+
+And it holds every document's footer to linking its licence from the
+repository root, as `[LICENSE](/LICENSE)`, rather than naming the licence,
+which goes stale the day the licence changes.
+
+Two more guard what a repository can hold. Compiled code, which no reviewer
+can read, fails wherever it is committed, and so does the vulnerability
+issue form in a repository that has become public, where an issue filed
+through it is published the moment it is filed.
 
 Exits non-zero on the first category with findings, listing all of them.
 Annotations are emitted in GitHub's format when running under Actions, so
@@ -26,6 +46,7 @@ findings land on the file and line in the diff.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import pathlib
@@ -94,7 +115,7 @@ def attributes(paths: list[pathlib.Path]) -> dict[str, dict[str, str]]:
     if not paths:
         return {}
     rels = [p.relative_to(ROOT).as_posix() for p in paths]
-    out = git('check-attr', '--stdin', '-z', 'text', 'eol',
+    out = git('check-attr', '--stdin', '-z', 'text', 'eol', REVIEWED_BINARY,
               stdin='\0'.join(rels) + '\0')
     fields = out.split('\0')
     found: dict[str, dict[str, str]] = {}
@@ -277,6 +298,208 @@ def check_whitespace(path: pathlib.Path, text: str, eol: str) -> None:
             report(path, number, 'trailing whitespace')
 
 
+# Placeholders the template ships for initialisation, or the owner, to
+# replace. While `.github/TEMPLATE_INIT` exists the repository is the template
+# itself, or one not yet initialised, and they are expected; once it is gone,
+# one left behind is a defect.
+TEMPLATE_INIT = '.github/TEMPLATE_INIT'
+
+# ⚠️ BUILT IN TWO HALVES, ON PURPOSE. Initialisation replaces the contact
+# link's placeholder with this repository's name in every text file it
+# reads, this one included, and 🔄 Template Sync does the same to every file
+# it brings. Written whole here, the placeholder would become the
+# repository's own name, and the check would then fail the link that
+# initialisation filled in correctly.
+CONTACT_PLACEHOLDER = 'OWNER' + '/' + 'REPOSITORY'
+
+
+def check_placeholders(path: pathlib.Path, text: str) -> None:
+    rel = path.relative_to(ROOT).as_posix()
+    for number, line in enumerate(text.splitlines(), start=1):
+        if line.lstrip().startswith('#'):
+            continue
+        if rel == '.github/ISSUE_TEMPLATE/config.yml' and CONTACT_PLACEHOLDER in line:
+            report(path, number,
+                   f'the contact link still names {CONTACT_PLACEHOLDER}, so it 404s: '
+                   'put this repository there, as initialisation would have')
+        if rel == '.github/CODEOWNERS' and '@your-org/your-team' in line:
+            report(path, number,
+                   'this rule names @your-org/your-team, which owns nothing: '
+                   'name a real @user or @org/team with write access, or comment the rule out')
+
+
+# A FOOTER LINKS ITS LICENCE AND NAMES NONE. "Distributed under the MIT
+# License." is true only until the licence changes, and then it is wrong on
+# every page at once, here and in every repository generated from this one,
+# with nothing to say so. The footer links to the file instead, from the
+# repository root, which GitHub resolves on any branch and from any folder:
+# a seed copied out of docs/templates/ to another depth keeps its link, and
+# the link names no repository, so it holds in a fork or after a rename. The
+# standards' styling guide sets the clause; this holds every page to it.
+LICENCE_CLAUSE = 'Distributed under the terms in [LICENSE](/LICENSE).'
+FOOTER_CLAUSE = re.compile(r'distributed under', re.I)
+ROOT_LICENCE_LINK = re.compile(r'\]\(/(?:LICEN[CS]E|COPYING)[^)/]*\)')
+MARKDOWN_LINK = re.compile(r'\[[^\]]*\]\([^)]*\)')
+NAMED_LICENCE = re.compile(r'\b(?:MIT|Apache|A?GPL|LGPL|BSD|MPL|ISC|Unlicense|CC0|EPL)\b', re.I)
+CODE_FENCE = re.compile(r'^\s*(`{3,}|~{3,})')
+INLINE_CODE = re.compile(r'(`+)(?:(?!\1).)+?\1')
+
+
+def check_footer(path: pathlib.Path, text: str) -> None:
+    """Each line of a Markdown file carrying the licence clause, outside code."""
+    fence = None
+    for number, line in enumerate(text.splitlines(), start=1):
+        marker = CODE_FENCE.match(line)
+        if fence:
+            if marker and marker.group(1)[0] == fence[0] and len(marker.group(1)) >= len(fence):
+                fence = None
+            continue
+        if marker:
+            fence = marker.group(1)
+            continue
+        prose = INLINE_CODE.sub('', line)
+        if not FOOTER_CLAUSE.search(prose):
+            continue
+        named = NAMED_LICENCE.search(MARKDOWN_LINK.sub('', prose))
+        if named:
+            report(path, number,
+                   f'the footer names its licence, {named.group(0)}, which goes stale the day the licence '
+                   f'changes: link the file instead, as `{LICENCE_CLAUSE}`')
+        elif not ROOT_LICENCE_LINK.search(prose):
+            report(path, number,
+                   'the footer does not link its licence from the repository root, the one link that holds '
+                   f'from any folder: write `{LICENCE_CLAUSE}`')
+
+
+# NO COMPILED CODE IS COMMITTED. Nobody can review a binary, so a pull
+# request that adds one asks every reviewer to trust what they cannot read,
+# and a build output committed by mistake goes stale the moment its source
+# changes (OpenSSF baseline OSPS-QA-05). Each is recognised by how it starts,
+# so a rename does not hide it, and by suffix where the format has no fixed
+# start. The build tools' wrapper jars, which their projects commit by
+# design, pass. A binary a project must keep, such as a test fixture, is
+# marked `reviewed-binary` in .gitattributes, where the exception is in plain
+# sight of every reviewer.
+REVIEWED_BINARY = 'reviewed-binary'
+EXECUTABLE_MAGIC = (
+    (b'\x7fELF', 'an ELF executable or library'),
+    (b'\xfe\xed\xfa\xce', 'a Mach-O executable or library'),
+    (b'\xce\xfa\xed\xfe', 'a Mach-O executable or library'),
+    (b'\xfe\xed\xfa\xcf', 'a Mach-O executable or library'),
+    (b'\xcf\xfa\xed\xfe', 'a Mach-O executable or library'),
+    (b'\xca\xfe\xba\xbe', 'a compiled Java class or a universal Mach-O binary'),
+    (b'!<arch>\n', 'a static library'),
+    (b'\x00asm', 'a WebAssembly module'),
+)
+EXECUTABLE_SUFFIXES = {
+    '.exe', '.dll', '.so', '.dylib', '.class', '.jar', '.war', '.ear', '.pyc', '.pyo',
+}
+WRAPPER_JARS = ('gradle/wrapper/gradle-wrapper.jar', '.mvn/wrapper/maven-wrapper.jar')
+
+
+def executable_kind(raw: bytes, suffix: str) -> str | None:
+    for magic, kind in EXECUTABLE_MAGIC:
+        if raw.startswith(magic):
+            return kind
+    # A Windows binary opens with `MZ`, which plain text can too, so the PE
+    # signature the header points at is what decides.
+    if raw[:2] == b'MZ' and len(raw) >= 0x40:
+        offset = int.from_bytes(raw[0x3C:0x40], 'little')
+        if raw[offset:offset + 4] == b'PE\0\0':
+            return 'a Windows executable or library'
+    if suffix in EXECUTABLE_SUFFIXES:
+        return f'a {suffix} file'
+    return None
+
+
+def check_executable(path: pathlib.Path, raw: bytes, attrs: dict[str, str]) -> None:
+    rel = path.relative_to(ROOT).as_posix()
+    if attrs.get(REVIEWED_BINARY) == 'set' or any(rel == j or rel.endswith('/' + j) for j in WRAPPER_JARS):
+        return
+    kind = executable_kind(raw, path.suffix.lower())
+    if kind:
+        report(path, None,
+               f'{kind} is committed, and nobody can review compiled code: build it in CI instead, '
+               f'or mark a binary the project must keep, such as a test fixture, `{REVIEWED_BINARY}` '
+               'in .gitattributes')
+
+
+# A PUBLIC REPOSITORY KEEPS NO VULNERABILITY ISSUE FORM. The form is the
+# intake a private repository needs, where an issue is as private as the
+# repository. In a public one every issue is public, so a report filed
+# through the form is published the moment it is filed. Initialisation
+# deletes the form from a repository that is public when it is generated;
+# one made public later keeps it, and this is what notices. The visibility
+# comes from the event that started the run: a run whose event names no
+# repository, such as a scheduled one, cannot tell, and skips this.
+VULNERABILITY_FORM = '.github/ISSUE_TEMPLATE/Vulnerability-Report.yaml'
+GOING_PUBLIC = ('https://github.com/tannergolden/standards/blob/Development/'
+                'docs/introduction/What-You-Do-By-Hand.md#going-public')
+
+
+def repository_is_public() -> bool:
+    event = os.environ.get('GITHUB_EVENT_PATH')
+    if not event:
+        return False
+    try:
+        payload = json.loads(pathlib.Path(event).read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        return False
+    repository = payload.get('repository') if isinstance(payload, dict) else None
+    if not isinstance(repository, dict):
+        return False
+    if 'visibility' in repository:
+        return repository['visibility'] == 'public'
+    return repository.get('private') is False
+
+
+def check_vulnerability_form(tracked: list[pathlib.Path]) -> None:
+    form = ROOT / VULNERABILITY_FORM
+    if form in tracked and repository_is_public():
+        report(form, None,
+               'this repository is public, so an issue filed through this form is published the moment '
+               'it is filed: delete the form, since private vulnerability reporting takes reports here, '
+               f'and see what else going public needs at {GOING_PUBLIC}')
+
+
+# THE OWNER'S HALF OF docs/Prompts.md IS FROZEN IN THE TEMPLATE. The page is
+# the template's down to the comment that closes the Golden Path prompts, and
+# each generated repository's owner's from that comment to the end. Template
+# Sync merges the whole page, so a template edit below that comment would land
+# in every owner's own prompts, or conflict with what they wrote there. So
+# while .github/TEMPLATE_INIT exists - in the template, and in a copy not yet
+# initialised - that half must match the hash below exactly. 🏷️ Cut Release
+# runs this script, so a release that changed it is refused. A deliberate
+# change is breaking: release it as a new major, and update the hash.
+PROMPTS_PAGE = 'docs/Prompts.md'
+GOLDEN_PATH_OPENS = '<!-- The Golden Path prompts start here.'
+GOLDEN_PATH_CLOSES = '<!-- The Golden Path prompts end here.'
+OWNER_HEADING = "## ✍️ This Repository's Prompts"
+OWNER_HALF_SHA256 = 'b023afa0077bde9c5eef9327c05c420a4b789bb3cd7a0c7c0c78917ad65623c0'
+
+
+def check_prompts_page() -> None:
+    page = ROOT / PROMPTS_PAGE
+    if not (ROOT / '.github' / 'TEMPLATE_INIT').is_file() or not page.is_file():
+        return
+    lines = page.read_text(encoding='utf-8').splitlines(keepends=True)
+
+    def found(prefix: str) -> list[int]:
+        return [i for i, line in enumerate(lines) if line.startswith(prefix)]
+
+    opens, closes, heading = found(GOLDEN_PATH_OPENS), found(GOLDEN_PATH_CLOSES), found(OWNER_HEADING)
+    if len(opens) != 1 or len(closes) != 1 or len(heading) != 1 or not opens[0] < closes[0] < heading[0]:
+        report(page, None, 'the Golden Path prompts must sit between one opening and one closing '
+                           "comment, with the owner's section after them")
+        return
+    owner_half = ''.join(lines[closes[0]:]).encode('utf-8')
+    if hashlib.sha256(owner_half).hexdigest() != OWNER_HALF_SHA256:
+        report(page, closes[0] + 1, "the owner's section changed: from this comment to the end belongs "
+                                    "to each generated repository's owner, so the template leaves it as "
+                                    'it is; revert it, or release a deliberate change as a new major and '
+                                    'update OWNER_HALF_SHA256 in this script')
+
+
 def main() -> int:
     try:
         import yaml  # noqa: F401
@@ -305,6 +528,7 @@ def main() -> int:
         rel = path.relative_to(ROOT).as_posix()
         mine = attrs.get(rel, {})
         raw = path.read_bytes()
+        check_executable(path, raw, mine)
         if not is_text(path, mine, raw):
             continue
         files.append(path)
@@ -313,13 +537,21 @@ def main() -> int:
         if text is None:
             continue
         check_whitespace(path, text, mine.get('eol', 'unspecified'))
+        if not (ROOT / TEMPLATE_INIT).exists():
+            check_placeholders(path, text)
         suffix = path.suffix.lower()
+        if suffix == '.md':
+            check_footer(path, text)
         if suffix == '.json':
             check_json(path, text)
         elif suffix in ('.yml', '.yaml'):
             check_yaml(path, text)
             if path.parent.name == 'workflows':
                 check_pins(path, text)
+
+    check_prompts_page()
+    if not (ROOT / TEMPLATE_INIT).exists():
+        check_vulnerability_form(tracked)
 
     counts = {
         'files': len(files),

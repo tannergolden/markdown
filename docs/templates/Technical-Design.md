@@ -10,7 +10,7 @@ type: template
 
 <a name="top"></a>
 
-**Proposes a system or major feature's architecture - components, data, interfaces, and the trade-offs behind them.**
+**A system or feature's proposed architecture, and the trade-offs behind it.**
 
 _Strategic depth. Clear architecture. Long-term scale._
 
@@ -27,10 +27,14 @@ _Strategic depth. Clear architecture. Long-term scale._
 
 A high-level summary of the system architecture and its purpose.
 
+---
+
 ## 🎯 Goals & Non-Goals
 
 - **Goals**: [What this design must achieve]
 - **Non-Goals**: [What it deliberately does not attempt - prevents scope drift in review]
+
+---
 
 ## 📐 Architecture
 
@@ -46,14 +50,20 @@ graph TD
     C --> E[(Database)]
 ```
 
+---
+
 ## 🔐 Data Model
 
 Description of key entities and relationships.
+
+---
 
 ## 📡 API Interface
 
 - `GET /v1/resource`: Description
 - `POST /v1/resource`: Description
+
+---
 
 ## ⚖️ Alternatives Considered
 
@@ -62,11 +72,15 @@ Description of key entities and relationships.
 | [Option B]  | [Trade-off that ruled it out] |
 | [Option C]  | [Trade-off that ruled it out] |
 
+---
+
 ## 🚀 Scalability & Performance
 
 - Expected throughput
 - Caching strategy
 - Database optimization
+
+---
 
 ## 🛡️ Security
 
@@ -74,10 +88,14 @@ Description of key entities and relationships.
 - Data encryption
 - Role-based access control
 
+---
+
 ## 📈 Observability
 
 - Key metrics, logs, and traces this system must emit
 - Alert thresholds and dashboards
+
+---
 
 ## 🛫 Rollout & Migration
 
@@ -100,6 +118,6 @@ Description of key entities and relationships.
 
 <br />
 
-Built with ❤️ by the Engineering Team. Distributed under the MIT License.
+Built with ❤️ by the Engineering Team. Distributed under the terms in [LICENSE](/LICENSE).
 
 </div>

@@ -4,7 +4,6 @@ description: 'Where to get help with this repository - the right channel for eve
 type: guide
 -->
 
-
 <div align="center">
 
 # 🙋 SUPPORT
@@ -21,14 +20,18 @@ _Ask once. Ask in the right place._
 
 ## 🧭 Pick Your Channel
 
-| You have…                  | Go to                                                                             |
-| :------------------------- | :-------------------------------------------------------------------------------- |
-| A "how do I…?" question    | 💬 **Discussions → Q&A** (a guided form collects the context answerers need)      |
-| A reproducible bug         | 🐛 **Issues → Bug Report**                                                        |
-| A feature idea             | ✨ **Issues → Feature Request** (or 🧠 Discussions → Ideas to explore it first)   |
-| A documentation gap        | 📚 **Issues → Documentation Report**                                              |
-| A security vulnerability   | 🛡️ **[SECURITY.md](SECURITY.md)** - private disclosure only, never a public issue |
-| A setup or tooling problem | 🧰 **Discussions → Tooling & Setup**                                              |
+| You have…                  | Go to                                                                              |
+| :------------------------- | :--------------------------------------------------------------------------------- |
+| A "how do I…?" question    | 💬 **Discussions → Q&A** (a guided form collects the context answerers need)       |
+| A reproducible bug         | 🐛 **Issues → Bug Report**                                                         |
+| A feature idea             | ✨ **Issues → Feature Request** (or 🧠 Discussions → Ideas to explore it first)    |
+| A documentation gap        | 📚 **Issues → Documentation Report**                                               |
+| An accessibility barrier   | ♿ **Issues → Accessibility Report** - see [ACCESSIBILITY.md](ACCESSIBILITY.md)    |
+| A code of conduct concern  | 📜 **[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)** - report privately, as it explains |
+| A security vulnerability   | 🛡️ **[SECURITY.md](SECURITY.md)** - private disclosure only, never a public issue  |
+| A setup or tooling problem | 🧰 **Discussions → Tooling & Setup**                                               |
+
+---
 
 ## 📚 Self-Serve First
 
@@ -36,6 +39,8 @@ _Ask once. Ask in the right place._
 - **[Documentation index](https://github.com/tannergolden/standards/blob/Development/docs/README.md)** - every canonical guide, from branching to releases (lives in the template home).
 - **[Troubleshooting](https://github.com/tannergolden/standards/blob/Development/docs/operations/Troubleshooting.md)** - the 90-second triage for common failures.
 - **[Contributing guide](CONTRIBUTING.md)** - standards for changes and pull requests.
+
+---
 
 ## ⏱️ What to Expect
 

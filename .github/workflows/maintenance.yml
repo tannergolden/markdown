@@ -1,7 +1,8 @@
 # Installed from tannergolden/standards. Edit freely: this file is YOURS.
 #
-# Scheduled housekeeping, in one file: the weekly prune of workflow runs and
-# stale deployments, and the draft-release cleanup.
+# Scheduled housekeeping, in one file: the weekly prune of stale
+# deployments, and the draft-release cleanup. Workflow runs are pruned by
+# prune-runs.yml instead.
 #
 # The prune still checks WHICH cron fired via `github.event.schedule`, so
 # adding a second schedule later cannot silently start running it.
@@ -19,7 +20,7 @@ name: '🧹 Maintenance'
 
 on:
   schedule:
-    - cron: '0 6 * * 1' # weekly: prune runs and deployments
+    - cron: '0 6 * * 1' # weekly: prune stale deployments
   workflow_dispatch:
     inputs:
       task:
@@ -55,10 +56,10 @@ permissions: {}
 
 jobs:
   prune:
-    # Inert in a template repository, live in every repository generated
-    # from one. `is_template` is true only in the template itself, which
-    # is the same signal init-template.yml guards on.
-    if: ${{ !github.event.repository.is_template && (github.event.schedule == '0 6 * * 1' || (github.event_name == 'workflow_dispatch' && inputs.task == 'prune')) }}
+    # Inert in the golden path template, and live in every other
+    # repository, a template derived from it included: `is_template` alone
+    # is true there too, so the guard also names it.
+    if: ${{ !(github.event.repository.is_template && github.event.repository.name == 'path') && (github.event.schedule == '0 6 * * 1' || (github.event_name == 'workflow_dispatch' && inputs.task == 'prune')) }}
     permissions:
       actions: write # ceiling for the runs job, which this caller turns off
       contents: read # read the recent commit list for the protection window
@@ -74,9 +75,9 @@ jobs:
     # DISPATCH-ONLY, DELIBERATELY. This deletes releases, and no schedule
     # can reach it: the condition names the dispatch and the task.
     #
-    # Inert in a template repository, live in every repository generated
-    # from one.
-    if: ${{ !github.event.repository.is_template && github.event_name == 'workflow_dispatch' && inputs.task == 'prune-drafts' }}
+    # Inert in the golden path template, and live in every other
+    # repository, a template derived from it included.
+    if: ${{ !(github.event.repository.is_template && github.event.repository.name == 'path') && github.event_name == 'workflow_dispatch' && inputs.task == 'prune-drafts' }}
     permissions:
       contents: write # deleting releases requires write
     uses: tannergolden/standards/.github/workflows/prune-drafts.yml@v1

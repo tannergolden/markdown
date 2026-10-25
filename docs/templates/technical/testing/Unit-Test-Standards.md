@@ -62,7 +62,7 @@ Standardizing the structure and language of tests.
 
 ## 🧱 4. Execution Pattern (AAA)
 
-Utilizing a consistent structure for test logic.
+A consistent structure for test logic.
 
 ```javascript
 /* 1. Arrange (Given) */
@@ -109,6 +109,6 @@ Ensuring a healthy, high-confidence suite.
 
 <br />
 
-Built with ❤️ by the Engineering Team. Distributed under the MIT License.
+Built with ❤️ by the Engineering Team. Distributed under the terms in [LICENSE](/LICENSE).
 
 </div>

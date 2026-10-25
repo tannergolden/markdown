@@ -22,9 +22,9 @@ _Identity-first. Least privilege. Secure-by-default._
 
 We treat authentication and authorization as foundational infrastructure. Our goal is to provide a seamless user experience while ensuring that every request is strictly verified and authorized according to the principle of least privilege.
 
-- **Identity Integrity**: robust verification of user and service identities.
+- **Identity Integrity**: strong verification of user and service identities.
 - **Granular Control**: Policy-driven access control at the resource level.
-- **Continuous Auditing**: Comprehensive logging of security-sensitive events.
+- **Continuous Auditing**: Complete logging of security-sensitive events.
 
 ---
 
@@ -92,6 +92,6 @@ Maintaining a traceable record of security-critical actions.
 
 <br />
 
-Built with ❤️ by the Engineering Team. Distributed under the MIT License.
+Built with ❤️ by the Engineering Team. Distributed under the terms in [LICENSE](/LICENSE).
 
 </div>

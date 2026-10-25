@@ -39,6 +39,9 @@ on:
       - '🔬 Verify Stub Ceilings'
       - '🧹 Prune Run History'
       - '🚀 Preview Deploy'
+      # The weekly supply-chain score. A failure here is a broken publish or
+      # a broken upload, and nothing else would ever mention it.
+      - '🛡️ OpenSSF Scorecard'
       # Once a quarter: the measurement the trophies' thresholds are pinned to.
       - '📐 Calibrate'
       # This repository's own page, drawn daily by the stub every page copies,
@@ -52,6 +55,11 @@ on:
     # Only a run on a branch that escalates starts one here. The alert acts
     # on Development alone (see `branches` below), so a run on any other
     # branch would start one that does nothing. Widen both together.
+    #
+    # ⚠️ THIS FILTER NAMES THE DEFAULT BRANCH, as every stub's push trigger
+    # does. A trigger filter cannot be resolved at run time, so if you rename
+    # Development, rename it here and in each `push:` too, or the alerts stop
+    # without a word.
     branches: [Development]
 
 concurrency:
@@ -75,7 +83,7 @@ permissions: {}
 
 jobs:
   alert:
-    if: ${{ !github.event.repository.is_template }}
+    if: ${{ !(github.event.repository.is_template && github.event.repository.name == 'path') }}
     permissions:
       issues: write # open the escalation issue, and close it on recovery
     uses: tannergolden/standards/.github/workflows/ci-failure-alert.yml@v1

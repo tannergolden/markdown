@@ -4,7 +4,7 @@ This template becomes the body of your pull request. Fill in every section
 mark it N/A.
 - Title: Conventional Commit - <type>(<scope>): summary. The squash commit
   inherits it and feeds the changelog, so make it accurate.
-- Branch: a short-lived <type>/<topic> (feat/*, fix/*, docs/*) into Development.
+- Branch: a short-lived <type>/<topic> (feat/*, bugfix/*, docs/*) into Development.
 - Scope: one intent. Aim for under 300 lines and 10 files; the size labeler
   tags `size: large` past 200 changed lines and `size: extra large` past 500.
 - Open as a Draft for early feedback; mark Ready for Review once CI is green.
@@ -15,6 +15,7 @@ mark it N/A.
 
 - **What changed** (2-4 sentences):
 - **Why** (the problem it solves; link the issue / ADR / discussion):
+- **AI assistance** (which parts an AI drafted, if any; you still sign off for all of it):
 
 ## 🎯 Type
 
@@ -76,7 +77,8 @@ Reviewer rubric (https://github.com/tannergolden/standards/blob/Development/docs
 - Blocking: Correctness (edge cases + requirement met), Security (secrets,
   least privilege), Testability (coverage matches intent).
 - High: Readability. Medium: Parity with established patterns.
-- Merge needs 🧪 Lint, Test & Build, 🔍 Scan for Secrets, and ✍️ DCO Sign-Off green.
+- Merge needs 🧪 Lint, Test & Build, 📦 Dependency Review, 🔍 Scan for Secrets,
+  and ✍️ DCO Sign-Off green.
 - Tag feedback by intent: [BLOCKER] / [SUGGESTION] / [NIT] / [QUESTION].
 -->
 

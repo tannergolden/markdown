@@ -12,7 +12,7 @@ type: template
 
 **Setting up the frontend development environment.**
 
-_Deterministic environments. Parity-first. Streamlined onboarding._
+_Deterministic environments. Parity-first. Fast onboarding._
 
 </div>
 
@@ -99,6 +99,6 @@ Transforming source code into production-grade artifacts.
 
 <br />
 
-Built with ❤️ by the Engineering Team. Distributed under the MIT License.
+Built with ❤️ by the Engineering Team. Distributed under the terms in [LICENSE](/LICENSE).
 
 </div>

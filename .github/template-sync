@@ -12,6 +12,11 @@
 # pattern like `!/docs/**` to stop a whole folder - go under "Your rules" at
 # the end, and win over everything above them. Each sync redraws this file
 # from the template's latest list and keeps every choice you made in it.
+#
+# To keep your own lines in one file and still take the template's other
+# changes to it, write a note under "Your rules" naming it, such as
+# `# keep mine: /.github/workflows/checks.yml`. Where you and the template
+# changed the same lines, yours then stand.
 
 # --- Kept current -------------------------------------------------------------
 /.devcontainer/README.md
@@ -21,6 +26,7 @@
 /.env.example
 /.gitattributes
 
+/.github/ACCESSIBILITY.md
 /.github/CODE_OF_CONDUCT.md
 /.github/CONTRIBUTING.md
 /.github/DISCUSSION_TEMPLATE/README.md
@@ -29,7 +35,6 @@
 /.github/DISCUSSION_TEMPLATE/community.yaml
 /.github/DISCUSSION_TEMPLATE/ideas.yaml
 /.github/DISCUSSION_TEMPLATE/internationalization-i18n.yaml
-/.github/DISCUSSION_TEMPLATE/polls.yaml
 /.github/DISCUSSION_TEMPLATE/q-a.yaml
 /.github/DISCUSSION_TEMPLATE/roadmap.yaml
 /.github/DISCUSSION_TEMPLATE/showcase.yaml
@@ -42,15 +47,22 @@
 /.github/ISSUE_TEMPLATE/Feedback-Report.yaml
 /.github/ISSUE_TEMPLATE/Performance-Report.yaml
 /.github/ISSUE_TEMPLATE/README.md
-/.github/ISSUE_TEMPLATE/Vulnerability-Report.yaml
+#/.github/ISSUE_TEMPLATE/Vulnerability-Report.yaml
 /.github/ISSUE_TEMPLATE/config.yml
 /.github/SECURITY.md
 /.github/SUPPORT.md
+/.github/VULNERABILITY_REPORT.yml
+/.github/commit-template.txt
 /.github/dependabot.yml
 /.github/pull_request_template.md
 /.github/release.yml
 /.github/scripts/README.md
+/.github/scripts/hooks/README.md
+/.github/scripts/hooks/commit-msg
+/.github/scripts/hooks/pre-commit
+/.github/scripts/requirements.txt
 /.github/scripts/test_gitignore.py
+/.github/scripts/test_hooks.py
 /.github/scripts/test_validate_repository.py
 /.github/scripts/test_verify_stub_ceilings.py
 /.github/scripts/validate-repository.py
@@ -64,11 +76,14 @@
 /.github/workflows/ci-failure-alert.yml
 /.github/workflows/dependabot-automerge.yml
 /.github/workflows/governance.yml
+/.github/workflows/intelligence-sync.yml
 /.github/workflows/lifecycle.yml
 /.github/workflows/maintenance.yml
 /.github/workflows/preview-deploy.yml
 /.github/workflows/prune-runs.yml
 /.github/workflows/release.yml
+/.github/workflows/scorecard.yml
+/.github/workflows/semantic-pr.yml
 /.github/workflows/template-sync.yml
 /.github/workflows/verify-stubs.yml
 
@@ -79,16 +94,38 @@
 /.vscode/extensions.json
 /.vscode/settings.json
 
+/docs/Prompts.md
 /docs/README.md
 /docs/adrs/README.md
+/docs/distribution/README.md
+/docs/introduction/README.md
+/docs/library/README.md
+/docs/operations/README.md
+/docs/references/README.md
+/docs/technical/README.md
 /docs/templates/ADR.md
 /docs/templates/Communication.md
 /docs/templates/Implementation-Plan.md
 /docs/templates/Post-Mortem.md
+/docs/templates/Project-README.md
 /docs/templates/README.md
 /docs/templates/Research-Log.md
+/docs/templates/Runbook.md
 /docs/templates/Technical-Design.md
 /docs/templates/User-Story.md
+/docs/templates/distribution/README.md
+/docs/templates/distribution/Release-Process.md
+/docs/templates/distribution/Release-Verification.md
+/docs/templates/introduction/Getting-Started.md
+/docs/templates/introduction/README.md
+/docs/templates/introduction/Roadmap.md
+/docs/templates/operations/Dependency-Policy.md
+/docs/templates/operations/Incident-Response.md
+/docs/templates/operations/README.md
+/docs/templates/operations/Threat-Model.md
+/docs/templates/references/Glossary.md
+/docs/templates/references/README.md
+/docs/templates/technical/Architecture-Overview.md
 /docs/templates/technical/Packages-&-Workspaces.md
 /docs/templates/technical/README.md
 /docs/templates/technical/Source-Code.md
@@ -117,20 +154,35 @@
 # --- Yours: seeded once, never synced -----------------------------------------
 #/README.md
 #/LICENSE
+#/.git-blame-ignore-revs
 #/.github/CODEOWNERS
 #/.github/FUNDING.yml
 #/.github/actions/**
+#/.github/workflows/cut-release.yml
 #/assets/**
 #/benchmarks/**
+#/docs/adrs/ADR-0001-Record-Architecture-Decisions.md
+#/examples/**
 #/packages/**
 #/src/**
 #/tests/**
 
 # --- Only ever in the template ----------------------------------------------
+# Initialisation deletes each of these from every repository generated from
+# the template.
 #/.github/TEMPLATE_INIT
-#/.github/workflows/cut-release.yml
+#/CHANGELOG.md
 
 # --- Your rules ---------------------------------------------------------------
+# The kit keeps its own lines in these four, and still takes the
+# template's other changes: CONTRIBUTING.md says its game materials take
+# no outside contributions, ci-failure-alert.yml watches the kit's own
+# workflows, docs/README.md lists this project's documents, and the ADR
+# log introduces the kit's own decisions, not the template's first one.
+# keep mine: /.github/CONTRIBUTING.md
+# keep mine: /.github/workflows/ci-failure-alert.yml
+# keep mine: /docs/README.md
+# keep mine: /docs/adrs/README.md
 # technical/ keeps a README that describes the kit's own pages, so the
 # template's, written for any project, never replaces it.
 !/docs/technical/README.md

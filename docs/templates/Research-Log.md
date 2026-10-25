@@ -13,7 +13,7 @@ decision: '[The ADR or record this fed, as a markdown link - or - while it stand
 
 <a name="top"></a>
 
-**The format for a filed research report - the question asked, the evidence gathered claim by claim, the sources it rests on, and the recommendation it supports.**
+**A filed research report: the question, each claim's evidence, and the recommendation.**
 
 _Every claim sourced. Every finding dated. Nothing trusted past its window._
 
@@ -150,6 +150,6 @@ Append a reverification entry in this shape:
 
 <br />
 
-Built with ❤️ by the Engineering Team. Distributed under the MIT License.
+Built with ❤️ by the Engineering Team. Distributed under the terms in [LICENSE](/LICENSE).
 
 </div>
