@@ -47,6 +47,7 @@ draws, and says how to add or remove a pixel theme.
 
 | Entry                                  | Purpose                                                                                    |
 | :------------------------------------- | :----------------------------------------------------------------------------------------- |
+| [`brain/`](brain/)                     | -                                                                                          |
 | [`heaven_and_hell/`](heaven_and_hell/) | Heaven & Hell, a pixel theme: angels by day and demons by night, `theme: heaven-and-hell`. |
 | [`__init__.py`](__init__.py)           | The pixel themes: one world drawn as pixel art, a theme a page keeps all year.             |
 | [`README.md`](README.md)               | This file.                                                                                 |
