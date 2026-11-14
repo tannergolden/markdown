@@ -244,6 +244,26 @@ class Preview(unittest.TestCase):
                 self.assertEqual(run(["preview", "--root", tmp, "--input", f"mode={mode}"])[0], 0)
                 self.assertEqual(run(["check", "--root", tmp, "--input", f"mode={mode}"])[0], 0)
 
+    def test_every_file_a_pixel_set_draws_ends_with_a_newline(self):
+        # A pixel set's canvas ends its drawing at `</svg>`, so a page in brain had banners with no final newline,
+        # which a repository whose checks hold its text files to .editorconfig refused. A holiday's set draws a print's
+        # page around its day, so a print's page met it too.
+        flow = ("elements:\n  flow:\n    kind: schematic\n    boxes:\n      stub: {title: The stub}\n"
+                "      kit: {title: The kit}\n    wires:\n      - [stub, kit, CALLS]\n")
+        for theme, day in (("brain", "2026-11-14"), ("heaven-and-hell", "2026-11-14"), ("medieval", "2026-11-14"),
+                           ("blueprint", "2026-10-31")):
+            with self.subTest(theme=theme, day=day), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                (root / SETTINGS).parent.mkdir()
+                (root / SETTINGS).write_text(f"theme: {theme}\n{flow}", encoding="utf-8")
+                (root / "README.md").write_text("# Page\n\n<!-- markdown:element:flow:start -->\n"
+                                                "<!-- markdown:element:flow:end -->\n", encoding="utf-8")
+                self.assertEqual(run(["preview", "--root", tmp, "--today", day])[0], 0)
+                drawn = sorted((root / "assets").rglob("*.svg"))
+                self.assertLessEqual({"banners", "elements"}, {p.parent.name for p in drawn})
+                self.assertEqual([p.name for p in drawn if not p.read_text(encoding="utf-8").endswith("\n")], [])
+                self.assertEqual(run(["check", "--root", tmp])[0], 0)
+
 
 class TopLink(unittest.TestCase):
     """The footer is always the way back to the top of the README."""

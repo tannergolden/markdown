@@ -156,6 +156,11 @@ def plan_page(page: Page, measured: dict, *, draw: bool = True, was: list[str] =
         result["notes"] += p["notes"]
     else:
         result["hold"].append("trophies/")
+    # Every file ends with a newline, as a text file in a repository does. A pixel set's canvas ends its drawing at
+    # `</svg>`, so a page in a pixel theme, a collection or a holiday's set had banners and elements without one, and
+    # a repository whose checks want a final newline in every text file refused them.
+    result["files"] = {rel: svg + "\n" if svg and not svg.endswith("\n") else svg
+                       for rel, svg in result["files"].items()}
     return result
 
 
