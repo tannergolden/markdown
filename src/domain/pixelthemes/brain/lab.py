@@ -574,10 +574,10 @@ def bolt(rnd, x0, y0, x1, y1, jag=2.0) -> list:
     return trace(pts)
 
 
-def strike(p: Pix, cells, night, L, rnd=None, forks=0, thick=False, halo=True, flash=False):
+def strike(p: Pix, cells, night, L, rnd=None, forks=0, thick=False, flash=False):
     """A bolt's cells drawn as lightning: a white core, a violet glow about it, a fork or two off it, and with
-    `flash` a burst of light where it strikes. By day every bolt is edged in violet all round, so its white reads
-    against the lit wall; by night the dark does that, and only the main bolt glows."""
+    `flash` a burst of light where it strikes. By day the violet edges it all round, so its white reads against the
+    lit wall."""
     core = ARC[6] if night else C["white"]
     if flash and cells:
         ex, ey = cells[-1]
@@ -591,7 +591,7 @@ def strike(p: Pix, cells, night, L, rnd=None, forks=0, thick=False, halo=True, f
     for (x, y) in body:
         p.px(x, y, core, L)
     sides = ((0, 1), (1, 0)) if night else ((0, 1), (1, 0), (0, -1), (-1, 0))
-    for (x, y) in body if halo or not night else ():
+    for (x, y) in body:
         for dx, dy in sides:
             if (x + dx, y + dy) not in body:
                 p.px(x + dx, y + dy, ARC[4] + ":0.6" if night else ARC[3] + ":0.75", L)
@@ -605,8 +605,8 @@ def strike(p: Pix, cells, night, L, rnd=None, forks=0, thick=False, halo=True, f
 
 
 def arcs(p: Pix, cx, cy, r, k, night, motion, toward=None, frames=3):
-    """Lightning leaping off the coil's torus: a few bolts, each shown for its moment in turn, one of them reaching
-    for the jar; the still file keeps the first."""
+    """Lightning leaping off the coil's torus, one bolt at a time, each shown for its moment in turn and reaching for
+    the jar when there is one; the still file keeps the first."""
     if p.lite:
         return
     rnd = random.Random(int(cx * 7 + cy))
@@ -615,13 +615,12 @@ def arcs(p: Pix, cx, cy, r, k, night, motion, toward=None, frames=3):
             "base" if f == 0 else None)
         if L is None:
             continue
-        for j in range(2 if f == 0 else 1):
-            if toward and j == 0:
-                tx, ty = toward[0], toward[1] + rnd.uniform(-3, 3)
-            else:
-                a = rnd.uniform(-2.9, -1.4)
-                ln = rnd.uniform(12, 20) * max(0.7, k)
-                tx, ty = cx + r * math.cos(a) + ln * math.cos(a), cy + r * 0.3 * math.sin(a) + ln * math.sin(a)
-            sx = cx + (r if tx > cx else -r)
-            strike(p, bolt(rnd, sx, cy, tx, max(CEILING + 1, ty), jag=2.4), night, L, rnd, forks=1 if j == 0 else 0,
-                   thick=j == 0, halo=j == 0, flash=j == 0 and toward is not None)
+        if toward:
+            tx, ty = toward[0], toward[1] + rnd.uniform(-3, 3)
+        else:
+            a = rnd.uniform(-2.9, -1.4)
+            ln = rnd.uniform(12, 20) * max(0.7, k)
+            tx, ty = cx + r * math.cos(a) + ln * math.cos(a), cy + r * 0.3 * math.sin(a) + ln * math.sin(a)
+        sx = cx + (r if tx > cx else -r)
+        strike(p, bolt(rnd, sx, cy, tx, max(CEILING + 1, ty), jag=2.4), night, L, rnd, forks=1, thick=True,
+               flash=toward is not None)
