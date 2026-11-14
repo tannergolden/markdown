@@ -40,22 +40,18 @@ type: index
 > [!TIP]
 > **This page is the kit drawing itself.** Its header, the badge row, the
 > schematic, the trophy case and the footer are files the kit drew, in the
-> `blueprint`, from the [same stub](#-one-stub) it asks you to copy, and around
-> each holiday the page wears that holiday's set. **To see profile mode, check
-> out my profile, [@tannergolden](https://github.com/tannergolden).**
+> `blueprint`, from the [same stub](#-one-stub) it asks you to copy. **To see
+> profile mode, check out my profile, [@tannergolden](https://github.com/tannergolden).**
 
 ---
 
-## 💡 What This Is
+## 💡 What It Is
 
-A README's images usually come from someone else's server: a stats card, a
-badge service, a banner generator. Every one is a request on every page view,
-and a dependency on that server's uptime for your page to render. A header
-typed by hand is out of date the day your description changes.
-
-This kit draws them instead, and keeps them current. One scheduled run
-measures the page over GitHub's API and git, draws every image as an SVG,
-writes the README's blocks, and commits the lot once:
+A README's images usually come from someone else's server, one request on
+every page view, and a header typed by hand is out of date the day your
+description changes. This kit draws them instead, and keeps them current: one
+scheduled run measures the page over GitHub's API and git, draws every image
+as an SVG, writes the README's blocks, and commits the lot once.
 
 | Part         | What it draws                                                                           |
 | :----------- | :-------------------------------------------------------------------------------------- |
@@ -65,47 +61,23 @@ writes the README's blocks, and commits the lot once:
 | **Trophies** | The trophy case: eight core trophies with their tiers, and a hundred achievements.      |
 
 Every image is a **committed file**, served by GitHub with the rest of the
-repository: up as long as the repository is, with nothing to rate-limit and no
-third party in the path. The only thing on a schedule is the refresh, and a
-refresh that is late or skipped changes nothing a reader sees.
+repository, so nothing rate-limits it and no third party sits in the path. A
+page is a person's profile or a repository.
 
-A page is a person's profile or a repository. Organization pages are next.
-
----
-
-## 👤 The Example: A Profile
-
-**To see how profile mode looks, check out my profile,
-[@tannergolden](https://github.com/tannergolden).** Its repository,
-[**tannergolden/tannergolden**](https://github.com/tannergolden/tannergolden),
-is the example of all of it on a profile repository. Its README is drawn by
-this kit every night at midnight EST, in profile mode, in the medieval
-collection's Illuminated all year with Capricorn's roundel on every header,
-with the holidays on, from one stub and one settings file:
-
-| Part         | On the profile                                                                                                                                                                                                                |
-| :----------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Banners**  | A header read from GitHub, the name and the bio, with a motto, a note and six figures; a footer with its closing words, and four buttons under it.                                                                            |
-| **Badges**   | Three static badges, and two live ones the run measures: whether the standards pass their own checks, and how long ago the last commit was.                                                                                   |
-| **Elements** | A schematic of how its repositories fit together, written by hand, and placards for the two latest releases and two good first issues, which its own scripts rewrite weekly.                                                  |
-| **Games**    | Chess, Checkers, Pentago and Tic-Tac, @tannergolden against GitHub, played live: each board after every move, every legal move a link that plays it, and the Hall of Fame with its leaderboard, drawn for this profile alone. |
-| **Trophies** | The case in profile mode: five core trophies in one row, the level and next-up cards over them, and the achievements under them.                                                                                              |
-
-Its stub is the one below with `mode: profile`, `theme: medieval-illuminated`,
-`sign: capricorn` and `holidays: 'true'`, and
-[its settings](https://github.com/tannergolden/tannergolden/blob/Development/.github/markdown.yaml)
-set up every part, with a comment on each. This README is the other example:
-this repository's own page, in repository mode, in the `blueprint`, with the
-holidays on and its trophy case over the footer, drawn every night by the
-[stub below](#-one-stub), exactly as yours would be.
+- **Status**: Active, on the `v1` line.
 
 ---
 
-## 🚀 One Stub
+## 🚀 Quick Start
+
+### 📄 One Stub
 
 Your repository holds one small workflow that names the schedule. The
 checkout, the measurement, the drawing and the commit all happen here, so a fix
 lands once and reaches every README pinned to `v1`.
+
+<details>
+<summary>The whole stub, <code>.github/workflows/markdown.yml</code></summary>
 
 ```yaml
 # .github/workflows/markdown.yml
@@ -113,10 +85,10 @@ name: '📝 Markdown'
 
 on:
   schedule:
-    - cron: '0 0 * * *'   # every night at midnight UTC
+    - cron: '0 0 * * *' # every night at midnight UTC
   workflow_dispatch:
 
-concurrency:              # one drawing at a time; the next waits its turn
+concurrency: # one drawing at a time; the next waits its turn
   group: markdown-${{ github.ref }}
   cancel-in-progress: false
 
@@ -125,46 +97,28 @@ permissions: {}
 jobs:
   markdown:
     permissions:
-      contents: write        # the images, the README's blocks and the lock
-      pull-requests: write   # only used with commit: pr
+      contents: write # the images, the README's blocks and the lock
+      pull-requests: write # only used with commit: pr
     uses: tannergolden/markdown/.github/workflows/markdown.yml@v1
     secrets:
-      MARKDOWN_TOKEN: ${{ secrets.MARKDOWN_TOKEN }}   # the one secret the kit reads
+      MARKDOWN_TOKEN: ${{ secrets.MARKDOWN_TOKEN }} # the one secret the kit reads
 ```
 
-That is the whole setup. With no settings at all, the page gets a header and a
-footer read from GitHub and a trophy case, in the `standard` theme, with the
-holidays and a repository's birthday on. Two runs never draw at once: one that
-starts while another is drawing waits for it, then draws the page as it stands
-by then, so a redraw started straight after another is queued rather than
-failing to push. And the kit is handed `MARKDOWN_TOKEN` alone, never the
-repository's other secrets. The stub can set the choices made most often:
+</details>
 
-| Input           | Default          | What it does                                                                              |
-| :-------------- | :--------------- | :---------------------------------------------------------------------------------------- |
-| `mode`          | (guessed)        | `profile` or `repository`. A repository named after its owner is a profile.               |
-| `theme`         | `standard`       | `standard`, a print, `rainbowprint`, a print of your own, a pixel theme, or a collection. |
-| `sign`          | (the month's)    | The sign of the zodiac a collection's headers carry all year, as `leo`.                   |
-| `holidays`      | `true`           | `'false'` keeps the holiday sets away.                                                    |
-| `holiday-days`  | `3`              | How long each holiday's set is up, 3 to 7 days.                                           |
-| `birthday`      | `true`           | `'false'` keeps the Birthday set away; on a profile, `'03-14'` names it.                  |
-| `check`         | `false`          | Only check that the committed page is current. See below.                                 |
-| `commit`        | `push`           | `pr` opens or updates one pull request instead of pushing.                                |
-| `commit-branch` | `chore/markdown` | The branch that pull request rides on.                                                    |
-
-Everything else a page can set lives in `.github/markdown.yaml`, and
+With no settings at all, the page gets a header and a footer read from GitHub
+and a trophy case, in the `standard` theme. The stub sets the choices made
+most often, such as `mode` (`profile` or `repository`), `theme`, `holidays`,
+`check` and `commit` (`push`, or `pr` for a pull request); everything else
+lives in `.github/markdown.yaml`, and
 [`docs/references/Settings.md`](docs/references/Settings.md) has every key.
-
-> [!TIP]
-> **`MARKDOWN_TOKEN` is optional.** `GITHUB_TOKEN` reads everything public, so
-> a public page needs nothing. A read-only personal token saved as
-> `MARKDOWN_TOKEN` is read instead when it is there, which also lets a profile
-> count private contributions (`trophies: private: true`). The stub hands the
-> kit that one secret by name; where it is not set, the run uses `GITHUB_TOKEN`.
+`MARKDOWN_TOKEN` is optional: `GITHUB_TOKEN` reads everything public.
 
 ---
 
-## 🧭 How A Run Draws A Page
+## 📖 Using It
+
+### 🧭 How A Run Draws A Page
 
 <!-- markdown:element:how-it-runs:start -->
 <picture>
@@ -176,96 +130,22 @@ Everything else a page can set lives in `.github/markdown.yaml`, and
 <!-- markdown:element:how-it-runs:end -->
 
 Each run measures everything again, so a run GitHub delays or drops loses
-nothing: the next one catches up. A day on which nothing the page shows has
-moved writes nothing at all. When something did move, the commit says what:
+nothing, and a day on which nothing moved writes nothing. The kit owns only
+what sits between its markers in the README, so every word of yours around
+them stays yours. On a first run the header goes at the top, the badges under
+it, the trophy case over the footer and the footer at the foot; an element
+goes where you put its markers.
 
-```text
-chore(markdown): 🪧 redraw with release v1.4.0 and 212 stars
-
-Measured octo/drift on 2026-10-03. The header reads DRIFT, with project
-octo/drift, release v1.4.0, 212 stars, 18 forks, 3 open issues, language
-Rust and license MIT. The footer dates the last change 2026-10-01.
-
-Changed since the last drawing: release v1.4.0 (was v1.3.2) and 212
-stars (was 198).
-```
-
-The kit owns only what sits between its markers in the README, so every word
-of yours around them stays yours. On a first run the header goes at the top,
-the badges under it, the trophy case over the footer and the footer at the
-foot; an element goes where you put its markers.
-
----
-
-## 🎨 One Theme For The Whole Page
+### 🎨 One Theme For The Whole Page
 
 One setting colours everything, so the header, the badges, the body and the
-trophy case read as one family:
-
-- **`standard`**, the default: the original badges' own look at the size of a
-  header. Its header opens with one badge the width of the page, the title in
-  its black and the release in its accent, and its figures stand along the foot
-  as the badges a README would carry for them. Every letter holds 4.5:1 against
-  its ground.
-- **Eleven prints**, the colours a drawing is reproduced in: `redprint`
-  through `pinkprint` along the spectrum, `blueprint` among them, then
-  `brownprint` and `blackprint`. Each draws the page as a drafting sheet, its
-  lines on white by day and its sheet by night.
-- **`rainbowprint`** moves to the next colour of the spectrum each time
-  something the page shows changes.
-- **Your own prints**, a name and three colours in the settings.
-- **Pixel themes**, one world drawn as pixel art and kept all year.
-  `heaven-and-hell` is heaven in GitHub's light mode and hell in its dark mode:
-  the pearly gates and an archangel over a sea of cloud by day, and by night
-  the gates of hell and a demon over a river of lava, each thing of heaven with
-  its fallen twin standing where it stood. `brain` is a living brain kept in a
-  glass jar in a laboratory, wired to the machines it works with: its neurons
-  fire along its folds, and its face on the console's screen goes from focused
-  to happy, in love, struck by an idea and cool in shades. By night the lab's
-  lamps go out and the brain lights the room. See
-  [Pixel Themes](docs/references/Settings.md#-pixel-themes).
-- **Collections**, one subject drawn as pixel art twelve ways, a design for
-  each month. `medieval` draws the page in the month's design and changes on
-  the first of every month: a longship under the northern lights in January,
-  stained glass at Easter, the jousts of May, the Bayeux charge in October,
-  a dragon on its hoard in December. `matrix` draws twelve worlds of the
-  Matrix: the code itself falling down a terminal's glass in January, the two
-  pills in February's storm, the jump across the summer skyline, the fields
-  where the machines grow us at Halloween, the room of screens where the year
-  is reviewed in December. Naming one design, like `medieval-forge` or
-  `matrix-rain`, keeps it all year. See
-  [Collections](docs/references/Settings.md#-collections).
-
-[Themes and Sets](docs/technical/Themes.md) defines every kind of theme and set
-the kit draws, the words people use for each and how to add or remove one, and
+trophy case read as one family: `standard`, the default; eleven prints, from
+`redprint` to `blackprint`, and `rainbowprint`; your own prints; pixel themes
+such as `heaven-and-hell` and `brain`; and collections such as `medieval` and
+`matrix`, a design for each month. Around each holiday its set takes the page
+for a few days, and on the page's birthday the Birthday set does.
+[Themes and Sets](docs/technical/Themes.md) defines each kind, and
 `markdown-kit themes` lists every theme a page can pick.
-
-The header, the footer and the body each come as a **day** file and a
-**dark** file, and the README shows one through a `<picture>` that follows the
-reader's theme, with a still file for reduced motion and a narrow one for a
-phone.
-
-Around each holiday its own set takes over the page, then hands it back: New
-Year's Day, Valentine's Day, Juneteenth, Independence Day, Halloween,
-Thanksgiving and Christmas. A set redraws the banners, the badges, the
-elements and the trophy case as pixel art, in the same files.
-
-On the page's birthday the Birthday set takes it for the day, over a
-holiday's set too: a drip cake with its candles lit on every header,
-presents and a piñata, and HAPPY BIRTHDAY spelled across the bunting. A
-repository's birthday is the day GitHub created it, and its cake carries
-its age in gold number candles. A person gives theirs in the settings,
-`birthday: 03-14`, or with the year, `birthday: 1990-03-14`, for their
-age. `birthday: false` keeps it away. See
-[Birthday](docs/references/Settings.md#-birthday).
-
-The trophy case wears the theme too, and keeps its style, its sizes and its
-words: `standard` strikes its cups, crests, medallions, crystals and plaques
-in metal and enamel, a print draws each card as a sheet on its drafting paper,
-drawn further as the tier rises, and a holiday's set, a pixel theme or a
-collection's design strikes it in pixels, on its own paper and in its own frame.
-`look: standard` under [`trophies:`](docs/references/Settings.md#-trophies) keeps the
-standard look in every theme.
 
 <table>
   <tr>
@@ -331,141 +211,17 @@ standard look in every theme.
   </tr>
 </table>
 
-**[See every theme, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html)**:
-the theme-sets page shows each theme's headers, phone files, footers, elements,
-badges and trophy case on GitHub's light and dark grounds, at the size a README
-shows them.
-The page is [`docs/references/themes/index.html`](docs/references/themes/index.html) in this
-repository, and the link opens it through raw.githack.com, because GitHub
-shows an HTML file as its source.
+**[See every theme, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html)**,
+on GitHub's light and dark grounds, at the size a README shows them.
 
----
+### ♟️ The Games On @tannergolden's Profile
 
-## ♟️ The Games On @tannergolden's Profile
-
-> [!IMPORTANT]
-> **The games' designs are exclusive to
-> [@tannergolden's profile README](https://github.com/tannergolden).** The kit
-> draws them for that one page and nowhere else: any other page whose settings
-> name them is told so. **[See the games live on @tannergolden's
-> profile](https://github.com/tannergolden)**, where anyone on GitHub can play
-> the next move.
-
-The kit draws four games for one page, @tannergolden, the house, against
-everyone else on GitHub, from the deepest to the quickest:
-
-| Game     | Board                                                            | The house plays | GitHub plays | Who opens                                            |
-| :------- | :--------------------------------------------------------------- | :-------------- | :----------- | :--------------------------------------------------- |
-| Chess    | 8 × 8 squares, about 10⁴³ to 10⁵⁰ positions                      | White           | Black        | The house                                            |
-| Checkers | The 32 dark squares of 8 × 8, about 5 × 10²⁰ positions           | White           | Black        | GitHub, as Black moves first                         |
-| Pentago  | 6 × 6 holes in four quarters that turn, about 3 × 10¹⁵ positions | White           | Black        | The side the Arbiter draws once both ghosts are down |
-| Tic-Tac  | Nine boards of 3 × 3 squares, three a side                       | X               | O            | The side the Arbiter draws once both ghosts are down |
-
-A player picks a move under a board on the profile, its link opens a
-ready-made issue in [tannergolden/play](https://github.com/tannergolden/play),
-and the profile's own engine plays it and has the kit draw the page again.
-
-**Who plays what, and who opens.** Each player's colour is fixed: the house
-always plays White in Chess, Checkers and Pentago, and X in Tic-Tac, and GitHub
-the other side. Only who moves first can change. The house opens Chess, as
-White does. Checkers follows American checkers, where Black moves first, so
-GitHub opens it. In the other two the first player has a far higher chance of
-winning, so **Pentago and Tic-Tac are played under the Ghost Rule**: before the
-first move each side places one ghost, a hole or a square that is nobody's, the
-Arbiter drawing the side that places first, and once both ghosts are down the
-Arbiter draws the side that moves first, so neither side is favoured. A side
-that goes a week without placing its ghost gets one at random.
-
-- **Pentago is solved**: the side that sets the first marble wins with perfect
-  play (Geoffrey Irving, 2014).
-- **Tic-Tac is Ultimate Tic-Tac-Toe**, nine games of Tic-Tac-Toe as one, and it
-  favours its first player heavily too.
-- **Checkers** was weakly solved as a draw in 2007, and its first move's edge is
-  small; **in Chess**, White scores about 55% in master play. Neither needs the
-  Ghost Rule.
-
-These reasons belong to the kit's documentation and the play repository's ADR
-alone: a board and its note say only who places and who opens.
-
-**The winning board.** Every finished game, chess's included, keeps its final
-board up for two days before a fresh one comes by itself: the final position,
-who won and how on the turn's plate, or that it was drawn, the winning line
-where the game has one, and in place of the count a countdown to the moment the
-fresh board comes, its dial drawn in as the file opens. A README runs nothing,
-so the countdown says how long was left as of its drawing, and it is redrawn
-only when the page is drawn for something else, never in a commit of its own.
-Nothing can be played on a finished board, so its README block is the board and
-the note, with no move under it.
-
-**The replay.** A game won by a person's own move is played again: the kit's
-`replay` command draws, from the facts the profile's engine writes, the board
-in its frame playing every move with the README's own motion, the panel
-following the game move by move, and a finale of the winner ringed and the
-losing side faded, all on one loop, by day and by dark. Each player is a
-halftone of their avatar, dots in the print's ink and no image in the file, or
-their initials, and an account that is gone is an empty dial with no name. A
-replay is drawn in the page's print, and in blackprint when the page's theme
-has no replay look of its own. tannergolden/play keeps each game's newest 25
-and posts each on its winning move's issue.
-
-**Nothing on a board helps a player choose.** A sheet and its README say what
-has happened and what the rules make the side to move do, a king in check or a
-jump to take, and never what a move would do: no square or hole a side could win
-on next, no word of what perfect play makes of a game, no call to block, and no
-`+` or `#` on a move still to play. Every move is named for what it is, never
-for whether it is any good.
-
-Like a theme, each game is a design of its own, drawn in every look the page
-can take, and the four are one family: the same sheet and band, the same panel
-beside the board a section at a time (the two sides, whose turn it is and
-until when, the last move in notation and in words, what the game keeps count
-of, and the score sheet), and the same motion as each file opens:
-
-| Game         | A move is written                                                                                                                                         | The panel counts                                                              | As the file opens                                                                                                                                              |
-| :----------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Chess**    | In SAN: `Nf3`, `exd5`, `O-O`, and `Qxf7#` once played                                                                                                     | What each side has taken, and the lead                                        | The last piece comes in from its square, a knight leaping and a castling king bringing its rook round, and a king in check is marked                           |
-| **Checkers** | As checkers writes it, its 32 dark squares numbered: `11-15` a step, `22x15x8` a jump                                                                     | The men each side has taken, and the kings each has made                      | The last man slides, or hops each man it takes, its path drawn in behind it, and is crowned if it lands on the far row                                         |
-| **Pentago**  | Its hole, the quarter it turned and which way: `e4-ur-cw`, drawn `e4 ↻ UR`; a marble that makes five on its own, its hole alone: `e4#`; a ghost, its hole | Each side's marbles left, a rack of seventeen, and where the ghosts stand now | The last marble is set in its hole and its quarter turns its quarter turn, an arrow drawn round it the way it went, and a won five are ringed and joined       |
-| **Tic-Tac**  | Its mark and its square, named as chess names squares: `Xe5`, and `Xe5#` once it has won; a ghost, its square                                             | The boards each side has won, and where the ghosts stand                      | The last mark draws itself stroke by stroke, a board it wins is struck and its winner's mark drawn across it, and the board the next mark goes to is bracketed |
-
-- **Every tone**: the standard theme's enamel, chess's own board and lit pieces
-  under one lamp, the last move marked amber and whatever the rules make the
-  side to move answer (a king in check, a man that must jump) glowing red; the
-  house's pieces are the light ones in every game, White's men and marbles and
-  the X, and GitHub's the dark, Black's and the O; Tic-Tac's squares and bars
-  are chess's light and dark squares, Pentago's quarters are the theme's cobalt,
-  and Checkers plays on chess's own board, White at the foot as chess's White
-  is; a ghost is the board's own material, ringed or edged in phantom lines. Or
-  a print's drawing on drafting paper: poché for the dark squares, the bars and
-  the quarters, line shading for the light pieces, phantom lines where a piece
-  stood and a revision cloud round whatever must be answered. Or, while a
-  holiday's set, a pixel theme or a collection's design is up, its pixels: its paper, frame and
-  lettering, a board built of its own world's stuff, a ship's planks, a
-  cathedral's leaded glass or a mosaic's tesserae, in a frame of its own,
-  Tic-Tac's nine boards a chequer of it and Pentago's plates lying in a bed
-  inside the frame, and the Hall's podium cut from it too, crenellated for a
-  castle or tied with ribbon for Christmas; the same hand-drawn ivory and ebony
-  pieces in every set, what the rules point to and what wins in the trophies'
-  gold, and a collection's words in its hand's two inks. A set draws a game
-  whole, or leaves it in the page's own look.
-- **The Hall of Fame** of all four games: the series between the house and
-  GitHub, each game on its own row under the four together, in the README's
-  order and each named by its two pieces, the house's first; then a podium of
-  the three leading winners across all four and two more beside it, each with
-  their wins by game and named as their GitHub profile names them. Under it in
-  the README, a badge for each winner, the leader's glinting, and the
-  leaderboard folded shut: a column of wins for each game, then moves, then
-  wins in all. A win counts only for the player who makes the winning move,
-  and nothing the Arbiter plays counts for anyone.
-
-Each sheet comes as a **day** file and a **dark** file, wide and on a phone,
-moving as it opens and still for reduced motion, like a header. Round the
-pictures the README carries each game's words, since an image cannot be
-clicked square by square: every legal move with a link that opens its
-ready-made issue, folded shut under one line saying whose turn it is, signed
-with what that side plays (♔ or ♚, ⛀ or ⛂, ⚪ or ⚫, ❌ or ⭕), and past ten
-moves sorted into groups, each folded shut too. Chess's board is never folded,
-and each of the other three games is folded shut under its name.
+The kit also draws four games, Chess, Checkers, Pentago and Tic-Tac, for one
+page alone: [@tannergolden's profile](https://github.com/tannergolden), where
+anyone on GitHub can play the next move through
+[tannergolden/play](https://github.com/tannergolden/play). Any other page whose
+settings name them is told so. Their designs are proprietary, under
+[`LICENSE-GAMES`](LICENSE-GAMES).
 
 <table>
   <tr>
@@ -530,23 +286,11 @@ and each of the other three games is folded shut under its name.
   </tr>
 </table>
 
-**[See the games in every tone, drawn by the kit](https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#chess)**:
-the theme-sets page shows each game's board and its phone files, and the Hall
-of Fame of all four with its phone files and the winners' badges, in the
-standard theme and every print, every holiday's set, the Birthday set, every
-pixel theme and every month of every collection, each from a sample whose
-players are as fictional as driftmark's contributors. What the games' settings hold is in
-[Settings](docs/references/Settings.md#-elements); the games themselves are
-[live on @tannergolden's profile](https://github.com/tannergolden).
+### 🔍 Checking A Page
 
----
-
-## 🔍 Checking A Page
-
-The lock, `.github/markdown.lock.json`, keeps what each run measured. So the
-committed page can be drawn again with no token and no network, and compared
-with what is committed: a hand-edited image, a missing one, a README block that
-drifted, or settings changed without a run all show up. For pull-request CI:
+The lock, `.github/markdown.lock.json`, keeps what each run measured, so the
+committed page can be drawn again with no token and no network and compared
+with what is committed. For pull-request CI:
 
 ```yaml
 on: pull_request
@@ -561,25 +305,19 @@ jobs:
       check: true
 ```
 
----
-
-## 🖥️ On Your Own Machine
+### 🖥️ On Your Own Machine
 
 The kit is standard-library Python, 3.10 or later, with nothing to install:
 
 ```bash
 python3 src/markdown-kit.py preview --root /tmp/page       # a sample page, the way a run draws it
-python3 src/markdown-kit.py settings --root .              # a repository's settings, every default filled in
 python3 src/markdown-kit.py check --root .                 # is the committed page current?
-python3 src/markdown-kit.py set --root . status=Paused     # write a badge's value into the settings
 python3 src/markdown-kit.py themes                         # every theme a page can pick, by kind
-python3 src/markdown-kit.py holidays --year 2026 --days 5  # every holiday's window
-python3 src/markdown-kit.py collections                    # each collection's design for every month
 ```
 
-`python3 src/markdown-kit.py --help` lists the rest: `run`, `render`,
-`measure`, `lint`, `catalogue`, `calibrate`, `palette`, `icons`, `version`, and
-`replay`, which draws a finished game's replay for @tannergolden's profile.
+`python3 src/markdown-kit.py --help` lists the rest, and `make lint test` runs
+everything CI runs. [`.github/workflows/README.md`](.github/workflows/README.md)
+logs every workflow here.
 
 ---
 
@@ -597,90 +335,33 @@ python3 src/markdown-kit.py collections                    # each collection's d
 | `docs/references/themes/`        | The theme-sets page: every theme as the kit draws it, from `make themes`                                                           |
 | `tests/`                         | Unit, integration and end-to-end suites, and the fixtures they check against                                                       |
 
-`make lint test` runs everything CI runs, and `make draw` draws a sample profile
-and a sample repository page into `preview/`, which git leaves alone.
-`make themes` draws every theme into `docs/references/themes`, which is committed, so run
-it after changing a theme.
-[`docs/technical/Source-Code.md`](docs/technical/Source-Code.md) lays out the
-layers and the rules between them.
+---
+
+## 🤝 Getting Involved
+
+- **Questions**: [`SUPPORT.md`](/.github/SUPPORT.md) says where to ask.
+- **A bug or an idea**: open an issue from one of the forms.
+- **A change**: [`CONTRIBUTING.md`](/.github/CONTRIBUTING.md) explains how,
+  every change follows the
+  [standards](https://github.com/tannergolden/standards/blob/Development/docs/README.md)
+  by link, and every contribution follows the
+  [code of conduct](/.github/CODE_OF_CONDUCT.md).
+- **Who decides**: [`GOVERNANCE.md`](/.github/GOVERNANCE.md) names the
+  maintainers.
 
 ---
 
-## 🌿 How The Workflows Work
+## 🛡️ Security
 
-Most workflows here are **triggers**. Their logic lives in
-[`tannergolden/standards`](https://github.com/tannergolden/standards) and is
-pulled in by `uses:`. GitHub only runs a workflow that lives in the repository
-being pushed to, which is why these small files exist here at all. They are
-grouped by what they do, so one push produces one run with every check in it.
-Four are the kit's own: the workflow every page calls, this repository's own
-page, the release, and the calibration. One, `intelligence-sync.yml`, calls
-[`tannergolden/intelligence`](https://github.com/tannergolden/intelligence)
-instead: every Monday it proposes that hub's latest release of the rules for AI
-agents as one pull request.
-
-| Workflow                   | Gives you                                                                |
-| :------------------------- | :----------------------------------------------------------------------- |
-| `markdown.yml`             | The reusable workflow every page's stub calls                            |
-| `own-page.yml`             | This README, drawn every night by the stub above, at `v1`                |
-| `cut-release.yml`          | Cuts `vX.Y.Z` and moves `v1`, by calling the standards                   |
-| `calibrate.yml`            | Measures, each quarter, the repositories the trophies are set against    |
-| `checks.yml`               | The gates: lint/test/build, secret scan, CodeQL, workflow lint           |
-| `governance.yml`           | PR title and DCO checks, onboarding, triage, stale sweep, slash commands |
-| `release.yml`              | Draft notes, publish assets, registries, prune superseded releases       |
-| `maintenance.yml`          | Prunes stale deployments; deletes draft releases on request              |
-| `prune-runs.yml`           | Prunes workflow run history, with its logs and artifacts                 |
-| `lifecycle.yml`            | Claims this repository once; tells you when a new major exists           |
-| `dependabot-automerge.yml` | Approves and queues Dependabot's patch and minor updates                 |
-| `ci-failure-alert.yml`     | Opens an issue when a watched workflow fails, closes it on green         |
-| `apply-standards.yml`      | Dispatch-only. The label taxonomy and branch protection                  |
-| `template-sync.yml`        | Dispatch-only. The template's later fixes, as one pull request           |
-| `auto-format.yml`          | Formats what a push touched                                              |
-| `auto-index.yml`           | Redraws every folder's log after a push, as one pull request             |
-| `preview-deploy.yml`       | Deploys pushes to a preview target, once one is configured               |
-| `verify-stubs.yml`         | Proves every job's permission ceiling matches its called workflow        |
-| `intelligence-sync.yml`    | The universal rules for AI agents in `AGENTS.md`, one pull request each  |
-
-**Do not rename the job ids** `ci` and `secrets` (in `checks.yml`) or `pr`
-(in `governance.yml`). A called workflow reports its checks as
-`<job id> / <job name>`, so branch protection depends on them - the file a
-job lives in does not matter, but its id does.
-
-> [!IMPORTANT]
-> **🎯 Apply Standards needs a token for two of its three jobs.** Applying the
-> label taxonomy needs nothing. **Writing the settings and the rulesets** each
-> need a token with administration write as `ADMIN_TOKEN`. Without it, those
-> jobs stop with a sentence naming the missing token instead of a bare `403`.
->
-> A fine-grained token scoped to your repositories generated from the
-> templates, with **Administration: Read and write** and nothing else, is all
-> it needs. Step-by-step:
-> [Creating the ADMIN_TOKEN](https://github.com/tannergolden/standards/blob/Development/docs/operations/Branch-Protection.md#-creating-the-admin_token).
-> You can skip it entirely by applying the settings and rulesets yourself,
-> where your own rights are already enough.
-
-### Staying current takes no effort
-
-`@v1` is a **moving major tag**, both ways. Every fix in the kit's v1 line
-reaches every README whose stub pins `v1` the next time it runs, and every fix
-in the standards' v1 line reaches the workflows here the moment it is
-published. Breaking changes never arrive that way, because a new major is a
-different tag.
-
-The stubs themselves came from the
-[`tannergolden/path`](https://github.com/tannergolden/path) template, and its
-later fixes arrive whenever you run 🔄 Template Sync, as one pull request
-merged with whatever changed here. [`.github/template-sync`](.github/template-sync)
-lists what it keeps current, and
-[`.github/template-sync.md`](.github/template-sync.md) says how.
+Report a vulnerability privately, never in an issue:
+[`SECURITY.md`](/.github/SECURITY.md) says how, and how fast a fix follows.
 
 ---
 
-## 📚 The Standards
+## ⚖️ Licence
 
-Everything about how to branch, review, release, and secure a repository lives
-in the [Standards Index](https://github.com/tannergolden/standards/blob/Development/docs/README.md).
-This repository follows it **by link**.
+The kit is released under the terms in [LICENSE](/LICENSE). The games'
+materials are not: they are proprietary, under [`LICENSE-GAMES`](LICENSE-GAMES).
 
 ---
 
