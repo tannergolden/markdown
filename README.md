@@ -218,7 +218,11 @@ trophy case read as one family:
   `heaven-and-hell` is heaven in GitHub's light mode and hell in its dark mode:
   the pearly gates and an archangel over a sea of cloud by day, and by night
   the gates of hell and a demon over a river of lava, each thing of heaven with
-  its fallen twin standing where it stood. See
+  its fallen twin standing where it stood. `brain` is a living brain kept in a
+  glass jar in a laboratory, wired to the machines it works with: its neurons
+  fire along its folds, and its face on the console's screen goes from focused
+  to happy, in love, struck by an idea and cool in shades. By night the lab's
+  lamps go out and the brain lights the room. See
   [Pixel Themes](docs/references/Settings.md#-pixel-themes).
 - **Collections**, one subject drawn as pixel art twelve ways, a design for
   each month. `medieval` draws the page in the month's design and changes on
@@ -292,6 +296,16 @@ standard look in every theme.
     <td width="50%" align="center">
       <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#heaven-and-hell"><img src="docs/references/themes/heaven-and-hell/h2-still-dark.svg" alt="The H2 header in Heaven &amp; Hell by night: the demon before a wall of fire" width="100%"></a>
       <br /><sub><code>heaven-and-hell</code> in dark mode</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#brain"><img src="docs/references/themes/brain/h2-still-day.svg" alt="The H2 header in brain by day: the brain in its jar in the lit lab, a Tesla coil beside it" width="100%"></a>
+      <br /><sub><code>brain</code> in light mode</sub>
+    </td>
+    <td width="50%" align="center">
+      <a href="https://raw.githack.com/tannergolden/markdown/Development/docs/references/themes/index.html#brain"><img src="docs/references/themes/brain/h2-still-dark.svg" alt="The H2 header in brain by night: the jar glowing in the dark lab, lightning off the coil" width="100%"></a>
+      <br /><sub><code>brain</code> in dark mode</sub>
     </td>
   </tr>
 </table>

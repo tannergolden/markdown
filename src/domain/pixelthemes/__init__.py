@@ -44,6 +44,11 @@ THEMES = {theme.key: theme for theme in (
     Theme("heaven-and-hell", "Heaven & Hell",
           "Angels by day and demons by night: in GitHub's light mode the page is heaven, and in its dark mode the "
           "same page is hell, each thing of heaven with its fallen twin standing where it stood."),
+    Theme("brain", "brain",
+          "A living brain kept in a glass jar in a laboratory and wired to the machines it works with: by day the "
+          "lab is lit and the brain at work, its neurons firing along its folds and its moods on its console's "
+          "screen; by night the lamps go out and the brain lights the room, its jar glowing and lightning leaping "
+          "off the coil beside it."),
 )}
 
 

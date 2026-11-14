@@ -100,6 +100,7 @@ over the file's.
 | `brownprint`, `blackprint` | The two prints the trade named first after the blueprint.                                                 |
 | `rainbowprint`             | The next colour of the spectrum each time something the page shows moves. The lock remembers where it is. |
 | `heaven-and-hell`          | A pixel theme: angels by day and demons by night, all year. See [Pixel Themes](#-pixel-themes).           |
+| `brain`                    | A pixel theme: a brain in a jar in a lab, at work by day and lighting the dark by night.                  |
 | `medieval`                 | A collection: a pixel design for each month, changing on the first. See [Collections](#-collections).     |
 | `matrix`                   | A collection: the Matrix, a pixel design for each month. See [Collections](#-collections).                |
 
@@ -148,6 +149,7 @@ page back, and on the page's birthday the Birthday set takes it for the day.
 | Theme             | What it draws                                                                                                                                                                                                                                                                                     |
 | :---------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `heaven-and-hell` | Heaven & Hell: in GitHub's light mode the page is heaven, the pearly gates, the archangel and its herald over a sea of cloud; in its dark mode the same page is hell, the gates of hell, the demon and its herald over a river of lava, each thing of heaven with its fallen twin where it stood. |
+| `brain`           | brain: a living brain kept in a glass jar in a laboratory, wired to the machines it works with. In GitHub's light mode the lab is lit and the brain at work, its neurons firing and its moods on its console's screen; in its dark mode the lamps go out and the brain lights the room.           |
 
 ```yaml
 theme: heaven-and-hell
